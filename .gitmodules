@@ -1,0 +1,3 @@
+[submodule "external/butter"]
+	path = external/butter
+	url = git://github.com/secretrobotron/butter.git
