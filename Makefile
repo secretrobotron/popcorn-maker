@@ -13,6 +13,7 @@ HTML_SRCS := \
   $(SRC_DIR)/index.html
 
 JS_LIBS := \
+  $(EXTERNAL_DIR)/butter/dist/butter.js \
   $(EXTERNAL_DIR)/butter/dist/butter.min.js \
   $(EXTERNAL_DIR)/butter/dist/lib/jquery.js \
   $(EXTERNAL_DIR)/butter/dist/lib/jquery-ui.min.js \
@@ -45,3 +46,7 @@ $(DIST_DIR):
 
 clean:
 	@@rm -fr $(DIST_DIR)
+
+submodules:
+	@@git submodule init
+	@@git submodule update

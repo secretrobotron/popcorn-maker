@@ -4,7 +4,7 @@
     
     var b  = new Butter();
 
-    b.eventeditor( { target: "butter-editor-div" } );
+    b.eventeditor( { target: "butter-editor-div", defaultEditor: "lib/defaultEditor.html" } );
 
     b.previewer({
       layout: "layouts/default.html",
@@ -15,21 +15,15 @@
       }
     });
     
-    b.timeline({ target: "butter-timeline-div", duration: 80.25 });
+    b.timeline({ target: "butter-timeline-div" });
     
     new pluginTray({ target: "butter-plug-in-div", plugins: [ "footnote" ] })
   
-    b.listen ( "edittrackevent", function() {
+    b.listen ( "trackeditstarted", function() {
       overlay( "visible" );
-      console.log("sdfsdf");
     });
-    b.listen ( "trackeditcancelled", function() {
+    b.listen ( "trackeditclosed", function() {
       overlay( "hidden" );
-      console.log("sdfsdf");
-    });
-    b.listen ( "trackeditcomplete", function() {
-      overlay( "hidden" );
-      console.log("sdfsdf");
     });
     
   }, false);
