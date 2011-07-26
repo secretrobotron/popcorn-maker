@@ -17,7 +17,8 @@
     
     b.timeline({ target: "butter-timeline-div" });
     
-    new pluginTray({ target: "butter-plug-in-div", plugins: [ "footnote" ] })
+    b.plugintray({ target: "butter-plug-in-div" });
+    b.addPlugin( { type: "footnote" } );
   
     b.listen ( "trackeditstarted", function() {
       overlay( "visible" );
@@ -32,27 +33,6 @@
     el = document.getElementById( "overlay-div" );
     el.style.visibility = style;
   }
-  
-  function pluginTray( options ) {
-
-    options = options || {};
-    var container = document.getElementById( options.target ) || options.target;
-
-    this.addPlugin = function( type ) {
-
-      var pluginElement = document.createElement( "span" );
-      pluginElement.innerHTML = type + " ";
-      pluginElement.id = type;
-      pluginElement.setAttribute( "data-trackliner-type", "butterapp" );
-      $( pluginElement ).draggable({ helper: "clone", appendTo: "body", zIndex: 9001, revert: true, revertDuration: 0 });
-      container.appendChild( pluginElement );
-    };
-
-    for ( var i = 0, l = options.plugins.length; i < l; i++ ) {
-
-      this.addPlugin( options.plugins[ i ] );
-    }
-  };
 
 })();
 
