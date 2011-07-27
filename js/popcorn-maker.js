@@ -4,7 +4,7 @@
     
     var b  = new Butter();
 
-    b.eventeditor( { target: "butter-editor-div", defaultEditor: "lib/defaultEditor.html" } );
+    b.eventeditor( { target: "butter-editor-div", defaultEditor: "lib/defaultEditor.html", editorWidth: "98%", editorHeight: "98%"  } );
 
     b.previewer({
       layout: "layouts/default.html",
@@ -15,7 +15,7 @@
       }
     });
     
-    b.timeline({ target: "butter-timeline-div" });
+    b.timeline({ target: "butter-timeline-div"});
     
     b.plugintray({ target: "butter-plug-in-div" });
     b.addPlugin( { type: "footnote" } );
