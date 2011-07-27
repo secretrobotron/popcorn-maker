@@ -13,16 +13,16 @@
       callback: function() {
         b.buildPopcorn( "outerVideo", function() {
 
-          b.plugintray({ target: "butter-plug-in-div" });
           var registry = b.getRegistry();
-
-          for( var i = 0, l = registry.length; i < l; i++ ) {
-            b.addPlugin( { type: registry[ i ].type } );
-          } 
         } );
       }
     });
     
+    b.plugintray({ target: "butter-plug-in-div" });
+    b.addPlugin( { type: "footnote" } );
+    b.addPlugin( { type: "twitter" } );
+    b.addPlugin( { type: "webpage" } );
+    b.addPlugin( { type: "subtitle" } );
     b.timeline({ target: "butter-timeline-div"});
   
     b.listen ( "trackeditstarted", function() {
