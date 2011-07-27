@@ -11,14 +11,19 @@
       target: "previewer-iframe",
       media: "http://robothaus.org/bugs/video/brendan1.ogv",
       callback: function() {
-        b.buildPopcorn( "outerVideo" );
+        b.buildPopcorn( "outerVideo", function() {
+
+          b.plugintray({ target: "butter-plug-in-div" });
+          var registry = b.getRegistry();
+
+          for( var i = 0, l = registry.length; i < l; i++ ) {
+            b.addPlugin( { type: registry[ i ].type } );
+          } 
+        } );
       }
     });
     
     b.timeline({ target: "butter-timeline-div"});
-    
-    b.plugintray({ target: "butter-plug-in-div" });
-    b.addPlugin( { type: "footnote" } );
   
     b.listen ( "trackeditstarted", function() {
       overlay( "visible" );
