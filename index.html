@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" class="no-js">
-<head>
+<head> 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title>Popcorn</title>
@@ -8,35 +8,24 @@
   <meta name="author" content="">
   <!--  Mobile viewport optimized: j.mp/bplateviewport -->
   <meta name="viewport" content="width=device-width; initial-scale=1.0">
-
   <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
   <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="css/popcorn-maker.css">
+  <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="lib/trackLiner.css">
+  <link rel="stylesheet" href="css/popcorn-maker.css">
 
   <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
-  <script src="lib/modernizr-1.5.min.js"></script>
-  
+	<script src="lib/modernizr-1.5.min.js"></script>
 	<script src="lib/jquery.min.js"></script>
-
-  <script charset="utf-8" type="text/javascript" src="lib/jquery.infieldlabel.min.js"></script>
+	<script charset="utf-8" type="text/javascript" src="lib/jquery.infieldlabel.min.js"></script>
   <script type="text/javascript" src="lib/jquery.tinyscrollbar.min.js"></script>
-  <script type="text/javascript" src="lib/jquery_002.js"></script>
-  <script type="text/javascript" src="lib/custom.js"></script>
-  <script src="lib/jquery-ui.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="lib/jquery_002.js"></script>
+  <script src="lib/jquery-ui.js" type="text/javascript"></script>
+	<script type="text/javascript" src="lib/jquery.qtip.pack.js"></script>
+	
   <script src="lib/trackLiner.js" type="text/javascript"></script>
-  <script src="lib/popcorn-complete.js" type="text/javascript"></script>
   <script src="lib/butter.js" type="text/javascript"></script>
   <script src="js/popcorn-maker.js" type="text/javascript"></script>
-  
-  <script src="lib/a" type="text/javascript"></script>
-
-	<script>
-	$(function() {
-		$( ".draggable" ).draggable();
-	});
-	</script>
-
 
 </head>
 <body>
@@ -46,16 +35,21 @@
 <header>
 
  <h1 class="logo"><a href="#">Popcorn Maker</a></h1>
-
+ 
  <div class="header-right">
-
-
+ 
    <div class="my-projects-drpdwn">
-   <select name="websites2" class="websites2_dd" style="width:258px;" tabindex="1">
+   <select name="websites2" class="websites2" style="width:258px;" tabindex="1">
+   <option name="one" value="msDropDown" >msDropDown</option>
+   <option name="two" value="PrototypeCombobox" >Prototype Combobox</option>
+   <option selected="selected" value="jQuery Tabs" >jQuery Tabs</option>
+   <option value="Common Accordion" >Common Accordion</option>
    </select>
-
+	<ul class="actions"><li class="bubble_pointer"></li>
+     <li class="edit"><a href="#">edit</a></li>
+	</ul>
    </div>
-
+               
    <form action="">
    <ul class="header-buttons">
    <li class="add-btn"><input type="button" class="add-project-btn" name="add-project" value="" ></li>
@@ -63,22 +57,20 @@
    <li class="help-btn"><a href="#">help</a></li>
    </ul>
    </form>
-
-
+   
  </div>
 
 </header>
 <!-- ########## END HEADER ########## -->
 
 
-<!-- ########## START IFRAME SECTION ########## -->
+<!-- ########## START IFRAME SECTION ########## -->    
 <iframe id="main">
 </iframe>
 <!-- ########## END IFRAME SECTION ########## -->
 
-<!-- ########## START HIDE TIMELINE BUTTON ########## -->
+<!-- ########## START HIDE TIMELINE BUTTON ########## -->    
 <div class="hide-timeline">
-
  <a href="#" >Hide Timeline</a>
 </div>
 <!-- ########## END HIDE TIMELINE BUTTON ########## -->
@@ -89,111 +81,231 @@
 <!-- ***** START PROPERTIES HEADER ***** -->
  <div class="properties-header">
   <div class="timeline-heading">
-   <a href="#" class="timeline-title"> Untitled </a>
-
+   <a href="#" class="timeline-title"> Supermegaworm.webm</a>
    <ul class="actions"><li class="bubble_pointer"></li><li class="edit"><a href="#">edit</a></li></ul>
   </div>
-
+  
+  <div class="timeline-heading project-name">
+   <a href="#" class="timeline-title"> Supermegaworm.webm</a>
+  </div>
+  
  </div>
 <!-- ***** END PROPERTIES HEADER ***** -->
 
-<!-- ***** START TOOLBOX ***** -->
- <div class="enable-scroll toolbox" id="plugin-tray">
+<!-- ***** START TOOLBOX ***** --> 
+ <div class="enable-scroll toolbox collapsed">
+ 
   <div class="collapse-btn collapse"><a href="#">Collapse</a><span></span></div>
-
+  
+  <!-- ***** START SCROLLBAR ***** -->
+  <div class="scrollbar">
+   <div class="track">
+    <div class="thumb">
+     <div class="end">
+     </div>
+    </div>
+   </div>
+  </div>
+  <!-- ***** END SCROLLBAR ***** -->
+  
+  <!-- ***** START VIEWPORT ***** -->
+  <div class="viewport">
+     <div class="overview">
+		<script type="text/javascript">
+			window.fileSizes = {"stable":{"core":false,"plugins[bgiframe]":false},"nightly":{"core":54710}};
+		</script>
+        <div id="contentheader">
+          <ul class="tools" id="plugin-tray">
+            <!--
+            <li class="text_tool"><a href="#" title="Text Tool"><span></span>Text</a></li>
+            <li class="image_tool"><a href="#" title="Image Tool"><span></span>Image</a></li>
+            <li class="flickr_tool"><a href="#" title="Get pictures from Flickr"><span></span>Flickr</a></li>
+            <li class="wiki_tool"><a href="#" title="Wiki Tools"><span></span>Wikipedia</a></li>
+            <li class="map_tool"><a href="#" title="Bring in live map data and street views"><span></span>Maps</a></li>
+            <li class="media_tool"><a href="#" title="Queue another audio or video file"><span></span>Media</a></li>
+            <li class="facebook_tool"><a href="#" title="Share something on Facebook"><span></span>Facebook</a></li>
+            -->
+          </ul>
+         </div> 
+     </div>
+  </div>     
+ <!-- ***** END SCROLLBAR ***** -->
+ 
  </div>
-<!-- ***** END TOOLBOX ***** -->
+<!-- ***** END TOOLBOX ***** -->        
 
-<!-- ***** START TIMELINE ***** -->
-  <div style="height: 100px; width: 900px;" id="timeline-div" >
-
+    	
+    	
+<!-- ***** START TIMELINE ***** -->    	
+  <div class="timeline">
+  
+   <!-- ***** START PLAYBACK CONTROLS ***** -->
+   <div class="playback-controls">
+     <div class="play-btn"><a href="#"><span >play/pause</span></a></div>
+     
+     <div class="timeline-duration">00.20 / 05.45 </div>
+     
+     <!-- ***** TIMING NOTCHES ***** -->  
+     <div class="timeline-progress-wrapper timing-notches-div">
+     	<div class="timing-notches">
+        </div>
+     </div>
+     <!-- ***** END TIMING NOTCHES ***** -->  
+     <div class="timeline-progress-wrapper"><div class="timeline-bar"><div class="timeline-progress-bar">
+         <div class="current-line"></div>
+         <div class="current-white"></div>
+     </div></div></div>
+     
+     <div class="sound-btn"><a href="#"><span >play/pause</span></a></div>
+   </div>
+   <!-- ***** END PLAYBACK CONTROLS ***** -->
+   
+   <!-- ***** START LAYERS PANEL ***** -->
+   <div class="enable-scroll">
+      
+      <!-- ***** START SCROLLBAR ***** -->
+      <div class="scrollbar">
+       <div class="track">
+        <div class="thumb">
+         <div class="end">
+         </div>
+        </div>
+       </div>
+      </div>
+      <!-- ***** END SCROLLBAR ***** -->
+      
+      <!-- ***** START VIEWPORT ***** -->                  
+      <div class="viewport">
+        <div class="overview" id="timeline-div">
+        </div>
+      </div>
+      <!-- ***** END VIEWPORT ***** -->
+                        
+     </div>
+     <!-- ***** END LAYERS PANEL ***** -->
+               
   </div>
   <!-- ***** END TIMELINE ***** -->
-
+  
 </section>
 <!-- ########## END PROPERTIES PANEL ########## -->
 
 
-<!-- ########## START POPUPS ########## -->
+<!-- ########## START POPUPS ########## -->    
  <div class="popupDiv close-div">
  	<div class="balck-overlay"></div>
  	<div class="popup-container">
-
-        <div id="popup-change-tl-media" class="popup-change-tl-media pop-up close-div draggable" style="display:none"> <!-- popup change tl media -->
-          <a class="popup-close-btn" href="#"><span></span></a>
+        
+        <div id="popup-1" class="popup-1 pop-up close-div draggable" style="display:none"> <!-- popup 1 -->
+            <a class="popup-close-btn" href="#"><span></span></a>
         	<div class="popup-header">
-            <h3>Change timeline media</h3>
-          </div>
-
-          <div class="popup-content">
-            <form action="">
-              <p>
-                <label for="url">http://</label>
-                <input type="text" name="url" id="url" value="" />
-              </p>
-              <input type="submit" class="change-url-btn" value="change" />
-              <p class="desc">Show us where your video file lives. Youtube and Vimeo embeds work too.<a href="#">Learn more about what kind videos work...</a></p>
-
-              <div class="popup-btns">
-                <input type="submit" class="ok-btn" value="Ok" />
-                <input type="submit" class="apply-btn" value="Apply" />
-                 <input type="submit" class="cancel-btn" value="Cancel" />
-              </div>
-            </form>
-          </div>
-        </div><!-- end popup change tl media -->
-
-        <div id="popup-trackeditor" class="popup-trackeditor pop-up close-div draggable" style="display:none"> <!-- popup trackeditor -->
-<!--          <a class="popup-close-btn" href="#"><span></span></a>-->
-<!--        	<div class="popup-header">-->
-<!--            <h3>Track</h3>-->
-<!--            <div class="tracks-drpdwn">-->
-<!--              <select name="websites2" class="websites2" style="width:258px;" tabindex="1">-->
-<!--              </select>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="popup-content">-->
-<!--            <div class="track-content">-->
-
-<!--				    </div>-->
-<!--            <div class="popup-btns">-->
-<!--              <form action="">-->
-<!--                <input type="submit" class="ok-btn" value="Ok" />-->
-<!--                <input type="submit" class="apply-btn" value="Apply" />-->
-<!--                <input type="submit" class="delete-btn" value="Delete" />-->
-<!--              </form>-->
-<!--            </div>-->
-<!--          </div>-->
-        </div><!-- end popup trackeditor -->
-
-        <div id="popup-export" class="popup-export pop-up close-div" style="display:none"> <!-- popup export -->
-          <a class="popup-close-btn" href="#"><span></span></a>
-        	<div class="popup-header">
-            <h3>Export</h3>
-          </div>
-          <div class="popup-content">
-          	<div class="track-content">
-				    </div>
-            <p class="track-text">upload this code somewhere! or try <a href="#">htmlpad.org</a></p>
-
-            <div class="download-html">
-              <form action="">
-                <input type="submit" class="download-btn" name="download-btn" value="Download as HTML" />
-              </form>
+            	<h3>Change timeline media</h3>
             </div>
-          </div>
-        </div><!-- end popup export -->
-
-        <div id="popup-eventeditor" class="popup-eventeditor pop-up close-div draggable" style="display:none"> <!-- popup eventeditor -->          
-        </div><!-- end popup eventeditor -->
-
+            <div class="popup-content">
+                <form action="">
+                	<p>
+                        <label for="url">http://</label>
+                        <input type="text" name="url" id="url" value="">
+                    </p>
+                    <input type="submit" class="change-url-btn" value="change">
+                    <p class="desc">Show us where your video file lives. Youtube and Vimeo embeds work too.<a href="#">Learn more about what kind videos work...</a></p>
+                    <div class="popup-btns">
+                        <input type="submit" class="ok-btn" value="Ok">
+                        <input type="submit" class="apply-btn" value="Apply">
+                        <input type="submit" class="preview-btn" value="Preview">
+                    </div>
+                </form>
+            </div>
+        </div><!-- end popup 1 -->
+        
+        <div id="popup-2" class="popup-2 pop-up close-div draggable" style="display:none"> <!-- popup 2 -->
+            <a class="popup-close-btn" href="#"><span></span></a>
+        	<div class="popup-header">
+            	<h3>Track</h3>
+                <div class="tracks-drpdwn">
+                    <select name="websites2" class="websites2" style="width:258px;" tabindex="1">
+                      <option name="one" value="msDropDown" >msDropDown</option>
+                      <option name="two" value="PrototypeCombobox" >Prototype Combobox</option>
+                      <option selected="selected" value="jQuery Tabs" >jQuery Tabs</option>
+                      <option value="Common Accordion" >Common Accordion</option>
+                    </select>
+                </div>
+            </div>
+            <div class="popup-content">
+            	<div class="track-content">
+            	<p>var $p = Popcorn(" #video ").googlemap({ "id":"googlemap1310584466657" , "start":
+2.25, "end":6.25, "type":"ROADMAP", "zoom":8, "target":"poop"});
+//uncomment to auto pla</p>
+				</div>
+                <div class="popup-btns">
+                <form action="">
+                    <input type="submit" class="ok-btn" value="Ok">
+                    <input type="submit" class="apply-btn" value="Apply">
+                    <input type="submit" class="preview-btn" value="Preview">
+                </form>
+                </div>
+            </div>
+        </div><!-- end popup 2 -->
+        
+        <div id="popup-3" class="popup-3 pop-up close-div" style="display:none"> <!-- popup 3 -->
+            <a class="popup-close-btn" href="#"><span></span></a>
+        	<div class="popup-header">
+            	<h3>Export</h3>
+            </div>
+            <div class="popup-content">
+            	<div class="track-content">
+                    &lt;!doctype html&gt;<br />
+                    &lt;html&gt;<br />
+                    &lt;head&gt;<br />
+                    &lt;title&gt;MyButterProject&lt;/title&gt;<br />
+                    &lt;link rel=&quot;stylesheet&quot; href=&quot;http://butterapp.org/edge/themes/undefined/<br />
+                    theme.css&quot; type=&quot;text/css&quot; media=&quot;screen&quot;&gt;<br />
+                    &lt;link rel=&quot;stylesheet&quot; href=&quot;http://butterapp.org/edge/layouts/undefined/<br />
+                    layout.css&quot; type=&quot;text/css&quot; media=&quot;screen&quot;&gt;<br />
+                    &lt;script src=&quot;http://code.jquery.com/jquery-1.6.1.min.js&quot;&gt;&lt;/script&gt;<br />
+                    &lt;script src=&quot;http://popcornjs.org/code/dist/popcorn-complete.min.js&quot;&gt;&lt;/<br />
+                    script&gt;
+				</div>
+                <p class="track-text">upload this code somewhere! or try <a href="#">htmlpad.org</a></p>
+                <div class="download-html">
+                    <form action="">
+                        <input type="submit" class="download-btn" name="download-btn" value="Download as HTML">
+                    </form>
+                </div>
+            </div>
+        </div><!-- end popup 2 -->
+        
+        <div id="popup-4" class="popup-4 pop-up close-div draggable" style="display:none"> <!-- popup 4 -->
+            <a class="popup-close-btn" href="#"><span></span></a>
+        	<div class="popup-header">
+            	<h3>Edit Event</h3>
+            </div>
+            <div class="popup-content">
+                <form action="">
+                	<p>
+                        <label for="in_">In</label>
+                        <input type="text" name="in" id="in_" value="">
+                    </p>
+                	<p>
+                        <label for="out_">Out</label>
+                        <input type="text" name="out" id="out_" value="">
+                    </p>
+                    <div class="map_">
+                    </div>
+                    <div class="popup-btns">
+                        <input type="submit" class="ok-btn" value="Ok">
+                        <input type="submit" class="apply-btn" value="Apply">
+                        <input type="submit" class="preview-btn" value="Preview">
+                    </div>
+                </form>
+            </div>
+        </div><!-- end popup 4 -->
+        
     </div>
-
  </div>
-<!-- ########## END POPUPS ########## -->
-
+<!-- ########## END POPUPS ########## -->  
+  
 </body>
 </html>
-
 
 
