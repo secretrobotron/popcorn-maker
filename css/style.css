@@ -87,7 +87,7 @@ header { height:44px;
 .my-projects-drpdwn { width:212px; margin-right:14px; float: left; position:relative}
 .my-projects-drpdwn .actions { opacity:1; width:14px; height:14px; top:1px; right:0;}
 .header-right form { float:left}
-#websites2_msdd { width:177px !important}
+.websites2 { width:177px !important}
 .header-buttons { float:left;}
 .header-buttons li, .popup-close-btn { float:left; margin-right:10px; width:24px; height:24px; border: 1px solid #282828 !important;
 	   -moz-border-radius: 3px;
