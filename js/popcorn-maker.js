@@ -4,7 +4,7 @@
     
     var b  = new Butter();
 
-    b.eventeditor( { target: "popup-trackeditor", defaultEditor: "lib/defaultEditor.html", editorWidth: "98%", editorHeight: "98%"  } );
+    b.eventeditor( { target: "popup-4", defaultEditor: "lib/defaultEditor.html", editorWidth: "98%", editorHeight: "98%"  } );
 
     b.previewer({
       layout: "layouts/default.html",
@@ -28,7 +28,19 @@
     
     b.timeline({ target: "timeline-div"});
 
-    $('.enable-scroll').tinyscrollbar();	
+    $('.enable-scroll').tinyscrollbar();
+    
+    b.listen ( "trackeditstarted", function() {
+      $('.close-div').fadeOut('fast');
+      $('.popupDiv').fadeIn('slow');
+      $('#popup-4').show();
+      $(' .balck-overlay ').hide();
+    });
+    
+    b.listen ( "trackeditclosed", function() {
+      $('.close-div').fadeOut('fast');
+      $('.popups').hide(); 
+    });
 
 
     return;
@@ -103,12 +115,12 @@
       $(' .balck-overlay ').show();
     });
 
-    $('.track-event').click(function(){
-      $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
-      $('#popup-4').show();
-      $(' .balck-overlay ').hide();
-    });
+//    $('.track-event').click(function(){
+//      $('.close-div').fadeOut('fast');
+//      $('.popupDiv').fadeIn('slow');
+//      $('#popup-4').show();
+//      $(' .balck-overlay ').hide();
+//    });
 
     $('.popup-close-btn, .balck-overlay').click(function(){
       $('.close-div').fadeOut('fast');
