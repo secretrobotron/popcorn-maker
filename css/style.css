@@ -336,7 +336,7 @@ border:1px solid #111111 !important;
 	-webkit-box-shadow: 0 1px 0 #737373, inset 0 1px 0 #545454;
 	     -o-box-shadow: 0 1px 0 #737373, inset 0 1px 0 #545454;
 	        box-shadow: 0 1px 0 #737373, inset 0 1px 0 #545454;}
-.change-url-btn:hover { color:#fff;}
+.change-url-btn:hover, .change-title-btn:hover { color:#fff;}
 .layer-btn:active, .layer-btn:focus {
 	background-image: -webkit-gradient(
 		linear,
@@ -668,16 +668,16 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		rgb(238,238,238) 0%,
 		rgb(255,255,255) 100%
 	);}
-.pop-up .popup-content form p { float:left; width:200px; position: relative; padding: 0 0 10px 0;}
-.pop-up .popup-content form p label { position:absolute; left:10px; top:8px; color:#999;}
-.pop-up .popup-content form p input { height:30px; border:1px solid #ccc; padding: 0 10px; line-height:30px;}
-.change-url-btn { height:30px; width:100px;}
-.popup-1 .popup-content input.change-url-btn { float:right;}
-.popup-1 .popup-content form p input { width:200px}
-.popup-4 .popup-content form { position:relative;}
+.pop-up .popup-content p { float:left; width:200px; position: relative; padding: 0 0 10px 0;}
+.pop-up .popup-content p label { position:absolute; left:10px; top:8px; color:#999;}
+.pop-up .popup-content p input { height:30px; border:1px solid #ccc; padding: 0 10px; line-height:30px;}
+.change-url-btn, .change-title-btn { height:30px; width:100px;}
+.popup-1 .popup-content input.change-url-btn, .popup-project-title .popup-content input.change-title-btn, { float:right;}
+.popup-1 .popup-content p input { width:200px}
+.popup-4 .popup-content { position:relative;}
 .popup-4 .popup-content .map_ {  width:250px; height:85px; background-color:#FFCC66; position:absolute; top:0; right:0;}
-.popup-4 .popup-content form p { width: auto;}
-.popup-4 .popup-content form p input { width:65px;}
+.popup-4 .popup-content p { width: auto;}
+.popup-4 .popup-content p input { width:65px;}
 .tracks-drpdwn { position:absolute; z-index:999; left:150px; top:8px;}
 .tracks-drpdwn .dd .ddChild { top: 28px !important;}
 .tracks-drpdwn .dd .ddChild a { height:30px; line-height:30px}
@@ -693,7 +693,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .download-btn:hover { color:#fff;}
 .track-text {float: left; margin-top: 10px; width: 220px;}
 .download-html {float: right; height: 46px; overflow: hidden; position: relative; width: 200px;}
-.download-btn, .change-url-btn, .popup-btns input { float:left; margin-right:10px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC;
+.download-btn, .change-url-btn, .change-title-btn, .popup-btns input { float:left; margin-right:10px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC;
 	   -moz-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
 	-webkit-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
 	     -o-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
@@ -724,7 +724,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 	-webkit-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;
 	     -o-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;
 	        box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;}
-.header-buttons li, .popup-close-btn, .download-btn, .change-url-btn, .popup-btns input {
+.header-buttons li, .popup-close-btn, .download-btn, .change-url-btn, .change-title-btn, .popup-btns input {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -737,7 +737,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		rgb(56,56,56) 0%,
 		rgb(97,97,97) 100%
 	);}
-.header-buttons li:hover, .download-btn:hover, .change-url-btn:hover, .popup-btns input:hover {
+.header-buttons li:hover, .download-btn:hover, .change-url-btn:hover, .change-title-btn:hover, .popup-btns input:hover {
 	color: #fff;
 	background-image: -webkit-gradient(
 		linear,
@@ -751,7 +751,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		rgb(64,64,64) 0%,
 		rgb(112,112,112) 100%
 	);}
-.header-buttons li:active, .header-buttons li:focus, .download-btn:active, .download-btn:focus, .change-url-btn:active, .change-url-btn:focus, .popup-btns input:focus, .popup-btns input:active {
+.header-buttons li:active, .header-buttons li:focus, .download-btn:active, .download-btn:focus, .change-url-btn:active, .change-url-btn:focus, .change-title-btn:active,  .change-title-btn:focus, .popup-btns input:focus, .popup-btns input:active {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -802,7 +802,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		-webkit-border-radius: 0;
 			 -o-border-radius: 0;
 				border-radius: 0;}
-.enable-scroll.toolbox, .layer, .layer-btn, .download-btn, .change-url-btn, .popup-btns input {
+.enable-scroll.toolbox, .layer, .layer-btn, .download-btn, .change-url-btn, .change-title-btn, .popup-btns input {
 		   -moz-border-radius: 6px;
 		-webkit-border-radius: 6px;
 			 -o-border-radius: 6px;
@@ -822,12 +822,12 @@ ul.actions, .ttip, .ui-tooltip-content {
 	-webkit-transform: rotate(45deg);
 	     -o-transform: rotate(45deg);
 	       -transform: rotate(45deg);}
-.pop-up .popup-content form p input, .popup-content .track-content, .popup-1, .popup-2, .popup-4 {
+.pop-up .popup-content p input, .popup-content .track-content, .popup-1, .popup-2, .popup-4 {
 	   -moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	     -o-border-radius: 10px;
 	        border-radius: 10px;}
-.pop-up .popup-content form p input, .popup-content .track-content {
+.pop-up .popup-content p input, .popup-content .track-content {
 	   -moz-box-shadow: 0 1px 0 #fff, inset 0 2px 3px #eee;
 	-webkit-box-shadow: 0 1px 0 #fff, inset 0 2px 3px #eee;
 	     -o-box-shadow: 0 1px 0 #fff, inset 0 2px 3px #eee;
