@@ -5,7 +5,7 @@
     popcornString, butterId,
     userSetMedia, videoString,
     popcornURL, originalHead,
-    popcorns;
+    popcorns, originalBody;
 
   Butter.registerModule( "previewer", {
 
@@ -68,6 +68,8 @@
             that = this;
 
         Butter.extend( originalHead, ( iframe.contentWindow || iframe.contentDocument ).document.head );
+
+        originalBody = body[ 0 ].innerHTML;
 
         //originalHead = iframe.contentWindow.document.head;
 
@@ -237,12 +239,16 @@
       },
 
       getPopcorn: function( callback ) {
-        var popcornz = "var " + videoString;
+        var popcornz = "";
+        
+        for( video in videoString ) {
+          popcornz += "var " + videoString[ video ] + "\n";
+        }
         
         // if for some reason the iframe is refreshed, we want the most up to date popcorn code
         // to be represented in the head of the iframe, incase someone views source
         for( popcorn in popcorns ) {
-        
+
           var trackEvents = popcorns[ popcorn ].getTrackEvents();
 
           if ( trackEvents ) {
@@ -256,7 +262,7 @@
 
               // for each option
               for ( item in options ) {
-
+              
                 if ( options.hasOwnProperty( item ) ) {
 
                   // add the data to the string so it looks like normal popcorn code
@@ -270,9 +276,18 @@
             } // for
           } // if
         }
-      
+
         return popcornz;
 
+      },
+
+      getHTML: function() {
+        var doc = ( iframe.contentWindow || iframe.contentDocument ).document,
+            pcornString = this.getPopcorn();
+        return "<html>\n<head>\n" + originalHead.innerHTML + "\n" + 
+                "<script>" + pcornString + "\n</script>\n" + 
+                "<script src='" + popcornURL + "'></script>\n</head>\n<body>\n" +
+                originalBody + "\n</body>\n</html>";
       },
 
       getRegistry: function() {
