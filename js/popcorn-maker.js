@@ -31,26 +31,10 @@
     $('.enable-scroll').tinyscrollbar();
     
     b.listen ( "trackeditstarted", function() {
-      var popupDiv = document.getElementById("popup-4"),
-      iframe;
-      
-      function showEditor() {
-        if ( iframe && (iframe.contentWindow || iframe.contentDocument ) ){
-          console.log(( iframe.contentWindow || iframe.contentDocument ).document.body.scrollHeight, popupDiv.clientHeight );
-          popupDiv.style.height = ( iframe.contentWindow || iframe.contentDocument ).document.body.height;
-
-          $('.close-div').fadeOut('fast');
-          $('.popupDiv').fadeIn('slow');
-          $('#popup-4').show();
-          $(' .balck-overlay ').hide();
-        } else {
-          iframe = popupDiv.firstChild;
-          console.log(iframe.height);
-          setTimeout( showEditor, 1);
-        }
-      }
-      
-      showEditor();
+      $('.close-div').fadeOut('fast');
+      $('.popupDiv').fadeIn('slow');
+      $('#popup-4').show();
+      $(' .balck-overlay ').hide();
     });
     
     b.listen ( "trackeditclosed", function() {

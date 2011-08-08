@@ -44,7 +44,8 @@
           btn,
           elements = {},
           p,
-          popupButtons;
+          popupButtons,
+          popupContent;
           
         surroundingDiv.setAttribute( "class", "butter-eventeditor" );
 
@@ -173,7 +174,10 @@
         
         surroundingDiv.appendChild( popupButtons );
 
-        document.getElementById( "popup-content" ).appendChild( surroundingDiv );
+        popupContent = document.getElementById( "popup-content" );
+        popupContent.appendChild( surroundingDiv );
+
+        document.height = popupContent.scrollHeight + document.getElementById( "popup-header" ).scrollHeight;
         
       },
 
@@ -219,7 +223,7 @@
   <body>
     <div class="editor pop-up close-div" >
       <a id="popup-close-btn" class="popup-close-btn" href="#"><span></span></a>
-      <div class="popup-header">
+      <div id="popup-header" class="popup-header">
       	<h3>Edit Event</h3>
       </div>
       <div id="popup-content">
