@@ -1,0 +1,14 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <h1>Projects</h1>
+    {% if projects %}
+    <ul>
+      {% for project in projects %}
+      <li><a href="/storage/projects/{{ project.id }}/">{{ project }}</a></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </body>
+</html>

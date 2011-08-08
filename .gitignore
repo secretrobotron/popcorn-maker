@@ -1,2 +1,5 @@
 *~
 dist/
+server/bin
+server/include
+server/lib
