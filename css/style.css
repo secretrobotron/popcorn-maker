@@ -673,11 +673,8 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .pop-up .popup-content form p input { height:30px; border:1px solid #ccc; padding: 0 10px; line-height:30px;}
 .change-url-btn { height:30px; width:100px;}
 .popup-1 .popup-content input.change-url-btn { float:right;}
-.popup-1 .popup-content form p input { width:200px}
-.popup-4 .popup-content form { position:relative;}
-.popup-4 .popup-content .map_ {  width:250px; height:85px; background-color:#FFCC66; position:absolute; top:0; right:0;}
-.popup-4 .popup-content form p { width: auto;}
-.popup-4 .popup-content form p input { width:65px;}
+.popup-1 .popup-content p input { width:200px}
+
 .tracks-drpdwn { position:absolute; z-index:999; left:150px; top:8px;}
 .tracks-drpdwn .dd .ddChild { top: 28px !important;}
 .tracks-drpdwn .dd .ddChild a { height:30px; line-height:30px}
@@ -687,8 +684,8 @@ border-top: 1px solid #fff;	background-color:#eee;}
 	-webkit-box-shadow: 2px 2px 5px #000;
 	     -o-box-shadow: 2px 2px 5px #000;
 	        box-shadow: 2px 2px 5px #000;}
-.popup-1 .popup-content, .popup-2 .popup-content, .popup-4 .popup-content { padding:20px}
-.popup-1 .popup-header h3, .popup-2 .popup-header h3, .popup-4 .popup-header h3 { padding: 0 20px}
+.popup-1 .popup-content, .popup-2 .popup-content, .popup-content { padding:20px}
+.popup-1 .popup-header h3, .popup-2 .popup-header h3, .popup-header h3 { padding: 0 20px}
 .download-btn { position: absolute; right: 0; top: 12px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
 .download-btn:hover { color:#fff;}
 .track-text {float: left; margin-top: 10px; width: 220px;}

@@ -4,7 +4,7 @@
     
     var b  = new Butter();
 
-    b.eventeditor( { target: "popup-4", defaultEditor: "lib/defaultEditor.html", editorWidth: "98%", editorHeight: "98%"  } );
+    b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "100%", editorHeight: "100%"  } );
 
     b.previewer({
       layout: "layouts/default.html",
@@ -31,10 +31,26 @@
     $('.enable-scroll').tinyscrollbar();
     
     b.listen ( "trackeditstarted", function() {
-      $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
-      $('#popup-4').show();
-      $(' .balck-overlay ').hide();
+      var popupDiv = document.getElementById("popup-4"),
+      iframe;
+      
+      function showEditor() {
+        if ( iframe && (iframe.contentWindow || iframe.contentDocument ) ){
+          console.log(( iframe.contentWindow || iframe.contentDocument ).document.body.scrollHeight, popupDiv.clientHeight );
+          popupDiv.style.height = ( iframe.contentWindow || iframe.contentDocument ).document.body.height;
+
+          $('.close-div').fadeOut('fast');
+          $('.popupDiv').fadeIn('slow');
+          $('#popup-4').show();
+          $(' .balck-overlay ').hide();
+        } else {
+          iframe = popupDiv.firstChild;
+          console.log(iframe.height);
+          setTimeout( showEditor, 1);
+        }
+      }
+      
+      showEditor();
     });
     
     b.listen ( "trackeditclosed", function() {
