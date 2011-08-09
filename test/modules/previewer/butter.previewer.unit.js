@@ -48,9 +48,8 @@
               ok ( typeof butter.getRegistry() === "object", "getRegistry is working properly" );
             } );
           } );
-
-          ok( butter.getPopcorn() !== "", "getPopcorn function working properly" );
-          ok( butter.getHTML() !== "", "getHTML function working properly" );
+          equals( butter.getPopcorn().trim(), "var popcorn0 = Popcorn( '#outerVideo-butter');", "getPopcorn function working properly" );
+          ok( butter.getHTML().search("<div id=\"outerVideo\" data-butter=\"media\"></div>") !== -1,  "getHTML returning known content" );
           setTimeout(function(){
             var track = butter.getTracks()[ 0 ] || butter.addTrack( new Butter.Track() );
             butter.addTrackEvent( track, new Butter.TrackEvent( {
