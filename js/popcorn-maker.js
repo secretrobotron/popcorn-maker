@@ -27,6 +27,18 @@
     b.addPlugin( { type: "googlenews" } );
     
     b.timeline({ target: "timeline-div"});
+    
+    var projectsDrpDwn = $(".projects-dd"),
+    localProjects = localStorage["PopcornMaker.SavedProjects"];
+    
+    $.each( localProjects ), function( index, project ) {
+      $( "<option/>", {
+        "value": project.title,
+        "html": project.title
+      }).appendTo( projectsDrpDwn );
+    });
+    
+    
 
     $('.enable-scroll').tinyscrollbar();
     
@@ -87,7 +99,7 @@
     });
 
     try {
-      $(".websites2").msDropDown();
+      $(".projects-dd").msDropDown();
     } catch(e) {
       alert("Error: "+e.message);
     }
