@@ -1,8 +1,14 @@
 .trackliner-track {
-  background-image: -moz-linear-gradient(top,  #eee,  #999);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#999));
   height: 36px;
   position: relative;
+  background: url("../images/texture_1.png") repeat scroll 0 0 transparent;
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 1px 0 #737373, 0 1px 0 #131313 inset;
+    height: 27px;
+    margin-bottom: 6px;
+    padding-left: 112px;
+    position: relative;
+
 }
 
 .trackliner-event {
@@ -14,8 +20,34 @@
   cursor: move;
   width: 100px;
   top: 0px;
+  display: block;
+  height: 25px;
+  line-height: 25px;
+  text-align: center;
+  cursor:move;
+  position:absolute;
+  font:normal 10px/25px Arial, Helvetica, sans-serif;
+  text-transform:uppercase; 
+  color:#333;
+  opacity:0.8;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-o-border-radius: 5px;
+	border-radius: 5px;
+			
+	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	-o-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	
 }
 
+.trackliner-event:hover{
+opacity:1;
+}
+
+
+	
 .trackliner-event-selected {
   background-image: -moz-linear-gradient(top,  #0f0,  #060);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#0f0), to(#060));
