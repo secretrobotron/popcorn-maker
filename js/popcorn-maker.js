@@ -42,8 +42,6 @@
       $('.popups').hide(); 
     });
 
-
-    return;
     $(".collapse-btn").toggle(function() {
 
       $('.collapse-btn a').css('backgroundPosition','6px 7px');
@@ -101,7 +99,7 @@
       $(' .balck-overlay ').hide();
     });
 
-    $('.layer-btn .edit a').click(function(){
+    $('.layer-btn .edit span').click(function(){
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-2').show();
@@ -114,23 +112,30 @@
       $('#popup-3').show();
       $(' .balck-overlay ').show();
     });
-
-//    $('.track-event').click(function(){
-//      $('.close-div').fadeOut('fast');
-//      $('.popupDiv').fadeIn('slow');
-//      $('#popup-4').show();
-//      $(' .balck-overlay ').hide();
-//    });
+    
+    $('.p-timeline-title').click(function(){
+      console.log(b.getProjectDetails( "title" ) );
+      $('#project-title').val( b.getProjectDetails( "title" ) );
+      
+      $('.close-div').fadeOut('fast');
+      $('.popupDiv').fadeIn('slow');
+      $('#popup-project-title').show();
+      $('.balck-overlay').hide();
+    });
+    
+    $(".change-title-btn").click( function() {
+      var title = $('#project-title').val();
+      if ( title.length > 0) {
+        b.setProjectDetails("title", title);
+        $(".p-timeline-title").html( title );
+        $('.close-div').fadeOut('fast');
+        $('.popups').hide();
+      }
+    });
 
     $('.popup-close-btn, .balck-overlay').click(function(){
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
-    });
-
-    $('a#slickbox-toggle').click(function() {
-      $('#slickbox').slideToggle(400);
-      $(this).text($(this).text() == 'Show box' ? 'Hide box' : 'Show box'); // <- HERE
-      return false;
     });
 
     $(function(){ $("label").inFieldLabels(); });
