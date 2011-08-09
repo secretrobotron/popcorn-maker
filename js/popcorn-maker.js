@@ -28,10 +28,15 @@
     
     b.timeline({ target: "timeline-div"});
     
-    var projectsDrpDwn = $(".projects-dd"),
-    localProjects = localStorage["PopcornMaker.SavedProjects"];
+    localStorage.removeItem( "PopcornMaker.SavedProjects" );
     
-    $.each( localProjects ), function( index, project ) {
+    var projectsDrpDwn = $(".projects-dd"),
+    localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
+    console.log (localProjects);
+    
+    localProjects = !!localProjects ? JSON.parse( localProjects ) : undefined;
+    
+    localProjects && $.each( localProjects, function( index, project ) {
       $( "<option/>", {
         "value": project.title,
         "html": project.title
