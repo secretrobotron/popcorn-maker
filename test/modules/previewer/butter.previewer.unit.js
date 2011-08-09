@@ -17,11 +17,10 @@
   test( "Iframe empty check", function () {
     expect( 1 );
     ok( document.getElementById( "notIframe" ).innerHTML === "", "Iframe is initially empty" );
+    startPreviewer();
   } );
-
-  test( "Inside Callback", function() {
-    expect( 0 );
-
+  
+  function startPreviewer() {
     butter.previewer( {
       layout: "../../../src/modules/previewer/layout.html",
       target: "notIframe",
@@ -64,7 +63,7 @@
         } );
       }      
     } );
-  } );
+  }
 
 
   butter.listen( "trackeventadded", function( e ) {
