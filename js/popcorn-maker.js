@@ -28,13 +28,13 @@
     
     b.timeline({ target: "timeline-div"});
     
-    localStorage.removeItem( "PopcornMaker.SavedProjects" );
+    
+    // Load projects from localStorage, server //
     
     var projectsDrpDwn = $(".projects-dd"),
     localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
-    console.log (localProjects);
     
-    localProjects = !!localProjects ? JSON.parse( localProjects ) : undefined;
+    localProjects = !!localProjects ? JSON.parse( localProjects ) : localProjects;
     
     localProjects && $.each( localProjects, function( index, project ) {
       $( "<option/>", {
@@ -42,8 +42,6 @@
         "html": project.title
       }).appendTo( projectsDrpDwn );
     });
-    
-    
 
     $('.enable-scroll').tinyscrollbar();
     
