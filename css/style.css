@@ -158,7 +158,7 @@ header { height:44px;
 /*------- Timeline ------- */
 .timeline{padding:0 160px 0 20px;}
 #properties-panel { background:url(../images/timeline-bg.jpg) repeat; float:left; height:270px; position:absolute; bottom:0; width:100%; overflow:hidden}
-#properties-panel .properties-header { padding:0 20px; height:36px; border:1px solid #353535; border-bottom-color:#030303; margin-bottom:15px; border-right:0; border-left:0;}
+#properties-panel .properties-header { padding:0 20px; height:36px; border:1px solid #353535; border-bottom-color:#030303; margin-bottom:5px; border-right:0; border-left:0;}
 .timeline-heading { float:left; position:relative; padding: 5px 35px 5px 10px; background: #000;margin: 5px 0;}
 .playback-controls { height:48px; width:100%; position: relative;}
 .playback-controls .play-btn, .playback-controls .sound-btn { padding:3px;}
