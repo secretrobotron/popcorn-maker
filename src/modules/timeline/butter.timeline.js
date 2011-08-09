@@ -40,17 +40,6 @@
       return seconds;
     }; //secondsToSMPTE
 
-    var findAbsolutePosition = function( obj ) {
-	    var curleft = curtop = 0;
-	    if ( obj.offsetParent ) {
-		    do {
-			    curleft += obj.offsetLeft;
-			    curtop += obj.offsetTop;
-		    } while ( obj = obj.offsetParent );
-	    }
-	    return [ curleft, curtop ];
-    };
-
     var MediaInstance = function( media ) {
 
       // capturing self to be used inside element event listeners
