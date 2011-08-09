@@ -252,7 +252,6 @@
 
         b.currentTime( pixel / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
       } //if
-
       return b.currentTime() / currentMediaInstance.duration * ( currentMediaInstance.container.offsetWidth );
     };
   });
