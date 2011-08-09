@@ -1,6 +1,7 @@
-from storage.models import Project, Media, Track, TrackEvent, Target
+from storage.models import Project
 from django.contrib import admin
 
+"""
 class TrackEventInline(admin.TabularInline):
   model = TrackEvent
   extra = 3
@@ -16,7 +17,6 @@ class MediaInline(admin.StackedInline):
 class TargetInline(admin.StackedInline):
   model = Target 
   extra = 3 
-
 class ProjectAdmin(admin.ModelAdmin):
   inlines = [MediaInline, TargetInline]
 class MediaAdmin(admin.ModelAdmin):
@@ -33,3 +33,6 @@ admin.site.register(Media, MediaAdmin)
 admin.site.register(Track, TrackAdmin)
 admin.site.register(TrackEvent, TrackEventAdmin)
 admin.site.register(Target, TargetAdmin)
+"""
+
+admin.site.register(Project)

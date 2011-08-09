@@ -5,9 +5,11 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^storage$', 'storage.views.index', name='index'),
+    (r'^storage$', 'storage.views.index'),
     (r'^storage/projects$', 'storage.views.index'),
     (r'^storage/projects/$', 'storage.views.index'),
+    (r'^storage/projects/s/(?P<data>.+)', 'storage.views.save'),
+    (r'^storage/projects/s/(?P<project_id>\d+)/(?P<data>.+)', 'storage.views.save'),
     (r'^storage/projects/(?P<project_id>\d+)/$', 'storage.views.detail'),
     # url(r'^$', 'pmserver.views.home', name='home'),
     # url(r'^pmserver/', include('pmserver.foo.urls')),
