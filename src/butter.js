@@ -334,7 +334,7 @@ THE SOFTWARE.
     }; //removeTrack
 
     this.currentTime = function ( time) {
-      if ( time ) {
+      if ( time != null ) {
         currentTime = time;
         butter && butter.trigger("mediatimeupdate", that);
       } //if
