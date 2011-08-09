@@ -28,23 +28,6 @@
     
     b.timeline({ target: "timeline-div"});
     
-    
-    // Load projects from localStorage, server //
-    
-    var projectsDrpDwn = $(".projects-dd"),
-    localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
-    
-    localProjects = !!localProjects ? JSON.parse( localProjects ) : localProjects;
-    
-    localProjects && $.each( localProjects, function( index, project ) {
-      $( "<option/>", {
-        "value": project.title,
-        "html": project.title
-      }).appendTo( projectsDrpDwn );
-    });
-
-    $('.enable-scroll').tinyscrollbar();
-    
     b.listen ( "trackeditstarted", function() {
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
@@ -56,6 +39,87 @@
       $('.close-div').fadeOut('fast');
       $('.popups').hide(); 
     });
+    
+    function loadProjectsFromLocalStorage() {
+    
+      // Load projects from localStorage, server //
+      
+      var projectsDrpDwn = $(".projects-dd"),
+      localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
+      
+      localProjects = localProjects ? JSON.parse( localProjects ) : localProjects;
+
+      localProjects && $.each( localProjects, function( index, oneProject ) {
+        $( "<option/>", {
+          "value": oneProject.project.title,
+          "html": oneProject.project.title
+        }).appendTo( projectsDrpDwn );
+      });
+      
+      create_mdDropDown()
+
+    } // loadProjectsFromLocalStorage
+    
+    //initial loading
+    loadProjectsFromLocalStorage();
+    
+    function loadProjectsFromServer(){
+      //load stuff from bobby's server
+    }
+    
+    loadProjectsFromServer();
+    
+    // Saving
+
+    $(".save-project-data-btn").click(function(){
+      
+      try {
+        var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
+        projectToSave = b.exportProject(),
+        overwrite = false,
+        projectsDrpDwn = $( ".projects-dd" ) ;
+        
+        localProjects = localProjects ? JSON.parse( localProjects ) : [];
+        
+        for ( var i = 0, l = localProjects.length; i < l; i++ ) {
+          if ( localProjects[ i ].project.title === projectToSave.project.title ) {
+            localProjects[ i ] = projectToSave;
+            overwrite = true;
+          }
+        }
+        !overwrite && localProjects.push( projectToSave );
+        localStorage.setItem( "PopcornMaker.SavedProjects", JSON.stringify( localProjects ) );
+        !overwrite && $( "<option/>", {
+          "value": projectToSave.project.title,
+          "html": projectToSave.project.title
+        }).appendTo( projectsDrpDwn );
+        projectsDrpDwn[0].refresh()
+        window.alert( b.getProjectDetails( "title" ) + " was saved" );
+      }
+      catch ( e ) {
+        console.log( "Saving Failed!", e );
+      }
+    
+    });
+
+    $( ".edit-selected-project" ).click( function() {
+      var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
+      projectsDrpDwn = $( ".projects-dd" );
+      
+      if ( projectsDrpDwn[0].selectedIndex > -1 ) {
+
+        localProjects = localProjects ? JSON.parse( localProjects ) : [];
+        
+        for ( var i = 0, l = localProjects.length; i < l; i++ ) {
+          if ( localProjects[ i ].project.title === projectsDrpDwn[0].value ) {
+            b.importProject( localProjects[ i ] );
+            return;
+          }
+        }
+      }
+    });
+
+    $('.enable-scroll').tinyscrollbar();
 
     $(".collapse-btn").toggle(function() {
 
@@ -101,11 +165,15 @@
       $(".sound-btn a span").css('backgroundPosition','0 0');
     });
 
-    try {
-      $(".projects-dd").msDropDown();
-    } catch(e) {
-      alert("Error: "+e.message);
+    function create_mdDropDown() {
+      try {
+        $(".projects-dd").msDropDown();
+      } catch( e ) {
+        alert( "Error: "+ e.message);
+      }
     }
+    
+    create_mdDropDown();
 
     $('.timeline-heading .edit a').click(function(){
       $('.close-div').fadeOut('fast');
@@ -129,7 +197,6 @@
     });
     
     $('.p-timeline-title').click(function(){
-      console.log(b.getProjectDetails( "title" ) );
       $('#project-title').val( b.getProjectDetails( "title" ) );
       
       $('.close-div').fadeOut('fast');
@@ -170,7 +237,7 @@
     },
     c = $("#contentheader");
 
-    $('a[title!=""]', c).qtip(d.links);			
+    $('a[title!=""]', c).qtip(d.links);
 
   }, false);
 

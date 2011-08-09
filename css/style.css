@@ -690,14 +690,16 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .popup-1 .popup-content, .popup-2 .popup-content, .popup-4 .popup-content { padding:20px}
 .popup-1 .popup-header h3, .popup-2 .popup-header h3, .popup-4 .popup-header h3 { padding: 0 20px}
 .download-btn { position: absolute; right: 0; top: 12px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
-.download-btn:hover { color:#fff;}
+.save-project-data-btn { position: absolute; left: 0; top: 50px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
+.download-btn:hover, .save-project-data-btn:hover { color:#fff;}
 .track-text {float: left; margin-top: 10px; width: 220px;}
-.download-html {float: right; height: 46px; overflow: hidden; position: relative; width: 200px;}
-.download-btn, .change-url-btn, .change-title-btn, .popup-btns input { float:left; margin-right:10px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC;
+.download-html {float: right; height: 86px; overflow: hidden; position: relative; width: 200px;}
+.download-btn, .save-project-data-btn, .change-url-btn, .change-title-btn, .popup-btns input { float:left; margin-right:10px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC;
 	   -moz-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
 	-webkit-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
 	     -o-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
 	        box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;}
+.save-project-data-btn { float:left; margin-left:60px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC; }
 /*----- pin -----*/
 .pin { background-color: #FFFF99; position: absolute; padding:10px 10px 10px 20px; display:inline;top:100px; left:50%; font-weight:bold;
 	   -moz-box-shadow: 0 1px 0 #666, inset 0 1px 0 #ccc;
@@ -724,7 +726,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 	-webkit-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;
 	     -o-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;
 	        box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;}
-.header-buttons li, .popup-close-btn, .download-btn, .change-url-btn, .change-title-btn, .popup-btns input {
+.header-buttons li, .popup-close-btn, .download-btn, .save-project-data-btn, .change-url-btn, .change-title-btn, .popup-btns input {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -737,7 +739,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		rgb(56,56,56) 0%,
 		rgb(97,97,97) 100%
 	);}
-.header-buttons li:hover, .download-btn:hover, .change-url-btn:hover, .change-title-btn:hover, .popup-btns input:hover {
+.header-buttons li:hover, .download-btn:hover, .save-project-data-btn:hover, .change-url-btn:hover, .change-title-btn:hover, .popup-btns input:hover {
 	color: #fff;
 	background-image: -webkit-gradient(
 		linear,
@@ -751,7 +753,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		rgb(64,64,64) 0%,
 		rgb(112,112,112) 100%
 	);}
-.header-buttons li:active, .header-buttons li:focus, .download-btn:active, .download-btn:focus, .change-url-btn:active, .change-url-btn:focus, .change-title-btn:active,  .change-title-btn:focus, .popup-btns input:focus, .popup-btns input:active {
+.header-buttons li:active, .header-buttons li:focus, .download-btn:active, .download-btn:focus, .save-project-data-btn:active, .save-project-data-btn:focus, .change-url-btn:active, .change-url-btn:focus, .change-title-btn:active,  .change-title-btn:focus, .popup-btns input:focus, .popup-btns input:active {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -802,7 +804,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		-webkit-border-radius: 0;
 			 -o-border-radius: 0;
 				border-radius: 0;}
-.enable-scroll.toolbox, .layer, .layer-btn, .download-btn, .change-url-btn, .change-title-btn, .popup-btns input {
+.enable-scroll.toolbox, .layer, .layer-btn, .download-btn, .save-project-data-btn, .change-url-btn, .change-title-btn, .popup-btns input {
 		   -moz-border-radius: 6px;
 		-webkit-border-radius: 6px;
 			 -o-border-radius: 6px;
