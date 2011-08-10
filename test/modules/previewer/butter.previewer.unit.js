@@ -10,14 +10,17 @@
   var butter = new Butter(),
       oldVideo;
 
+  if( /file/.test( location.protocol ) ) {
+    throw "Tests must be run from a web server";
+  }
+
   test( "Iframe empty check", function () {
     expect( 1 );
     ok( document.getElementById( "notIframe" ).innerHTML === "", "Iframe is initially empty" );
+    startPreviewer();
   } );
-
-  test( "Inside Callback", function() {
-    expect( 0 );
-
+  
+  function startPreviewer() {
     butter.previewer( {
       layout: "../../../src/modules/previewer/layout.html",
       target: "notIframe",
@@ -25,7 +28,7 @@
       media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm",
       callback: function() {
         test( "Previewer Method Test", function() {
-          expect( 9 );
+          expect( 10 );
           var layoutSrc = document.getElementById( "notIframe" ).src;
           ok( true, "Inside callback function" );
           ok( document.getElementById( "notIframe" ).contentWindow.document.innerHTML !== "", "Iframe has contents" );
@@ -44,8 +47,8 @@
               ok ( typeof butter.getRegistry() === "object", "getRegistry is working properly" );
             } );
           } );
-
-          ok( butter.getPopcorn() !== "", "getPopcorn function working properly" );
+          equals( butter.getPopcorn().trim(), "var popcorn0 = Popcorn( '#outerVideo-butter');", "getPopcorn function working properly" );
+          ok( butter.getHTML().search("<div id=\"outerVideo\" data-butter=\"media\"></div>") !== -1,  "getHTML returning known content" );
           setTimeout(function(){
             var track = butter.getTracks()[ 0 ] || butter.addTrack( new Butter.Track() );
             butter.addTrackEvent( track, new Butter.TrackEvent( {
@@ -60,7 +63,7 @@
         } );
       }      
     } );
-  } );
+  }
 
 
   butter.listen( "trackeventadded", function( e ) {
