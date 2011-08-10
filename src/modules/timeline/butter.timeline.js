@@ -3,7 +3,7 @@
   Butter.registerModule( "timeline", function ( options ) {
 
     // Convert an SMPTE timestamp to seconds
-    var smpteToSeconds = function( smpte ) {
+    this.smpteToSeconds = function( smpte ) {
       var t = smpte.split(":");
 
       if ( t.length === 1 ) {
@@ -23,7 +23,7 @@
       }
     }; //smpteToSeconds
 
-    var secondsToSMPTE = function( time ) {
+    this.secondsToSMPTE = function( time ) {
 
       var timeStamp = new Date( 1970,0,1 ),
           seconds;
@@ -38,21 +38,7 @@
 
       }
       return seconds;
-    };
-
-    var findAbsolutePosition = function( obj ) {
-	    var curleft = curtop = 0;
-	    if ( obj.offsetParent ) {
-		    do {
-			    curleft += obj.offsetLeft;
-			    curtop += obj.offsetTop;
-		    } while ( obj = obj.offsetParent );
-	    }
-	    return [ curleft, curtop ];
-    }; //findAbsolutePosition
-
-    var scrubberClicked = false,
-        scrollLeft = 0;
+    }; //secondsToSMPTE
 
     var MediaInstance = function( media ) {
 
@@ -86,76 +72,14 @@
           restrictToKnownPlugins: true
         });
 
-        //this.lastTrack;
+        this.lastTrack;
         this.butterTracks = {};
         this.trackLinerTracks = {};
         this.butterTrackEvents = {};
         this.trackLinerTrackEvents = {};
-
-        this.timeline = document.createElement( "canvas" );
-        this.timeline.style.height = "25px";
-        this.timeline.style.width = this.container.offsetWidth + "px";
-        this.timeline.height = "25";
-        this.timeline.width = this.container.offsetWidth;
-
-        this.scrubber = document.createElement( "div" );
-        this.scrubber.style.height = "100%";
-        this.scrubber.style.width = "1px";
-        this.scrubber.style.position = "absolute";
-        this.scrubber.style.top = "0px";
-        this.scrubber.style.left = "0px";
-        this.scrubber.style.zIndex = this.timeline.style.zIndex + 1;
-        this.scrubber.style.backgroundColor = "red";
-
-        this.userInteract = document.createElement( "div" );
-        this.userInteract.style.position = "absolute";
-        this.userInteract.style.top = "0px";
-        this.userInteract.style.left = "0px";
-        this.userInteract.style.height = this.timeline.style.height;
-        this.userInteract.style.width = "100%";
-        this.userInteract.style.zIndex = this.scrubber.style.zIndex + 1;
-
-        this.userInteract.addEventListener( "mousemove", function( event ) {
-
-          scrollLeft = event.rangeParent.scrollLeft;
-        }, false );
-        this.userInteract.addEventListener( "mousedown", function( event ) {
-
-          scrubberClicked = true;
-          b.currentTime( ( ( event.pageX - ( self.container.offsetLeft - scrollLeft ) + self.container.scrollLeft ) - findAbsolutePosition( self.container )[ 0 ] ) / self.container.offsetWidth * self.duration );
-          b.trigger( "mediatimeupdate", b, "timeline" );
-        }, false );
-
-        this.container.appendChild( this.scrubber );
-        this.container.appendChild( this.userInteract );
-        this.container.appendChild( this.timeline );
         this.container.appendChild( this.tracks );
+        this.container.style.display = "none";
 
-        var context = this.timeline.getContext( "2d" ),
-            inc = this.container.offsetWidth / this.duration / 4,
-            heights = [ 10, 4, 7, 4 ],
-            textWidth = context.measureText( secondsToSMPTE( 5 ) ).width,
-            lastTimeDisplayed = -textWidth / 2;
-
-        // translate will make the time ticks thin
-        context.translate( 0.5, 0.5 );
-        context.beginPath();
-
-        for ( var i = 1, l = this.duration * 4; i < l; i++ ) {
-
-          var position = i * inc;
-
-          context.moveTo( -~position, 0 );
-          context.lineTo( -~position, heights[ i % 4 ] );
-
-          if ( i % 4 === 0 && ( position - lastTimeDisplayed ) > textWidth ) {
-
-            lastTimeDisplayed = position;
-            context.fillText( secondsToSMPTE( i / 4 ), -~position - ( textWidth / 2 ), 21 );
-          }
-        }
-        context.stroke();
-        context.closePath();
       };
 
       this.hide = function() {
@@ -242,39 +166,6 @@
       }
     });
 
-    document.addEventListener( "mousemove", function( event ) {
-
-      if ( scrubberClicked ) {
-
-        if ( event.pageX - findAbsolutePosition( currentMediaInstance.container )[ 0 ] > ( currentMediaInstance.container.offsetLeft - scrollLeft ) && event.pageX - findAbsolutePosition( currentMediaInstance.container )[ 0 ] < ( ( currentMediaInstance.container.offsetLeft - scrollLeft ) + currentMediaInstance.container.offsetWidth ) ) {
-
-          //currentMediaInstance.scrubber.style.left = ( event.pageX - ( currentMediaInstance.container.offsetLeft - scrollLeft ) ) + "px";
-          b.currentTime( ( ( event.pageX - ( currentMediaInstance.container.offsetLeft - scrollLeft ) + currentMediaInstance.container.scrollLeft ) - findAbsolutePosition( currentMediaInstance.container )[ 0 ] ) / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
-        } else {
-
-          if ( event.pageX - findAbsolutePosition( currentMediaInstance.container )[ 0 ] <= ( currentMediaInstance.container.offsetLeft - scrollLeft ) ) {
-
-            //currentMediaInstance.scrubber.style.left = "0px";
-            b.currentTime( 0 );
-          } else {
-
-            //currentMediaInstance.scrubber.style.left = currentMediaInstance.container.offsetWidth - 30 + "px";
-            b.currentTime( currentMediaInstance.duration );
-          }
-        }
-        b.trigger( "mediatimeupdate", b, "timeline" );
-      }
-    }, false );
-    document.addEventListener( "mouseup", function() {
-
-      scrubberClicked = false;
-    }, false );
-
-    this.listen( "mediatimeupdate", function( event ) {
-
-      currentMediaInstance.scrubber.style.left = b.currentTime() / currentMediaInstance.duration * ( currentMediaInstance.container.offsetWidth ) + "px";
-    });
-
     this.listen( "trackadded", function( event ) {
 
       var track = event.data;
@@ -359,6 +250,16 @@
       currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ] = trackEvent;
       currentMediaInstance.trackLinerTrackEvents[ trackEvent.getId() ] = trackLinerTrackEvent;
     });
+
+    this.currentTimeInPixels = function( pixel ) {
+
+      if ( pixel != null) {
+
+        b.currentTime( pixel / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
+      } //if
+      return b.currentTime() / currentMediaInstance.duration * ( currentMediaInstance.container.offsetWidth );
+    };
   });
 
 })( window, window.document, Butter );
+
