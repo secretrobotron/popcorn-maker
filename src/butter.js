@@ -356,7 +356,7 @@ THE SOFTWARE.
 
       importData.target && that.setTarget( importData.target );
       importData.url && that.setUrl( importData.url );
-
+      
       if ( importData.tracks ) {
         var importTracks = importData.tracks;
         for ( var i=0, l=importTracks.length; i<l; ++i ) {
@@ -400,7 +400,7 @@ THE SOFTWARE.
         targetsByName = {},
         projectDetails = {},
         that = this;
-
+        
     this.id = "Butter" + numButters++;
 
     function checkMedia() {
@@ -641,7 +641,7 @@ THE SOFTWARE.
         for ( var i=0, l=projectData.media.length; i<l; ++i ) {
           var m = new Media();
           m.importJSON( projectData.media[ i ] );
-          that.addMedia( m );
+          that.addMedia( m );          
         }
       }
     };
@@ -745,7 +745,6 @@ THE SOFTWARE.
 
     //addMedia - add a media object
     this.addMedia = function ( media ) {
-
       if ( !( media instanceof Media ) ) {
         media = new Media( media );
       } //if
@@ -773,12 +772,13 @@ THE SOFTWARE.
         delete mediaByName[ media.getName() ];
         media.setButter( undefined );
         if ( media === currentMedia ) {
+          
           currentMedia = undefined;
         } //if
         that.trigger( "mediaremoved", media );
         return media;
       } //if
-      return undefined;    
+      return undefined;
     };
 
     this.extend = function () {

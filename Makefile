@@ -39,7 +39,7 @@ compile = java -jar $(TOOLS_DIR)/closure/compiler.jar \
 	                  --compilation_level SIMPLE_OPTIMIZATIONS \
 	                  --js_output_file $(1)
 
-all: $(DIST_DIR) $(BUTTER_DIST) $(BUTTER_MIN) $(BUTTER_HEAVY)
+all: $(DIST_DIR) $(BUTTER_DIST) 
 	@@echo "Finished, see $(DIST_DIR)"
 
 $(BUTTER_HEAVY_CSS):

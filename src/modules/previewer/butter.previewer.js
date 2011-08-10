@@ -114,6 +114,10 @@
     this.buildPopcorn = function( media, callback ) {
 
       videoURL = media.getUrl();
+      
+      if ( !videoURL ) {
+        return;
+      }
 
       var bpIframe = ( iframe.contentWindow || iframe.contentDocument ).document;
       
@@ -390,9 +394,13 @@
       }, "timeline" );
 
       this.listen( "mediachanged", function( e ) {
-        that.buildPopcorn( that.getCurrentMedia() );
+        that.buildPopcorn( e.data );
       } );
-
+      
+      this.listen( "mediacontentchanged", function( e ) {
+        that.buildPopcorn( e.data );
+      } );
+      
     }; // fillIframe
 
   }); //registerModule

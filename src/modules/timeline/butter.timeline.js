@@ -82,7 +82,7 @@
           element: this.tracks,
           dynamicTrackCreation: true,
           scale: 1,
-          duration: this.duration, // to do. get this from the media
+          duration: this.duration,
           restrictToKnownPlugins: true
         });
 
@@ -167,6 +167,8 @@
 
         this.container.style.display = "block";
       };
+      
+      this.media = media;
     };
 
     var mediaInstances = [],
@@ -341,6 +343,9 @@
     this.listen( "mediaremoved", function( event ) {
 
       delete mediaInstances[ event.data.getId() ];
+      if ( event.data.getId() === currentMediaInstance.media.getId() ) {
+        currentMediaInstance = undefined;
+      }
     });
 
     this.listen( "trackeventupdated", function( event ) {
