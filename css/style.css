@@ -256,7 +256,7 @@ padding: 0 2px;
 	        box-shadow: 0 1px 0 #737373, inset 0 1px 1px #131313;}
 .play-btn { position: absolute; left: 0; z-index: 999;}
 .timeline-progress-wrapper {padding:7px 30px 0 120px;}
-.timing-notches-div { padding:0 33px 0 122px; height:15px;}
+.timing-notches-div { padding:0px 0px 0px 0px; height:15px;}
 .timeline-sound-td { position: absolute; top:0; right:0;}
 .timing-notches { width:100%; background:url(../images/timing-notches.png) repeat-x; height:15px}
 
@@ -423,9 +423,9 @@ ul.actions li.bubble_pointer { position:absolute; display:block; top:9px; width:
 .tools li.facebook_tool a:active span, .tools li.facebook_tool a:focus span{ background-position: -220px -64px}
 
 /*---------- Timeline Progress bar ------------*/
-.timeline-progress-bar { height:4px; width:40%; position:relative; background-color:#999; top:2px;}
+.timeline-progress-bar { height:4px; width: 0px; position:relative; background-color:#999; top:2px;}
 .timeline-progress-bar .current-line, .timeline-progress-bar .current-white { position:absolute; z-index:99999;}
-.timeline-progress-bar .current-line { background-color:#ff0000; width:2px; height:184px; right:-1px;
+.timeline-progress-bar .current-line { background-color:#ff0000; width:2px; height:146px; right:-1px;
 	   -moz-box-shadow: -3px 3px 5px #222;
 	-webkit-box-shadow: -3px 3px 5px #222;
 	     -o-box-shadow: -3px 3px 5px #222;

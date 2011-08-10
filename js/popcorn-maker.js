@@ -45,16 +45,43 @@
       $('.popups').hide(); 
     });
 
-    document.getElementById( "tracks-div" ).addEventListener( "scroll", function( e ) {
+    var scrubber = document.getElementById( "scrubber" );
+    var layersDiv = document.getElementById( "layers-div" );
+    var scrubberContainer = document.getElementById( "scrubber-container" );
+    var tracksDiv = document.getElementById( "tracks-div" );
+    var progressBar = document.getElementById( "progress-bar" );
 
-      document.getElementById( "layers-div" ).style.top = -this.scrollTop + "px";
-    }, false);
+    function checkScrubber( event ) {
 
-    b.listen( "mediatimeupdate", function() {
-console.log( "up" );
-      document.getElementById( "scrubber" ).style.left = b.currentTimeInPixels() + "px";
-    });
-    
+
+      layersDiv.style.top = -tracksDiv.scrollTop + "px";
+      scrubber.style.left = -tracksDiv.scrollLeft + b.currentTimeInPixels() + "px";
+      progressBar.style.width = -tracksDiv.scrollLeft + b.currentTimeInPixels() + "px";
+
+      var scrubberLeft = parseInt( scrubber.style.left, 10);
+
+      if ( scrubberLeft < 0 ) {
+
+        progressBar.style.width = "0px";
+      }
+
+      if ( scrubberLeft > scrubberContainer.offsetWidth ) {
+
+        progressBar.style.width = "100%";
+      }
+
+      if ( scrubberLeft < scrubberContainer.offsetWidth && scrubberLeft >= 0 ) {
+
+        scrubber.style.display = "block";
+      } else {
+
+        scrubber.style.display = "none";
+      }
+    }
+
+    b.listen( "mediatimeupdate", checkScrubber);
+    document.getElementById( "tracks-div" ).addEventListener( "scroll", checkScrubber, false );
+
     function create_msDropDown() {
       try {
         $(".projects-dd").msDropDown();
@@ -137,7 +164,7 @@ console.log( "up" );
       }
     });
 
-    $('.enable-scroll').tinyscrollbar();
+    //$('.enable-scroll').tinyscrollbar();
 
     $(".collapse-btn").toggle(function() {
 
