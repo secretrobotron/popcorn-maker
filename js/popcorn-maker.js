@@ -4,7 +4,7 @@
     
     var b  = new Butter();
 
-    b.eventeditor( { target: "popup-4", defaultEditor: "lib/defaultEditor.html", editorWidth: "98%", editorHeight: "98%"  } );
+    b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "100%", editorHeight: "100%"  } );
 
     b.previewer({
       layout: "layouts/default.html",
