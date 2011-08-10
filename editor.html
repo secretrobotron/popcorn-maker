@@ -439,14 +439,14 @@
 				elements.end.value = trackEvent.end;
 
 				if (isNaN(trackEvent.lat) || trackEvent.lat < -90 || trackEvent.lat > 90) {
-					delete trackEvent[lat];
+					delete trackEvent['lat'];
 					elements.lat.value = '';
 				} else {
 					elements.lat.value = trackEvent.lat;
 				}
 
 				if (isNaN(trackEvent.lng) || trackEvent.lng < -180 || trackEvent.lng > 180) {
-					delete trackEvent[lng];
+					delete trackEvent['lng'];
 					elements.lng.value = '';
 				} else {
 					elements.lng.value = trackEvent.lng;
