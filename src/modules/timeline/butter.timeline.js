@@ -78,7 +78,7 @@
         this.butterTrackEvents = {};
         this.trackLinerTrackEvents = {};
         this.container.appendChild( this.tracks );
-        this.container.style.display = "none";
+        //this.container.style.display = "none";
 
       };
 
