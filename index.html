@@ -40,14 +40,10 @@
  <div class="header-right">
  
    <div class="my-projects-drpdwn">
-   <select name="websites2" class="websites2" style="width:258px;" tabindex="1">
-   <option name="one" value="msDropDown" >msDropDown</option>
-   <option name="two" value="PrototypeCombobox" >Prototype Combobox</option>
-   <option selected="selected" value="jQuery Tabs" >jQuery Tabs</option>
-   <option value="Common Accordion" >Common Accordion</option>
+   <select name="projects-dd" class="projects-dd" style="width:258px;" tabindex="1">
    </select>
 	<ul class="actions"><li class="bubble_pointer"></li>
-     <li class="edit"><a href="#">edit</a></li>
+     <li class="edit"><a class="edit-selected-project" title="Edit Project" href="#">edit</a></li>
 	</ul>
    </div>
                
@@ -143,10 +139,12 @@
         </div>
      </div>
      <!-- ***** END TIMING NOTCHES ***** -->  
-     <div class="timeline-progress-wrapper"><div class="timeline-bar"><div class="timeline-progress-bar">
-         <div class="current-line"></div>
-         <div class="current-white"></div>
-     </div></div></div>
+     <div>
+       <div class="timeline-progress-wrapper"><div class="timeline-bar"><div class="timeline-progress-bar">
+           <div id="scrubber" class="current-line"></div>
+           <div class="current-white"></div>
+       </div></div></div>
+     </div>
      
      <div class="sound-btn"><a href="#"><span >play/pause</span></a></div>
    </div>
@@ -167,8 +165,8 @@
       <!-- ***** END SCROLLBAR ***** -->
       
       <!-- ***** START VIEWPORT ***** -->               
-      <div class="timeline-div" style="position: absolute; width: 110px; top: 0px; left: 0px;"></div>   
-      <div class="viewport" style="position: absolute; overflow: scroll; left: 120px; right: 10px;">
+      <div class="timeline-div" style="color: white; overflow: hidden; position: absolute; width: 110px;"><div style="position: absolute;" class="timeline-div" id="layers-div" >fhesifbibi< br/>fhesifbibi< br/>fhesifbibi< br/>fhesifbibi< br/>fhesifbibi< br/>fhesifbibi< br/>fhesifbibi< br/>fbiefbies</div></div>   
+      <div class="viewport" id="tracks-div" style="position: absolute; overflow: scroll; left: 120px; right: 10px;">
         <!--<div class="timeline-left timeline-div"></div>-->
         <div class="overview timeline-right timeline-div" id="timeline-div">
         </div>
@@ -215,7 +213,7 @@
         	<div class="popup-header">
             	<h3>Track</h3>
                 <div class="tracks-drpdwn">
-                    <select name="websites2" class="websites2" style="width:258px;" tabindex="1">
+                    <select name="projects-dd" class="projects-dd" style="width:258px;" tabindex="1">
                       <option name="one" value="msDropDown" >msDropDown</option>
                       <option name="two" value="PrototypeCombobox" >Prototype Combobox</option>
                       <option selected="selected" value="jQuery Tabs" >jQuery Tabs</option>
@@ -240,7 +238,7 @@
         <div id="popup-3" class="popup-3 pop-up close-div" style="display:none"> <!-- popup 3 -->
             <a class="popup-close-btn" href="#"><span></span></a>
         	<div class="popup-header">
-            	<h3>Export</h3>
+            	<h3>Save / Export</h3>
             </div>
             <div class="popup-content">
             	<div class="track-content">
@@ -260,7 +258,8 @@
                 <div class="download-html">
 
                   <input type="submit" class="download-btn" name="download-btn" value="Download as HTML">
-
+                  <input type="submit" class="save-project-data-btn" name="save-project-data-btn" value="Save Project">
+                  
                 </div>
             </div>
         </div><!-- end popup 2 -->

@@ -14,7 +14,6 @@ HTML_SRCS := \
 
 JS_LIBS := \
   $(EXTERNAL_DIR)/butter/dist/butter.js \
-  $(EXTERNAL_DIR)/butter/dist/butter.min.js \
   $(EXTERNAL_DIR)/butter/dist/lib/jquery.js \
   $(EXTERNAL_DIR)/butter/dist/lib/jquery-ui.min.js \
   $(EXTERNAL_DIR)/butter/dist/lib/popcorn-complete.js \
@@ -28,16 +27,15 @@ $(POPMKR_DIST): $(DIST_DIR)
 	@@echo "Creating popcorn-maker"
 	@@cp -r $(JS_DIR) $(DIST_DIR)/js
 	@@cp -r $(LAYOUTS_DIR) $(DIST_DIR)
+	@@cd $(EXTERNAL_DIR)/butter; make clean; make; cd ../..
+	@@cp $(JS_LIBS) $(LIB_DIR)
+	@@cp $(CSS_LIBS) $(LIB_DIR)
 	@@cp -r $(CSS_DIR) $(DIST_DIR)
 	@@cp -r $(LIB_DIR) $(DIST_DIR)
 	@@cp $(HTML_SRCS) $(DIST_DIR)
 	@@echo "Finished, see $(DIST_DIR)"
 
-libs:
-	@@cp $(JS_LIBS) $(LIB_DIR)
-	@@cp $(CSS_LIBS) $(LIB_DIR)
-
-all: $(DIST_DIR) libs $(POPMKR_DIST)
+all: $(DIST_DIR) $(POPMKR_DIST)
 	@@echo "Finished, see $(DIST_DIR)"
 
 $(DIST_DIR):

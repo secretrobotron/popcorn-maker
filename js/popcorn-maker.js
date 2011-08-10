@@ -30,6 +30,9 @@
 
     //$('.enable-scroll').tinyscrollbar();
     
+    b.setProjectDetails("title", "Untitled Project" );
+    $(".p-timeline-title").html( "Untitled Project" );
+    
     b.listen ( "trackeditstarted", function() {
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
@@ -41,6 +44,100 @@
       $('.close-div').fadeOut('fast');
       $('.popups').hide(); 
     });
+
+    document.getElementById( "tracks-div" ).addEventListener( "scroll", function( e ) {
+
+      document.getElementById( "layers-div" ).style.top = -this.scrollTop + "px";
+    }, false);
+
+    b.listen( "mediatimeupdate", function() {
+console.log( "up" );
+      document.getElementById( "scrubber" ).style.left = b.currentTimeInPixels() + "px";
+    });
+    
+    function create_msDropDown() {
+      try {
+        $(".projects-dd").msDropDown();
+      } catch( e ) {
+        alert( "Error: "+ e.message);
+      }
+    }
+    
+    // Load projects from localStorage //
+    
+    var projectsDrpDwn = $(".projects-dd"),
+    localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
+    
+    localProjects = localProjects ? JSON.parse( localProjects ) : localProjects;
+
+    localProjects && $.each( localProjects, function( index, oneProject ) {
+      $( "<option/>", {
+        "value": oneProject.project.title,
+        "html": oneProject.project.title
+      }).appendTo( projectsDrpDwn );
+    });
+    
+    create_msDropDown()
+    
+    function loadProjectsFromServer(){
+      //load stuff from bobby's server
+    }
+    
+    loadProjectsFromServer();
+    
+    // Saving
+
+    $(".save-project-data-btn").click(function(){
+      
+      try {
+        var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
+        projectToSave = b.exportProject(),
+        overwrite = false,
+        projectsDrpDwn = $( ".projects-dd" ) ;
+        
+        localProjects = localProjects ? JSON.parse( localProjects ) : [];
+        
+        for ( var i = 0, l = localProjects.length; i < l; i++ ) {
+          if ( localProjects[ i ].project.title === projectToSave.project.title ) {
+            localProjects[ i ] = projectToSave;
+            overwrite = true;
+          }
+        }
+        console.log(projectToSave);
+        !overwrite && localProjects.push( projectToSave ) && 
+        $( "<option/>", {
+          "value": projectToSave.project.title,
+          "html": projectToSave.project.title
+        }).appendTo( projectsDrpDwn );
+        localStorage.setItem( "PopcornMaker.SavedProjects", JSON.stringify( localProjects ) );
+        projectsDrpDwn[0].refresh()
+        window.alert( b.getProjectDetails( "title" ) + " was saved" );
+      }
+      catch ( e ) {
+        console.log( "Saving Failed!", e );
+      }
+    
+    });
+
+    $( ".edit-selected-project" ).click( function() {
+      var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
+      projectsDrpDwn = $( ".projects-dd" );
+      
+      if ( projectsDrpDwn[0].selectedIndex > -1 ) {
+
+        localProjects = localProjects ? JSON.parse( localProjects ) : [];
+        
+        for ( var i = 0, l = localProjects.length; i < l; i++ ) {
+          if ( localProjects[ i ].project.title === projectsDrpDwn[0].value ) {
+            b.clearProject();
+            b.importProject( localProjects[ i ] );
+            return;
+          }
+        }
+      }
+    });
+
+    $('.enable-scroll').tinyscrollbar();
 
     $(".collapse-btn").toggle(function() {
 
@@ -86,12 +183,6 @@
       $(".sound-btn a span").css('backgroundPosition','0 0');
     });
 
-    try {
-      $(".websites2").msDropDown();
-    } catch(e) {
-      alert("Error: "+e.message);
-    }
-
     $('.timeline-heading .edit a').click(function(){
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
@@ -114,7 +205,6 @@
     });
     
     $('.p-timeline-title').click(function(){
-      console.log(b.getProjectDetails( "title" ) );
       $('#project-title').val( b.getProjectDetails( "title" ) );
       
       $('.close-div').fadeOut('fast');
@@ -155,7 +245,7 @@
     },
     c = $("#contentheader");
 
-    $('a[title!=""]', c).qtip(d.links);			
+    $('a[title!=""]', c).qtip(d.links);
 
   }, false);
 
