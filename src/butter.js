@@ -333,8 +333,8 @@ THE SOFTWARE.
       return undefined;    
     }; //removeTrack
 
-    this.currentTime = function ( time) {
-      if ( time != null ) {
+    this.currentTime = function ( time ) {
+      if ( time !== undefined ) {
         currentTime = time;
         butter && butter.trigger("mediatimeupdate", that);
       } //if
