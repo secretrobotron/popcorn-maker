@@ -28,7 +28,7 @@
     
     b.timeline({ target: "timeline-div"});
 
-    $('.enable-scroll').tinyscrollbar();
+    //$('.enable-scroll').tinyscrollbar();
     
     b.listen ( "trackeditstarted", function() {
       $('.close-div').fadeOut('fast');

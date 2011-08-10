@@ -7,7 +7,14 @@ html, body {
   min-height: 400px;
 }
 
-#timeline-div {
+.timeline-div {
   height: 300px;
+}
+
+.timeline-left {
+  width: 110px !important;
+}
+.timeline-right {
+  width: 10000px !important;
 }
 

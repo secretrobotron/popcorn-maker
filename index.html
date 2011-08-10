@@ -156,19 +156,21 @@
    <div class="enable-scroll">
       
       <!-- ***** START SCROLLBAR ***** -->
-      <div class="scrollbar">
+      <!--<div class="scrollbar">
        <div class="track">
         <div class="thumb">
          <div class="end">
          </div>
         </div>
        </div>
-      </div>
+      </div>-->
       <!-- ***** END SCROLLBAR ***** -->
       
-      <!-- ***** START VIEWPORT ***** -->                  
-      <div class="viewport">
-        <div class="overview" id="timeline-div">
+      <!-- ***** START VIEWPORT ***** -->               
+      <div class="timeline-div" style="position: absolute; width: 110px; top: 0px; left: 0px;"></div>   
+      <div class="viewport" style="position: absolute; overflow: scroll; left: 120px; right: 10px;">
+        <!--<div class="timeline-left timeline-div"></div>-->
+        <div class="overview timeline-right timeline-div" id="timeline-div">
         </div>
       </div>
       <!-- ***** END VIEWPORT ***** -->
