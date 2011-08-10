@@ -139,10 +139,12 @@
         </div>
      </div>
      <!-- ***** END TIMING NOTCHES ***** -->  
-     <div class="timeline-progress-wrapper"><div class="timeline-bar"><div class="timeline-progress-bar">
-         <div class="current-line"></div>
-         <div class="current-white"></div>
-     </div></div></div>
+     <div>
+       <div class="timeline-progress-wrapper"><div class="timeline-bar"><div class="timeline-progress-bar">
+           <div id="scrubber" class="current-line"></div>
+           <div class="current-white"></div>
+       </div></div></div>
+     </div>
      
      <div class="sound-btn"><a href="#"><span >play/pause</span></a></div>
    </div>
@@ -152,19 +154,21 @@
    <div class="enable-scroll">
       
       <!-- ***** START SCROLLBAR ***** -->
-      <div class="scrollbar">
+      <!--<div class="scrollbar">
        <div class="track">
         <div class="thumb">
          <div class="end">
          </div>
         </div>
        </div>
-      </div>
+      </div>-->
       <!-- ***** END SCROLLBAR ***** -->
       
-      <!-- ***** START VIEWPORT ***** -->                  
-      <div class="viewport">
-        <div class="overview" id="timeline-div">
+      <!-- ***** START VIEWPORT ***** -->               
+      <div class="timeline-div" style="color: white; overflow: hidden; position: absolute; width: 110px;"><div style="position: absolute;" class="timeline-div" id="layers-div" >fhesifbibi< br/>fhesifbibi< br/>fhesifbibi< br/>fhesifbibi< br/>fhesifbibi< br/>fhesifbibi< br/>fhesifbibi< br/>fbiefbies</div></div>   
+      <div class="viewport" id="tracks-div" style="position: absolute; overflow: scroll; left: 120px; right: 10px;">
+        <!--<div class="timeline-left timeline-div"></div>-->
+        <div class="overview timeline-right timeline-div" id="timeline-div">
         </div>
       </div>
       <!-- ***** END VIEWPORT ***** -->

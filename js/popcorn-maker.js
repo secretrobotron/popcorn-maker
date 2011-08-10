@@ -27,6 +27,8 @@
     b.addPlugin( { type: "googlenews" } );
     
     b.timeline({ target: "timeline-div"});
+
+    //$('.enable-scroll').tinyscrollbar();
     
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
@@ -41,6 +43,16 @@
     b.listen ( "trackeditclosed", function() {
       $('.close-div').fadeOut('fast');
       $('.popups').hide(); 
+    });
+
+    document.getElementById( "tracks-div" ).addEventListener( "scroll", function( e ) {
+
+      document.getElementById( "layers-div" ).style.top = -this.scrollTop + "px";
+    }, false);
+
+    b.listen( "mediatimeupdate", function() {
+console.log( "up" );
+      document.getElementById( "scrubber" ).style.left = b.currentTimeInPixels() + "px";
     });
     
     function create_msDropDown() {
