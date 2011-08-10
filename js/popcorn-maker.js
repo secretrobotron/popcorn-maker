@@ -122,7 +122,7 @@
     $( ".edit-selected-project" ).click( function() {
       var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
       projectsDrpDwn = $( ".projects-dd" );
-      
+
       if ( projectsDrpDwn[0].selectedIndex > -1 ) {
 
         localProjects = localProjects ? JSON.parse( localProjects ) : [];
@@ -196,6 +196,10 @@
     });
 
     $('.p-3').click(function(){
+      
+      console.log("sdfsdf", $('<div/>').text( b.getHTML() ).html() );
+      $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
+      
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-3').show();
@@ -204,7 +208,7 @@
     
     $('.p-timeline-title').click(function(){
       $('#project-title').val( b.getProjectDetails( "title" ) );
-      
+
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-project-title').show();
