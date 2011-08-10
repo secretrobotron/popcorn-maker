@@ -91,6 +91,7 @@
             overwrite = true;
           }
         }
+        console.log(projectToSave);
         !overwrite && localProjects.push( projectToSave ) && 
         $( "<option/>", {
           "value": projectToSave.project.title,
