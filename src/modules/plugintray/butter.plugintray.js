@@ -88,13 +88,8 @@ THE SOFTWARE.
 
       plugin.setButter( this );
       this.trigger( "pluginadded", plugin );
-      
-      var pluginElement = document.createElement( "span" );
-      pluginElement.innerHTML = plugin.type + " ";
-      pluginElement.id = plugin.type;
-      pluginElement.setAttribute( "data-trackliner-type", "butterapp" );
-      $( pluginElement ).draggable({ helper: "clone", appendTo: "body", zIndex: 9001, revert: true, revertDuration: 0 });
-      container.appendChild( pluginElement );
+
+      container.appendChild( plugin.createElement( pattern ) );
       
       return plugin;
     }; //addPlugin
