@@ -51,7 +51,7 @@
     }, false);
 
     b.listen( "mediatimeupdate", function() {
-console.log( "up" );
+
       document.getElementById( "scrubber" ).style.left = b.currentTimeInPixels() + "px";
     });
     
@@ -136,8 +136,6 @@ console.log( "up" );
         }
       }
     });
-
-    $('.enable-scroll').tinyscrollbar();
 
     $(".collapse-btn").toggle(function() {
 

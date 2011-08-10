@@ -130,7 +130,7 @@ input[type="button"], input[type="submit"], button {
 	        text-shadow: 0 1px 0 #fff;
 }
 
-#popup-content { padding:40px; overflow:hidden; width:auto; height: auto;
+#popup-content { padding:40px; overflow:hidden; width:auto; height: 73%;
      -moz-border-radius: 0 0 10px 10px;
   -webkit-border-radius: 0 0 10px 10px;
        -o-border-radius: 0 0 10px 10px;
@@ -172,6 +172,7 @@ input[type="button"], input[type="submit"], button {
 
 .editor {
   width:100%;
+  height: 100%;
 	   -moz-box-shadow: 2px 2px 5px #000;
 	-webkit-box-shadow: 2px 2px 5px #000;
 	     -o-box-shadow: 2px 2px 5px #000;

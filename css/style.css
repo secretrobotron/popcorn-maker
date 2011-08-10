@@ -680,11 +680,25 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .tracks-drpdwn .dd .ddChild { top: 28px !important;}
 .tracks-drpdwn .dd .ddChild a { height:30px; line-height:30px}
 .popup-content .track-content { padding:10px; border:1px solid #ccc; background-color:#FFF;}
-.popup-1, .popup-2, .popup-4 {width:400px;
+.popup-1, .popup-2, .popup-4 {width:400px; height:450px;
 	   -moz-box-shadow: 2px 2px 5px #000;
 	-webkit-box-shadow: 2px 2px 5px #000;
 	     -o-box-shadow: 2px 2px 5px #000;
 	        box-shadow: 2px 2px 5px #000;}
+.popup-4 {
+  background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(238,238,238)),
+    color-stop(1, rgb(255,255,255))
+  );
+  background-image: -moz-linear-gradient(
+    center bottom,
+    rgb(238,238,238) 0%,
+    rgb(255,255,255) 100%
+  );
+}
 .popup-1 .popup-content, .popup-2 .popup-content, .popup-content { padding:20px}
 .popup-1 .popup-header h3, .popup-2 .popup-header h3, .popup-header h3 { padding: 0 20px}
 .download-btn { position: absolute; right: 0; top: 12px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
