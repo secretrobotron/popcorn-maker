@@ -357,14 +357,16 @@ THE SOFTWARE.
       importData.target && that.setTarget( importData.target );
       importData.url && that.setUrl( importData.url );
       
-      if ( importData.tracks ) {
-        var importTracks = importData.tracks;
-        for ( var i=0, l=importTracks.length; i<l; ++i ) {
-          var newTrack = new Track();
-          newTrack.importJSON( importTracks[ i ] );
-          that.addTrack( newTrack );
+      butter.listen( "timelineready", function(){
+        if ( importData.tracks ) {
+          var importTracks = importData.tracks;
+          for ( var i=0, l=importTracks.length; i<l; ++i ) {
+            var newTrack = new Track();
+            newTrack.importJSON( importTracks[ i ] );
+            that.addTrack( newTrack );
+          }
         }
-      }
+      });
     };
 
     this.exportJSON = function () {
@@ -640,8 +642,9 @@ THE SOFTWARE.
       if ( projectData.media ) {
         for ( var i=0, l=projectData.media.length; i<l; ++i ) {
           var m = new Media();
+          that.addMedia( m );
           m.importJSON( projectData.media[ i ] );
-          that.addMedia( m );          
+          
         }
       }
     };
