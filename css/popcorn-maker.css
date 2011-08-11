@@ -28,3 +28,15 @@ html, body {
   -o-user-select: none;
   user-select: none;
 }
+
+.layer-div {
+  background-image: -moz-linear-gradient(top,  #2A2A2A, #1C1C1C);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#999));
+  height: 36px;
+  text-align: center;
+}
+
+#layers-div {
+  height: 100%;
+  width: 100%;
+}

@@ -149,6 +149,36 @@
       document.getElementById( "scrubber" ).style.left = b.currentTimeInPixels() + "px";
     });
 
+    var trackLayers = {};
+
+    var createLayer = function( track ) {
+
+      var layerDiv = document.createElement( "div" );
+      layerDiv.id = "layer-" + track.getId();
+      layerDiv.innerHTML = layerDiv.id;
+      layerDiv.setAttribute("class", "layer-div");
+
+      return layerDiv;
+    };
+
+    b.listen( "trackadded", function( event ) {
+
+      trackLayers[ "layer-" + event.data.getId() ] = createLayer( event.data );
+      layersDiv.appendChild( trackLayers[ "layer-" + event.data.getId() ] );
+    });
+
+    b.listen( "trackremoved", function( event ) {
+
+      layersDiv.removeChild( trackLayers[ "layer-" + event.data.getId() ] );
+    });
+
+    b.listen( "trackmoved", function( event ) {
+
+      layersDiv.insertBefore( trackLayers[ "layer-" + event.data.getId() ], layersDiv.children[ event.data.newPos ] ); //children[ event.data.newPos ] 
+      //layersDiv.removeChild( trackLayers[ "layer-" + event.data.getId() ] );
+      //console.log( layersDiv.children.splice );
+    });
+
     function create_msDropDown() {
       try {
         $(".projects-dd").msDropDown();

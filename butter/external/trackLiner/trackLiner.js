@@ -11,6 +11,7 @@
     def.dblclick = def.dblclick || function (){};
     def.select = def.select || function (){};
     def.deselect = def.deselect || function (){};
+    def.trackMoved = def.trackMoved || function (){};
     if ( name ) {
       plugins[name] = def;
     } //if
@@ -43,7 +44,17 @@
       parent.style.height = "100%";
       parent.appendChild( container );
 
-      $( container ).sortable( { containment: "parent", tolerance: 'pointer' } ).droppable( { greedy: true } );
+      $( container ).sortable( { containment: "parent", tolerance: 'pointer', update: function( event, ui ) {
+
+        var type = ui.item[ 0 ].getAttribute('data-trackliner-type');
+
+        plugins[ type ].trackMoved( self.getTrack( ui.item[ 0 ].id ), ui.item.index() );
+      } } ).droppable( { greedy: true, drop: function( event, ui ) {
+
+        //var type = ui.draggable[ 0 ].getAttribute('data-trackliner-type');
+
+        //plugins[ type ].trackMoved( self.getTrack( ui.draggable[ 0 ].id ) );
+      } } );
 
       $( parent ).droppable({
         // this is dropping an event on empty space
@@ -54,7 +65,7 @@
             var eventId = ui.draggable[ 0 ].id,
                 type = ui.draggable[ 0 ].getAttribute('data-trackliner-type'),
                 parentId = ui.draggable[ 0 ].parentNode.id,
-                newTrack = self.createTrack();
+                newTrack = self.createTrack( undefined, type );
 
             if ( self.getTrack( parentId ) ) {
 
@@ -78,7 +89,7 @@
         eventCount = 0;
       };
 
-      this.createTrack = function( name ) {
+      this.createTrack = function( name, type ) {
 
         //index = ~index || ~trackArray.length;
         var track = new Track(),
@@ -96,6 +107,8 @@
           
           element.appendChild( titleElement );
         } //if
+
+        element.setAttribute( 'data-trackliner-type', type );
 
         tracks[ track.getElement().id ] = track;//.splice( ~index, 0, track );
         return track;
