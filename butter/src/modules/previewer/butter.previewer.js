@@ -412,17 +412,13 @@
         doc.head.appendChild( popcornSourceScript );
       }
 
-      if ( popcornScript ) {
-        doc.head.removeChild( popcornScript );
-      }
-
       while ( win.Popcorn && win.Popcorn.instances.length > 0 ) {
         win.Popcorn.removeInstance( win.Popcorn.instances[0] );
       }
 
-      popcornScript = doc.createElement( "script" );
-      popcornScript.innerHTML = popcornString;
-      doc.head.appendChild( popcornScript );
+      if ( popcornScript ) {
+        doc.head.removeChild( popcornScript );
+      }
 
       // create a new body element with our new data
       body = doc.body.innerHTML;
@@ -434,13 +430,18 @@
 
       var instancesBefore = win.Popcorn ? win.Popcorn.instances.length : 0;
       var popcornReady = function( e, callback2 ) {
-
-        if ( win.Popcorn.instances.length > instancesBefore ) {
+        
+        if ( !win.Popcorn ) {
           setTimeout( function() {
             popcornReady( e, callback2 );
           }, 10 );
         } else {
-          callback2 && callback2( win.Popcorn.instances[ win.Popcorn.instances.length - 1 ] );
+          popcornScript = doc.createElement( "script" );
+          popcornScript.innerHTML = popcornString;
+          doc.head.appendChild( popcornScript );
+
+          framePopcorn = win.Popcorn.instances[ 0 ];
+          callback2 && callback2( win.Popcorn.instances[ 0 ] );
         } // else  
       }
 
