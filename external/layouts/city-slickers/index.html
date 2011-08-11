@@ -1,0 +1,441 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8">
+		<title>City Slickers</title>
+		<style type="text/css">
+
+		body {
+			margin: 0;
+			background-color: #aaa;
+		}
+		
+		#map {
+			background-color: #aaa;
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			z-index: 0;
+		}
+		
+		/*
+		I'd hoped I'd never have to use one of these. Blech.
+		*/
+		#stupid-vertical-spacer {
+			height: 0;
+			visibility: hidden;
+		}
+		
+		#main-container {
+			position: relative;
+			white-space-collapse: discard;
+		}
+		
+		#video {
+			width: 100%;
+			display: block;
+			opacity: 1;
+			-moz-transition: opacity 0.4s;
+			-webkit-transition: opacity 0.4s;
+			-opera-transition: opacity 0.4s;
+			-ie-transition: opacity 0.4s;
+			transition: opacity 0.4s;
+		}
+
+		#video-container {
+			position: relative;
+			pointer-events: none;
+			z-index: 1;
+			opacity: 1;
+			-moz-transition: opacity 0.4s;
+			-webkit-transition: opacity 0.4s;
+			-opera-transition: opacity 0.4s;
+			-ie-transition: opacity 0.4s;
+			transition: opacity 0.4s;
+		}
+		
+		#video:hover, #video.hover {
+			-webkit-transition: opacity 0.4s;
+			-opera-transition: opacity 0.4s;
+			-ie-transition: opacity 0.4s;
+			transition: opacity 0.4s;
+			opacity: 0.2;
+		}
+		
+		#controls {
+			position: absolute;
+			z-index: 99;
+			right: 0px;
+			bottom: 0px;
+			width: 400px;
+			height: 40px;
+			background-color: rgba(255, 255, 255, 0.4);
+		}
+		
+		#controls > div {
+			cursor: pointer;
+		}
+
+		#play-button {
+			float: left;
+			width: 30px;
+			height: 30px;
+			margin: 5px;
+			background-color: rgba(0, 0, 0, 0.4);
+		}
+		
+		#play-button:hover, #play-button:active {
+			background-color: rgba(40, 40, 80, 0.4);
+		}
+
+		#play-button > span {
+			border-bottom: 7px solid transparent;
+			border-left: 12px solid #fff;
+			border-top: 7px solid transparent;
+			display: block;
+			font-size: 0;
+			height: 0;
+			line-height: 0;
+			margin: 8px 0 0 10px;
+			width: 0;
+		}
+
+		#play-button.playing > span {
+			border-bottom: none;
+			border-top: none;
+			border-left: 4px solid #fff;
+			border-right: 4px solid #fff;
+			display: block;
+			font-size: 0;
+			height: 14px;
+			line-height: 0;
+			margin: 8px 0 0 10px;
+			width: 3px;
+		}
+		
+		#progress-outer {
+			float: left;
+			width: 320px;
+			height: 30px;
+			margin: 5px 5px 5px 0;
+			background-color: rgba(0, 0, 0, 0.2);
+		}
+
+		#progress {
+			width: 0%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.25);
+		}
+
+		#progress-outer:hover, #progress-outer:active {
+			background-color: rgba(40, 40, 80, 0.2);
+		}
+
+		</style>
+		<!--
+		<style type="text/css" id="wide-style" media="screen and (min-aspect-ratio: 635/264)">
+		
+		body {
+			background-color: #faa;
+		}
+
+		#stupid-vertical-spacer {
+			height: 0%;
+			visibility: hidden;
+			display: none;
+		}
+		
+		#video {
+			width: 100%;
+			height: auto;
+		}
+
+		</style>
+-->
+	</head>
+	<body>
+		<div style="height: 100%; width: 100%">
+			<div id="stupid-vertical-spacer">blah blah</div>
+			<div id="main-container">
+				<div id="map" style="visibility: hidden"></div>
+				<div id="video-container" style="">
+					<video id="video" preload data-butter="media">
+						<source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+						<source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm; codecs="vp8, vorbis"' />
+						
+						<source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg; codecs="theora, vorbis"' />
+					</video>
+				</div>
+				<div id="controls">
+					<div id="play-button"><span></span></div>
+					<div id="progress-outer"><div id="progress"></div></div>
+				</div>
+			</div>
+		</div>
+	</body>
+<!--
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> 
+-->
+	<script type="text/javascript" src="../popcorn-js/popcorn.js"></script>
+	<script type="text/javascript" src="js/popcorn.slickers.js"></script>
+	<script type="text/javascript">
+	
+	(function() {
+	
+		var controls,
+			progress,
+			progressOuter,
+			playButton,
+			map,
+			video,
+			videoContainer,
+			videoPaused = true,
+			allLoaded = false,
+			activeEvents = [];
+
+		function getElementPosition(element) {
+			var parent = element,
+				x = element.offsetLeft,
+				y = element.offsetTop;
+
+
+			while (parent.offsetParent) {
+				parent = parent.offsetParent;
+				x += parent.offsetLeft;
+				y += parent.offsetTop;
+			}
+			
+			return {
+				x: x,
+				y: y
+			};
+		}
+		
+		function setUpMap() {
+			google.maps.event.addListener(map, 'dragstart', function() {
+				var endListener;
+
+				function dragEnd() {
+					google.maps.event.removeListener(endListener);
+					video.style.opacity = '';
+					if (!videoPaused) {
+						video.play();
+					}
+				}
+
+				endListener = google.maps.event.addListener(map, 'dragend', dragEnd);
+
+				if (!video.paused) {
+					video.pause();
+				}
+				//video.style.opacity = '0';
+			});
+
+			if (video.readyState >= 3) {
+				setTimeout(function() {
+					document.getElementById('map').style.visibility = '';
+//					videoContainer.style.opacity = 0.5;
+				}, 500);
+				//videoPaused = false;
+				//video.play();
+			}
+		}
+
+		function doFadeyThing() {
+			var i, recent = -5;
+			
+			for (i = 0; i < activeEvents.length; i++) {
+				recent = Math.max(activeEvents[i].start, recent);
+			}
+			
+			if (video.currentTime - recent  < 1) {
+				videoContainer.style.opacity = 0.1;
+			} else {
+				videoContainer.style.opacity = 1;
+			}
+
+		}
+		
+		window.markerLoaded = function (options) {
+			if (!map) {
+				map = options.map;
+				setUpMap();
+			}			
+		}
+		
+		window.markerStart = function (options) {
+			activeEvents.push(options);			
+			activeEvents[0].onFrame = doFadeyThing;
+		}
+
+		window.markerEnd = function (options) {
+			var index = activeEvents.indexOf(options);
+			if (index >= 0) {
+				activeEvents.splice(index, 1);
+			}
+			
+			options.onFrame = null;
+			
+			if (activeEvents.length) {
+				activeEvents[0].onFrame = doFadeyThing;
+			}
+		}
+		
+		function videoLoading() {
+			var range, ranges = video.buffered, max = 0;
+			
+			for (i = 0; i < ranges.length; i++) {
+				max = Math.max(ranges.end(i));
+			}
+			
+			progressOuter.style.width = (320 * max / video.duration) + 'px';
+			
+			if (max === video.duration) {
+				video.removeEventListener('progress', videoLoading, false);
+			}
+		}
+
+		window.addEventListener('DOMContentLoaded', function() {
+			controls = document.getElementById('controls');
+			video = document.getElementById('video');
+			videoContainer = document.getElementById('video-container');
+			progress = document.getElementById('progress');
+			progressOuter = document.getElementById('progress-outer');
+			playButton = document.getElementById('play-button');
+/*			
+			var latlng = new google.maps.LatLng(-34.397, 150.644);
+			map = new google.maps.Map(document.getElementById("map"), {
+				zoom: 8,
+				center: latlng,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			});
+*/			
+			var videoHover = false;
+			window.addEventListener('mousemove', function (e) {
+			//http://www.quirksmode.org/js/events_properties.html#position
+				var event = e || window.event;
+				var vpos = getElementPosition(video);
+				var mouseX, mouseY;
+				var x0 = vpos.x,
+					y0 = vpos.y,
+					x1 = video.offsetWidth + x0,
+					y1 = video.offsetHeight + y0 - 30;
+				
+				mouseX = event.pageX;
+				mouseY = event.pageY;
+				
+				if (mouseX >= x0 && mouseX <= x1 &&
+					mouseY >= y0 && mouseY <= y1) {
+					if (!videoHover && video.currentTime) {
+						video.setAttribute('class', 'hover');
+						videoHover = true;
+					}
+				} else if (videoHover) {
+					video.removeAttribute('class');
+					videoHover = false;
+				}
+
+			}, false);
+			
+			video.addEventListener('timeupdate', function() {
+				progress.style.width = (320 * video.currentTime / video.duration) + 'px';
+			}, false);
+
+			video.addEventListener('play', function() {
+				playButton.setAttribute('class', 'playing');
+			}, false);
+			
+			video.addEventListener('pause', function() {
+				playButton.removeAttribute('class');
+			}, false);
+			
+			video.addEventListener('progress', videoLoading, false);
+			
+			video.addEventListener('canplaythrough', function() {
+				setTimeout(function() {
+					document.getElementById('map').style.visibility = '';
+//					videoContainer.style.opacity = 0.5;
+				}, 500);
+
+				return;
+				if (map) {
+					videoPaused = false;
+					video.play();
+				}
+			}, false);
+
+			playButton.addEventListener('click', function() {
+				if (video.paused) {
+					videoPaused = false;
+					video.play();
+					videoContainer.style.opacity = '';
+				} else {
+					videoPaused = true;
+					video.pause();
+				}
+			}, false);
+
+			var p = Popcorn('#video');
+
+			p.slickers({
+				start: 4,
+				end: 10,
+				location: '﻿﻿5105 genoa street, oakland, ca',
+				lat: 37.80436370,
+				lng: -122.27111370,
+				label: 'Secret Garden',
+				target: 'map',
+				onLoad: 'markerLoaded',
+				onStart: 'markerStart',
+				onEnd: 'markerEnd'
+			});
+
+			p.slickers({
+				start: 14,
+				end: 20,
+				location: '﻿﻿1580 5th Street, oakland, ca',
+				lat: 37.8047831,
+				lng: -122.29823920000001,
+				label: 'Annex Farm',
+				target: 'map',
+				onLoad: 'markerLoaded',
+				onStart: 'markerStart',
+				onEnd: 'markerEnd'
+			});
+
+			p.slickers({
+				start: 23,
+				end: 29,
+				location: '﻿﻿537 Lewis Street, oakland, ca',
+				lat: 37.805487,
+				lng: -122.29842300000001,
+				label: 'West Oakland Woods',
+				target: 'map',
+				onLoad: 'markerLoaded',
+				onStart: 'markerStart',
+				onEnd: 'markerEnd'
+			});
+
+			p.slickers({
+				start: 31,
+				end: 37,
+				location: '﻿﻿16th Street and Center Street, oakland, ca',
+				lat: 37.8125818,
+				lng: -122.29236559999998,
+				label: 'Center Street Farm',
+				target: 'map',
+				onLoad: 'markerLoaded',
+				onStart: 'markerStart',
+				onEnd: 'markerEnd'
+			});
+
+		}, false);
+
+
+	}());
+	
+	
+	</script>
+</html>
