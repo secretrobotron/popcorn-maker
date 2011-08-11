@@ -131,19 +131,26 @@
    <div class="playback-controls">
      <div class="play-btn"><a href="#"><span >play/pause</span></a></div>
      
-     <div class="timeline-duration">00.20 / 05.45 </div>
+     <div class="timeline-duration" id="timeline-duration">00:00:00</div>
      
-     <div class="timeline-progress-wrapper">
+     <div class="timeline-progress-wrapper disable-select">
      <!-- ***** TIMING NOTCHES ***** -->  
-       <div class="timing-notches-div">
-       	<div class="timing-notches">
+       <div class="timing-notches-div disable-select">
+       	<div class="timing-notches disable-select">
           </div>
        </div>
      <!-- ***** END TIMING NOTCHES ***** -->  
-       <div id="scrubber-container"><div class="timeline-bar"><div id="progress-bar" class="timeline-progress-bar">
-           <div id="scrubber" class="current-line">
-           <div style="left: -5px"class="current-white"></div></div>
-       </div></div></div>
+       <div id="scrubber-container" class="disable-select" style="z-index: 1; position: relative;">
+         <div id="scrubber-interact" class="disable-select" style="position: absolute; left: 0px; top: -10px; height: 400%; width: 100%;"></div>
+         <div class="timeline-bar disable-select">
+           <div id="progress-bar" class="timeline-progress-bar disable-select">
+             <div id="scrubber" class="current-line disable-select">
+               <div style="left: -5px"class="current-white disable-select">
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
      </div>
      
      <div class="sound-btn"><a href="#"><span >play/pause</span></a></div>

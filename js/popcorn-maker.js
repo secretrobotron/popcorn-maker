@@ -50,9 +50,9 @@
     var scrubberContainer = document.getElementById( "scrubber-container" );
     var tracksDiv = document.getElementById( "tracks-div" );
     var progressBar = document.getElementById( "progress-bar" );
+    var timelineDuration = document.getElementById( "timeline-duration" );
 
     function checkScrubber( event ) {
-
 
       layersDiv.style.top = -tracksDiv.scrollTop + "px";
       scrubber.style.left = -tracksDiv.scrollLeft + b.currentTimeInPixels() + "px";
@@ -68,19 +68,69 @@
       if ( scrubberLeft > scrubberContainer.offsetWidth ) {
 
         progressBar.style.width = "100%";
+        scrubber.style.left = scrubberContainer.offsetWidth + "px";
       }
 
-      if ( scrubberLeft < scrubberContainer.offsetWidth && scrubberLeft >= 0 ) {
-
-        scrubber.style.display = "block";
-      } else {
-
-        scrubber.style.display = "none";
-      }
+      return scrubberLeft;
     }
 
-    b.listen( "mediatimeupdate", checkScrubber);
-    document.getElementById( "tracks-div" ).addEventListener( "scroll", checkScrubber, false );
+    b.listen( "mediatimeupdate", function( event ) {
+
+      var scrubberLeft = checkScrubber( event );
+
+      timelineDuration.innerHTML = b.secondsToSMPTE( b.currentTime() );
+
+      scrubber.style.display = "block";
+      if ( scrubberLeft >= scrubberContainer.offsetWidth ) {
+
+        tracksDiv.scrollLeft = b.currentTimeInPixels() - scrubberContainer.offsetWidth;
+      } else if ( scrubberLeft < 0 ) {
+
+        tracksDiv.scrollLeft = b.currentTimeInPixels();
+      }
+    });
+
+    document.getElementById( "tracks-div" ).addEventListener( "scroll", function( event ) {
+
+      scrubberLeft = checkScrubber( event );
+
+      if ( scrubberLeft - 5 > scrubberContainer.offsetWidth || scrubberLeft < 0 ) {
+
+        scrubber.style.display = "none";
+      } else {
+
+        scrubber.style.display = "block";
+      }
+    }, false );
+
+    var scrubberClicked = false;
+
+    scrubberContainer.addEventListener( "mousedown", function( event ) {
+
+      scrubberClicked = true;
+      b.currentTimeInPixels( event.clientX - this.offsetLeft - 22 + tracksDiv.scrollLeft );
+    }, false);
+
+    document.addEventListener( "mouseup", function( event ) {
+
+      scrubberClicked = false;
+    }, false);
+
+    document.addEventListener( "mousemove", function( event ) {
+
+      if ( scrubberClicked ) {
+
+        var scrubberPos = event.pageX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft;
+
+        if ( scrubberPos >= 0 ) {
+
+          b.currentTimeInPixels( scrubberPos );
+        } else {
+
+          b.currentTime( 0 );
+        }
+      }
+    }, false);
 
     function create_msDropDown() {
       try {

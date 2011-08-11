@@ -21,3 +21,10 @@ html, body {
 .enable-scroll {
   overflow: hidden;
 }
+
+.disable-select {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
