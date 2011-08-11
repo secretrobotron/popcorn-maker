@@ -438,10 +438,12 @@
           }, 10 );
         } else {
 
-          popcornScript = doc.createElement( "script" );
-          popcornScript.innerHTML = popcornString;
-          doc.head.appendChild( popcornScript );
-
+          if ( !win.Popcorn.instances[ 0 ] ) {
+            popcornScript = doc.createElement( "script" );
+            popcornScript.innerHTML = popcornString;
+            doc.head.appendChild( popcornScript );
+          }
+  
           framePopcorn = win.Popcorn.instances[ 0 ];
           callback2 && callback2( win.Popcorn.instances[ 0 ] );
         } // else  
