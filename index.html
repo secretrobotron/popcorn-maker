@@ -20,14 +20,6 @@
 			z-index: 0;
 		}
 		
-		/*
-		I'd hoped I'd never have to use one of these. Blech.
-		*/
-		#stupid-vertical-spacer {
-			height: 0;
-			visibility: hidden;
-		}
-		
 		#main-container {
 			position: relative;
 			white-space-collapse: discard;
@@ -157,9 +149,8 @@
 	</head>
 	<body>
 		<div style="height: 100%; width: 100%">
-			<div id="stupid-vertical-spacer">blah blah</div>
 			<div id="main-container">
-				<div id="map" style="visibility: hidden"></div>
+				<div id="map" style="visibility: hidden" data-butter="target"></div>
 				<div id="video-container" style="">
 					<video id="video" preload>
 						<source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
