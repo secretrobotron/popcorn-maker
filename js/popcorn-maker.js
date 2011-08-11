@@ -3,12 +3,15 @@
   window.addEventListener("DOMContentLoaded", function(){
     
     var b  = new Butter();
+    
+    b.comm();
 
-    b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "100%", editorHeight: "100%"  } );
+    b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "100%", editorHeight: "101%"  } );
 
     b.previewer({
-      layout: "external/layouts/city-slickers/index.html",
+      layout: "layouts/default.html",
       target: "main",
+      media: "http://robothaus.org/bugs/video/brendan1.ogv",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
@@ -34,8 +37,16 @@
     
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
+
+    b.listen( "clientdimsupdated", function( e ) {
+      console.log("yo");
+      $('#popup-4')
+      .css( "height", e.data.height + "px" )
+      .css("width", e.data.width + "px" );
+    }, "comm" );
     
     b.listen ( "trackeditstarted", function() {
+      
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-4').show();
