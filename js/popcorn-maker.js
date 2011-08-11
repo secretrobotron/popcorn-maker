@@ -3,13 +3,14 @@
   window.addEventListener("DOMContentLoaded", function(){
     
     var b  = new Butter();
+    
+    b.comm();
 
-    b.eventeditor( { target: "popup-4", defaultEditor: "lib/defaultEditor.html", editorWidth: "98%", editorHeight: "98%"  } );
+    b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "100%", editorHeight: "101%"  } );
 
     b.previewer({
-      layout: "layouts/default.html",
+      layout: "external/layouts/city-slickers/index.html",
       target: "main",
-      media: "http://robothaus.org/bugs/video/brendan1.ogv",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
@@ -19,6 +20,7 @@
     });
     
     b.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
+    b.addPlugin( { type: "slickers" } );
     b.addPlugin( { type: "image" } );
     b.addPlugin( { type: "footnote" } );
     b.addPlugin( { type: "twitter" } );
@@ -28,12 +30,22 @@
     
     b.timeline({ target: "timeline-div"});
 
+    b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
+
     //$('.enable-scroll').tinyscrollbar();
     
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
+
+    b.listen( "clientdimsupdated", function( e ) {
+      console.log("yo");
+      $('#popup-4')
+      .css( "height", e.data.height + "px" )
+      .css("width", e.data.width + "px" );
+    }, "comm" );
     
     b.listen ( "trackeditstarted", function() {
+      
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-4').show();
@@ -132,6 +144,11 @@
       }
     }, false);
 
+    b.listen( "mediatimeupdate", function() {
+
+      document.getElementById( "scrubber" ).style.left = b.currentTimeInPixels() + "px";
+    });
+
     function create_msDropDown() {
       try {
         $(".projects-dd").msDropDown();
@@ -199,7 +216,7 @@
     $( ".edit-selected-project" ).click( function() {
       var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
       projectsDrpDwn = $( ".projects-dd" );
-      
+
       if ( projectsDrpDwn[0].selectedIndex > -1 ) {
 
         localProjects = localProjects ? JSON.parse( localProjects ) : [];
@@ -275,6 +292,10 @@
     });
 
     $('.p-3').click(function(){
+      
+      console.log("sdfsdf", $('<div/>').text( b.getHTML() ).html() );
+      $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
+      
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-3').show();
@@ -283,7 +304,7 @@
     
     $('.p-timeline-title').click(function(){
       $('#project-title').val( b.getProjectDetails( "title" ) );
-      
+
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-project-title').show();
