@@ -7,9 +7,8 @@
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "100%", editorHeight: "100%"  } );
 
     b.previewer({
-      layout: "layouts/default.html",
+      layout: "external/layouts/city-slickers/index.html",
       target: "main",
-      media: "http://robothaus.org/bugs/video/brendan1.ogv",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
@@ -19,6 +18,7 @@
     });
     
     b.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
+    b.addPlugin( { type: "slickers" } );
     b.addPlugin( { type: "image" } );
     b.addPlugin( { type: "footnote" } );
     b.addPlugin( { type: "twitter" } );
@@ -27,6 +27,8 @@
     b.addPlugin( { type: "googlenews" } );
     
     b.timeline({ target: "timeline-div"});
+
+    b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
 
     //$('.enable-scroll').tinyscrollbar();
     
