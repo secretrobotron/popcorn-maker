@@ -10,8 +10,9 @@
           document.addEventListener('DOMContentLoaded', function (e) {
 
           butter = new Butter();
+          butter.comm();
 
-          client = new Butter.CommClient( "defaultEditor" );
+          client = new butter.CommClient( "defaultEditor" );
 
           client.listen( "edittrackevent", function( message ) {
             targets = message.targets;

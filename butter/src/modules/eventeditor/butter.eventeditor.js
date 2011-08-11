@@ -159,7 +159,7 @@ THE SOFTWARE.
 
     defaultEditor = options.defaultEditor || "defaultEditor.html";
 
-    commServer = new Butter.CommServer();
+    commServer = new butter.CommServer();
 
     /************************
      * instance methods

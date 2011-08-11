@@ -1,15 +1,13 @@
 (function (window, document, Butter, undefined) {
 
-  Butter.registerModule( "comm", {
+  Butter.registerModule( "comm", function( options ) {
 
-    setup: function ( options ) {
-    },
+      var butter = this;
 
-    extend: {
+      this.CommClient = function ( name, onmessage ) {
 
-      CommClient: function ( name, onmessage ) {
-
-        var listeners = {};
+        var listeners = {},
+        self = this;
 
         window.addEventListener('message', function (e) {
           if ( e.source !== window ) {
@@ -62,7 +60,7 @@
 
       }, //CommClient
 
-      CommServer: function () {
+      this.CommServer = function () {
 
         var clients = {};
         var that = this;
@@ -129,6 +127,7 @@
 
         this.bindFrame = function ( name, frame, readyCallback, messageCallback ) {
           frame.addEventListener( "load", function (e) {
+            butter.trigger( "clientdimsupdated", { "height": frame.contentDocument.height + 40, "width": frame.contentDocument.width }, "comm");
             that.bindClientWindow( name, frame.contentWindow, messageCallback );
             readyCallback && readyCallback( e );
           }, false );
@@ -136,6 +135,7 @@
 
         this.bindWindow = function ( name, win, readyCallback, messageCallback ) {
           win.addEventListener( "load", function (e) {
+            butter.trigger( "clientdimsupdated", { "height": win.innerHeight + 40, "width": win.innerWidth }, "comm");
             that.bindClientWindow( name, win, messageCallback );
             readyCallback && readyCallback( e );
           }, false );
@@ -158,8 +158,6 @@
         };
 
       } //CommServer
-
-    } //extend
 
   });
 })(window, document, Butter);
