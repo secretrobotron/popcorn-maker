@@ -436,6 +436,7 @@
             popcornReady( e, callback2 );
           }, 10 );
         } else {
+
           popcornScript = doc.createElement( "script" );
           popcornScript.innerHTML = popcornString;
           doc.head.appendChild( popcornScript );
@@ -499,7 +500,9 @@
       this.listen( "trackeventadded", function ( e ) {
         e = e.data;
 
-        popcornReady( e, function( framePopcorn ) {
+          if ( !win.Popcorn ) {
+            throw new Error("Popcorn Not Available");
+          }
 
           if( !popcorns[ media.getId() ] ) {
             popcorns[ media.getId() ] = framePopcorn;
@@ -513,7 +516,6 @@
           butterIds[ e.getId() ] = framePopcorn.getLastTrackEventId();
 
           e.manifest = framePopcorn.getTrackEvent( butterIds[ e.getId() ] )._natives.manifest;
-        } );
       }); // listener
 
       this.listen( "trackeventremoved", function( e ) {
