@@ -1,16 +1,14 @@
 (function (window, document, undefined, Butter) {
 
-  var urlRegex, videoURL,
-    iframe, iframeBody,
-    popcornString, butterId,
-    userSetMedia, videoString,
-    popcornURL, originalHead,
-    popcorns, originalBody;
-
   Butter.registerModule( "previewer", function( options ) {
 
-    // setup function used to set default values, as well as setting up the iframe
-    
+    var urlRegex, videoURL,
+        iframe, iframeBody,
+        popcornString, butterId,
+        userSetMedia, videoString,
+        popcornURL, originalHead,
+        popcorns, originalBody,
+        popcornScript;
       
     originalHead = {};
     popcornURL = options.popcornURL || "http://popcornjs.org/code/dist/popcorn-complete.js";
@@ -58,29 +56,41 @@
     this.scraper = function( iframe, callback ) {
 
       // obtain a reference to the iframes body
-      var doc = ( iframe.contentWindow || iframe.contentDocument ).document;
-      var body = doc.getElementsByTagName( "BODY" );
-          that = this;
-
-      Butter.extend( originalHead, ( iframe.contentWindow || iframe.contentDocument ).document.head );
-
-      originalBody = body[ 0 ].innerHTML;
-
-      //originalHead = iframe.contentWindow.document.head;
-
-      // store original iframeBody incase we rebuild
-      var ifrmBody = ( iframe.contentWindow || iframe.contentDocument ).document;
-      iframeBody = "<body>" + ifrmBody.body.innerHTML + "</body>\n";
+      var win, doc, body, ifrmBody, that = this;
 
       // function to ensure body is actually there
+      var tries = 0;
       var ensureLoaded = function() {
 
-        if ( body.length < 1 ) {
-          setTimeout( function() {
-            ensureLoaded();
-          }, 5 );      
-        } else {
+        function fail() {
+          ++tries;
+          if ( tries < 10000 ) {
+            setTimeout( function() {
+              ensureLoaded();
+            }, 5 );
+          }
+          else {
+            throw new Error("Couldn't load iframe. Tried desperately.");
+          }
+        }
 
+        win = iframe.contentWindow || iframe.contentDocument;
+        if ( !win ) {
+          fail();
+          return;
+        }
+        
+        doc = win.document;
+        if ( !doc ) {
+          fail();
+          return;
+        }
+
+        body = doc.getElementsByTagName( "BODY" );
+        if ( body.length < 1 ) {
+          fail();
+          return;
+        } else {
           // begin scraping once body is actually there, call callback once done
           bodyReady( body[ 0 ].children );
           callback();
@@ -91,6 +101,17 @@
 
       // scraping is done here
       function bodyReady( children ) {
+
+        Butter.extend( originalHead, win.document.head );
+
+        originalBody = body[ 0 ].innerHTML;
+
+        //originalHead = iframe.contentWindow.document.head;
+
+        // store original iframeBody incase we rebuild
+        var ifrmBody = ( iframe.contentWindow || iframe.contentDocument ).document;
+        iframeBody = "<body>" + ifrmBody.body.innerHTML + "</body>\n";
+
 
         // loop for every child of the body
         for( var i = 0; i < children.length; i++ ) {
@@ -103,10 +124,18 @@
               type: "target"
             } );
           } else if( children[ i ].getAttribute( "data-butter" ) === "media" ) {
-            that.addMedia( { 
-              target: children[ i ].id, 
-              url: userSetMedia
-            } );
+            if ( ["VIDEO", "AUDIO"].indexOf( children[ i ].nodeName ) > -1 ) {
+              that.addMedia({
+                target: children[ i ].id,
+                url: children[ i ].currentSrc,
+              });
+            }
+            else {
+              that.addMedia( { 
+                target: children[ i ].id, 
+                url: userSetMedia
+              } );
+            }
           } // else
 
           // ensure we get every child, search recursively
@@ -115,7 +144,7 @@
             bodyReady( children[ i ].children );
           } // if
         } // for
-      } // ok
+      } // bodyReady
 
     }, // scraper
 
@@ -138,7 +167,7 @@
       bpIframe.getElementById( videoTarget ).innerHTML = "";
 
       // create a string that will create an instance of popcorn with the proper video source
-      popcornString = "document.addEventListener('DOMContentLoaded', function () {\n";        
+      popcornString = "function startPopcorn () {\n";        
 
       var regexResult = urlRegex.exec( videoURL ) || "",
           players = [], that = this;
@@ -232,7 +261,7 @@
         } // if
       }
 
-      popcornString += "}, false);";  
+      popcornString += "}; startPopcorn();";  
 
       this.fillIframe( media, callback );
     },
@@ -298,40 +327,46 @@
     // which is mostly managing track events added by the user
     this.fillIframe = function( media, callback ) {
       
-      var popcornScript, iframeHead, body,
-          that = this, doc = ( iframe.contentWindow || iframe.contentDocument ).document;
+      var iframeHead = "", body,
+          win = iframe.contentWindow || iframe.contentDocument,
+          that = this, doc = win.document;
 
       // create a script within the iframe and populate it with our popcornString
+      if ( !win.Popcorn ) {
+        var popcornSourceScript = doc.createElement( "script" );
+        popcornSourceScript.src = popcornURL;
+        doc.head.appendChild( popcornSourceScript );
+      }
+
+      if ( popcornScript ) {
+        doc.head.removeChild( popcornScript );
+      }
+
+      while ( win.Popcorn && win.Popcorn.instances.length > 0 ) {
+        win.Popcorn.removeInstance( win.Popcorn.instances[0] );
+      }
+
       popcornScript = doc.createElement( "script" );
       popcornScript.innerHTML = popcornString;
-
       doc.head.appendChild( popcornScript );
-
-      // create a new head element with our new data
-      iframeHead = "<head>" + originalHead.innerHTML + "\n<script src='" + popcornURL + "'>" + 
-        "</script>\n<script>\n" + popcornString + "</script>";
-
-      iframeHead += "\n</head>\n";
 
       // create a new body element with our new data
       body = doc.body.innerHTML;
 
       // open, write our changes to the iframe, and close it
-      doc.open();
-      doc.write( "<html>\n" + iframeHead + body + "\n</html>" );
-      doc.close();
+      //doc.open();
+      //doc.write( "<html>\n" + iframeHead + body + "\n</html>" );
+      //doc.close();
 
+      var instancesBefore = win.Popcorn ? win.Popcorn.instances.length : 0;
       var popcornReady = function( e, callback2 ) {
 
-        var popcornIframe = iframe.contentWindow || iframe.contentDocument;
-        var framePopcorn = popcornIframe[ "popcorn" + media.getId() ];
-        
-        if ( !framePopcorn ) {
+        if ( win.Popcorn.instances.length > instancesBefore ) {
           setTimeout( function() {
             popcornReady( e, callback2 );
           }, 10 );
         } else {
-          callback2 && callback2( framePopcorn );
+          callback2 && callback2( win.Popcorn.instances[ win.Popcorn.instances.length - 1 ] );
         } // else  
       }
 
