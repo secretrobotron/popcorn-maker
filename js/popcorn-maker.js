@@ -15,18 +15,14 @@
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
           var registry = b.getRegistry();
+          for( var i = 0, l = registry.length; i < l; i++ ) {
+            b.addPlugin( { type: registry[ i ].type } );
+          }
         } );
       }
     });
     
     b.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
-    b.addPlugin( { type: "slickers" } );
-    b.addPlugin( { type: "image" } );
-    b.addPlugin( { type: "footnote" } );
-    b.addPlugin( { type: "twitter" } );
-    b.addPlugin( { type: "webpage" } );
-    b.addPlugin( { type: "subtitle" } );
-    b.addPlugin( { type: "googlenews" } );
     
     b.timeline({ target: "timeline-div"});
 
