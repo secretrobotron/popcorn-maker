@@ -1,6 +1,3 @@
-[submodule "external/butter"]
-	path = external/butter
-	url = git://github.com/secretrobotron/butter.git
 [submodule "external/layouts/city-slickers"]
 	path = external/layouts/city-slickers
 	url = git://github.com/secretrobotron/Mozilla-BAVC-City-Slickers.git
