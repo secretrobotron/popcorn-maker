@@ -1,6 +1,0 @@
-[submodule "external/layouts/city-slickers"]
-	path = external/layouts/city-slickers
-	url = git://github.com/secretrobotron/Mozilla-BAVC-City-Slickers.git
-[submodule "external/layouts/creative-growth"]
-	path = external/layouts/creative-growth
-	url = git://github.com/brianchirls/Mozilla-BAVC-Creative-Growth.git
