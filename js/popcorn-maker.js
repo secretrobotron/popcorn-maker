@@ -34,7 +34,6 @@
     $(".p-timeline-title").html( "Untitled Project" );
 
     b.listen( "clientdimsupdated", function( e ) {
-      console.log("yo");
       $('#popup-4')
       .css( "height", e.data.height + "px" )
       .css("width", e.data.width + "px" );
