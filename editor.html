@@ -4,21 +4,14 @@
 		<meta charset="UTF-8">
 		<title></title>
 		<!--
-		
-		I suppose you'll want to load butter.js here, but maybe it's more efficient to first try to grab window.parent.Butter
-		
+		Is this always gonna be the right path to Butter?
 		-->
-		<script type="text/javascript">
-		
-		var fps;
-
-		</script>
+		<script type="text/javascript" src="../../../lib/butter.js"></script>
 		<style type="text/css">
 		
 		body, fieldset {
 			background-color: rgba(0, 0, 0, 0.5);
-			font-family: sans-serif;
-			font-size: 10px;
+			font-family: arial;
 			color: white;
 		}
 		
@@ -104,7 +97,8 @@
 					'start', 'end', 'label', 'location', 'lat', 'lng',
 					'target', 'target-fieldset', 'geocode-button',
 					'cancel', 'ok', 'apply', 'delete'
-				];
+				],
+				butter, client;
 			
 			function saveLocation(loc) {
 				if (!loc) {
@@ -327,71 +321,6 @@
 				
 				//todo: RR, send your message
 			}
-
-			function initialize() {
-				var i;
-
-				if (window.parent) {
-					try {
-						gmaps = window.parent.google && window.parent.google.maps;
-					} catch (e) {
-					}
-				}
-
-				if (gmaps) {
-					loadGoogleMaps();
-				} else {
-					(function() {
-						var script = document.createElement('script');
-						script.src = 'http://maps.google.com/maps/api/js?sensor=false&callback=loadGoogleMaps';
-						document.head.appendChild(script);
-	
-						window.loadGoogleMaps = loadGoogleMaps;
-					}());
-				}
-				
-				for (i = 0; i < fields.length; i++) {
-					elements[ fields[i] ] = document.getElementById(fields[i]);
-				}
-				
-				// start and end use keyup because they need the new value
-				elements.start.addEventListener('change', checkTime, false);
-				elements.start.addEventListener('keyup', checkTime, true);
-
-				elements.end.addEventListener('change', checkTime, false);
-				elements.end.addEventListener('keyup', checkTime, true);
-
-				//lat, lng, location use keypress because they have a setTimeout
-				elements.lat.addEventListener('change', checkLatLng, false);
-				elements.lat.addEventListener('keypress', checkLatLng, false);
-
-				elements.lng.addEventListener('change', checkLatLng, false);
-				elements.lng.addEventListener('keypress', checkLatLng, false);
-
-				elements.location.addEventListener('change', checkLocation, false);
-				elements.location.addEventListener('keypress', checkLocation, false);
-
-				//buttons
-				elements['geocode-button'].addEventListener('click', checkLocation, false);
-				
-				elements.cancel.addEventListener('click', function() {
-					//todo: do it, RR
-				}, false);
-
-				elements.cancel.addEventListener('delete', function() {
-					//todo: do it, RR
-				}, false);
-
-				elements.cancel.addEventListener('apply', function() {
-					saveEverything();
-					//todo: do it, RR
-				}, false);
-
-				elements.cancel.addEventListener('ok', function() {
-					saveEverything();
-					//todo: do it, RR
-				}, false);
-			}
 			
 			function targetsUpdated( newTargets ) {
 				var i, select, option;
@@ -453,9 +382,9 @@
 					elements.lng.value = trackEvent.lng;
 				}
 				
-				elements.label.value = trackEvent.label;
+				elements.label.value = trackEvent.label || '';
 
-				elements.location.value = trackEvent.location;
+				elements.location.value = trackEvent.location || '';
 				
 				if (trackEvent.location && geocoder &&
 					(trackEvent.lat === undefined || trackEvent.lng === undefined) ) {
@@ -466,13 +395,111 @@
 
 			}
 			
+			function initialize() {
+				var i;
+				
+				//set up butter
+				if (window.Butter) {
+					butter = new Butter();
+					butter.comm();
+					client = new butter.CommClient('defaultEditor');
+	
+					client.listen('edittrackevent', function (message) {
+						//console.log('edittrackevent');
+						console.log(JSON.stringify(message));
+						targetsUpdated(targets);
+						editTrackEvent(message.trackEvent.popcornOptions);
+					});
+	
+					client.listen( "domtargetsupdated", function( message ) {
+						console.log('domtargetsupdated');
+						console.log(JSON.stringify(message));
+						targetsUpdated(message);
+					});
+				}
+
+				if (window.parent) {
+					try {
+						gmaps = window.parent.google && window.parent.google.maps;
+					} catch (e) {
+					}
+				}
+					
+				if (gmaps) {
+					loadGoogleMaps();
+				} else {
+					(function() {
+						var script = document.createElement('script');
+						script.src = 'http://maps.google.com/maps/api/js?sensor=false&callback=loadGoogleMaps';
+						document.head.appendChild(script);
+	
+						window.loadGoogleMaps = loadGoogleMaps;
+					}());
+				}
+				
+				for (i = 0; i < fields.length; i++) {
+					elements[ fields[i] ] = document.getElementById(fields[i]);
+				}
+				
+				// start and end use keyup because they need the new value
+				elements.start.addEventListener('change', checkTime, false);
+				elements.start.addEventListener('keyup', checkTime, true);
+
+				elements.end.addEventListener('change', checkTime, false);
+				elements.end.addEventListener('keyup', checkTime, true);
+
+				//lat, lng, location use keypress because they have a setTimeout
+				elements.lat.addEventListener('change', checkLatLng, false);
+				elements.lat.addEventListener('keypress', checkLatLng, false);
+
+				elements.lng.addEventListener('change', checkLatLng, false);
+				elements.lng.addEventListener('keypress', checkLatLng, false);
+
+				elements.location.addEventListener('change', checkLocation, false);
+				elements.location.addEventListener('keypress', checkLocation, false);
+
+				//buttons
+				elements['geocode-button'].addEventListener('click', checkLocation, false);
+				
+				elements.cancel.addEventListener('click', function() {
+					//tell butter we've cancelled
+					if (client) {
+						client.send( '', 'cancelclicked');
+					}
+				}, false);
+
+				elements.cancel.addEventListener('delete', function() {
+					//tell butter to delete
+					if (client) {
+						client.send( '', 'deleteclicked');
+					}
+				}, false);
+
+				elements.cancel.addEventListener('apply', function() {
+					saveEverything();
+					//send back to Butter
+					if (client) {
+						client.send( trackEvent, "applyclicked" );
+					}
+				}, false);
+
+				elements.cancel.addEventListener('ok', function() {
+					saveEverything();
+					//send back to Butter and close
+					if (client) {
+						client.send( trackEvent, "okayclicked" );
+					}
+				}, false);
+				
+			}
+			
 			initialize();
 			
 			targetsUpdated([
 				'one',
 				'two'
 			]);
-			
+/*			
 			editTrackEvent({
 				start: 31,
 				end: 37,
@@ -482,6 +509,7 @@
 				label: 'Center Street Farm',
 				target: 'two'
 			});
+*/
 		}());
 		
 		</script>
