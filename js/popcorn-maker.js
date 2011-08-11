@@ -9,8 +9,10 @@
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "100%", editorHeight: "101%"  } );
 
     b.previewer({
-      layout: "external/layouts/city-slickers/index.html",
+      layout: "layouts/default.html",
       target: "main",
+      popcornURL: "",
+      media: "http://www.youtube.com/watch?v=xyd4oM3fMO4",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
