@@ -12,7 +12,8 @@
       layout: "layouts/default.html",
       target: "main",
       popcornURL: "",
-      media: "http://www.youtube.com/watch?v=iUKpVz8hRcs",
+      //media: "http://www.youtube.com/watch?v=iUKpVz8hRcs",
+      media: "http://robothaus.org/bugs/video/brendan1.ogv",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
@@ -224,7 +225,6 @@
             overwrite = true;
           }
         }
-        console.log(projectToSave);
         !overwrite && localProjects.push( projectToSave ) && 
         $( "<option/>", {
           "value": projectToSave.project.title,
@@ -235,7 +235,7 @@
         window.alert( b.getProjectDetails( "title" ) + " was saved" );
       }
       catch ( e ) {
-        console.log( "Saving Failed!", e );
+        throw new Error("Saving Failed...");
       }
     
     });
@@ -320,7 +320,6 @@
 
     $('.p-3').click(function(){
       
-      console.log("sdfsdf", $('<div/>').text( b.getHTML() ).html() );
       $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
       
       $('.close-div').fadeOut('fast');

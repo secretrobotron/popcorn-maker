@@ -1,6 +1,11 @@
 (function ( window, document, Butter, undefined ) {
 
   Butter.registerModule( "timeline", function ( options ) {
+  
+    var mediaInstances = {},
+        currentMediaInstance,
+        target = document.getElementById( options.target ) || options.target,
+        b = this;
 
     // Convert an SMPTE timestamp to seconds
     this.smpteToSeconds = function( smpte ) {
@@ -49,6 +54,7 @@
       container.style.webkitUserSelect = "none";
       container.style.oUserSelect = "none";
       container.style.userSelect = "none";
+      container.id = "funbagofcontainers";
       return container;
     };
 
@@ -57,20 +63,21 @@
       // capturing self to be used inside element event listeners
       var self = this;
       
+      this.initialized = false;
+      
       target.appendChild( this.container = createContainer() );
 
       this.tracks = document.createElement( "div" );
       this.tracks.style.width = "100%";
       this.tracks.style.height = "100%";
+      this.tracks.id = "funbags";
 
       this.init = function() {
-
+      
+        this.initialized = true;
         this.duration = media.duration();
         
-        while ( target.firstChild ) {
-          target.removeChild( target.firstChild );
-        }
-        target.appendChild( this.container = createContainer() );
+        //target.appendChild( this.container = createContainer() );
 
         this.trackLine = new TrackLiner({
           element: this.tracks,
@@ -90,6 +97,10 @@
 
       };
 
+      this.destroy = function() {
+        target.removeChild( this.container );
+      };
+
       this.hide = function() {
 
         this.container.style.display = "none";
@@ -102,11 +113,6 @@
       
       this.media = media;
     };
-
-    var mediaInstances = [],
-        currentMediaInstance,
-        target = document.getElementById( options.target ) || options.target,
-        b = this;
 
     TrackLiner.plugin( "butterapp", {
       // called when a new track is created
@@ -182,14 +188,22 @@
         b.editTrackEvent && b.editTrackEvent( trackEventObj.options );
       }
     });
-
-    this.listen( "trackadded", function( event ) {
-
-      var track = event.data;
+    
+    var addTrack = function( track ) {
       var trackLinerTrack = currentMediaInstance.trackLine.createTrack( undefined, "butterapp");
       currentMediaInstance.trackLinerTracks[ track.getId() ] = trackLinerTrack;
       currentMediaInstance.lastTrack = trackLinerTrack;
       currentMediaInstance.butterTracks[ trackLinerTrack.id() ] = track;
+    };
+
+    this.listen( "trackadded", function( event ) {
+    
+      if ( !currentMediaInstance ) {
+        return;
+      }
+
+       addTrack( event.data );
+
     });
 
     this.listen( "trackremoved", function( event ) {
@@ -208,12 +222,20 @@
       delete currentMediaInstance.trackLinerTracks[ track.getId() ];
     });
 
-    this.listen( "trackeventadded", function( event ) {
-
-      var trackEvent = event.data;
+    var addTrackEvent = function( trackEvent ) {
       var trackLinerTrackEvent = currentMediaInstance.lastTrack.createTrackEvent( "butterapp", trackEvent );
       currentMediaInstance.trackLinerTrackEvents[ trackEvent.getId() ] = trackLinerTrackEvent;
       currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ] = trackEvent;
+    };
+
+    this.listen( "trackeventadded", function( event ) {
+    
+      if ( !currentMediaInstance ) {
+        return;
+      }
+
+      addTrackEvent( event.data );
+      
     });
 
     this.listen( "trackeventremoved", function( event ) {
@@ -230,27 +252,51 @@
     var butter = this;
 
     this.listen( "mediaadded", function( event ) {
-
+      
       mediaInstances[ event.data.getId() ] = new MediaInstance( event.data );
     });
 
     this.listen( "mediaready", function( event ) {
-
-      mediaInstances[ event.data.getId() ].init();
-      butter.trigger( "timelineready", {}, "timeline" );
+    
+      var mi = mediaInstances[ event.data.getId() ];
+      if ( !mi.initialized ) {
+        mi.init();
+        
+        var media = event.data,
+        tracks = media.getTracks();
+        
+        for ( var i = 0, tlength = tracks.length; i < tlength; i++ ) {
+          var t = tracks[ i ],
+          trackEvents = t.getTrackEvents();
+          
+          addTrack ( t );
+          
+          for ( var j = 0, teLength = trackEvents.length; j < teLength; j++ ) {
+            addTrackEvent( trackEvents [ j ] );
+          } // add Track Events per Track
+        } //add Tracks
+        butter.trigger( "timelineready", {}, "timeline" );
+      }
     });
 
     this.listen( "mediachanged", function( event ) {
 
-      currentMediaInstance && currentMediaInstance.hide();
-      currentMediaInstance = mediaInstances[ event.data.getId() ];
-      currentMediaInstance && currentMediaInstance.show();
-      butter.trigger( "timelineready", {}, "timeline" );
+      if ( currentMediaInstance !== mediaInstances[ event.data.getId() ] ) {
+        currentMediaInstance && currentMediaInstance.hide();
+        currentMediaInstance = mediaInstances[ event.data.getId() ];
+        currentMediaInstance && currentMediaInstance.show();
+        butter.trigger( "timelineready", {}, "timeline" );
+      }
     });
 
     this.listen( "mediaremoved", function( event ) {
+    
+      if ( mediaInstances[ event.data.getId() ] ) {
+        mediaInstances[ event.data.getId() ].destroy();
+      }
 
       delete mediaInstances[ event.data.getId() ];
+      
       if ( event.data.getId() === currentMediaInstance.media.getId() ) {
         currentMediaInstance = undefined;
       }
