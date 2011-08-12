@@ -2,6 +2,17 @@
 
   Butter.registerModule( "timeline", function ( options ) {
 
+    this.findAbsolutePosition = function (obj) {
+	    var curleft = curtop = 0;
+	    if (obj.offsetParent) {
+		    do {
+			    curleft += obj.offsetLeft;
+			    curtop += obj.offsetTop;
+		    } while (obj = obj.offsetParent);
+	    }
+	    return [curleft,curtop];
+    //returns an array
+    };
     // Convert an SMPTE timestamp to seconds
     this.smpteToSeconds = function( smpte ) {
       var t = smpte.split(":");
@@ -271,6 +282,7 @@
       if ( pixel != null) {
 
         b.currentTime( pixel / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
+        b.trigger( "mediatimeupdate", currentMediaInstance.media, "timeline" );
       } //if
       return b.currentTime() / currentMediaInstance.duration * ( currentMediaInstance.container.offsetWidth );
     };

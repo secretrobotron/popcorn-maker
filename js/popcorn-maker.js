@@ -12,7 +12,7 @@
       layout: "layouts/default.html",
       target: "main",
       popcornURL: "",
-      media: "http://www.youtube.com/watch?v=xyd4oM3fMO4",
+      media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
@@ -118,7 +118,7 @@
     scrubberContainer.addEventListener( "mousedown", function( event ) {
 
       scrubberClicked = true;
-      b.currentTimeInPixels( event.clientX - this.offsetLeft - 22 + tracksDiv.scrollLeft );
+      b.currentTimeInPixels( event.clientX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft );
     }, false);
 
     document.addEventListener( "mouseup", function( event ) {
@@ -144,7 +144,7 @@
 
     b.listen( "mediatimeupdate", function() {
 
-      document.getElementById( "scrubber" ).style.left = b.currentTimeInPixels() + "px";
+      scrubber.style.left = b.currentTimeInPixels() - tracksDiv.scrollLeft + "px";
     });
 
     var trackLayers = {};
