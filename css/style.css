@@ -698,7 +698,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .tracks-drpdwn .dd .ddChild { top: 28px !important;}
 .tracks-drpdwn .dd .ddChild a { height:30px; line-height:30px}
 .popup-content .track-content { padding:10px; border:1px solid #ccc; background-color:#FFF; overflow: auto; height: 150px}
-.popup-1, .popup-2, .popup-4 {width:400px; height:450px;
+.popup-1, .popup-2, .popup-4 {width:400px;
 	   -moz-box-shadow: 2px 2px 5px #000;
 	-webkit-box-shadow: 2px 2px 5px #000;
 	     -o-box-shadow: 2px 2px 5px #000;
