@@ -161,6 +161,18 @@
     
     });
 
+    document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
+      b.isPlaying() ? b.play() : b.pause();
+    }, false);
+
+    b.listen( "mediaplaying", function( event ) {
+      document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "0pt -25px";
+    } );
+
+    b.listen( "mediapaused", function( event ) {
+      document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "0pt 0px";
+    } );
+
     $( ".edit-selected-project" ).click( function() {
       var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
       projectsDrpDwn = $( ".projects-dd" );
