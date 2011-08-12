@@ -353,11 +353,10 @@ THE SOFTWARE.
       if ( importData.name ) {
         name = importData.name;
       }
-
       importData.target && that.setTarget( importData.target );
       importData.url && that.setUrl( importData.url );
       
-      butter.listen( "timelineready", function(){
+      //butter.listen( "timelineready", function(){
         if ( importData.tracks ) {
           var importTracks = importData.tracks;
           for ( var i=0, l=importTracks.length; i<l; ++i ) {
@@ -366,7 +365,7 @@ THE SOFTWARE.
             that.addTrack( newTrack );
           }
         }
-      });
+      //});
     };
 
     this.exportJSON = function () {
@@ -642,8 +641,8 @@ THE SOFTWARE.
       if ( projectData.media ) {
         for ( var i=0, l=projectData.media.length; i<l; ++i ) {
           var m = new Media();
-          that.addMedia( m );
           m.importJSON( projectData.media[ i ] );
+          that.addMedia( m );
           
         }
       }
@@ -679,12 +678,8 @@ THE SOFTWARE.
     };
     
     this.clearProject = function() {
-      var allTracks = that.getTracks(),
-      allTargets = that.getTargets(),
+      var allTargets = that.getTargets(),
       allMedias = that.getAllMedia();
-      for ( var i = 0, l = allTracks.length; i < l; i++ ) {
-        that.removeTrack( allTracks[ i ] );
-      }
       for ( var i = 0, l = allTargets.length; i < l; i++ ) {
         that.removeTarget( allTargets[ i ] );
       }
@@ -773,6 +768,10 @@ THE SOFTWARE.
       if ( idx > -1 ) {
         medias.splice( idx, 1 );
         delete mediaByName[ media.getName() ];
+        var tracks = media.getTracks();
+        for ( var i=0, l=tracks.length; i<l; ++i ) {
+          that.trigger( "trackremoved", tracks[i] );
+        } //for
         media.setButter( undefined );
         if ( media === currentMedia ) {
           

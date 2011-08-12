@@ -12,7 +12,8 @@
       layout: "layouts/default.html",
       target: "main",
       popcornURL: "",
-      media: "http://www.youtube.com/watch?v=iUKpVz8hRcs",
+      //media: "http://www.youtube.com/watch?v=iUKpVz8hRcs",
+      media: "http://robothaus.org/bugs/video/brendan1.ogv",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
@@ -60,9 +61,9 @@
     var scrubberContainer = document.getElementById( "scrubber-container" );
     var tracksDiv = document.getElementById( "tracks-div" );
     var progressBar = document.getElementById( "progress-bar" );
+    var timelineDuration = document.getElementById( "timeline-duration" );
 
     function checkScrubber( event ) {
-
 
       layersDiv.style.top = -tracksDiv.scrollTop + "px";
       scrubber.style.left = -tracksDiv.scrollLeft + b.currentTimeInPixels() + "px";
@@ -78,23 +79,127 @@
       if ( scrubberLeft > scrubberContainer.offsetWidth ) {
 
         progressBar.style.width = "100%";
+        scrubber.style.left = scrubberContainer.offsetWidth + "px";
       }
 
-      if ( scrubberLeft < scrubberContainer.offsetWidth && scrubberLeft >= 0 ) {
-
-        scrubber.style.display = "block";
-      } else {
-
-        scrubber.style.display = "none";
-      }
+      return scrubberLeft;
     }
 
-    b.listen( "mediatimeupdate", checkScrubber);
-    document.getElementById( "tracks-div" ).addEventListener( "scroll", checkScrubber, false );
+    b.listen( "mediatimeupdate", function( event ) {
+
+      var scrubberLeft = checkScrubber( event );
+
+      timelineDuration.innerHTML = b.secondsToSMPTE( b.currentTime() );
+
+      scrubber.style.display = "block";
+      if ( scrubberLeft >= scrubberContainer.offsetWidth ) {
+
+        tracksDiv.scrollLeft = b.currentTimeInPixels() - scrubberContainer.offsetWidth;
+      } else if ( scrubberLeft < 0 ) {
+
+        tracksDiv.scrollLeft = b.currentTimeInPixels();
+      }
+    });
+
+    document.getElementById( "tracks-div" ).addEventListener( "scroll", function( event ) {
+
+      scrubberLeft = checkScrubber( event );
+
+      if ( scrubberLeft - 5 > scrubberContainer.offsetWidth || scrubberLeft < 0 ) {
+
+        scrubber.style.display = "none";
+      } else {
+
+        scrubber.style.display = "block";
+      }
+    }, false );
+
+    var scrubberClicked = false;
+
+    scrubberContainer.addEventListener( "mousedown", function( event ) {
+
+      scrubberClicked = true;
+      b.currentTimeInPixels( event.clientX - this.offsetLeft - 22 + tracksDiv.scrollLeft );
+    }, false);
+
+    document.addEventListener( "mouseup", function( event ) {
+
+      scrubberClicked = false;
+    }, false);
+
+    document.addEventListener( "mousemove", function( event ) {
+
+      if ( scrubberClicked ) {
+
+        var scrubberPos = event.pageX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft;
+
+        if ( scrubberPos >= 0 ) {
+
+          b.currentTimeInPixels( scrubberPos );
+        } else {
+
+          b.currentTime( 0 );
+        }
+      }
+    }, false);
 
     b.listen( "mediatimeupdate", function() {
 
       document.getElementById( "scrubber" ).style.left = b.currentTimeInPixels() + "px";
+    });
+
+    var trackLayers = {};
+
+    var createLayer = function( track ) {
+
+      var layerDiv = document.createElement( "div" );
+      layerDiv.id = "layer-" + track.getId();
+      layerDiv.innerHTML = layerDiv.id;
+      layerDiv.setAttribute("class", "layer-btn");
+      layerDiv.style.position = "relative";
+
+      var ulist = document.createElement( "ul" );
+      ulist.className = "actions";
+
+      var pointerBubble = document.createElement( "li" );
+      pointerBubble.className = "bubble_pointer";
+
+      var editButton = document.createElement( "li" );
+      editButton.className = "edit";
+      editButton.innerHTML = "<a href=\"#\">edit</a>";
+
+      var deleteButton = document.createElement( "li" );
+      deleteButton.className = "delete";
+      deleteButton.innerHTML = "<a href=\"#\">delete</a>";
+      deleteButton.addEventListener( "click", function( click ) {
+
+        b.removeTrack( track );
+      }, false );
+
+      ulist.appendChild( pointerBubble );
+      ulist.appendChild( editButton );
+      ulist.appendChild( deleteButton );
+
+      layerDiv.appendChild( ulist );
+
+      return layerDiv;
+    };
+
+    b.listen( "trackadded", function( event ) {
+
+      trackLayers[ "layer-" + event.data.getId() ] = createLayer( event.data );
+      layersDiv.appendChild( trackLayers[ "layer-" + event.data.getId() ] );
+    });
+
+    b.listen( "trackremoved", function( event ) {
+
+      layersDiv.removeChild( trackLayers[ "layer-" + event.data.getId() ] );
+    });
+
+    b.listen( "trackmoved", function( event ) {
+
+      layersDiv.removeChild( trackLayers[ "layer-" + event.data.getId() ] );
+      layersDiv.insertBefore( trackLayers[ "layer-" + event.data.getId() ], layersDiv.children[ event.data.newPos ] );
     });
 
     function create_msDropDown() {
@@ -145,7 +250,6 @@
             overwrite = true;
           }
         }
-        console.log(projectToSave);
         !overwrite && localProjects.push( projectToSave ) && 
         $( "<option/>", {
           "value": projectToSave.project.title,
@@ -156,7 +260,7 @@
         window.alert( b.getProjectDetails( "title" ) + " was saved" );
       }
       catch ( e ) {
-        console.log( "Saving Failed!", e );
+        throw new Error("Saving Failed...");
       }
     
     });
@@ -253,7 +357,6 @@
 
     $('.p-3').click(function(){
       
-      console.log("sdfsdf", $('<div/>').text( b.getHTML() ).html() );
       $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
       
       $('.close-div').fadeOut('fast');

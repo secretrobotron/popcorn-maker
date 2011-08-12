@@ -21,3 +21,30 @@ html, body {
 .enable-scroll {
   overflow: hidden;
 }
+
+.disable-select {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.layer-div {
+  background-image: -moz-linear-gradient(top,  #2A2A2A, #1C1C1C);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#999));
+  height: 36px;
+  text-align: center;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
+#layers-div {
+  height: 100%;
+  width: 100%;
+}
+
+.butter-track-event.slickers {
+  background-color: #8dd75a;
+}
