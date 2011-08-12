@@ -9,15 +9,16 @@
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "100%", editorHeight: "101%"  } );
 
     b.previewer({
-      layout: "layouts/default.html",
+      layout: "external/layouts/city-slickers/index.html",
       target: "main",
-      popcornURL: "",
+      //popcornURL: "",
       //media: "http://www.youtube.com/watch?v=iUKpVz8hRcs",
-      media: "http://robothaus.org/bugs/video/brendan1.ogv",
+      //media: "http://robothaus.org/bugs/video/brendan1.ogv",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
           var registry = b.getRegistry();
+console.log(registry);
           for( var i = 0, l = registry.length; i < l; i++ ) {
             b.addPlugin( { type: registry[ i ].type } );
           }
