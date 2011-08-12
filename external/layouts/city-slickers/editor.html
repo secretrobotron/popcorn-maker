@@ -4,16 +4,14 @@
 		<meta charset="UTF-8">
 		<title></title>
 		<!--
-		
-		I suppose you'll want to load butter.js here, but maybe it's more efficient to first try to grab window.parent.Butter
-		
+		Is this always gonna be the right path to Butter?
 		-->
-		<script type="text/javascript">
-		
-		var fps;
-
-		</script>
+		<script type="text/javascript" src="../../../lib/butter.js"></script>
 		<style type="text/css">
+		
+		body {
+			width: 800px;
+		}
 		
 		body, fieldset {
 			background-color: rgba(0, 0, 0, 0.5);
@@ -29,8 +27,8 @@
 		}
 		
 		#map {
-			width: 400px;
-			height: 400px;
+			width: 300px;
+			height: 300px;
 			float: right;
 			border: black solid 1px;
 		}
@@ -103,7 +101,8 @@
 					'start', 'end', 'label', 'location', 'lat', 'lng',
 					'target', 'target-fieldset', 'geocode-button',
 					'cancel', 'ok', 'apply', 'delete'
-				];
+				],
+				butter, client;
 			
 			function saveLocation(loc) {
 				if (!loc) {
@@ -320,15 +319,126 @@
 				trackEvent.label = trackEvent.label.replace(/^[\s\t\n\r ]+/, '');
 				trackEvent.label = trackEvent.label.replace(/[\s\t\n\r ]+$/, '');
 				
-				if (targets.indexOf(elements.target.value) > -1) {
-					trackEvent.target = elements.target.value;
+				trackEvent.location = elements.location.value;
+				trackEvent.location = trackEvent.location.replace(/^[\s\t\n\r ]+/, '');
+				trackEvent.location = trackEvent.location.replace(/[\s\t\n\r ]+$/, '');
+				
+				trackEvent.target = elements.target.value;
+				
+				if (map) {
+					trackEvent.zoom = map.getZoom();
+				}
+			}
+			
+			function targetsUpdated( newTargets ) {
+				var i, select, option;
+
+				targets = newTargets || [];
+				
+				if (targets.length <= 1) {
+					elements['target-fieldset'].style.display = 'none';
+
+					if (targets.length) {
+						trackEvent.target = targets[0];
+					}
+				} else {
+					elements['target-fieldset'].style.display = '';
+					select = elements.target;
+					select.innerHTML = '<option>Default</option>';
+					
+					for (i = 0; i < targets.length; i++) {
+						option = document.createElement('option');
+						option.value = targets[i][0];
+						option.appendChild( document.createTextNode(targets[i][0]) );
+						select.appendChild(option);
+
+						if (targets[i][0] === trackEvent.target) {
+							option.selectedIndex = i;
+						}
+					}
+				}
+			}
+			
+			function editTrackEvent( popcornOptions ) {
+				trackEvent = popcornOptions;
+				
+				//todo: https://webmademovies.lighthouseapp.com/projects/65733/tickets/194-editor-dialogs-should-show-frame-accurate-times
+				
+				//todo: I'd also like to have the video duration so I can error-check against that as well.
+				
+				if (isNaN(trackEvent.start) || trackEvent.start < 0) {
+					trackEvent.start = 0;
+				}
+				elements.start.value = trackEvent.start;
+
+				if (isNaN(trackEvent.end) || trackEvent.end < trackEvent.start) {
+					trackEvent.start = trackEvent.start + 5;
+				}
+				elements.end.value = trackEvent.end;
+
+				if (isNaN(trackEvent.lat) || trackEvent.lat < -90 || trackEvent.lat > 90) {
+					delete trackEvent['lat'];
+					elements.lat.value = '';
+				} else {
+					elements.lat.value = trackEvent.lat;
+				}
+
+				if (isNaN(trackEvent.lng) || trackEvent.lng < -180 || trackEvent.lng > 180) {
+					delete trackEvent['lng'];
+					elements.lng.value = '';
+				} else {
+					elements.lng.value = trackEvent.lng;
 				}
 				
-				//todo: RR, send your message
-			}
+				elements.label.value = trackEvent.label || '';
 
+				elements.location.value = trackEvent.location || '';
+				
+				if (trackEvent.location && geocoder &&
+					(trackEvent.lat === undefined || trackEvent.lng === undefined) ) {
+
+					geocode(trackEvent.location);
+
+				} else if (map && trackEvent.lat !== undefined && !isNaN(trackEvent.lat) &&
+					trackEvent.lng !== undefined && !isNaN(trackEvent.lng) ) {
+
+					latLng = new gmaps.LatLng(trackEvent.lat, trackEvent.lng);
+
+					map.setCenter(latLng);
+					marker.setPosition(latLng);
+					marker.setTitle(trackEvent.label);
+					marker.setVisible(true);
+
+					if (trackEvent.zoom) {
+						map.setZoom(trackEvent.zoom);
+					}
+				}
+				
+				elements.target.value = trackEvent.target;
+
+			}
+			
 			function initialize() {
 				var i;
+				
+				//set up butter
+				if (window.Butter) {
+					butter = new Butter();
+					butter.comm();
+					client = new butter.CommClient('defaultEditor');
+	
+					client.listen('edittrackevent', function (message) {
+						console.log(JSON.stringify(message));
+						targetsUpdated(message.targets);
+						editTrackEvent(message.trackEvent.popcornOptions);
+					});
+	
+					client.listen( "domtargetsupdated", function( message ) {
+						console.log('domtargetsupdated');
+						console.log(JSON.stringify(message));
+						targetsUpdated(message);
+					});
+				}
 
 				if (window.parent) {
 					try {
@@ -374,99 +484,39 @@
 				elements['geocode-button'].addEventListener('click', checkLocation, false);
 				
 				elements.cancel.addEventListener('click', function() {
-					//todo: do it, RR
-				}, false);
-
-				elements.cancel.addEventListener('delete', function() {
-					//todo: do it, RR
-				}, false);
-
-				elements.cancel.addEventListener('apply', function() {
-					saveEverything();
-					//todo: do it, RR
-				}, false);
-
-				elements.cancel.addEventListener('ok', function() {
-					saveEverything();
-					//todo: do it, RR
-				}, false);
-			}
-			
-			function targetsUpdated( newTargets ) {
-				var i, select, option;
-
-				targets = newTargets || [];
-				
-				if (targets.length <= 1) {
-					elements['target-fieldset'].style.display = 'none';
-
-					if (targets.length) {
-						trackEvent.target = targets[0];
+					//tell butter we've cancelled
+					if (client) {
+						client.send( '', 'cancelclicked');
 					}
-				} else {
-					elements['target-fieldset'].style.display = '';
-					select = elements.target;
-					select.innerHTML = '';
-					
-					for (i = 0; i < targets.length; i++) {
-						option = document.createElement('option');
-						option.value = targets[i];
-						option.appendChild( document.createTextNode(targets[i]) );
-						select.appendChild(option);
+				}, false);
 
-						if (targets[i] === trackEvent.target) {
-							option.selectedIndex = i;
-						}
+				elements.delete.addEventListener('click', function() {
+					//tell butter to delete
+					if (client) {
+						client.send( '', 'deleteclicked');
 					}
-				}
-			}
-			
-			function editTrackEvent( popcornOptions ) {
-				trackEvent = popcornOptions;
-				
-				//todo: https://webmademovies.lighthouseapp.com/projects/65733/tickets/194-editor-dialogs-should-show-frame-accurate-times
-				
-				//todo: I'd also like to have the video duration so I can error-check against that as well.
-				
-				if (isNaN(trackEvent.start) || trackEvent.start < 0) {
-					trackEvent.start = 0;
-				}
-				elements.start.value = trackEvent.start;
+				}, false);
 
-				if (isNaN(trackEvent.end) || trackEvent.end < trackEvent.start) {
-					trackEvent.start = trackEvent.start + 5;
-				}
-				elements.end.value = trackEvent.end;
+				elements.apply.addEventListener('click', function() {
+					saveEverything();
+					//send back to Butter
+					if (client) {
+						client.send( trackEvent, "applyclicked" );
+					}
+				}, false);
 
-				if (isNaN(trackEvent.lat) || trackEvent.lat < -90 || trackEvent.lat > 90) {
-					delete trackEvent['lat'];
-					elements.lat.value = '';
-				} else {
-					elements.lat.value = trackEvent.lat;
-				}
-
-				if (isNaN(trackEvent.lng) || trackEvent.lng < -180 || trackEvent.lng > 180) {
-					delete trackEvent['lng'];
-					elements.lng.value = '';
-				} else {
-					elements.lng.value = trackEvent.lng;
-				}
+				elements.ok.addEventListener('click', function() {
+					saveEverything();
+					//send back to Butter and close
+					if (client) {
+						client.send( trackEvent, "okayclicked" );
+					}
+				}, false);
 				
-				elements.label.value = trackEvent.label;
-
-				elements.location.value = trackEvent.location;
-				
-				if (trackEvent.location && geocoder &&
-					(trackEvent.lat === undefined || trackEvent.lng === undefined) ) {
-					geocode(trackEvent.location);
-				}
-				
-				elements.target.value = trackEvent.target;
-
 			}
 			
 			initialize();
-			
+/*			
 			targetsUpdated([
 				'one',
 				'two'
@@ -481,6 +531,7 @@
 				label: 'Center Street Farm',
 				target: 'two'
 			});
+*/
 		}());
 		
 		</script>

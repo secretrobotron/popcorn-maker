@@ -393,6 +393,21 @@
               originalBody + "\n</body>\n</html>";
     };
 
+    this.play = function() {
+        ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ].media.play();
+    };
+
+    this.isPlaying = function() {
+       var video = ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ].video;
+
+        video.paused = !video.paused;
+        return video.paused;
+    };
+
+    this.pause = function() {
+        ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ].media.pause();
+    };
+
     this.getRegistry = function() {
       var ifrme = iframe.contentWindow || iframe.contentDocument;
       return ifrme.Popcorn.registry;
@@ -462,6 +477,14 @@
               that.currentTime( framePopcorn.media.currentTime );
               that.trigger( "mediatimeupdate", media );                
             },false);
+
+            framePopcorn.media.addEventListener( "pause", function() {
+              that.trigger("mediapaused");
+            }, false);
+
+            framePopcorn.media.addEventListener( "playing", function() {
+              that.trigger("mediaplaying");
+            }, false);
             callback && callback();
           } else {
             setTimeout( function() {

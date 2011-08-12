@@ -8,8 +8,7 @@
 		body {
 			margin: 0;
 			background-color: #aaa;
-		
-    }
+		}
 		
 		#map {
 			background-color: #aaa;
@@ -19,14 +18,6 @@
 			top: 0;
 			left: 0;
 			z-index: 0;
-		}
-		
-		/*
-		I'd hoped I'd never have to use one of these. Blech.
-		*/
-		#stupid-vertical-spacer {
-			height: 0;
-			visibility: hidden;
 		}
 		
 		#main-container {
@@ -158,11 +149,10 @@
 	</head>
 	<body>
 		<div style="height: 100%; width: 100%">
-			<div id="stupid-vertical-spacer">blah blah</div>
 			<div id="main-container">
-				<div id="map" style="visibility: hidden"></div>
+				<div id="map" style="visibility: hidden" data-butter="target"></div>
 				<div id="video-container" style="">
-					<video data-butter="media" id="video" preload>
+					<video id="video" data-butter="media" preload>
 						<source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
 						<source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm; codecs="vp8, vorbis"' />
 						
