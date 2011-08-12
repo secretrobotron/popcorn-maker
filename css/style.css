@@ -608,7 +608,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 /*-----Popup-----*/
 .popupDiv { height:100%; width:100%; overflow:hidden; position:absolute; z-index:9999999; display:none; top:0; left:0}
 .balck-overlay {background-color:#000; height:100%; width:100%; opacity:0.7; top:0; left:0}
-.popup-container { width:auto; height:auto; position:absolute; z-index:999; top:20%; left:50%; margin:-200px 0 0 -250px}
+.popup-container { width:auto; height:auto; position:absolute; z-index:999; top:50px; left:50%; margin:0 0 0 -250px}
 .popup-close-btn { position: absolute; z-index:99999; top:7px; right:7px; width:30px; height:24px; margin-right:1px;
 	background-image: -webkit-gradient(
 		linear,
@@ -717,7 +717,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
     rgb(255,255,255) 100%
   );
 }
-.popup-1 .popup-content, .popup-2 .popup-content, .popup-content { padding:20px}
+.popup-1 .popup-content, .popup-2 .popup-content, .popup-content { padding:20px;}
 .popup-1 .popup-header h3, .popup-2 .popup-header h3, .popup-header h3 { padding: 0 20px}
 .download-btn { position: absolute; right: 0; top: 12px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
 .save-project-data-btn { position: absolute; left: 0; top: 50px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}

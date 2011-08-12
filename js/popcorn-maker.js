@@ -6,7 +6,7 @@
     
     b.comm();
 
-    b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "100%", editorHeight: "101%"  } );
+    b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "101%", editorHeight: "101%"  } );
 
     b.previewer({
       layout: "external/layouts/city-slickers/index.html",
