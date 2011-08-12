@@ -606,9 +606,9 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .dd .noBorderTop{border-top:none 0  !important}
 
 /*-----Popup-----*/
-.popupDiv { height:100%; width:100%; overflow:hidden; position:absolute; z-index:9999999; display:none; top:0; left:0}
+.popupDiv { position:absolute; z-index:9999999; display:none; top:0; left:0; pointerEvents: none}
 .balck-overlay {background-color:#000; height:100%; width:100%; opacity:0.7; top:0; left:0}
-.popup-container { width:auto; height:auto; position:absolute; z-index:999; top:50px; left:50%; margin:0 0 0 -250px}
+.popup-container { width:auto; height:auto; position:absolute; z-index:999; top:50px;}
 .popup-close-btn { position: absolute; z-index:99999; top:7px; right:7px; width:30px; height:24px; margin-right:1px;
 	background-image: -webkit-gradient(
 		linear,
