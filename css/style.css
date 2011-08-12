@@ -442,6 +442,20 @@ ul.actions li.bubble_pointer { position:absolute; display:block; top:9px; width:
   top: 1px;
 }
 .track-event:hover{ opacity:1;}
+.butter-track-event {
+  background-color: #FFFF33;
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(255,255,51)),
+		color-stop(1, rgb(140,215,90))
+	);
+	background-image: -moz-linear-gradient(
+		center bottom,
+		rgb(255,255,0) 0%,
+		rgb(200,200,0) 100%
+	);}
 .track-event.text{ background-color: #abdff9; width: 20%; left:0;
 	background-image: -webkit-gradient(
 		linear,
@@ -520,6 +534,7 @@ ul.actions li.bubble_pointer { position:absolute; display:block; top:9px; width:
 		rgb(25,118,125) 0%,
 		rgb(67,200,212) 100%
 	);}
+	
 .track-event.facebook{background-color: #5692cf; width: 23%; left:60%;
 	background-image: -webkit-gradient(
 		linear,
