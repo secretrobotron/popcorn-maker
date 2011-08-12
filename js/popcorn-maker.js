@@ -27,6 +27,7 @@
     b.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
     
     b.timeline({ target: "timeline-div"});
+    b.trackeditor({ target: "popup-5"});
 
     b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
 
@@ -148,6 +149,8 @@
     });
 
     var trackLayers = {};
+    var editTrackTargets =  document.getElementById( "track-edit-target" );
+    var trackJSONtextArea = document.getElementById( "track-edit-JSON" );
 
     var createLayer = function( track ) {
 
@@ -175,6 +178,34 @@
         b.removeTrack( track );
       }, false );
 
+      trackJSONtextArea.addEventListener( "change", function() {
+
+        b.setTrackJSON( this.value );
+      }, false );
+
+      editButton.addEventListener( "click", function( click ) {
+
+        editTrackTargets.innerHTML = "<option value=\"\">Media Element (if applicable)</option>";
+
+        var targets = b.getTargets( true );
+
+        for ( var i = 0; i < targets.length; i++ ) {
+
+          editTrackTargets.innerHTML += "<option value=\"" + targets[ i ].name + "\">" + targets[ i ].name + "</option>";
+        }
+
+        b.openEditTrack( track );
+
+        trackJSONtextArea.value = b.getTrackJSON();
+
+        editTrackTargets.value = b.getEditTrack().target;
+
+        $('.close-div').fadeOut('fast');
+        $('.popupDiv').fadeIn('slow');
+        $('#popup-5').show();
+        $(' .balck-overlay ').hide();
+      }, false );
+
       ulist.appendChild( pointerBubble );
       ulist.appendChild( editButton );
       ulist.appendChild( deleteButton );
@@ -183,6 +214,46 @@
 
       return layerDiv;
     };
+
+    var closeTrackEditor = function() {
+
+      b.closeEditTrack();
+      $('.popupDiv').fadeOut( 'slow' );
+      $('#popup-5').hide();
+    };
+
+    var applyTrackEditor = function() {
+
+      b.setTrackTarget( editTrackTargets.value );
+    };
+
+    document.getElementById( "cancel-track-edit" ).addEventListener( "click", function( e ) {
+
+      closeTrackEditor();
+    }, false );
+
+    document.getElementById( "apply-track-edit" ).addEventListener( "click", function( e ) {
+
+      applyTrackEditor();
+    }, false );
+
+    document.getElementById( "ok-track-edit" ).addEventListener( "click", function( e ) {
+
+      applyTrackEditor();
+      closeTrackEditor();
+    }, false );
+
+    document.getElementById( "delete-track-edit" ).addEventListener( "click", function( e ) {
+
+      b.deleteTrack();
+      closeTrackEditor();
+    }, false );
+
+    document.getElementById( "clear-track-edit" ).addEventListener( "click", function( e ) {
+
+      trackJSONtextArea.value = "[]";
+      b.clearTrack();
+    }, false );
 
     b.listen( "trackadded", function( event ) {
 

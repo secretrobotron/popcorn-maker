@@ -222,7 +222,7 @@
     this.listen( "trackeventadded", function( event ) {
 
       var trackEvent = event.data;
-      var trackLinerTrackEvent = currentMediaInstance.lastTrack.createTrackEvent( "butterapp", trackEvent );
+      var trackLinerTrackEvent = currentMediaInstance.trackLinerTracks[ trackEvent.track.getId() ].createTrackEvent( "butterapp", trackEvent );
       currentMediaInstance.trackLinerTrackEvents[ trackEvent.getId() ] = trackLinerTrackEvent;
       currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ] = trackEvent;
     });
