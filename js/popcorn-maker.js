@@ -3,7 +3,7 @@
   window.addEventListener("DOMContentLoaded", function(){
     
     var b  = new Butter();
-    
+    document.getElementById( "main" ).style.height = window.innerHeight - document.getElementById( "properties-panel" ).style.height;
     b.comm();
 
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "101%", editorHeight: "101%"  } );
