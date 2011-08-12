@@ -174,9 +174,8 @@
 
     b.listen( "trackmoved", function( event ) {
 
-      layersDiv.insertBefore( trackLayers[ "layer-" + event.data.getId() ], layersDiv.children[ event.data.newPos ] ); //children[ event.data.newPos ] 
-      //layersDiv.removeChild( trackLayers[ "layer-" + event.data.getId() ] );
-      //console.log( layersDiv.children.splice );
+      layersDiv.removeChild( trackLayers[ "layer-" + event.data.getId() ] );
+      layersDiv.insertBefore( trackLayers[ "layer-" + event.data.getId() ], layersDiv.children[ event.data.newPos ] );
     });
 
     function create_msDropDown() {
