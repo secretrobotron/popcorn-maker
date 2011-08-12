@@ -18,7 +18,6 @@
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
           var registry = b.getRegistry();
-console.log(registry);
           for( var i = 0, l = registry.length; i < l; i++ ) {
             b.addPlugin( { type: registry[ i ].type } );
           }
