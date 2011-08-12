@@ -1,23 +1,30 @@
 .trackliner-track {
-  background-image: -moz-linear-gradient(top,  #eee,  #999);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#999));
-  height: 36px;
+  box-shadow: 0 1px 0 #737373, 0 1px 0 #131313 inset;
+  border-bottom-right-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  border-top-left-radius: 6px;
+  background-attachment: scroll;
+  background-clip: border-box;
+  background-color: transparent;
+  background-image: url("../images/texture_1.png");
+  background-origin: padding-box;
+  background-position: 0 0;
+  background-repeat: repeat;
+  background-size: auto auto;
+  height: 27px;
+  margin-bottom: 6px;
   position: relative;
 }
 
 .trackliner-event {
-  background-image: -moz-linear-gradient(top,  #ff0,  #660);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#ff0), to(#660));
-  opacity: 0.5;
-  height: 100%;
-  position: absolute;
-  cursor: move;
-  width: 100px;
-  top: 0px;
 }
 
 .trackliner-event-selected {
   background-image: -moz-linear-gradient(top,  #0f0,  #060);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#0f0), to(#060));
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
 }
 

@@ -151,7 +151,7 @@
               width = ( end - start ) / currentMediaInstance.duration * track.getElement().offsetWidth,
               left = start / currentMediaInstance.duration * track.getElement().offsetWidth;
 
-          return { left: left, innerHTML: trackEventObj.type, width: width };
+          return { left: left, innerHTML: trackEventObj.type, classes: [ "track-event", "butter-track-event", trackEventObj.type ], width: width };
         }
       },
       // called when an existing track is moved
