@@ -139,7 +139,8 @@
           } // else
 
           // ensure we get every child, search recursively
-          if ( children[ i ].children.length > 0 ) {
+          var child = children[ i ].children;
+          if ( child && child.length > 0 ) {
 
             bodyReady( children[ i ].children );
           } // if
@@ -153,16 +154,16 @@
     this.buildPopcorn = function( media, callback ) {
       var that = this;
       // default to first butter-media tagged object if none is specified
+      if ( !media ) {
+        return;  
+      }
+      
       videoURL = media.getUrl();
 
       var bpIframe = ( iframe.contentWindow || iframe.contentDocument ).document;
       
       // default to first butter-media tagged object if none is specified
       videoTarget = media.getTarget();
-      
-      if ( !videoURL ) {
-        return;
-      }
 
       bpIframe.getElementById( videoTarget ).innerHTML = "";
 

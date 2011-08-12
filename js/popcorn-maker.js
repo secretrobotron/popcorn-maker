@@ -12,7 +12,7 @@
       layout: "layouts/default.html",
       target: "main",
       popcornURL: "",
-      media: "http://www.youtube.com/watch?v=xyd4oM3fMO4",
+      media: "http://www.youtube.com/watch?v=iUKpVz8hRcs",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
@@ -20,6 +20,7 @@
           for( var i = 0, l = registry.length; i < l; i++ ) {
             b.addPlugin( { type: registry[ i ].type } );
           }
+          $('.tiny-scroll').tinyscrollbar();
         } );
       }
     });
@@ -30,13 +31,12 @@
 
     b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
 
-    //$('.enable-scroll').tinyscrollbar();
+    
     
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
 
     b.listen( "clientdimsupdated", function( e ) {
-      console.log("yo");
       $('#popup-4')
       .css( "height", e.data.height + "px" )
       .css("width", e.data.width + "px" );
