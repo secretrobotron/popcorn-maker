@@ -146,7 +146,7 @@
         } // for
       } // bodyReady
 
-    }, // scraper
+    }; // scraper
 
     // buildPopcorn function, builds an instance of popcorn in the iframe and also
     // a local version of popcorn
@@ -264,7 +264,81 @@
       popcornString += "}; startPopcorn();";  
 
       this.fillIframe( media, callback );
-    },
+    };
+
+    //  Toggle a ui cue for one of the targets in the layout
+    this.toggleUiCue = function( target, className ) {
+       var doc, target, tempDiv;
+     
+      doc = ( iframe.contentWindow || iframe.contentDocument ).document;
+      target = doc.getElementById( target );
+      
+      if ( !doc.getElementById( "tempUi-" + target.id ) ) {
+        tempDiv = doc.createElement( "div" );
+        tempDiv.id = "tempUi-" + target.id;
+        target.parentNode.appendChild( tempDiv );
+      } else {
+        tempDiv = doc.getElementById( "tempUi-" + target.id );
+      }
+
+      tempDiv.innerHTML = className ? target.id : "";
+
+      tempDiv.className = className;
+
+      tempDiv.style.top = target.offsetTop + "px";
+      tempDiv.style.left = target.offsetLeft + "px";
+      tempDiv.style.position = "absolute";
+      tempDiv.style.pointerEvents = "none";
+      tempDiv.style.zIndex = target.style.zIndex + 1;
+      
+    };
+
+    this.uiHighlighting = function( target, className ) {
+      var doc, target, tempDiv;
+
+      doc = ( iframe.contentWindow || iframe.contentDocument ).document;
+      target = doc.getElementById( target );
+      
+      if ( !doc.getElementById( "temp-" + target.id ) ) {
+        tempDiv = doc.createElement( "div" );
+        tempDiv.id = "temp-" + target.id;
+        target.parentNode.appendChild( tempDiv );
+      } else {
+        tempDiv = doc.getElementById( "temp-" + target.id );
+      }
+
+      tempDiv.className = className;
+      tempDiv.style.display = "none";
+
+      function mousing( event ) {
+
+        tempDiv.style.width = target.offsetWidth;
+        tempDiv.style.height = target.offsetHeight;
+        tempDiv.style.top = target.offsetTop + "px";
+        tempDiv.style.left = target.offsetLeft + "px";
+        tempDiv.style.position = "absolute";
+        tempDiv.style.pointerEvents = "none";
+        tempDiv.style.zIndex = target.style.zIndex + 1;
+        tempDiv.style.display = "block";
+
+      }
+
+      target.addEventListener( "mouseover", mousing, false );
+
+      tempDiv.addEventListener( "mouseout", function( event ) {
+
+        tempDiv.style.display = "none";
+        target.addEventListener( "mousover", mousing, false );
+
+      }, false );
+
+      target.addEventListener( "mouseout", function( event ) {
+
+        tempDiv.style.display = "none";
+        target.addEventListener( "mousover", mousing, false );
+
+      }, false );
+    };
 
     this.getPopcorn = function( callback ) {
       var popcornz = "";
@@ -307,7 +381,7 @@
 
       return popcornz;
 
-    },
+    };
 
     this.getHTML = function() {
       var doc = ( iframe.contentWindow || iframe.contentDocument ).document,
@@ -316,12 +390,27 @@
               "<script>" + pcornString + "\n</script>\n" + 
               "<script src='" + popcornURL + "'></script>\n</head>\n<body>\n" +
               originalBody + "\n</body>\n</html>";
-    },
+    };
+
+    this.play = function() {
+        ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ].media.play();
+    };
+
+    this.isPlaying = function() {
+       var video = ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ].video;
+
+        video.paused = !video.paused;
+        return video.paused;
+    };
+
+    this.pause = function() {
+        ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ].media.pause();
+    };
 
     this.getRegistry = function() {
       var ifrme = iframe.contentWindow || iframe.contentDocument;
       return ifrme.Popcorn.registry;
-    },
+    };
   
     // fillIframe function used to populate the iframe with changes made by the user,
     // which is mostly managing track events added by the user
@@ -338,17 +427,13 @@
         doc.head.appendChild( popcornSourceScript );
       }
 
-      if ( popcornScript ) {
-        doc.head.removeChild( popcornScript );
-      }
-
       while ( win.Popcorn && win.Popcorn.instances.length > 0 ) {
         win.Popcorn.removeInstance( win.Popcorn.instances[0] );
       }
 
-      popcornScript = doc.createElement( "script" );
-      popcornScript.innerHTML = popcornString;
-      doc.head.appendChild( popcornScript );
+      if ( popcornScript ) {
+        doc.head.removeChild( popcornScript );
+      }
 
       // create a new body element with our new data
       body = doc.body.innerHTML;
@@ -360,13 +445,21 @@
 
       var instancesBefore = win.Popcorn ? win.Popcorn.instances.length : 0;
       var popcornReady = function( e, callback2 ) {
-
-        if ( win.Popcorn.instances.length > instancesBefore ) {
+        
+        if ( !win.Popcorn ) {
           setTimeout( function() {
             popcornReady( e, callback2 );
           }, 10 );
         } else {
-          callback2 && callback2( win.Popcorn.instances[ win.Popcorn.instances.length - 1 ] );
+
+          if ( !win.Popcorn.instances[ 0 ] ) {
+            popcornScript = doc.createElement( "script" );
+            popcornScript.innerHTML = popcornString;
+            doc.head.appendChild( popcornScript );
+          }
+  
+          framePopcorn = win.Popcorn.instances[ 0 ];
+          callback2 && callback2( win.Popcorn.instances[ 0 ] );
         } // else  
       }
 
@@ -383,6 +476,14 @@
               that.currentTime( framePopcorn.media.currentTime );
               that.trigger( "mediatimeupdate", media );                
             },false);
+
+            framePopcorn.media.addEventListener( "pause", function() {
+              that.trigger("mediapaused");
+            }, false);
+
+            framePopcorn.media.addEventListener( "playing", function() {
+              that.trigger("mediaplaying");
+            }, false);
             callback && callback();
           } else {
             setTimeout( function() {
@@ -424,7 +525,9 @@
       this.listen( "trackeventadded", function ( e ) {
         e = e.data;
 
-        popcornReady( e, function( framePopcorn ) {
+          if ( !win.Popcorn ) {
+            throw new Error("Popcorn Not Available");
+          }
 
           if( !popcorns[ media.getId() ] ) {
             popcorns[ media.getId() ] = framePopcorn;
@@ -433,13 +536,11 @@
           }
 
           // add track events to the iframe verison of popcorn
-          framePopcorn[ e.type ]( ( iframe.contentWindow || iframe.contentDocument ).Popcorn.extend( {},
-            e.popcornOptions ) );
+          framePopcorn[ e.type ]( ( iframe.contentWindow || iframe.contentDocument ).Popcorn.extend( {}, e.popcornOptions ) );
           
           butterIds[ e.getId() ] = framePopcorn.getLastTrackEventId();
 
           e.manifest = framePopcorn.getTrackEvent( butterIds[ e.getId() ] )._natives.manifest;
-        } );
       }); // listener
 
       this.listen( "trackeventremoved", function( e ) {

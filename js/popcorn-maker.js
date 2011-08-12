@@ -9,24 +9,22 @@
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "100%", editorHeight: "101%"  } );
 
     b.previewer({
-      layout: "external/layouts/city-slickers/index.html",
+      layout: "layouts/default.html",
       target: "main",
+      popcornURL: "",
+      media: "http://www.youtube.com/watch?v=xyd4oM3fMO4",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
           var registry = b.getRegistry();
+          for( var i = 0, l = registry.length; i < l; i++ ) {
+            b.addPlugin( { type: registry[ i ].type } );
+          }
         } );
       }
     });
     
     b.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
-    b.addPlugin( { type: "slickers" } );
-    b.addPlugin( { type: "image" } );
-    b.addPlugin( { type: "footnote" } );
-    b.addPlugin( { type: "twitter" } );
-    b.addPlugin( { type: "webpage" } );
-    b.addPlugin( { type: "subtitle" } );
-    b.addPlugin( { type: "googlenews" } );
     
     b.timeline({ target: "timeline-div"});
 
@@ -266,6 +264,18 @@
       }
     
     });
+
+    document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
+      b.isPlaying() ? b.play() : b.pause();
+    }, false);
+
+    b.listen( "mediaplaying", function( event ) {
+      document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "0pt -25px";
+    } );
+
+    b.listen( "mediapaused", function( event ) {
+      document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "0pt 0px";
+    } );
 
     $( ".edit-selected-project" ).click( function() {
       var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
