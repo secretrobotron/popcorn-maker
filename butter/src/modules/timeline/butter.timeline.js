@@ -110,6 +110,11 @@
 
     TrackLiner.plugin( "butterapp", {
       // called when a new track is created
+      trackMoved: function( track, index ) {
+
+        currentMediaInstance.butterTracks[ track.id() ].newPos = index;
+        b.trigger( "trackmoved", currentMediaInstance.butterTracks[ track.id() ] );
+      },
       setup: function( track, trackEventObj, event, ui ) {
 
         // setup for data-trackliner-type
@@ -160,7 +165,11 @@
           b.addTrack( new Butter.Track() );
           trackLinerTrack = currentMediaInstance.lastTrack;
           trackLinerTrack.addTrackEvent( trackEventObj );
-        }
+        }// else {
+          //trackEventObj.options.track.removeTrackEvent( trackEventObj.options );
+          //currentMediaInstance.butterTracks[ track.id() ].addTrackEvent( trackEventObj.options );
+        //}
+
         currentMediaInstance.lastTrack = trackLinerTrack;
 
         b.trigger( "trackeventupdated", trackEventObj.options );
@@ -177,7 +186,7 @@
     this.listen( "trackadded", function( event ) {
 
       var track = event.data;
-      var trackLinerTrack = currentMediaInstance.trackLine.createTrack();
+      var trackLinerTrack = currentMediaInstance.trackLine.createTrack( undefined, "butterapp");
       currentMediaInstance.trackLinerTracks[ track.getId() ] = trackLinerTrack;
       currentMediaInstance.lastTrack = trackLinerTrack;
       currentMediaInstance.butterTracks[ trackLinerTrack.id() ] = track;
@@ -252,11 +261,9 @@
       var trackEvent = event.data;
       var trackLinerTrackEvent = currentMediaInstance.trackLinerTrackEvents[ trackEvent.getId() ];
           trackLinerTrack = currentMediaInstance.trackLine.getTrack( trackLinerTrackEvent.trackId );
-      delete currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ];
-      trackLinerTrack.removeTrackEvent( trackLinerTrackEvent.element.id );
-      trackLinerTrackEvent = trackLinerTrack.createTrackEvent( "butterapp", trackEvent );
-      currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ] = trackEvent;
-      currentMediaInstance.trackLinerTrackEvents[ trackEvent.getId() ] = trackLinerTrackEvent;
+
+      trackEvent.track.removeTrackEvent( trackEvent );
+      currentMediaInstance.butterTracks[ currentMediaInstance.lastTrack.id() ].addTrackEvent( trackEvent );
     });
 
     this.currentTimeInPixels = function( pixel ) {
