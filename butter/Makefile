@@ -28,7 +28,8 @@ JS_SRCS := \
   $(MODULES_DIR)/plugintray/butter.plugintray.js \
   $(MODULES_DIR)/eventeditor/butter.eventeditor.js \
   $(MODULES_DIR)/previewer/butter.previewer.js \
-  $(MODULES_DIR)/timeline/butter.timeline.js
+  $(MODULES_DIR)/timeline/butter.timeline.js \
+  $(MODULES_DIR)/trackeditor/butter.trackeditor.js
 
 CSS_SRCS := \
   $(EXTERNAL_DIR)/jquery-ui/jquery-ui-1.8.5.custom.css \
