@@ -255,6 +255,7 @@
 
     document.getElementById( "clear-track-edit" ).addEventListener( "click", function( e ) {
 
+      trackJSONtextArea.value = "";
       b.clearTrack();
     }, false );
 
