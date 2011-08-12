@@ -156,7 +156,32 @@
       var layerDiv = document.createElement( "div" );
       layerDiv.id = "layer-" + track.getId();
       layerDiv.innerHTML = layerDiv.id;
-      layerDiv.setAttribute("class", "layer-div");
+      layerDiv.setAttribute("class", "layer-btn");
+      layerDiv.style.position = "relative";
+
+      var ulist = document.createElement( "ul" );
+      ulist.className = "actions";
+
+      var pointerBubble = document.createElement( "li" );
+      pointerBubble.className = "bubble_pointer";
+
+      var editButton = document.createElement( "li" );
+      editButton.className = "edit";
+      editButton.innerHTML = "<a href=\"#\">edit</a>";
+
+      var deleteButton = document.createElement( "li" );
+      deleteButton.className = "delete";
+      deleteButton.innerHTML = "<a href=\"#\">delete</a>";
+      deleteButton.addEventListener( "click", function( click ) {
+
+        b.removeTrack( track );
+      }, false );
+
+      ulist.appendChild( pointerBubble );
+      ulist.appendChild( editButton );
+      ulist.appendChild( deleteButton );
+
+      layerDiv.appendChild( ulist );
 
       return layerDiv;
     };

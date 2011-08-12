@@ -49,12 +49,7 @@
         var type = ui.item[ 0 ].getAttribute('data-trackliner-type');
 
         plugins[ type ].trackMoved( self.getTrack( ui.item[ 0 ].id ), ui.item.index() );
-      } } ).droppable( { greedy: true, drop: function( event, ui ) {
-
-        //var type = ui.draggable[ 0 ].getAttribute('data-trackliner-type');
-
-        //plugins[ type ].trackMoved( self.getTrack( ui.draggable[ 0 ].id ) );
-      } } );
+      } } ).droppable( { greedy: true } );
 
       $( parent ).droppable({
         // this is dropping an event on empty space
