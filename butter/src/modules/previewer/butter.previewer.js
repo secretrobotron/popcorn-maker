@@ -553,8 +553,8 @@
         that.buildPopcorn( e.data );
       } );
 
-      this.listen( "mediatimeupdate", function( event ) {
-        iframe.contentWindow[ "popcorn" + media.getId() ].currentTime( event.data.currentTime() );
+      this.listen( "mediatimeupdate", function( e ) {
+        iframe.contentWindow[ "popcorn" + media.getId() ].currentTime( e.data.currentTime() );
       }, "timeline" );
       
       this.listen( "mediacontentchanged", function( e ) {

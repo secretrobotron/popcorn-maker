@@ -202,10 +202,11 @@
 
         editTrackTargets.value = b.getEditTrack().target;
 
-        $('.close-div').fadeOut('fast');
+        //$('.close-div').fadeOut('fast');
         $('.popupDiv').fadeIn('slow');
         $('#popup-5').show();
         $(' .balck-overlay ').hide();
+        centerPopup( $('#popup-5') );
       }, false );
 
       ulist.appendChild( pointerBubble );
@@ -222,6 +223,7 @@
       b.closeEditTrack();
       $('.popupDiv').fadeOut( 'slow' );
       $('#popup-5').hide();
+      $(' .balck-overlay ').show();
     };
 
     var applyTrackEditor = function() {
@@ -479,9 +481,9 @@
 
     //$(function(){ $("label").inFieldLabels(); });
 
-//    $(function() {
-//      $( ".draggable" ).draggable();
-//    });
+    $(function() {
+      $( ".draggable" ).draggable();
+    });
 
     var d = {
       links: {
