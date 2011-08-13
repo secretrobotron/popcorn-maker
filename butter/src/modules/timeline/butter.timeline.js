@@ -7,6 +7,17 @@
         target = document.getElementById( options.target ) || options.target,
         b = this;
 
+    this.findAbsolutePosition = function (obj) {
+	    var curleft = curtop = 0;
+	    if (obj.offsetParent) {
+		    do {
+			    curleft += obj.offsetLeft;
+			    curtop += obj.offsetTop;
+		    } while (obj = obj.offsetParent);
+	    }
+	    return [curleft,curtop];
+    //returns an array
+    };
     // Convert an SMPTE timestamp to seconds
     this.smpteToSeconds = function( smpte ) {
       var t = smpte.split(":");
@@ -223,9 +234,9 @@
     });
 
     var addTrackEvent = function( trackEvent ) {
-      var trackLinerTrackEvent = currentMediaInstance.lastTrack.createTrackEvent( "butterapp", trackEvent );
+      var trackLinerTrackEvent = currentMediaInstance.trackLinerTracks[ trackEvent.track.getId() ].createTrackEvent( "butterapp", trackEvent );
       currentMediaInstance.trackLinerTrackEvents[ trackEvent.getId() ] = trackLinerTrackEvent;
-      currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ] = trackEvent;
+      currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ]
     };
 
     this.listen( "trackeventadded", function( event ) {
@@ -317,6 +328,7 @@
       if ( pixel != null) {
 
         b.currentTime( pixel / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
+        b.trigger( "mediatimeupdate", currentMediaInstance.media, "timeline" );
       } //if
       return b.currentTime() / currentMediaInstance.duration * ( currentMediaInstance.container.offsetWidth );
     };
