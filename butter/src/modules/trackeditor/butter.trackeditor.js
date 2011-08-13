@@ -70,13 +70,13 @@
           returnArray.push( JSON.stringify( { type: trackEvents[ i ].type, options: trackEvents[ i ].popcornOptions } ) );
         }
 
-        return "[" + returnArray + "]";
+        return returnArray;
       };
       // clears the track of all events
       // parses data into events
       this.setTrackJSON = function( data ) {
 
-        newArray = JSON.parse( data );
+        newArray = JSON.parse( "[" + data + "]" );
         b.clearTrack();
 
         for ( var i = 0, l = newArray.length; i < l; i++ ) {

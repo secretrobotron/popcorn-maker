@@ -6,21 +6,30 @@
       (function(){
         var client,
           butter,
-          targets = {};
-          document.addEventListener('DOMContentLoaded', function (e) {
+          targets = {},
+          elements = {},
+          eventId;
+        document.addEventListener('DOMContentLoaded', function (e) {
 
           butter = new Butter();
           butter.comm();
-
+          
           client = new butter.CommClient( "defaultEditor" );
 
           client.listen( "edittrackevent", function( message ) {
             targets = message.targets;
+            eventId = message.id;
             constructDefaultEditor ( message.trackEvent );
+            client.send( { "height": window.innerHeight + 45, "width": window.innerWidth }, "clientdimsupdated" );
           });
           
           client.listen( "domtargetsupdated", function( message ) {
             targets = message;
+          });
+          
+          client.listen( "trackeventupdated", function( message ) {
+            console.log("message recieved in editor - ", message );
+            ( eventId === message.id ) && updateFields( message.options );
           });
 
           var closeBtn = document.getElementById("popup-close-btn");
@@ -43,7 +52,6 @@
           attr,
           surroundingDiv = document.createElement("div"),
           btn,
-          elements = {},
           p,
           popupButtons,
           popupContent;
@@ -112,7 +120,7 @@
         
         optionElement = document.createElement( "option" );
         optionElement.value = null;
-        optionElement.text = "Default Target";
+        optionElement.text = "Media Element (if applicable)";
         target.appendChild( optionElement );
         
         for ( var i = 0, l = DOMTargets.length; i < l; i++ ) {
@@ -180,6 +188,35 @@
 
         document.height = popupContent.scrollHeight + document.getElementById( "popup-header" ).scrollHeight;
         
+      },
+      
+      updateFields = function ( options ) {
+        
+        var elem,
+        
+        updateHTML = {
+          "input": function( input ) {
+            input.value = options[ elem ];
+          },
+          
+          "select": function( select ) {
+            for (var i = 0, l = select.options.length, targ = options[elem]; i < l; i ++ ) {
+              if ( targ === select.options[ i ].value ) {
+                select.options.selectedIndex = i;
+                i = l;
+              }
+            }
+          }
+        };
+        
+        for ( elem in options ) {
+          if ( options.hasOwnProperty( elem ) ) {
+            var field = elements[ elem ]
+            
+            updateHTML[ field.nodeName.toLowerCase() ]( field );
+          }
+        }
+      
       },
 
       compileOptions = function( elements ) {

@@ -127,7 +127,7 @@
 
         this.bindFrame = function ( name, frame, readyCallback, messageCallback ) {
           frame.addEventListener( "load", function (e) {
-            butter.trigger( "clientdimsupdated", { "height": frame.contentDocument.height + 40, "width": frame.contentDocument.width }, "comm");
+            //butter.trigger( "clientdimsupdated", { "height": frame.contentDocument.height + 40, "width": frame.contentDocument.width }, "comm");
             that.bindClientWindow( name, frame.contentWindow, messageCallback );
             readyCallback && readyCallback( e );
           }, false );
@@ -135,7 +135,7 @@
 
         this.bindWindow = function ( name, win, readyCallback, messageCallback ) {
           win.addEventListener( "load", function (e) {
-            butter.trigger( "clientdimsupdated", { "height": win.innerHeight + 40, "width": win.innerWidth }, "comm");
+            //butter.trigger( "clientdimsupdated", { "height": win.innerHeight + 40, "width": win.innerWidth }, "comm");
             that.bindClientWindow( name, win, messageCallback );
             readyCallback && readyCallback( e );
           }, false );

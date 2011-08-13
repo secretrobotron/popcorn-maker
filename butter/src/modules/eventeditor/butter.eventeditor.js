@@ -40,8 +40,9 @@ THE SOFTWARE.
       var editorWindow,
         butter = this,
         editorSrc =  customEditors[ trackEvent.type ] || trackEvent.manifest.customEditor || defaultEditor,
-        updateEditor = function( trackEvent ){
-          commServer.send( "editorCommLink", trackEvent.data.popcornOptions, "updatetrackevent" );
+        updateEditor = function( e ){
+          console.log( "event editor callback", e );
+          commServer.send( "editorCommLink", { "id": e.data.getId(), "options": e.data.popcornOptions }, "trackeventupdated" );
         };
 
       editorTarget && clearTarget();
@@ -101,13 +102,16 @@ THE SOFTWARE.
             butter.unlisten ( "trackeventupdated", updateEditor );
             butter.trigger( "trackeditclosed" );
           });
+          commServer.listen( "editorCommLink", "clientdimsupdated", function( dims ) {
+            butter.trigger( "clientdimsupdated", dims, "eventeditor" );
+          });
 
           var targetCollection = butter.getTargets(), targetArray = [];
           for ( var i=0, l=targetCollection.length; i<l; ++i ) {
             targetArray.push( [ targetCollection[ i ].getName(), targetCollection[ i ].getId() ] );
           }
           
-          commServer.send( "editorCommLink", { trackEvent: trackEvent, targets: targetArray }, "edittrackevent");
+          commServer.send( "editorCommLink", { "trackEvent": trackEvent, "targets": targetArray, "id": trackEvent.getId() }, "edittrackevent");
         });
       }
 

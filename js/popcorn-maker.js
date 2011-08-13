@@ -3,7 +3,7 @@
   window.addEventListener("DOMContentLoaded", function(){
     
     var b  = new Butter();
-    document.getElementById( "main" ).style.height = window.innerHeight - document.getElementById( "properties-panel" ).style.height;
+    document.getElementById( "main" ).style.height = window.innerHeight - document.getElementsByTagName( "HEADER" )[ 0 ].clientHeight - 5 + "px";
     b.comm();
 
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "101%", editorHeight: "101%"  } );
@@ -11,7 +11,6 @@
     b.previewer({
       layout: "layouts/default.html",
       target: "main",
-      popcornURL: "",
       media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
@@ -32,8 +31,6 @@
 
     b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
 
-    
-    
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
     
@@ -46,14 +43,13 @@
       .css( "height", e.data.height + "px" )
       .css("width", e.data.width + "px" );
       centerPopup( $('#popup-4') );
-    }, "comm" );
+    });
     
     b.listen ( "trackeditstarted", function() {
       
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-4').show();
-      
       $(' .balck-overlay ').hide();
     });
     
@@ -206,10 +202,11 @@
 
         editTrackTargets.value = b.getEditTrack().target;
 
-        $('.close-div').fadeOut('fast');
+        //$('.close-div').fadeOut('fast');
         $('.popupDiv').fadeIn('slow');
         $('#popup-5').show();
         $(' .balck-overlay ').hide();
+        centerPopup( $('#popup-5') );
       }, false );
 
       ulist.appendChild( pointerBubble );
@@ -226,6 +223,7 @@
       b.closeEditTrack();
       $('.popupDiv').fadeOut( 'slow' );
       $('#popup-5').hide();
+      $(' .balck-overlay ').show();
     };
 
     var applyTrackEditor = function() {
@@ -257,7 +255,7 @@
 
     document.getElementById( "clear-track-edit" ).addEventListener( "click", function( e ) {
 
-      trackJSONtextArea.value = "[]";
+      trackJSONtextArea.value = "";
       b.clearTrack();
     }, false );
 
@@ -279,11 +277,6 @@
     });
 
     function centerPopup( popup ) {
-      console.log( "( window.innerWidth / 2 ) === ",  ( window.innerWidth / 2 ) );
-      console.log( "( popup.innerWidth / 2 ) === ", ( popup[0].clientWidth / 2 ) );
-      console.log( "popup", popup );
-      console.log( "left: ", ( window.innerWidth / 2 ) - ( popup[0].clientWidth / 2 ) );
-      
       popup.css( "margin-left", ( window.innerWidth / 2 ) - ( popup[0].clientWidth / 2 ) );
     }
 
@@ -426,7 +419,7 @@
       $(".sound-btn a span").css('backgroundPosition','0 0');
     });
 
-    $('.timeline-heading .edit a').click(function(){
+    $('.timeline-title.media-title-div').click(function(){
       $('#url').val( b.getCurrentMedia().getUrl() );
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
@@ -488,9 +481,9 @@
 
     //$(function(){ $("label").inFieldLabels(); });
 
-//    $(function() {
-//      $( ".draggable" ).draggable();
-//    });
+    $(function() {
+      $( ".draggable" ).draggable();
+    });
 
     var d = {
       links: {
