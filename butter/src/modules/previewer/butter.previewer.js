@@ -153,6 +153,7 @@
     // a local version of popcorn
     this.buildPopcorn = function( media, callback ) {
       var that = this;
+console.log(media.getUrl());
       // default to first butter-media tagged object if none is specified
       if ( !media ) {
         return;  
@@ -388,7 +389,7 @@
       var doc = ( iframe.contentWindow || iframe.contentDocument ).document,
           pcornString = this.getPopcorn();
       return "<html>\n<head>\n" + originalHead.innerHTML + "\n" + 
-              "<script>" + pcornString + "\n</script>\n" + 
+              "<script> document.addEventListener( 'DOMContentLoaded', function(){\n" + pcornString + "\n}, false); </script>\n" + 
               "<script src='" + popcornURL + "'></script>\n</head>\n<body>\n" +
               originalBody + "\n</body>\n</html>";
     };
@@ -410,7 +411,6 @@
     
     this.mute = function() {
       var video = ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ].media;
-      console.log( (iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ]);
       video.muted = !video.muted;
     };
 
@@ -427,8 +427,7 @@
       for( var i = 0, l = allPopcorn.length; i < l; i ++ ) {
        popcorn.removeInstance( allPopcorn[ i ] ); 
       }
-      console.log(allPopcorn, ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances); 
-      console.log(popcorns, videoString );
+
       videoString = {};
     };
   
@@ -465,7 +464,7 @@
 
       var instancesBefore = win.Popcorn ? win.Popcorn.instances.length : 0;
       var popcornReady = function( e, callback2 ) {
-        
+console.log("HERE");        
         if ( !win.Popcorn ) {
           setTimeout( function() {
             popcornReady( e, callback2 );
@@ -486,7 +485,7 @@
       popcornReady( null, function( framePopcorn ) {
   
         var videoReady = function() {
-
+            console.log(framePopcorn.media.readyState, framePopcorn.media.duration );
           if( framePopcorn.media.readyState >= 2 || framePopcorn.media.duration > 0 ) {
             that.duration( framePopcorn.media.duration );
             
@@ -555,6 +554,7 @@
             framePopcorn = popcorns[ media.getId() ]; 
           }
 
+          console.log(that.getPopcorn());
           // add track events to the iframe verison of popcorn
           framePopcorn[ e.type ]( ( iframe.contentWindow || iframe.contentDocument ).Popcorn.extend( {}, e.popcornOptions ) );
           
@@ -569,7 +569,9 @@
       } );
 
       this.listen( "mediachanged", function( e ) {
-        that.buildPopcorn( e.data );
+        console.log(e.data.getId());
+        that.buildPopcorn( e.data, function(){ alert("ASDASDASD"); console.log(that.getPopcorn()); } );
+        
       } );
 
       this.listen( "mediatimeupdate", function( e ) {
@@ -578,7 +580,7 @@
       
       this.listen( "mediacontentchanged", function( e ) {
         console.log(e.data.getId());
-        that.buildPopcorn( e.data );
+        that.buildPopcorn( e.data, function(){ console.log(that.getPopcorn()); }  );
 
       } );
 
