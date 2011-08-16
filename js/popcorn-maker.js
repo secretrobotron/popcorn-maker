@@ -12,6 +12,7 @@
       layout: "layouts/default.html",
       target: "main",
       media: "http://scotland.proximity.on.ca/cadecairos/processingDemo/pjsvid.ogv",
+
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
