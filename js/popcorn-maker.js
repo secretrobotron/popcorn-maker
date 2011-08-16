@@ -11,7 +11,7 @@
     b.previewer({
       layout: "layouts/default.html",
       target: "main",
-      media: "http://www.youtube.com/watch?v=97o6zB9m1T4",
+      media: "http://scotland.proximity.on.ca/cadecairos/processingDemo/pjsvid.ogv",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
@@ -317,18 +317,17 @@
       try {
         var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
         projectToSave = b.exportProject(),
+        title = projectToSave.project.title,
         overwrite = false,
-        projectsDrpDwn = $( ".projects-dd" ) ;
+        projectsDrpDwn = $( ".projects-dd" );
         
-        localProjects = localProjects ? JSON.parse( localProjects ) : [];
+        localProjects = localProjects ? JSON.parse( localProjects ) : {};
         
-        for ( var i = 0, l = localProjects.length; i < l; i++ ) {
-          if ( localProjects[ i ].project.title === projectToSave.project.title ) {
-            localProjects[ i ] = projectToSave;
-            overwrite = true;
-          }
-        }
-        !overwrite && localProjects.push( projectToSave ) && 
+        overwrite = localProjects[ title ] ? true : false;
+        
+        localProjects[ title ] = projectToSave;
+
+        !overwrite &&
         $( "<option/>", {
           "value": projectToSave.project.title,
           "html": projectToSave.project.title
@@ -359,26 +358,24 @@
       document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "0pt 0px";
     } );
 
-    $( ".edit-selected-project" ).click( function() {
-      var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
-      projectsDrpDwn = $( ".projects-dd" );
+//    $( ".edit-selected-project" ).click( function() {
+//      var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
+//      projectsDrpDwn = $( ".projects-dd" );
 
-      if ( projectsDrpDwn[0].selectedIndex > -1 ) {
+//      if ( projectsDrpDwn[0].selectedIndex > -1 ) {
 
-        localProjects = localProjects ? JSON.parse( localProjects ) : [];
-        
-        for ( var i = 0, l = localProjects.length; i < l; i++ ) {
-          if ( localProjects[ i ].project.title === projectsDrpDwn[0].value ) {
-            b.clearProject();
-            b.clearPopcorn();
-            b.importProject( localProjects[ i ] );
-            return;
-          }
-        }
-      }
-    });
-
-    //$('.enable-scroll').tinyscrollbar();
+//        localProjects = localProjects ? JSON.parse( localProjects ) : [];
+//        
+//        for ( var i = 0, l = localProjects.length; i < l; i++ ) {
+//          if ( localProjects[ i ].project.title === projectsDrpDwn[0].value ) {
+//            b.clearProject();
+//            b.clearPopcorn();
+//            b.importProject( localProjects[ i ] );
+//            return;
+//          }
+//        }
+//      }
+//    });
 
     $(".collapse-btn").toggle(function() {
 
@@ -459,8 +456,8 @@
       $(' .balck-overlay ').show();
     });
     
-    $('.p-timeline-title').click(function(){
-      $('#project-title').val( b.getProjectDetails( "title" ) );
+    $('.edit-selected-project').click(function(){
+      $('#project-title').val( $( ".projects-dd" ).val() );
 
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
@@ -470,10 +467,34 @@
     });
     
     $(".change-title-btn").click( function() {
-      var title = $('#project-title').val();
-      if ( title.length > 0) {
-        b.setProjectDetails("title", title);
-        $(".p-timeline-title").html( title );
+      var newTitle = $('#project-title').val(),
+        oldTitle = $( ".projects-dd" ).val(),
+        projectsDrpDwn = $( ".projects-dd" ),
+        idx = projectsDrpDwn[0].selectedIndex,
+        selectedOpt;
+
+      if ( newTitle.length > 0) {
+        localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
+    
+        localProjects = localProjects ? JSON.parse( localProjects ) : localProjects;
+        
+        ( b.getProjectDetails ( "title" ) === newTitle ) && b.setProjectDetails ( "title", newTitle );
+        
+        console.log( "saskdfjlaskdf", projectsDrpDwn[0] );
+        
+        console.log( "opt", projectsDrpDwn[0].options[ idx ] );
+        
+        selectedOpt = projectsDrpDwn[0].options[ idx ];
+        
+        selectedOpt.value = newTitle;
+        selectedOpt.innerHTML = newTitle;
+        projectsDrpDwn[0].refresh();
+        
+        if ( localProjects[ oldTitle ] ) {
+          localProjects[ oldTitle ].project.title = newTitle;
+          localStorage.setItem( "PopcornMaker.SavedProjects", JSON.stringify( localProjects ) );
+        }
+        
         $('.close-div').fadeOut('fast');
         $('.popups').hide();
       }
