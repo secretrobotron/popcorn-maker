@@ -10,7 +10,8 @@
 		<style type="text/css">
 		
 		body {
-			width: 800px;
+			width: 700px;
+			height: 380px;
 		}
 		
 		body, fieldset {
@@ -428,6 +429,11 @@
 					client = new butter.CommClient('defaultEditor');
 	
 					client.listen('edittrackevent', function (message) {
+						client.send( {
+							width: 720,
+							height: 400
+						}, 'clientdimsupdated' );
+
 						console.log(JSON.stringify(message));
 						targetsUpdated(message.targets);
 						editTrackEvent(message.trackEvent.popcornOptions);

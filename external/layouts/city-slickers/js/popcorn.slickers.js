@@ -188,7 +188,7 @@
 				var target;
 				if (!options.target ||
 					!options.location && (!options.lat || !options.lng) ) {
-					return;
+//					return;
 				}
 				
 				target = options.target;
@@ -281,6 +281,18 @@
 				}
 			},
 			_teardown: function( event, options ) {
+				mapDiv = null;
+				mapData = null;
+				map = null;
+				activeEvents = null;
+				latLng = null;
+				
+				if (options) {
+					if (options.marker) {
+						options.marker.setVisible(false);
+						options.marker.setMap(null);
+					}
+				}
 			},
 			manifest: {
 				about: {

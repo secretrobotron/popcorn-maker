@@ -219,7 +219,12 @@
         }
       },
       _teardown: function( options ) {
-        options.target.removeChild(container);
+        if (container && container.parentNode) {
+          container.parentNode.removeChild(container);
+        }
+        container = null;
+        image = null;
+        imageRecord = null;
       },
       manifest: {
         about:{
