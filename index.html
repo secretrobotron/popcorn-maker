@@ -239,6 +239,7 @@
                 <div class="download-html">
 
                   <input type="submit" class="download-btn" name="download-btn" value="Download as HTML">
+                  <label class="save-prj-lbl" for="project-title-textbox">Title:</label><input type="text" class="project-title-textbox" name="project-title-textbox" >
                   <input type="submit" class="save-project-data-btn" name="save-project-data-btn" value="Save Project">
                   
                 </div>
@@ -261,10 +262,28 @@
           <button id="clear-track-edit" class="edit-track-button">clear</button>
         </div><!-- end popup 5 -->
         
+        <div id="popup-add-project" class="popup-5 pop-up close-div draggable" style="display:none"> <!-- popup-add-project -->
+          <a class="popup-close-btn" href="#"><span></span></a>
+        	<div class="popup-header">
+          	<h3>Load / Create New Project</h3>
+          </div>
+          <div class="popup-content">
+          	<textarea class="project-json">
+				    </textarea>
+            <p class="track-text">Press Load to Load in the project code!</p>
+            <div class="download-html">
+
+              <input type="submit" class="load-code-btn" name="load-code-btn" value="Load Project from JSON">
+              <input type="submit" class="create-new-btn" name="create-new-btn" value="New Project">
+                  
+            </div>
+          </div>
+        </div><!-- end popup-add-project -->
+        
         <div id="popup-project-title" class="popup-project-title pop-up close-div draggable" style="display:none"> <!-- popup-project-title -->
             <a class="popup-close-btn" href="#"><span></span></a>
         	<div class="popup-header">
-            	<h3>Edit Project Title</h3>
+            	<h3>Edit Title</h3>
             </div>
             <div class="popup-content">
           	  <p>
@@ -273,7 +292,7 @@
               </p>
               <br />
               <input type="submit" class="change-title-btn" value="change">
-              <p class="desc">Use this dialog to Change the title of your Popcorn Maker Project.</p>
+              <p class="desc">Use this dialog to Change the title of the selected Popcorn Maker Project.</p>
             </div>
         </div><!-- end popup popup-project-title -->
         
