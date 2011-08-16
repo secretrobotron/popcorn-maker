@@ -499,7 +499,10 @@
 					trackEvent.target = elements.target.value;
 				}
 				
-				//todo: RR, send your message
+				if (!elements['end-enabled'].value) {
+					trackEvent.endPosition = null;
+				}
+				
 			}
 			
 			function mouseDown(event) {
@@ -574,7 +577,7 @@
 					elements['target-fieldset'].style.display = 'none';
 
 					if (targets.length) {
-						trackEvent.target = targets[0];
+						trackEvent.target = targets[0][0];
 					}
 				} else {
 					elements['target-fieldset'].style.display = '';
@@ -635,7 +638,12 @@
 					client = new butter.CommClient('defaultEditor');
 	
 					client.listen('edittrackevent', function (message) {
-						console.log(JSON.stringify(message));
+						client.send( {
+							width: 720,
+							height: 400
+						}, 'clientdimsupdated' );
+
+						//console.log(JSON.stringify(message));
 						targetsUpdated(message.targets);
 						editTrackEvent(message.trackEvent.popcornOptions);
 					});
