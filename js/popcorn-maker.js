@@ -546,7 +546,14 @@
         }
       }
     });
+    
+    $(".show-json-btn").click(function() {
+      $('.track-content').html( JSON.stringify( b.exportProject() ) );
+    });
 
+    $(".show-html-btn").click(function() {
+      $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
+    });
     //$(function(){ $("label").inFieldLabels(); });
 
     $(function() {

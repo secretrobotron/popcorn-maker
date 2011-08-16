@@ -728,6 +728,9 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .save-prj-lbl {position: absolute; left: 0; top: 50px; margin:0; padding:7px 0; height:auto !important}
 .download-btn:hover, .load-code-btn:hover, .save-project-data-btn:hover, .create-new-btn:hover { color:#fff;}
 .track-text {float: left; margin-top: 10px; width: 220px;}
+.track-text.json-text.hide-text, .track-text.track-text.hide-text { display: none }
+.track-text.json-text.show-text, .track-text.track-text.show-text { display: inline }
+ 
 .download-html {float: right; height: 86px; overflow: hidden; position: relative; width: 330px;}
 .download-btn, .load-code-btn, .save-project-data-btn, .create-new-btn, .change-url-btn, .change-title-btn, .popup-btns input { float:left; margin-right:10px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC;
 	   -moz-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
