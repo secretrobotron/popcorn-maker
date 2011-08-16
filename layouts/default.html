@@ -1,9 +1,31 @@
 <html>
 <head>
+<script src="http://popcornjs.org/code/dist/popcorn-complete.js"></script>
+<script src="../lib/butter.js"></script>
+<script>
+  document.addEventListener( "DOMContentLoaded", function(){
+    var popcorn = Popcorn( "#DICK" );
+    console.log(Butter);
+    var b = new Butter();
+    b.comm();
+    var commClient = new b.CommClient( "previewerClient", function ( message ) {
+      console.log('in preview', message);
+    } );
+    commClient.listen( "ping", function( message ) {
+      console.log(popcorn);
+      commClient.send( Popcorn.instances.indexOf( popcorn ), "pong" );
+    });
+
+    
+  }, false );
+</script>
 </head>
 <body>
   <div id="div1">
-    <div data-butter="media" id="outerVideo">
+    <div id="outerVideo">
+      <video data-butter="media" id="DICK">
+        <source src="../../popcorn-js/test/trailer.ogv"/>
+      </video>
     </div>
     <div data-butter="target" id="div2" style="position:relative;float:left;width:400px;"></div>
   </div>

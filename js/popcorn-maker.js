@@ -7,7 +7,6 @@
     b.comm();
 
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "101%", editorHeight: "101%"  } );
-
     b.previewer({
       layout: "layouts/default.html",
       target: "main",
@@ -20,7 +19,7 @@
             b.addPlugin( { type: registry[ i ].type } );
           }
           $('.tiny-scroll').tinyscrollbar();
-        } );
+        }, true );
       }
     });
     
