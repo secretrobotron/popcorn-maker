@@ -549,8 +549,8 @@
             popcorns[ media.getId() ] = framePopcorn;
           } else {
             framePopcorn = popcorns[ media.getId() ]; 
-          framePopcorn[ e.type ]( ( iframe.contentWindow || iframe.contentDocument ).Popcorn.extend( {}, e.popcornOptions ) );
           }
+          framePopcorn[ e.type ]( ( iframe.contentWindow || iframe.contentDocument ).Popcorn.extend( {}, e.popcornOptions ) );
 
           // add track events to the iframe verison of popcorn
           
@@ -566,7 +566,13 @@
 
       this.listen( "mediachanged", function( e ) {
         that.buildPopcorn( e.data );
-        
+      } );
+
+      this.listen( "trackupdated", function( e ) {
+        var trackEvents = e.data.getTrackEvents();
+        for( var i = 0, l = e.data.getTrackEvents().length; i < l; i ++ ) {
+          trackEvents[ i ].popcornOptions.target = e.data.target;
+        }
       } );
 
       this.listen( "mediatimeupdate", function( e ) {
