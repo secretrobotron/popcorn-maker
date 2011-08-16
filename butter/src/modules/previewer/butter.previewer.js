@@ -570,7 +570,7 @@ console.log("HERE");
 
       this.listen( "mediachanged", function( e ) {
         console.log(e.data.getId());
-        that.buildPopcorn( e.data, function(){ alert("ASDASDASD"); console.log(that.getPopcorn()); } );
+        that.buildPopcorn( e.data );
         
       } );
 
