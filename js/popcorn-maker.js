@@ -295,7 +295,12 @@
     localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
     
     localProjects = localProjects ? JSON.parse( localProjects ) : localProjects;
-
+    
+    $( "<option/>", {
+        "value": undefined,
+        "html": "[select a project]"
+      }).appendTo( projectsDrpDwn );
+    
     localProjects && $.each( localProjects, function( index, oneProject ) {
       $( "<option/>", {
         "value": oneProject.project.title,
@@ -368,10 +373,6 @@
       centerPopup( $('#popup-add-project') );
       $(' .balck-overlay ').show();
     });
-
-//    $( ".edit-selected-project" ).click( function() {
-
-//    });
 
     $(".collapse-btn").toggle(function() {
 
@@ -454,13 +455,15 @@
     });
     
     $('.edit-selected-project').click(function(){
-      $('#project-title').val( $( ".projects-dd" ).val() );
+      if ( projectsDrpDwn[0].selectedIndex > 0 ) {
+        $('#project-title').val( $( ".projects-dd" ).val() );
 
-      $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
-      $('#popup-project-title').show();
-      centerPopup( $('#popup-project-title') );
-      $('.balck-overlay').hide();
+        $('.close-div').fadeOut('fast');
+        $('.popupDiv').fadeIn('slow');
+        $('#popup-project-title').show();
+        centerPopup( $('#popup-project-title') );
+        $('.balck-overlay').hide();
+      }
     });
     
     $(".change-title-btn").click( function() {
@@ -505,8 +508,8 @@
     
       var title;
       localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
-
-      if ( projectsDrpDwn[0].selectedIndex > -1 ) {
+      
+      if ( projectsDrpDwn[0].selectedIndex > 0 ) {
 
         localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
         title = projectsDrpDwn.val();
@@ -517,6 +520,30 @@
           b.importProject( localProjects [ title ] );
         }
         
+      }
+    });
+    
+    $(".create-new-btn").click(function() {
+      b.clearProject();
+      b.clearPopcorn();
+      b.setProjectDetails( "title", "Untitled Project");
+    });
+    
+    $(".load-code-btn").click(function() {
+      var dataString = $(".project-json").val();
+      if ( dataString ) {
+      
+        try {
+          var data = JSON.parse( dataString );
+          b.clearProject();
+          b.clearPopcorn();
+          b.importProject( data );
+          $('.close-div').fadeOut('fast');
+          $('.popups').hide();
+        }
+        catch ( e ) {
+          console.log ( "Error Loading in Data", e );
+        }
       }
     });
 
