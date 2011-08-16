@@ -446,12 +446,14 @@
         doc.head.appendChild( popcornSourceScript );
       }
 
-      while ( win.Popcorn && win.Popcorn.instances.length > 0 ) {
-        win.Popcorn.removeInstance( win.Popcorn.instances[0] );
-      }
+      if ( !layoutPopcorn ) {
+        while ( win.Popcorn && win.Popcorn.instances.length > 0 ) {
+          win.Popcorn.removeInstance( win.Popcorn.instances[0] );
+        }
 
-      if ( popcornScript ) {
-        doc.head.removeChild( popcornScript );
+        if ( popcornScript ) {
+          doc.head.removeChild( popcornScript );
+        }
       }
 
       // create a new body element with our new data
@@ -461,8 +463,6 @@
       //doc.open();
       //doc.write( "<html>\n" + iframeHead + body + "\n</html>" );
       //doc.close();
-
-      var instancesBefore = win.Popcorn ? win.Popcorn.instances.length : 0;
 
       function $popcornReady ( framePopcorn ) {
   
@@ -492,45 +492,41 @@
           }
         }
         videoReady( framePopcorn );
-      }
-
+      } //$popcornReady
 
       var popcornReady = function( e, callback2 ) {
         if ( !win.Popcorn ) {
           setTimeout( function() {
             popcornReady( e, callback2 );
-          }, 10 );
+          }, 1000 );
         } else {
-console.log(win.Popcorn, win.Butter);
-      if ( layoutPopcorn && win.Popcorn && win.Butter ) {
-        console.log("GOT OUR SERVER RUNNING DING DONG");
-        commServer = new that.CommServer();
-        commServer.bindClientWindow( "previewerCommClient", ( iframe.contentWindow || iframe.contentDocument ), function(message) {
-          console.log(message, "THIS IS THE MESSAGE");        
-        } );
+          if ( layoutPopcorn && win.Popcorn && win.Butter ) {
+            commServer = new that.CommServer();
+            commServer.bindClientWindow( "previewerCommClient", ( iframe.contentWindow || iframe.contentDocument ), function(message) {
+              console.log(message, "THIS IS THE MESSAGE");        
+            } );
 
-        commServer.listen( "previewerCommClient", "pong", function( message ) {
-          console.log(message);
-          framePopcorn = win.Popcorn.instances[ 0 ];
-          callback2 && callback2( win.Popcorn.instances[ 0 ] );
-        } );
-        commServer.send( "previewerCommClient", "ping", "ping" );
-//popcornReady( null, $popcornReady );
-      }else {
+            commServer.listen( "previewerCommClient", "pong", function( message ) {
+              console.log(message, win.Popcorn.instances);
+              framePopcorn = win.Popcorn.instances[ 0 ];
+              callback2 && callback2( win.Popcorn.instances[ 0 ] );
+            } );
+            commServer.send( "previewerCommClient", "ping", "ping" );
+          } else {
 
-          if ( !win.Popcorn.instances[ 0 ] ) {
-            popcornScript = doc.createElement( "script" );
-            popcornScript.innerHTML = popcornString;
-            doc.head.appendChild( popcornScript );
-          }
-  
-          framePopcorn = win.Popcorn.instances[ 0 ];
-          callback2 && callback2( win.Popcorn.instances[ 0 ] );
-        } // else  
-}
-      }
+            if ( !win.Popcorn.instances[ 0 ] ) {
+              popcornScript = doc.createElement( "script" );
+              popcornScript.innerHTML = popcornString;
+              doc.head.appendChild( popcornScript );
+            }
+    
+            framePopcorn = win.Popcorn.instances[ 0 ];
+            callback2 && callback2( win.Popcorn.instances[ 0 ] );
+          } // else  
+        } //if
+      } //popcornReady
 
-      //popcornReady( null, $popcornReady );
+      popcornReady( null, $popcornReady );
 
       this.teAdded = function( event ) {
         var that = this, e = event.data;
@@ -569,7 +565,26 @@ console.log(win.Popcorn, win.Butter);
         e = e.data;
 
           if ( commServer ) {
-            commServer.send( "previewerCommClient", e, "trackeventadded" );
+            var $addReceived = function ( message ) {
+              if ( message.butterId === e.getId() ) {
+                butterIds[ message.butterId ] = message.popcornId;
+                e.manifest = framePopcorn.getTrackEvent( message.popcornId )._natives.manifest;
+                commServer.forget( "previewerCommClient", "trackeventadded", $addReceived );
+              
+                commServer.listen( "previewerCommClient", "trackeventremoved", function ( message ) {
+                } );
+
+                commServer.listen( "previewerCommClient", "trackeventupdated", function ( message ) {
+                } );
+              }
+            }
+            commServer.listen( "previewerCommClient", "trackeventadded", $addReceived );
+
+            commServer.send( "previewerCommClient", {
+              id: e.getId(),
+              type: e.type,
+              popcornOptions: e.popcornOptions,
+            }, "trackeventadded" );
           } else {
 
             if ( !win.Popcorn ) {
