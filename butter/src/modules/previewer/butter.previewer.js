@@ -549,10 +549,10 @@
             popcorns[ media.getId() ] = framePopcorn;
           } else {
             framePopcorn = popcorns[ media.getId() ]; 
+          framePopcorn[ e.type ]( ( iframe.contentWindow || iframe.contentDocument ).Popcorn.extend( {}, e.popcornOptions ) );
           }
 
           // add track events to the iframe verison of popcorn
-          framePopcorn[ e.type ]( ( iframe.contentWindow || iframe.contentDocument ).Popcorn.extend( {}, e.popcornOptions ) );
           
           butterIds[ e.getId() ] = framePopcorn.getLastTrackEventId();
 

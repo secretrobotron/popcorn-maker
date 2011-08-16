@@ -11,7 +11,7 @@
     b.previewer({
       layout: "layouts/default.html",
       target: "main",
-      media: "http://www.youtube.com/watch?v=97o6zB9m1T4",
+      media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
