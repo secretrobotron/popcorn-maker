@@ -417,10 +417,8 @@
     };
 
     this.isPlaying = function() {
-       var video = framePopcorn.video;
 
-        video.paused = !video.paused;
-        return video.paused;
+        return framePopcorn.media.paused;
     };
 
     this.pause = function() {
