@@ -333,6 +333,10 @@
 				console.log('trackeventremoved', message);
 			});
 
+			videoSetup = true;
+			container.style.display = '';
+			VideoJS.setupAllWhenReady();
+
 		} else {
 			loadEvent(0, {
 				start: 1,
