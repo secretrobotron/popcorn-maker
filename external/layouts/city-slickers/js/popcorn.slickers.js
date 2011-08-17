@@ -62,7 +62,7 @@
 							(waitingToLoad.shift())();
 							
 							if (mapData && map && mapData.bounds) {
-								map.fitBounds(mapData.bounds);
+								//map.fitBounds(mapData.bounds);
 							}
 						}
 					};
@@ -147,9 +147,8 @@
 			activeEvents = mapData.activeEvents;
 
 			mapData.bounds.extend(latLng);
-			map.fitBounds(mapData.bounds);
+			//map.fitBounds(mapData.bounds);
 
-			//temp
 			var marker = new google.maps.Marker({
 				map: map, 
 				position: latLng,

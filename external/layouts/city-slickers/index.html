@@ -182,7 +182,7 @@
 		</header>
 		<div style="width: 100%">
 			<div id="main-container">
-				<div id="map" style="visibility: hidden" data-butter="target"></div>
+				<div id="map" data-butter="target"></div>
 				<div id="video-container" style="visibility: visible">
 					<video id="video" data-butter="media" class="unshoop">
 						<source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
@@ -212,6 +212,7 @@
 			progressOuter,
 			playButton,
 			map,
+			center,
 			playMarker,
 			video,
 			videoContainer,
@@ -242,7 +243,7 @@
 				draggable: false
 			});
 			
-			var center = new google.maps.LatLng(37.81250111667474, -122.28639156254883);
+			center = new google.maps.LatLng(37.81250111667474, -122.28639156254883);
 			
 			playMarker = new google.maps.Marker({
 				map: map,
@@ -279,7 +280,7 @@
 				}
 			});
 
-			if (video.readyState >= 3) {
+			if (false && video.readyState >= 3) {
 				setTimeout(function() {
 					document.getElementById('map').style.visibility = '';
 //					videoContainer.style.opacity = 0.5;
@@ -311,6 +312,7 @@
 			}
 			options.marker.setDraggable(false);
 			options.marker.setClickable(false);
+			map.setCenter(center);
 		}
 		
 		window.markerStart = function (options) {
