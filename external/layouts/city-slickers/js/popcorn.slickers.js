@@ -275,6 +275,10 @@
 				}
 				
 				//zoomMap(mapData, options.map);
+				
+				if (popcorn.currentTime() < options.start && options.marker) {
+					options.marker.setVisible(false);
+				}
 
 				if (typeof options.onEnd === 'function') {
 					options.onEnd(options);
