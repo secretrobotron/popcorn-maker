@@ -491,9 +491,9 @@
 					everything except question and target should already be saved by their own event handlers
 				*/				
 				
-				if (questions.indexOf(elements.question.value) > -1) {
+				//if (questions.indexOf(elements.question.value) > -1) {
 					trackEvent.question = elements.question.value;
-				}
+				//}
 				
 				if (targets.indexOf(elements.target.value) > -1) {
 					trackEvent.target = elements.target.value;
@@ -719,6 +719,11 @@
 			}
 			
 			initialize();
+
+			questionsUpdated([
+				'What is your favorite color?',
+				'What is your favorite food?'
+			]);
 /*			
 			targetsUpdated([
 				'one',

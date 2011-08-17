@@ -8,7 +8,7 @@
 
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "101%", editorHeight: "101%"  } );
     b.previewer({
-      layout: "external/layouts/city-slickers/",
+      layout: "external/layouts/cgg/",
       target: "main",
       media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm",
     });
@@ -30,7 +30,7 @@
     b.timeline({ target: "timeline-div"});
     b.trackeditor({ target: "popup-5"});
 
-    b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
+    b.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
 
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );

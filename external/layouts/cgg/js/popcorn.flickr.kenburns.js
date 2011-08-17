@@ -105,16 +105,16 @@
 		//todo: handle different formats, check for negative sizes
 		if (options.startPosition) {
 			position = {
-				top: options.startPosition[0] || 10,
-				left: options.startPosition[1] || 10,
+				left: options.startPosition[0],
+				top: options.startPosition[1],
 				width: options.startPosition[2] || 10,
 				height: options.startPosition[3] || 10
 			};
 
 			if (options.endPosition) {
 				destination = {
-					top: options.endPosition[0] || position.top,
-					left: options.endPosition[1] || position.left,
+					left: options.endPosition[0],
+					top: options.endPosition[1],
 					width: options.endPosition[2] || position.width,
 					height: options.endPosition[3] || position.height
 				};

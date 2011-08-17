@@ -169,16 +169,16 @@
 
 		</style>
 -->
-	<script type="text/javascript">
-		if (window.parent) {
-			document.write('<script src="../../../lib/butter.js"><' + '/script>');
-		}
-
-	</script>
+		<script type="text/javascript">
+			if (window.parent) {
+				document.write('<script src="../../../lib/butter.js"><' + '/script>');
+			}
+	
+		</script>
 	</head>
 	<body>
 		<header>
-			<h1>Cultivating community:<br/> Urban farming in West Oakland</h1>
+			<h1>Cultivating Community:<br/> Urban farming in West Oakland</h1>
 		</header>
 		<div style="width: 100%">
 			<div id="main-container">
@@ -491,60 +491,62 @@
 					}
 				});
 
+			} else {
+	
+				popcorn.slickers({
+					start: 4,
+					end: 10,
+					location: '﻿﻿5105 genoa street, oakland, ca',
+					lat: 37.80436370,
+					lng: -122.27111370,
+					label: 'Secret Garden',
+					target: 'map',
+					onLoad: 'markerLoaded',
+					onStart: 'markerStart',
+					onEnd: 'markerEnd'
+				});
+	
+				popcorn.slickers({
+					start: 14,
+					end: 20,
+					location: '﻿﻿1580 5th Street, oakland, ca',
+					lat: 37.8047831,
+					lng: -122.29823920000001,
+					label: 'Annex Farm',
+					target: 'map',
+					onLoad: 'markerLoaded',
+					onStart: 'markerStart',
+					onEnd: 'markerEnd'
+				});
+	
+				popcorn.slickers({
+					start: 23,
+					end: 29,
+					location: '﻿﻿537 Lewis Street, oakland, ca',
+					lat: 37.805487,
+					lng: -122.29842300000001,
+					label: 'West Oakland Woods',
+					target: 'map',
+					onLoad: 'markerLoaded',
+					onStart: 'markerStart',
+					onEnd: 'markerEnd'
+				});
+	
+				popcorn.slickers({
+					start: 31,
+					end: 37,
+					location: '﻿﻿16th Street and Center Street, oakland, ca',
+					lat: 37.8125818,
+					lng: -122.29236559999998,
+					label: 'Center Street Farm',
+					target: 'map',
+					onLoad: 'markerLoaded',
+					onStart: 'markerStart',
+					onEnd: 'markerEnd'
+				});
+				
 			}
-/*
-			popcorn.slickers({
-				start: 4,
-				end: 10,
-				location: '﻿﻿5105 genoa street, oakland, ca',
-				lat: 37.80436370,
-				lng: -122.27111370,
-				label: 'Secret Garden',
-				target: 'map',
-				onLoad: 'markerLoaded',
-				onStart: 'markerStart',
-				onEnd: 'markerEnd'
-			});
 
-			popcorn.slickers({
-				start: 14,
-				end: 20,
-				location: '﻿﻿1580 5th Street, oakland, ca',
-				lat: 37.8047831,
-				lng: -122.29823920000001,
-				label: 'Annex Farm',
-				target: 'map',
-				onLoad: 'markerLoaded',
-				onStart: 'markerStart',
-				onEnd: 'markerEnd'
-			});
-
-			popcorn.slickers({
-				start: 23,
-				end: 29,
-				location: '﻿﻿537 Lewis Street, oakland, ca',
-				lat: 37.805487,
-				lng: -122.29842300000001,
-				label: 'West Oakland Woods',
-				target: 'map',
-				onLoad: 'markerLoaded',
-				onStart: 'markerStart',
-				onEnd: 'markerEnd'
-			});
-
-			popcorn.slickers({
-				start: 31,
-				end: 37,
-				location: '﻿﻿16th Street and Center Street, oakland, ca',
-				lat: 37.8125818,
-				lng: -122.29236559999998,
-				label: 'Center Street Farm',
-				target: 'map',
-				onLoad: 'markerLoaded',
-				onStart: 'markerStart',
-				onEnd: 'markerEnd'
-			});
-*/
 		}, false);
 
 	}());
