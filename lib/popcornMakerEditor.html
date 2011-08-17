@@ -20,7 +20,9 @@
             targets = message.targets;
             eventId = message.id;
             constructDefaultEditor ( message.trackEvent );
-            client.send( { "height": window.innerHeight + 45, "width": window.innerWidth }, "clientdimsupdated" );
+            var body = window.document.body;
+            
+            client.send( { "height": body.scrollHeight, "width": body.getClientRects()[0].width + 50 }, "clientdimsupdated" );
           });
           
           client.listen( "domtargetsupdated", function( message ) {
@@ -28,7 +30,6 @@
           });
           
           client.listen( "trackeventupdated", function( message ) {
-            console.log("message recieved in editor - ", message );
             ( eventId === message.id ) && updateFields( message.options );
           });
 

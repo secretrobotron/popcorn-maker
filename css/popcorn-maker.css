@@ -15,7 +15,7 @@ html, body {
   width: 110px !important;
 }
 .timeline-right {
-  width: 10000px !important;
+  width: 100%;
 }
 
 .enable-scroll {

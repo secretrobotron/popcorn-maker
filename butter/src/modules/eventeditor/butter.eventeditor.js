@@ -41,7 +41,6 @@ THE SOFTWARE.
         butter = this,
         editorSrc =  customEditors[ trackEvent.type ] || trackEvent.manifest.customEditor || defaultEditor,
         updateEditor = function( e ){
-          console.log( "event editor callback", e );
           commServer.send( "editorCommLink", { "id": e.data.getId(), "options": e.data.popcornOptions }, "trackeventupdated" );
         };
 
@@ -58,6 +57,7 @@ THE SOFTWARE.
       } else if ( binding === "bindFrame" ) {
 
         editorWindow = document.createElement( "iframe" );
+        editorWindow.id = "butter-editor-iframe";
         editorWindow.style.width = editorWidth;
         editorWindow.style.height = editorHeight;
         setupServer();
