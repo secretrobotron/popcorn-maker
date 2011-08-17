@@ -43,6 +43,7 @@ input[type="button"], input[type="submit"], button {
 
 .popup-btns input {
     background-image: -moz-linear-gradient(center bottom , #383838 0%, #616161 100%);
+    background-image: -webkit-linear-gradient( #383838 0%, #616161 100%);
 }
 
 .popup-btns input {
