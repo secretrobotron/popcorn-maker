@@ -40,26 +40,29 @@
     });
 
     b.listen( "clientdimsupdated", function( e ) {
-      $('#popup-4')
-      .css( "height", e.data.height + "px" )
+      var popup4 = $('#popup-4');
+      popup4.css( "height", e.data.height + "px" )
       .css("width", e.data.width + "px" );
       $('#butter-editor-iframe')
       .css("height", e.data.height + "px")
       .css("width", e.data.width + "px" );
-      centerPopup( $('#popup-4') );
+      centerPopup( popup4 );
+      popup4.css("visibility", "visible");
     });
     
     b.listen ( "trackeditstarted", function() {
-      
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
-      $('#popup-4').show();
+      $('.popup-4').show();
       $(' .balck-overlay ').hide();
+      
     });
     
     b.listen ( "trackeditclosed", function() {
       $('.close-div').fadeOut('fast');
-      $('.popups').hide(); 
+      $('.popupDiv').hide();
+      $('popup-4').css("visibility", "hidden")
+      .css( "display", "" );
     });
 
     var scrubber = document.getElementById( "scrubber" );
