@@ -20,9 +20,9 @@
             targets = message.targets;
             eventId = message.id;
             constructDefaultEditor ( message.trackEvent );
-            var rect = window.document.body.getClientRects()[0];
+            var body = window.document.body;
             
-            client.send( { "height": rect.height + 100, "width": rect.width + 50 }, "clientdimsupdated" );
+            client.send( { "height": body.scrollHeight, "width": body.getClientRects()[0].width + 50 }, "clientdimsupdated" );
           });
           
           client.listen( "domtargetsupdated", function( message ) {
