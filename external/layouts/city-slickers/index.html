@@ -421,9 +421,11 @@
 				}
 			}, false);
 
-			var p = Popcorn('#video');
+			var popcorn = Popcorn('#video');
 			
 			if (window.Butter) {
+
+				var butterTracks = {};
 
 				var b = new Butter();
 				b.comm();
@@ -440,31 +442,58 @@
 					console.log('trackeventadded!!!!!!', message);
 				
 					var butterId = message.id;
+					
+					//add callbacks
+					message.popcornOptions.onLoad = 'markerLoaded';
+					message.popcornOptions.onStart = 'markerStart';
+					message.popcornOptions.onEnd = 'markerEnd';
+					
 					popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) ); 
 				
 					var popcornEventId = popcorn.getLastTrackEventId();
-					commClient.send( { butterId: message.id, popcornId: popcorn.getLastTrackEventId() }, "trackeventadded" );
-				
-					commClient.listen( "trackeventupdated", function ( message ) {
-						if ( message.id === butterId ) {
-							popcorn.removeTrackEvent( popcornEventId );
-							popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) );
-							popcornEventId = popcorn.getLastTrackEventId();
-	
-							console.log('trackeventupdated', message);
-						}
-					});
-				
-					commClient.listen( "trackeventremoved", function ( message ) {
-						if ( message.id === butterId ) {
-							popcorn.removeTrackEvent( popcornEventId );
-							console.log('trackeventremoved', message);
-						}
-					});
-				});
-			}
 
-			p.slickers({
+					butterTracks[butterId] = popcornEventId;
+					
+					commClient.send( { butterId: message.id, popcornId: popcornEventId }, "trackeventadded" );				
+				});
+
+				commClient.listen( "trackeventupdated", function ( message ) {
+					var butterId = message.id;
+					var popcornEventId = butterTracks[butterId]
+					
+					if ( popcornEventId ) {
+						popcorn.removeTrackEvent( popcornEventId );
+
+						//add callbacks
+						message.popcornOptions.onLoad = 'markerLoaded';
+						message.popcornOptions.onStart = 'markerStart';
+						message.popcornOptions.onEnd = 'markerEnd';
+						
+						popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) );
+						popcornEventId = popcorn.getLastTrackEventId();
+
+						butterTracks[butterId] = popcornEventId;
+
+						console.log('trackeventupdated', message);
+					}
+				});
+			
+				commClient.listen( "trackeventremoved", function ( message ) {
+					var butterId = message.id;
+					var popcornEventId = butterTracks[butterId]
+					
+					if ( popcornEventId ) {
+						popcorn.removeTrackEvent( popcornEventId );
+						
+						delete butterTracks[butterId];
+						
+						console.log('trackeventremoved', message);
+					}
+				});
+
+			}
+/*
+			popcorn.slickers({
 				start: 4,
 				end: 10,
 				location: '﻿﻿5105 genoa street, oakland, ca',
@@ -477,7 +506,7 @@
 				onEnd: 'markerEnd'
 			});
 
-			p.slickers({
+			popcorn.slickers({
 				start: 14,
 				end: 20,
 				location: '﻿﻿1580 5th Street, oakland, ca',
@@ -490,7 +519,7 @@
 				onEnd: 'markerEnd'
 			});
 
-			p.slickers({
+			popcorn.slickers({
 				start: 23,
 				end: 29,
 				location: '﻿﻿537 Lewis Street, oakland, ca',
@@ -503,7 +532,7 @@
 				onEnd: 'markerEnd'
 			});
 
-			p.slickers({
+			popcorn.slickers({
 				start: 31,
 				end: 37,
 				location: '﻿﻿16th Street and Center Street, oakland, ca',
@@ -515,7 +544,7 @@
 				onStart: 'markerStart',
 				onEnd: 'markerEnd'
 			});
-
+*/
 		}, false);
 
 	}());

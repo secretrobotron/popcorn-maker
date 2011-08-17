@@ -188,7 +188,7 @@
 				var target;
 				if (!options.target ||
 					!options.location && (!options.lat || !options.lng) ) {
-//					return;
+					return;
 				}
 				
 				target = options.target;
@@ -280,7 +280,7 @@
 					options.onEnd(options);
 				}
 			},
-			_teardown: function( event, options ) {
+			_teardown: function( event, opts ) {
 				mapDiv = null;
 				mapData = null;
 				map = null;
@@ -291,8 +291,11 @@
 					if (options.marker) {
 						options.marker.setVisible(false);
 						options.marker.setMap(null);
+						options.marker = null;
 					}
+					options = null;
 				}
+				opts = null;
 			},
 			manifest: {
 				about: {

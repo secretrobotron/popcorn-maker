@@ -336,26 +336,26 @@
 
 				targets = newTargets || [];
 				
+				elements['target-fieldset'].style.display = '';
+				select = elements.target;
+				select.innerHTML = '<option>Default</option>';
+				
+				for (i = 0; i < targets.length; i++) {
+					option = document.createElement('option');
+					option.value = targets[i][0];
+					option.appendChild( document.createTextNode(targets[i][0]) );
+					select.appendChild(option);
+
+					if (targets[i][0] === trackEvent.target) {
+						option.selectedIndex = i;
+					}
+				}
+
 				if (targets.length <= 1) {
 					elements['target-fieldset'].style.display = 'none';
 
 					if (targets.length) {
 						trackEvent.target = targets[0][0];
-					}
-				} else {
-					elements['target-fieldset'].style.display = '';
-					select = elements.target;
-					select.innerHTML = '<option>Default</option>';
-					
-					for (i = 0; i < targets.length; i++) {
-						option = document.createElement('option');
-						option.value = targets[i][0];
-						option.appendChild( document.createTextNode(targets[i][0]) );
-						select.appendChild(option);
-
-						if (targets[i][0] === trackEvent.target) {
-							option.selectedIndex = i;
-						}
 					}
 				}
 			}
@@ -413,6 +413,10 @@
 					if (trackEvent.zoom) {
 						map.setZoom(trackEvent.zoom);
 					}
+				}
+				
+				if (targets.length === 1) {
+					trackEvent.target = targets[0][0];
 				}
 				
 				elements.target.value = trackEvent.target;
