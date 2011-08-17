@@ -285,6 +285,10 @@
 				}
 			},
 			_teardown: function( event, opts ) {
+				if (typeof options.onEnd === 'function') {
+					options.onEnd(options);
+				}
+
 				mapDiv = null;
 				mapData = null;
 				map = null;
