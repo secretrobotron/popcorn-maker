@@ -275,14 +275,16 @@ THE SOFTWARE.
     };
 
     this.setButter = function ( b ) {
-      butter = b;
-      if ( butter ) {
-        butter.trigger( "mediaadded", that );
-        var tracks = that.getTracks();
-        for ( var i=0, l=tracks.length; i<l; ++i ) {
-          tracks[i].setButter( butter );
-        } //for
-      }
+      if ( b !== butter ) {      
+        butter = b;
+        if ( butter ) {
+          butter.trigger( "mediaadded", that );
+          var tracks = that.getTracks();
+          for ( var i=0, l=tracks.length; i<l; ++i ) {
+            tracks[i].setButter( butter );
+          } //for
+        }
+      } //if
     };
 
     this.getButter = function ()  {
@@ -420,15 +422,22 @@ THE SOFTWARE.
         domain: domain,
         data: options
       };
+
       if ( events[ name ] ) {
-        for (var i=0, l=events[ name ].length; i<l; ++i) {
+console.log(name);
+        //for (var i=0, l=events[ name ].length; i<l; ++i) {
+        for ( var i=events[ name ].length - 1; i>=0; --i ) {
+          if( !events[ name ][ i ] ) {
+            console.log(name, events[ name ], i, l);
+          }
           events[ name ][ i ].call( that, eventObj, domain );
         } //for
       } //if
       if ( domain ) {
         name = name + domain;
         if ( events[ name ] ) {
-          for (var i=0, l=events[ name ].length; i<l; ++i) {
+          for ( var i=events[ name ].length - 1; i>=0; --i ) {
+          //for (var i=0, l=events[ name ].length; i<l; ++i) {
             events[ name ][ i ].call( that, eventObj, domain );
           } //for
         } //if
@@ -640,9 +649,22 @@ THE SOFTWARE.
       }
       if ( projectData.media ) {
         for ( var i=0, l=projectData.media.length; i<l; ++i ) {
-          var m = new Media();
-          m.importJSON( projectData.media[ i ] );
-          that.addMedia( m );
+
+          var m, medias = that.getAllMedia(), mediaData = projectData.media[ i ];
+          for( var k = 0, j = medias.length; k < j; k++ ) { 
+            if( medias[ k ].getTarget() === mediaData.target && medias[ k ].getUrl() === mediaData.url ) {
+              m = medias[ k ];  
+            }
+          }
+
+          if ( !m ) {
+            m = new Media();
+            m.importJSON( projectData.media[ i ] );
+            that.addMedia( m );
+          }
+          else {
+            m.importJSON( projectData.media[ i ] );
+          }
           
         }
       }

@@ -43,7 +43,7 @@
             var idx = listeners[ type ].indexOf( callback );
             if ( idx > -1 ) {
               var callback = listeners[ type ][ idx ];
-              listeners.splice( idx, 1 );
+              listeners[ type ].splice( idx, 1 );
               return callback;
             } //if
           } //if
@@ -94,7 +94,7 @@
               var idx = listeners[ type ].indexOf( callback );
               if ( idx > -1 ) {
                 var callback = listeners[ type ][ idx ];
-                listeners.splice( idx, 1 );
+                listeners[ type ].splice( idx, 1 );
                 return callback;
               } //if
             } //if

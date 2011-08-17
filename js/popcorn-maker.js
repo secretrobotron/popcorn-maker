@@ -7,23 +7,24 @@
     b.comm();
 
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "101%", editorHeight: "101%"  } );
-
     b.previewer({
       layout: "layouts/default.html",
       target: "main",
-      media: "http://www.youtube.com/watch?v=97o6zB9m1T4",
-      callback: function() {
-        b.buildPopcorn( b.getCurrentMedia() , function() {
-
-          var registry = b.getRegistry();
-          for( var i = 0, l = registry.length; i < l; i++ ) {
-            b.addPlugin( { type: registry[ i ].type } );
-          }
-          $('.tiny-scroll').tinyscrollbar();
-        } );
-      }
+      media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm",
     });
-    
+
+    b.listen( "layoutloaded", function( e ){
+      b.buildPopcorn( b.getCurrentMedia() , function() {
+
+        var registry = b.getRegistry();
+        for( var i = 0, l = registry.length; i < l; i++ ) {
+          b.addPlugin( { type: registry[ i ].type } );
+        }
+        $('.tiny-scroll').tinyscrollbar();
+      }, true );
+      b.unlisten( "layoutloaded", this );
+    } );
+
     b.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
     
     b.timeline({ target: "timeline-div"});
@@ -405,8 +406,26 @@
         for ( var i = 0, l = localProjects.length; i < l; i++ ) {
           if ( localProjects[ i ].project.title === projectsDrpDwn[0].value ) {
             b.clearProject();
-            b.clearPopcorn();
-            b.importProject( localProjects[ i ] );
+            (function ( localProject ) {
+              b.listen( "layoutloaded", function( e ) {
+                document.getElementById( "main" ).innerHTML = "";
+                b.buildPopcorn( b.getCurrentMedia() , function() {
+
+                  var registry = b.getRegistry();
+                  for( var i = 0, l = registry.length; i < l; i++ ) {
+                    b.addPlugin( { type: registry[ i ].type } );
+                  }
+                  $('.tiny-scroll').tinyscrollbar();
+                  b.importProject( localProject );
+                }, true );
+                b.unlisten( "layoutloaded", this );
+              });
+            })( localProjects[ i ] );
+            b.loadPreview( {
+              layout: "layouts/default.html",
+              target: "main",
+              media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+            });
             return;
           }
         }
