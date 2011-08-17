@@ -239,8 +239,15 @@
       deleteButton.className = "delete";
       deleteButton.innerHTML = "<a href=\"#\">delete</a>";
       deleteButton.addEventListener( "click", function( click ) {
-
-        b.removeTrack( track );
+        $('.close-div').fadeOut('fast');
+        $('.popupDiv').fadeIn('slow');
+        $('#popup-delete-track').show();
+        $('#deleteTrackBtn').click(function(){
+          b.removeTrack( track );
+          $('#popup-delete-track').hide();
+        });
+        centerPopup( $('#popup-delete-track') );
+        $('.balck-overlay').hide();
       }, false );
 
       trackJSONtextArea.addEventListener( "change", function() {
