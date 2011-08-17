@@ -80,12 +80,6 @@
 
               attr = trackEvent.popcornOptions[ prop ] || "";
 
-              //  Round displayed times to nearest quarter of a second
-              if ( typeof +attr === "number" && [ "start", "end" ].indexOf( prop ) > -1 ) {
-
-                attr = Math.round( attr * 4 ) / 4;
-              }
-
               elem.setAttribute( "value", attr );
             } else if ( elemType === "select" ) {
               attr = trackEvent.popcornOptions[ prop ];
