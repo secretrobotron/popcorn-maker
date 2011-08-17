@@ -6,7 +6,7 @@
     document.getElementById( "main" ).style.height = window.innerHeight - document.getElementsByTagName( "HEADER" )[ 0 ].clientHeight - 5 + "px";
     b.comm();
 
-    b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "101%", editorHeight: "101%"  } );
+    b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html" } );
 
     b.previewer({
       layout: "layouts/default.html",
@@ -42,6 +42,9 @@
     b.listen( "clientdimsupdated", function( e ) {
       $('#popup-4')
       .css( "height", e.data.height + "px" )
+      .css("width", e.data.width + "px" );
+      $('#butter-editor-iframe')
+      .css("height", e.data.height + "px")
       .css("width", e.data.width + "px" );
       centerPopup( $('#popup-4') );
     });

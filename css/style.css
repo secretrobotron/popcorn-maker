@@ -668,7 +668,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .popup-3 .popup-header { height:55px}
 .popup-content p {  clear:both;}
 .ckp .popup-content p span { color:#cd5d44; padding-right:14px; font-size:16px}
-.pop-up { width:500px; height:auto; overflow:hidden}
+.pop-up { overflow:hidden}
 .pop-up .popup-content { padding:40px; overflow:hidden; width:auto;
 	   -moz-border-radius: 0 0 10px 10px;
 	-webkit-border-radius: 0 0 10px 10px;

@@ -58,6 +58,7 @@ THE SOFTWARE.
       } else if ( binding === "bindFrame" ) {
 
         editorWindow = document.createElement( "iframe" );
+        editorWindow.id = "butter-editor-iframe";
         editorWindow.style.width = editorWidth;
         editorWindow.style.height = editorHeight;
         setupServer();
@@ -103,6 +104,9 @@ THE SOFTWARE.
             butter.trigger( "trackeditclosed" );
           });
           commServer.listen( "editorCommLink", "clientdimsupdated", function( dims ) {
+            console.log( "height:", dims.height );
+            console.log( "width:", dims.width );
+            console.log( "-------------------------" );
             butter.trigger( "clientdimsupdated", dims, "eventeditor" );
           });
 
