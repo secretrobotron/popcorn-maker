@@ -10,6 +10,15 @@
 
   window.addEventListener("DOMContentLoaded", function() {
 
+    function toggleLoadingScreen ( state ) {
+      if ( state ) {
+        $('#loading-overlay').show();
+      }
+      else {
+        $('#loading-overlay').hide();
+      }
+    }
+
     var layoutSelect = document.getElementById('layout-select');
     for ( var i=0; i<layouts.length; ++i ) {
       var option = document.createElement( 'option' );
@@ -39,6 +48,7 @@
           b.addPlugin( { type: registry[ i ].type } );
         }
         $('.tiny-scroll').tinyscrollbar();
+        toggleLoadingScreen( false );
       }, b.popcornFlag());
       b.unlisten( "layoutloaded", this );
     } );
@@ -591,10 +601,12 @@
                 }
                 $('.tiny-scroll').tinyscrollbar();
                 b.importProject( localProject );
+                toggleLoadingScreen( false );
               }, true );
               b.unlisten( "layoutloaded", this );
             });
           })( localProjects[ title ] );
+          toggleLoadingScreen( true );
           b.loadPreview( {
             layout: currentLayout,
             target: "main",
@@ -618,10 +630,12 @@
             b.addPlugin( { type: registry[ i ].type } );
           }
           $('.tiny-scroll').tinyscrollbar();
+          toggleLoadingScreen( false );
         }, b.popcornFlag() );
         b.unlisten( "layoutloaded", this );
       });
 
+      toggleLoadingScreen( true );
       b.loadPreview( {
         layout: currentLayout,
         target: "main",

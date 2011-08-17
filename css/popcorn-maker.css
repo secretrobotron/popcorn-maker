@@ -125,3 +125,26 @@ html, body {
   height: 300px;
 }
 
+#loading-overlay {
+  opacity: 0.8;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 99999999;
+  background: #505050;
+  font: 200pt Helvetica;
+  color: #fff;
+}
+
+#loading-overlay h1 {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+#loading-overlay h2 {
+}
