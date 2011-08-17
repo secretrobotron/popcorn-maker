@@ -303,6 +303,14 @@
       layersDiv.insertBefore( trackLayers[ "layer-" + event.data.getId() ], layersDiv.children[ event.data.newPos ] );
     });
 
+    document.addEventListener( "keypress", function( event ) {
+
+      if ( event.charCode === 32 ) {
+
+        b.isPlaying() ? b.play() : b.pause();
+      }
+    }, false );
+
     function centerPopup( popup ) {
       popup.css( "margin-left", ( window.innerWidth / 2 ) - ( popup[0].clientWidth / 2 ) );
     }
