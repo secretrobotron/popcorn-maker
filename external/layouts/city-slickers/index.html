@@ -447,6 +447,7 @@
 					message.popcornOptions.onLoad = 'markerLoaded';
 					message.popcornOptions.onStart = 'markerStart';
 					message.popcornOptions.onEnd = 'markerEnd';
+					message.popcornOptions.target = 'map';
 					
 					popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) ); 
 				

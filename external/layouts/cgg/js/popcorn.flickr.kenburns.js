@@ -20,7 +20,7 @@
       videoAspect;
 
 		function load() {
-			var link, url = 'http://api.flickr.com/services/rest/?method=flickr.photos.getInfo';
+			var link, url = 'http://api.flickr.com/services/rest/?method=flickr.photos.getSizes';
 	
 			if (options.apikey) {
 				url += "&api_key=" + options.apikey;
@@ -33,17 +33,20 @@
 			Popcorn.xhr.getJSONP( url, function( data ) {
 				var photo;
 	
-				if (!data || data.stat !== 'ok' || !data.photo) {
+				if (!data || data.stat !== 'ok') {
 					return;
 				}
 				
-				photo = data.photo;
+				photo = data.sizes.size[data.sizes.size.length - 1];
 				
 				image = document.createElement('img');
-				image.src = 'http://farm' + photo.farm + '.static.flickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '_m.jpg';
+				//image.src = 'http://farm' + photo.farm + '.static.flickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '_m.jpg';
+				image.src = photo.source;
 				
 				link = document.createElement('a');
 				link.setAttribute('target', '_new');
+				link.setAttribute('href', photo.url);
+				/*
 				if (photo.urls && photo.urls.url && photo.urls.url[0] &&
 					photo.urls.url[0]._content) {
 	
@@ -54,6 +57,7 @@
 					link.setAttribute('href', 'http://www.flickr.com/photos/' + (photo.owner.nsid) + '/' + photo.id + '/');
 	
 				}
+				*/
 				
 				link.addEventListener('click', function() {
 					popcorn.pause();
