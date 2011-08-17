@@ -180,7 +180,7 @@ THE SOFTWARE.
      * instance methods
      ************************/
     this.editTrackEvent = function( trackEvent ) {
-             
+       
       if ( !trackEvent || !( trackEvent instanceof Butter.TrackEvent ) ) {
         return false;
       }
