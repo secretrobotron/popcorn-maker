@@ -575,7 +575,6 @@
           var $addReceived = function ( message ) {
             if ( message.butterId === e.getId() ) {
               butterIds[ message.butterId ] = message.popcornId;
-              console.log( ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances);
               e.manifest = framePopcorn.getTrackEvent( message.popcornId )._natives.manifest;
               commServer.forget( "previewerCommClient", "trackeventadded", $addReceived );
             
@@ -630,11 +629,18 @@
       }
       this.listen( "trackeventremoved", trackeventremoved );
 
+      var lastMediaAdded;
+      this.listen( "mediaadded", function ( event ) {
+        lastMediaAdded = event.data;
+      });
+
       function mediachanged( e ) {
         //if ( commServer ) {
         //  commServer.send( "previewerCommClient", e.data, "mediachanged" );
         //} else {
+        if ( lastMediaAdded !== e.data ) {
           that.buildPopcorn( e.data );
+        }
         //}
       }
       this.listen( "mediachanged", mediachanged );

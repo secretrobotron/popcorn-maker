@@ -14,7 +14,6 @@
       commClient.send( Popcorn.instances.indexOf( popcorn ), "pong" );
     });
     commClient.listen( "trackeventadded", function ( message ) {
-      console.log('trackeventadded!!!!!!', message);
       var butterId = message.id;
       popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) ); 
       var popcornEventId = popcorn.getLastTrackEventId();
@@ -26,13 +25,11 @@
           popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) );
           popcornEventId = popcorn.getLastTrackEventId();
         }
-        console.log('trackeventupdated', message);
       });
       commClient.listen( "trackeventremoved", function ( message ) {
         if ( message.id === butterId ) {
           popcorn.removeTrackEvent( popcornEventId );
         }
-        console.log('trackeventremoved', message);
       });
     });
     
