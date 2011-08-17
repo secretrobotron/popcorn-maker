@@ -1,19 +1,45 @@
 (function(){
 
-  window.addEventListener("DOMContentLoaded", function(){
-    
+  var layouts = [
+    "layouts/default.html",
+    "layouts/default-basic.html",
+    "external/layouts/city-slickers/index.html",
+    "external/layouts/cgg/index.html",
+  ],
+  currentLayout;
+
+  window.addEventListener("DOMContentLoaded", function() {
+
+    function toggleLoadingScreen ( state ) {
+      if ( state ) {
+        $('#loading-overlay').show();
+      }
+      else {
+        $('#loading-overlay').hide();
+      }
+    }
+
+    var layoutSelect = document.getElementById('layout-select');
+    for ( var i=0; i<layouts.length; ++i ) {
+      var option = document.createElement( 'option' );
+      option.value = layouts[ i ];
+      option.innerHTML = layouts[ i ];
+      layoutSelect.appendChild( option );
+    }
+
+    currentLayout = layouts[ 0 ];
+
     var b  = new Butter();
     document.getElementById( "main" ).style.height = window.innerHeight - document.getElementsByTagName( "HEADER" )[ 0 ].clientHeight - 5 + "px";
     b.comm();
 
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html" } );
     b.previewer({
-      layout: "layouts/default.html",
+      layout: currentLayout,
       target: "main",
       media: "http://soundcloud.com/forss/flickermood",
       popcornURL: "../lib/popcorn-complete.js"
     });
-console.log(b.popcornFlag());
     b.listen( "layoutloaded", function( e ){
       b.buildPopcorn( b.getCurrentMedia() , function() {
 
@@ -22,6 +48,7 @@ console.log(b.popcornFlag());
           b.addPlugin( { type: registry[ i ].type } );
         }
         $('.tiny-scroll').tinyscrollbar();
+        toggleLoadingScreen( false );
       }, b.popcornFlag());
       b.unlisten( "layoutloaded", this );
     } );
@@ -32,6 +59,7 @@ console.log(b.popcornFlag());
     b.trackeditor({ target: "popup-5"});
 
     b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
+    b.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
 
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
@@ -354,7 +382,7 @@ console.log(b.popcornFlag());
     
 //    function loadProjectsFromServer(){
 //      //load stuff from bobby's server
-//    }
+//     }
 //    
 //    loadProjectsFromServer();
     
@@ -364,8 +392,10 @@ console.log(b.popcornFlag());
       
       try {
         var projectToSave = b.exportProject(),
-        overwrite = false,
+        overwrite = false,  
         title;
+
+        projectToSave.layout = currentLayout;
         
         localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
         
@@ -559,6 +589,8 @@ console.log(b.popcornFlag());
         
         if ( localProjects && localProjects[ title ] ) {
           b.clearProject();         
+          b.clearPlugins();
+          currentLayout = localProjects[ title ].layout;
           (function ( localProject ) {
             b.listen( "layoutloaded", function( e ) {
               document.getElementById( "main" ).innerHTML = "";
@@ -570,12 +602,14 @@ console.log(b.popcornFlag());
                 }
                 $('.tiny-scroll').tinyscrollbar();
                 b.importProject( localProject );
+                toggleLoadingScreen( false );
               }, true );
               b.unlisten( "layoutloaded", this );
             });
           })( localProjects[ title ] );
+          toggleLoadingScreen( true );
           b.loadPreview( {
-            layout: "layouts/default.html",
+            layout: currentLayout,
             target: "main",
             media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
           });
@@ -587,8 +621,30 @@ console.log(b.popcornFlag());
     
     $(".create-new-btn").click(function() {
       b.clearProject();
-      b.clearPopcorn();
+      b.clearPlugins();
       b.setProjectDetails( "title", "Untitled Project");
+      currentLayout = document.getElementById( 'layout-select' ).value;
+      b.listen( "layoutloaded", function( e ) {
+        b.buildPopcorn( b.getCurrentMedia() , function() {
+
+          var registry = b.getRegistry();
+          for( var i = 0, l = registry.length; i < l; i++ ) {
+            b.addPlugin( { type: registry[ i ].type } );
+          }
+          $('.tiny-scroll').tinyscrollbar();
+          toggleLoadingScreen( false );
+        }, b.popcornFlag() );
+        b.unlisten( "layoutloaded", this );
+      });
+
+      toggleLoadingScreen( true );
+      b.loadPreview( {
+        layout: currentLayout,
+        target: "main",
+        media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+      });
+      $('.close-div').fadeOut('fast');
+      $('.popups').hide();
     });
     
     $(".load-code-btn").click(function() {
@@ -597,11 +653,33 @@ console.log(b.popcornFlag());
       
         try {
           var data = JSON.parse( dataString );
-          b.clearProject();
-          b.clearPopcorn();
-          b.importProject( data );
+          b.clearProject();         
+          b.clearPlugins();
+          currentLayout = data.layout ? data.layout : layouts[ 0 ];
+          (function ( data ) {
+            b.listen( "layoutloaded", function( e ) {
+              document.getElementById( "main" ).innerHTML = "";
+              b.buildPopcorn( b.getCurrentMedia() , function() {
+
+                var registry = b.getRegistry();
+                for( var i = 0, l = registry.length; i < l; i++ ) {
+                  b.addPlugin( { type: registry[ i ].type } );
+                }
+                $('.tiny-scroll').tinyscrollbar();
+                b.importProject( data );
+              }, b.popcornFlag() );
+              b.unlisten( "layoutloaded", this );
+            });
+          })( data );
           $('.close-div').fadeOut('fast');
           $('.popups').hide();
+          b.loadPreview( {
+            layout: currentLayout,
+            target: "main",
+            media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+          });
+          return;
+
         }
         catch ( e ) {
           console.log ( "Error Loading in Data", e );
@@ -610,7 +688,9 @@ console.log(b.popcornFlag());
     });
     
     $(".show-json-btn").click(function() {
-      $('.track-content').html( JSON.stringify( b.exportProject() ) );
+      var exp = b.exportProject();
+      exp.layout = currentLayout;
+      $('.track-content').html( JSON.stringify( exp ) );
     });
 
     $(".show-html-btn").click(function() {

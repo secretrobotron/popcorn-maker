@@ -331,8 +331,14 @@
     this.listen( "trackeventupdated", function( event ) {
 
       var trackEvent = event.data;
-      var trackLinerTrackEvent = currentMediaInstance.trackLinerTrackEvents[ trackEvent.getId() ];
-          trackLinerTrack = currentMediaInstance.trackLine.getTrack( trackLinerTrackEvent.trackId );
+      var trackLinerTrackEvent = currentMediaInstance.trackLinerTrackEvents[ trackEvent.getId() ],
+          elem = trackLinerTrackEvent.element,
+          trackLinerTrack = currentMediaInstance.trackLine.getTrack( trackLinerTrackEvent.trackId ),      
+          start = trackEvent.popcornOptions.start,
+          end = trackEvent.popcornOptions.end;
+          
+      trackLinerTrackEvent.element.style.width = ( end - start ) / currentMediaInstance.duration * target.offsetWidth + "px";
+      trackLinerTrackEvent.element.style.left = start / currentMediaInstance.duration * target.offsetWidth + "px";
 
       //trackEvent.track.removeTrackEvent( trackEvent );
       //currentMediaInstance.butterTracks[ currentMediaInstance.lastTrack.id() ].addTrackEvent( trackEvent );

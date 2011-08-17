@@ -7,11 +7,26 @@
 
 		body {
 			margin: 0;
-			background-color: #aaa;
+			background-color: #000;
+			font-family: Bell MT, garamond,georgia;
+		}
+		
+		header {
+			color: #FFFFFF;
+			padding: 0 40px;
+		}
+		
+		.playing h1 {
+			opacity: 0;
+			-moz-transition: opacity 0.4s;
+			-webkit-transition: opacity 0.4s;
+			-o-transition: opacity 0.4s;
+			-ie-transition: opacity 0.4s;
+			transition: opacity 0.4s;
 		}
 		
 		#map {
-			background-color: #aaa;
+			background-color: #000;
 			position: absolute;
 			width: 100%;
 			height: 100%;
@@ -29,11 +44,18 @@
 			width: 100%;
 			display: block;
 			opacity: 1;
-			-moz-transition: opacity 0.4s;
-			-webkit-transition: opacity 0.4s;
-			-opera-transition: opacity 0.4s;
-			-ie-transition: opacity 0.4s;
-			transition: opacity 0.4s;
+			-moz-transition: opacity 0.4s, -moz-transform 0.5s;
+			-webkit-transition: opacity 0.4s, -webkit-transform 0.5s;
+			-o-transition: opacity 0.4s, -o-transform 0.5s;
+			-ie-transition: opacity 0.4s, -ie-transform 0.5s;
+			transition: opacity 0.4s, transform 0.5s;
+
+			-moz-transform: scale(1);
+		}
+		
+		#video.unshoop {
+			opacity: 0;
+			-moz-transform: scale(0);
 		}
 
 		#video-container {
@@ -43,14 +65,14 @@
 			opacity: 1;
 			-moz-transition: opacity 0.4s;
 			-webkit-transition: opacity 0.4s;
-			-opera-transition: opacity 0.4s;
+			-o-transition: opacity 0.4s;
 			-ie-transition: opacity 0.4s;
 			transition: opacity 0.4s;
 		}
 		
 		#video:hover, #video.hover {
 			-webkit-transition: opacity 0.4s;
-			-opera-transition: opacity 0.4s;
+			-o-transition: opacity 0.4s;
 			-ie-transition: opacity 0.4s;
 			transition: opacity 0.4s;
 			opacity: 0.2;
@@ -64,6 +86,7 @@
 			width: 400px;
 			height: 40px;
 			background-color: rgba(255, 255, 255, 0.4);
+			display: none;
 		}
 		
 		#controls > div {
@@ -146,17 +169,29 @@
 
 		</style>
 -->
+		<script type="text/javascript">
+			if (window.parent) {
+				document.write('<script src="../../../lib/butter.js"><' + '/script>');
+			}
+	
+		</script>
 	</head>
 	<body>
-		<div style="height: 100%; width: 100%">
+		<header>
+			<h1>Cultivating Community:<br/> Urban farming in West Oakland</h1>
+		</header>
+		<div style="width: 100%">
 			<div id="main-container">
-				<div id="map" style="visibility: hidden" data-butter="target"></div>
-				<div id="video-container" style="">
-					<video id="video" data-butter="media" preload>
-						<source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+				<div id="map" data-butter="target"></div>
+				<div id="video-container" style="visibility: visible">
+					<video id="video" data-butter="media" class="unshoop">
+						<source src="http://videos-origin.mozilla.org/serv/webmademovies/bavc/cityslickers.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+						<source src="http://videos-origin.mozilla.org/serv/webmademovies/bavc/cityslickers.webm" type='video/webm; codecs="vp8, vorbis"' />
+						<!--
 						<source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm; codecs="vp8, vorbis"' />
 						
 						<source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg; codecs="theora, vorbis"' />
+						-->
 					</video>
 				</div>
 				<div id="controls">
@@ -180,6 +215,8 @@
 			progressOuter,
 			playButton,
 			map,
+			center,
+			playMarker,
 			video,
 			videoContainer,
 			videoPaused = true,
@@ -205,6 +242,36 @@
 		}
 		
 		function setUpMap() {
+			map.setOptions({
+				draggable: false,
+				mapTypeControl: false,
+				panControl: false,
+				scaleControl: false,
+				zoomControl: false,
+				streetViewControl: false,
+				disableDoubleClickZoom: true,
+				scrollwheel: false
+			});
+			
+			center = new google.maps.LatLng(37.8169812, -122.28960699999999);
+			
+			playMarker = new google.maps.Marker({
+				map: map,
+				position: center,
+				animation: google.maps.Animation.DROP,
+				icon: 'https://www.google.com/intl/en_ALL/mapfiles/marker_purple.png',
+				visible: true
+			});
+			map.setCenter(center);
+			google.maps.event.addListener(playMarker, 'click', function() {
+				videoPaused = false;
+				video.play();
+				videoContainer.style.opacity = '';
+			});
+			
+			//var georssLayer = new google.maps.KmlLayer('http://api.flickr.com/services/feeds/geo/?g=322338@N20&lang=en-us&format=feed-georss');
+			//georssLayer.setMap(map);
+			
 			google.maps.event.addListener(map, 'dragstart', function() {
 				var endListener;
 
@@ -221,10 +288,9 @@
 				if (!video.paused) {
 					video.pause();
 				}
-				//video.style.opacity = '0';
 			});
 
-			if (video.readyState >= 3) {
+			if (false && video.readyState >= 3) {
 				setTimeout(function() {
 					document.getElementById('map').style.visibility = '';
 //					videoContainer.style.opacity = 0.5;
@@ -236,6 +302,13 @@
 
 		function doFadeyThing() {
 			var i, recent = -5;
+			
+			if (activeEvents.length) {
+				videoContainer.style.opacity = 0.1;
+			} else {
+				videoContainer.style.opacity = 1;
+			}
+			return;
 			
 			for (i = 0; i < activeEvents.length; i++) {
 				recent = Math.max(activeEvents[i].start, recent);
@@ -253,12 +326,24 @@
 			if (!map) {
 				map = options.map;
 				setUpMap();
-			}			
+			}
+			options.marker.setDraggable(false);
+			options.marker.setClickable(false);
+			
+			var bounds = map.getBounds() || options.mapBounds;
+			bounds = new google.maps.LatLngBounds(bounds.getSouthWest(), bounds.getNorthEast());
+			if (bounds) {
+				bounds.extend(center);	
+				map.fitBounds(bounds);
+			} else {
+				//map.setCenter(center);
+			}
 		}
 		
 		window.markerStart = function (options) {
-			activeEvents.push(options);			
-			activeEvents[0].onFrame = doFadeyThing;
+			activeEvents.push(options);
+			//activeEvents[0].onFrame = doFadeyThing;
+			doFadeyThing();
 		}
 
 		window.markerEnd = function (options) {
@@ -266,6 +351,8 @@
 			if (index >= 0) {
 				activeEvents.splice(index, 1);
 			}
+			doFadeyThing();
+			return;
 			
 			options.onFrame = null;
 			
@@ -295,14 +382,7 @@
 			progress = document.getElementById('progress');
 			progressOuter = document.getElementById('progress-outer');
 			playButton = document.getElementById('play-button');
-/*			
-			var latlng = new google.maps.LatLng(-34.397, 150.644);
-			map = new google.maps.Map(document.getElementById("map"), {
-				zoom: 8,
-				center: latlng,
-				mapTypeId: google.maps.MapTypeId.ROADMAP
-			});
-*/			
+
 			var videoHover = false;
 			window.addEventListener('mousemove', function (e) {
 			//http://www.quirksmode.org/js/events_properties.html#position
@@ -330,16 +410,29 @@
 
 			}, false);
 			
+			window.addEventListener('mouseout', function (e) {
+				video.removeAttribute('class');
+				videoHover = false;
+			}, false);
+			
+			window.addEventListener('blur', function (e) {
+				video.removeAttribute('class');
+				videoHover = false;
+			}, false);
+			
 			video.addEventListener('timeupdate', function() {
 				progress.style.width = (320 * video.currentTime / video.duration) + 'px';
 			}, false);
 
 			video.addEventListener('play', function() {
+				document.body.setAttribute('class', 'playing');
 				playButton.setAttribute('class', 'playing');
+				video.removeAttribute('class');
 			}, false);
 			
 			video.addEventListener('pause', function() {
 				playButton.removeAttribute('class');
+				document.body.removeAttribute('class');
 			}, false);
 			
 			video.addEventListener('progress', videoLoading, false);
@@ -368,62 +461,134 @@
 				}
 			}, false);
 
-			var p = Popcorn('#video');
+			var popcorn = Popcorn('#video');
+			
+			if (window.Butter) {
 
-			p.slickers({
-				start: 4,
-				end: 10,
-				location: '﻿﻿5105 genoa street, oakland, ca',
-				lat: 37.80436370,
-				lng: -122.27111370,
-				label: 'Secret Garden',
-				target: 'map',
-				onLoad: 'markerLoaded',
-				onStart: 'markerStart',
-				onEnd: 'markerEnd'
-			});
+				var butterTracks = {};
 
-			p.slickers({
-				start: 14,
-				end: 20,
-				location: '﻿﻿1580 5th Street, oakland, ca',
-				lat: 37.8047831,
-				lng: -122.29823920000001,
-				label: 'Annex Farm',
-				target: 'map',
-				onLoad: 'markerLoaded',
-				onStart: 'markerStart',
-				onEnd: 'markerEnd'
-			});
+				var b = new Butter();
+				b.comm();
+	
+				var commClient = new b.CommClient( "previewerClient", function ( message ) {
+					console.log('in preview', message);
+				} );
+	
+				commClient.listen( "ping", function( message ) {
+					commClient.send( Popcorn.instances.indexOf( popcorn ), "pong" );
+				});
+	
+				commClient.listen( "trackeventadded", function ( message ) {
+					console.log('trackeventadded!!!!!!', message);
+				
+					var butterId = message.id;
+					
+					//add callbacks
+					message.popcornOptions.onLoad = 'markerLoaded';
+					message.popcornOptions.onStart = 'markerStart';
+					message.popcornOptions.onEnd = 'markerEnd';
+					message.popcornOptions.target = 'map';
+					
+					popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) ); 
+				
+					var popcornEventId = popcorn.getLastTrackEventId();
 
-			p.slickers({
-				start: 23,
-				end: 29,
-				location: '﻿﻿537 Lewis Street, oakland, ca',
-				lat: 37.805487,
-				lng: -122.29842300000001,
-				label: 'West Oakland Woods',
-				target: 'map',
-				onLoad: 'markerLoaded',
-				onStart: 'markerStart',
-				onEnd: 'markerEnd'
-			});
+					butterTracks[butterId] = popcornEventId;
+					
+					commClient.send( { butterId: message.id, popcornId: popcornEventId }, "trackeventadded" );				
+				});
 
-			p.slickers({
-				start: 31,
-				end: 37,
-				location: '﻿﻿16th Street and Center Street, oakland, ca',
-				lat: 37.8125818,
-				lng: -122.29236559999998,
-				label: 'Center Street Farm',
-				target: 'map',
-				onLoad: 'markerLoaded',
-				onStart: 'markerStart',
-				onEnd: 'markerEnd'
-			});
+				commClient.listen( "trackeventupdated", function ( message ) {
+					var butterId = message.id;
+					var popcornEventId = butterTracks[butterId]
+					
+					if ( popcornEventId ) {
+						popcorn.removeTrackEvent( popcornEventId );
+
+						//add callbacks
+						message.popcornOptions.onLoad = 'markerLoaded';
+						message.popcornOptions.onStart = 'markerStart';
+						message.popcornOptions.onEnd = 'markerEnd';
+						
+						popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) );
+						popcornEventId = popcorn.getLastTrackEventId();
+
+						butterTracks[butterId] = popcornEventId;
+
+						console.log('trackeventupdated', message);
+					}
+				});
+			
+				commClient.listen( "trackeventremoved", function ( message ) {
+					var butterId = message.id;
+					var popcornEventId = butterTracks[butterId]
+					
+					if ( popcornEventId ) {
+						popcorn.removeTrackEvent( popcornEventId );
+						
+						delete butterTracks[butterId];
+						
+						console.log('trackeventremoved', message);
+					}
+				});
+
+			} else {
+	
+				popcorn.slickers({
+					start: 4,
+					end: 10,
+					location: '﻿﻿5105 genoa street, oakland, ca',
+					lat: 37.80436370,
+					lng: -122.27111370,
+					label: 'Secret Garden',
+					target: 'map',
+					onLoad: 'markerLoaded',
+					onStart: 'markerStart',
+					onEnd: 'markerEnd'
+				});
+	
+				popcorn.slickers({
+					start: 14,
+					end: 20,
+					location: '﻿﻿1580 5th Street, oakland, ca',
+					lat: 37.8047831,
+					lng: -122.29823920000001,
+					label: 'Annex Farm',
+					target: 'map',
+					onLoad: 'markerLoaded',
+					onStart: 'markerStart',
+					onEnd: 'markerEnd'
+				});
+	
+				popcorn.slickers({
+					start: 23,
+					end: 29,
+					location: '﻿﻿537 Lewis Street, oakland, ca',
+					lat: 37.805487,
+					lng: -122.29842300000001,
+					label: 'West Oakland Woods',
+					target: 'map',
+					onLoad: 'markerLoaded',
+					onStart: 'markerStart',
+					onEnd: 'markerEnd'
+				});
+	
+				popcorn.slickers({
+					start: 31,
+					end: 37,
+					location: '﻿﻿16th Street and Center Street, oakland, ca',
+					lat: 37.8125818,
+					lng: -122.29236559999998,
+					label: 'Center Street Farm',
+					target: 'map',
+					onLoad: 'markerLoaded',
+					onStart: 'markerStart',
+					onEnd: 'markerEnd'
+				});
+				
+			}
 
 		}, false);
-
 
 	}());
 	

@@ -720,8 +720,8 @@ border-top: 1px solid #fff;	background-color:#eee;}
 }
 .popup-1 .popup-content, .popup-2 .popup-content, .popup-content { padding:20px;}
 .popup-1 .popup-header h3, .popup-2 .popup-header h3, .popup-header h3 { padding: 0 20px}
-.download-btn, .load-code-btn { position: absolute; right: 0; top: 12px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
-.save-project-data-btn, .create-new-btn { position: absolute; left: 0; top: 50px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
+.download-btn, .load-code-btn { position: absolute; right: 0; top: 25px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
+.save-project-data-btn, .create-new-btn { position: absolute; left: 0; top: 57px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
 .create-new-btn { left: 120px}
 .save-project-data-btn { left: 125px !important }
 .project-title-textbox { position: absolute; left: 30px; top: 50px; margin:0; padding:7px 0; height:auto; width: 130px !important}
