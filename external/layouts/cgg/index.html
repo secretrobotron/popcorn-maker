@@ -5,22 +5,35 @@
 		<title>Yo Momma</title>
 		<style type="text/css">
 		
+		body {
+			margin: 0;
+			padding: 0;
+		}
+		
 		#container {
 			position: relative;
 			max-width: 100%;
 			max-height: 100%;
 			overflow: hidden;
 		}
-		
+
 		#container > div {
 			position: absolute;
 			top: 0;
 			left: 0;
 		}
+		
+		#container > div.video-js-box {
+			position: static;
+		}
 
 		#video {
 			width: 100%;
 			max-height: 100%;
+		}
+		
+		.vjs-big-play-button {
+			visibility: hidden;
 		}
 		
 		#form {
@@ -35,14 +48,17 @@
 			padding: 0 20px;
 		}
 		</style>
+		<link rel="stylesheet" href="css/video-js.css" type="text/css" media="screen" title="Video JS">
 	</head>
 	<body>
-		<div id="container" data-butter="target">
-			<video id="video" preload="auto" autobuffer controls poster="http://videos.mozilla.org/serv/webmademovies/popcornposter.png" data-butter="media">
-				<source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4" type="video/mp4">
-				<source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm" type="video/webM">
-				<source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv" type="video/ogg">
-			</video>
+		<div id="container" style="display: none">
+			<div data-butter="target" class="video-js-box">
+				<video id="video" preload="auto" autobuffer controls poster="http://videos.mozilla.org/serv/webmademovies/popcornposter.png" data-butter="media" class="video-js">
+					<source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4" type="video/mp4">
+					<source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm" type="video/webM">
+					<source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv" type="video/ogg">
+				</video>
+			</div>
 		</div>
 		<div id="form">
 			<p>What is your favorite color?</p>
@@ -50,11 +66,13 @@
 			<button id="go">Go</button>
 		</div>
 	</body>
+	<script src="js/video.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" src="../popcorn-js/popcorn.js"></script>
 	<script type="text/javascript" src="js/popcorn.flickr.kenburns.js"></script>
 	<script type="text/javascript">
 	
 	(function() {
+		VideoJS.setupAllWhenReady();
 	
 		var p = Popcorn('#video', { frameAnimation: true } );
 		
@@ -65,12 +83,14 @@
 		var flickrData;
 		var time = 0.5;
 		var r = Math.random;
+		var container = document.getElementById('container');
 		
 		window.imageLoaded = function (option) {
 			toLoad--;
 			loaded++;
 			if (!toLoad) {
 				if (loaded > 20 || loaded >= p.duration() ) {
+					container.style.display = '';
 					p.play();
 				}
 				load();
@@ -83,10 +103,13 @@
 
 				p.fkb({
 					start: time,
-					end: time + 2 + Math.random() * 3,
+					end: time + 2 + Math.random() * 2,
 					id: flickrData[0].id,
 					apikey: apikey,
 					target: 'container',
+					startPosition: [0, 0, 100, 100],
+					endPosition: [-10, -10, 120, 120],
+					/*
 					startPosition: [
 						5 + r() * 90,
 						5 + r() * 80,
@@ -97,14 +120,15 @@
 						5 + r() * 90,
 						5 + r() * 80,
 						5 + r() * 40,
-						5 + r() * 40
+						5 + r() * 40 * 16/9
 					],
+					*/
 					onLoad: 'imageLoaded'
 				});
 		
 				flickrData.shift();
 				toLoad++;
-				time += 2;
+				time += 6;
 			}
 			
 			console.log('loading ' + toLoad + ' more');
@@ -123,7 +147,7 @@
 				return;
 			}
 			
-			url = 'http://api.flickr.com/services/rest/?lang=en-us&format=json&jsoncallback=flickr&method=flickr.photos.search&api_key=' + apikey + '&text=' + encodeURIComponent(search) + '&safe_search=1&sort=interestingness-desc&jsoncallback=flickr';
+			url = 'http://api.flickr.com/services/rest/?lang=en-us&format=json&jsoncallback=flickr&method=flickr.photos.search&api_key=' + apikey + '&text=' + encodeURIComponent(search) + '&safe_search=1&sort=relevance&jsoncallback=flickr';
 
 			this.disabled = true;
 

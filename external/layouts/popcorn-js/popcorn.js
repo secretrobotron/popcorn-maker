@@ -1,20 +1,12 @@
-/*
- * popcorn.js version dd68d3c
- * http://popcornjs.org
- *
- * Copyright 2011, Mozilla Foundation
- * Licensed under the MIT license
- */
-
 (function(global, document) {
 
   //  Cache refs to speed up calls to native utils
-  
+
   var
-  
+
   AP = Array.prototype,
   OP = Object.prototype,
-  
+
   forEach = AP.forEach,
   slice = AP.slice,
   hasOwn = OP.hasOwnProperty,
@@ -30,11 +22,23 @@
 
   //  Non-public internal data object
   internal = {
-    events: { 
+    events: {
       hash: {},
       apis: {}
     }
   },
+
+  requestAnimFrame = (function(){
+    // shim from http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+    return global.requestAnimationFrame       || 
+      global.webkitRequestAnimationFrame || 
+      global.mozRequestAnimationFrame    || 
+      global.oRequestAnimationFrame      || 
+      global.msRequestAnimationFrame     || 
+      function(/* function */ callback, /* DOMElement */ element){
+        global.setTimeout(callback, 16);
+      };
+  }()),
 
   //  Declare constructor
   //  Returns an instance object.
@@ -192,6 +196,7 @@
             start: -1,
             end: -1
           }],
+          animating:[],
           startIndex: 0,
           endIndex:   0,
           previousUpdateTime: 0
@@ -214,13 +219,14 @@
             end: videoDurationPlus
           });
 
-          that.media.addEventListener( "timeupdate", function( event ) {
-
-            var currentTime    = this.currentTime,
+          var updateTrackEvents = function ( event ) {
+            var currentTime    = that.media.currentTime,
                 previousTime   = that.data.trackEvents.previousUpdateTime,
                 tracks         = that.data.trackEvents,
                 tracksByEnd    = tracks.byEnd,
-                tracksByStart  = tracks.byStart;
+                tracksByStart  = tracks.byStart,
+                tracksAnimating= tracks.animating,
+                animIndex = 0;
 
             //  Playbar advancing
             if ( previousTime < currentTime ) {
@@ -243,18 +249,31 @@
               while ( tracksByStart[ tracks.startIndex ] && tracksByStart[ tracks.startIndex ].start <= currentTime ) {
                 //  If plugin does not exist on this instance, remove it
                 if ( !tracksByStart[ tracks.startIndex ]._natives || !!that[ tracksByStart[ tracks.startIndex ]._natives.type ] ) {
-                  if ( tracksByStart[ tracks.startIndex ].end > currentTime && 
-                        tracksByStart[ tracks.startIndex ]._running === false && 
+                  if ( tracksByStart[ tracks.startIndex ].end > currentTime &&
+                        tracksByStart[ tracks.startIndex ]._running === false &&
                           that.data.disabled.indexOf( tracksByStart[ tracks.startIndex ]._natives.type ) === -1 ) {
-                          
+
                     tracksByStart[ tracks.startIndex ]._running = true;
                     tracksByStart[ tracks.startIndex ]._natives.start.call( that, event, tracksByStart[ tracks.startIndex ] );
+
+                    if (tracksByStart[ tracks.startIndex ]._natives.frame) {
+                      tracksAnimating.push(tracksByStart[ tracks.startIndex ]);
+                    }
                   }
                   tracks.startIndex++;
                 } else {
                   // remove track event
                   Popcorn.removeTrackEvent( that, tracksByStart[ tracks.startIndex ]._id );
                   return;
+                }
+              }
+
+              while (animIndex < tracksAnimating.length) {
+                if (tracksAnimating[animIndex]._running == false) {
+                   tracksAnimating.splice(animIndex,1);
+                } else {
+                  tracksAnimating[animIndex]._natives.frame.call( that, event, tracksAnimating[animIndex], currentTime );
+                  animIndex++;
                 }
               }
 
@@ -279,12 +298,16 @@
               while ( tracksByEnd[ tracks.endIndex ] && tracksByEnd[ tracks.endIndex ].end > currentTime ) {
                 // if plugin does not exist on this instance, remove it
                 if ( !tracksByEnd[ tracks.endIndex ]._natives || !!that[ tracksByEnd[ tracks.endIndex ]._natives.type ] ) {
-                  if ( tracksByEnd[ tracks.endIndex ].start <= currentTime && 
-                        tracksByEnd[ tracks.endIndex ]._running === false  && 
+                  if ( tracksByEnd[ tracks.endIndex ].start <= currentTime &&
+                        tracksByEnd[ tracks.endIndex ]._running === false  &&
                           that.data.disabled.indexOf( tracksByEnd[ tracks.endIndex ]._natives.type ) === -1 ) {
 
                     tracksByEnd[ tracks.endIndex ]._running = true;
                     tracksByEnd[ tracks.endIndex ]._natives.start.call( that, event, tracksByEnd[tracks.endIndex] );
+
+                    if (tracksByEnd[ tracks.endIndex ]._natives.frame) {
+                      tracksAnimating.push(tracksByEnd[ tracks.endIndex ]);
+                    }
                   }
                   tracks.endIndex--;
                 } else {
@@ -293,11 +316,33 @@
                   return;
                 }
               }
+
+              while (animIndex < tracksAnimating.length) {
+                if (tracksAnimating[animIndex]._running == false) {
+                   tracksAnimating.splice(animIndex,1);
+                } else {
+                  tracksAnimating[animIndex]._natives.frame.call( that, event, tracksAnimating[animIndex], currentTime );
+                  animIndex++;
+                }
+              }
+
             }
 
             tracks.previousUpdateTime = currentTime;
+          };
 
-          }, false );
+          var animateLoop = function () {
+            updateTrackEvents( null );
+            requestAnimFrame(animateLoop);
+          };
+
+          if ( that.options.frameAnimation ) {
+            animateLoop();
+          } else {
+            that.media.addEventListener( "timeupdate", function( event ) {
+              updateTrackEvents( event );
+            }, false );
+          }
         } else {
           global.setTimeout(function() {
             isReady( that );
@@ -407,13 +452,13 @@
         bounds[ p ] = Math.round( clientRect[ p ] );
       }
 
-      return Popcorn.extend({}, bounds, { top: top, left: left });     
-    }, 
+      return Popcorn.extend({}, bounds, { top: top, left: left });
+    },
 
     disable: function( instance, plugin ) {
 
       var disabled = instance.data.disabled;
-      
+
       if ( disabled.indexOf( plugin ) === -1 ) {
         disabled.push( plugin );
       }
@@ -422,7 +467,7 @@
     },
     enable: function( instance, plugin ) {
 
-      var disabled = instance.data.disabled, 
+      var disabled = instance.data.disabled,
           index = disabled.indexOf( plugin );
 
       if ( index > -1 ) {
@@ -512,7 +557,7 @@
     // Toggle a plugin's playback behaviour (on or off) per instance
     toggle: function( plugin ) {
       return Popcorn[ this.data.disabled.indexOf( plugin ) > -1 ? "enable" : "disable" ]( this, plugin );
-    }, 
+    },
 
     // Set default values for plugin options objects per instance
     defaults: function( plugin, defaults ) {
@@ -561,7 +606,7 @@
   // Privately compile events table at load time
   (function( events, data ) {
 
-    var apis = internal.events.apiTypes, 
+    var apis = internal.events.apiTypes,
     eventsList = events.Natives.split( /\s+/g ),
     idx = 0, len = eventsList.length, prop;
 
@@ -573,8 +618,8 @@
 
       data.apis[ val ] = {};
 
-      var apiEvents = events[ val ].split( /\s+/g ), 
-      len = apiEvents.length, 
+      var apiEvents = events[ val ].split( /\s+/g ),
+      len = apiEvents.length,
       k = 0;
 
       for ( ; k < len; k++ ) {
@@ -594,14 +639,14 @@
         return false;
       }
 
-      var eventApi = internal.events, 
+      var eventApi = internal.events,
         apis = eventApi.apiTypes,
-        apihash = eventApi.apis, 
+        apihash = eventApi.apis,
         idx = 0, len = apis.length, api, tmp;
 
       for ( ; idx < len; idx++ ) {
         tmp = apis[ idx ];
-        
+
         if ( apihash[ tmp ][ type ] ) {
           api = tmp;
           break;
@@ -645,9 +690,9 @@
       listen: function( type, fn ) {
 
         var self = this,
-            hasEvents = true, 
-            eventHook = Popcorn.events.hooks[ type ], 
-            origType = type, 
+            hasEvents = true,
+            eventHook = Popcorn.events.hooks[ type ],
+            origType = type,
             tmp;
 
         if ( !this.data.events[ type ] ) {
@@ -776,7 +821,7 @@
 
     //  Store this definition in an array sorted by times
     var byStart = obj.data.trackEvents.byStart,
-        byEnd = obj.data.trackEvents.byEnd, 
+        byEnd = obj.data.trackEvents.byEnd,
         idx;
 
     for ( idx = byStart.length - 1; idx >= 0; idx-- ) {
@@ -814,6 +859,7 @@
         indexWasAt = 0,
         byStart = [],
         byEnd = [],
+        animating = [],
         history = [];
 
     Popcorn.forEach( obj.data.trackEvents.byStart, function( o, i, context ) {
@@ -841,6 +887,23 @@
 
     });
 
+    Popcorn.forEach( obj.data.trackEvents.animating, function( o, i, context ) {
+      // Preserve the original start/end trackEvents
+      if ( !o._id ) {
+        animating.push( obj.data.trackEvents.animating[i] );
+      }
+
+      // Filter for user track events (vs system track events)
+      if ( o._id ) {
+
+        // Filter for the trackevent to remove
+        if ( o._id !== trackId ) {
+          animating.push( obj.data.trackEvents.animating[i] );
+        }
+      }
+
+    });
+
     //  Update
     if ( indexWasAt <= obj.data.trackEvents.startIndex ) {
       obj.data.trackEvents.startIndex--;
@@ -852,6 +915,7 @@
 
     obj.data.trackEvents.byStart = byStart;
     obj.data.trackEvents.byEnd  = byEnd;
+    obj.data.trackEvents.animating  = animating;
 
     for ( var i = 0; i < historyLen; i++ ) {
       if ( obj.data.history[ i ] !== trackId ) {
@@ -879,7 +943,7 @@
     var trackevents = [],
       refs = obj.data.trackEvents.byStart,
       length = refs.length,
-      idx = 0, 
+      idx = 0,
       ref;
 
     for ( ; idx < length; idx++ ) {
@@ -959,7 +1023,7 @@
         plugin = {},
         setup,
         isfn = typeof definition === "function",
-        methods = [ "_setup", "_teardown", "start", "end" ];
+        methods = [ "_setup", "_teardown", "start", "end", "frame" ];
 
     // combines calls of two function calls into one
     var combineFn = function( first, second ) {
@@ -983,7 +1047,7 @@
     // apply safe, and empty default functions
     methods.forEach(function( method ) {
 
-      definition[ method ] = definition[ method ] || Popcorn.nop;      
+      definition[ method ] = definition[ method ] || Popcorn.nop;
     });
 
     var pluginFn = function( setup, options ) {
@@ -994,7 +1058,7 @@
 
       //  Storing the plugin natives
       var natives = options._natives = {},
-          compose = "", 
+          compose = "",
           defaults, originalOpts, manifestOpts, mergedSetupOpts;
 
       Popcorn.extend( natives, setup );
@@ -1143,6 +1207,7 @@
 
     var byStart = obj.data.trackEvents.byStart,
         byEnd = obj.data.trackEvents.byEnd,
+        animating = obj.data.trackEvents.animating,
         idx, sl;
 
     // remove all trackEvents
@@ -1164,6 +1229,19 @@
         }
       }
     }
+    
+    //remove all animating events
+    for ( idx = 0, sl = animating.length; idx < sl; idx++ ) {
+
+      if ( ( animating[ idx ] && animating[ idx ]._natives && animating[ idx ]._natives.type === name ) ) {
+
+        animating.splice( idx, 1 );
+
+        // update for loop if something removed, but keep checking
+        idx--; sl--;
+      }
+    }
+
   };
 
   Popcorn.compositions = {};
@@ -1292,7 +1370,7 @@
 
     options.dataType = options.dataType && options.dataType.toLowerCase() || null;
 
-    if ( options.dataType && 
+    if ( options.dataType &&
          ( options.dataType === "jsonp" || options.dataType === "script" ) ) {
 
       Popcorn.xhr.getJSONP(

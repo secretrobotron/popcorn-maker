@@ -7,11 +7,26 @@
 
 		body {
 			margin: 0;
-			background-color: #aaa;
+			background-color: #000;
+			font-family: Bell MT, garamond,georgia;
+		}
+		
+		header {
+			color: #FFFFFF;
+			padding: 0 40px;
+		}
+		
+		.playing h1 {
+			opacity: 0;
+			-moz-transition: opacity 0.4s;
+			-webkit-transition: opacity 0.4s;
+			-o-transition: opacity 0.4s;
+			-ie-transition: opacity 0.4s;
+			transition: opacity 0.4s;
 		}
 		
 		#map {
-			background-color: #aaa;
+			background-color: #000;
 			position: absolute;
 			width: 100%;
 			height: 100%;
@@ -29,11 +44,18 @@
 			width: 100%;
 			display: block;
 			opacity: 1;
-			-moz-transition: opacity 0.4s;
-			-webkit-transition: opacity 0.4s;
-			-opera-transition: opacity 0.4s;
-			-ie-transition: opacity 0.4s;
-			transition: opacity 0.4s;
+			-moz-transition: opacity 0.4s, -moz-transform 0.5s;
+			-webkit-transition: opacity 0.4s, -webkit-transform 0.5s;
+			-o-transition: opacity 0.4s, -o-transform 0.5s;
+			-ie-transition: opacity 0.4s, -ie-transform 0.5s;
+			transition: opacity 0.4s, transform 0.5s;
+
+			-moz-transform: scale(1);
+		}
+		
+		#video.unshoop {
+			opacity: 0;
+			-moz-transform: scale(0);
 		}
 
 		#video-container {
@@ -43,14 +65,14 @@
 			opacity: 1;
 			-moz-transition: opacity 0.4s;
 			-webkit-transition: opacity 0.4s;
-			-opera-transition: opacity 0.4s;
+			-o-transition: opacity 0.4s;
 			-ie-transition: opacity 0.4s;
 			transition: opacity 0.4s;
 		}
 		
 		#video:hover, #video.hover {
 			-webkit-transition: opacity 0.4s;
-			-opera-transition: opacity 0.4s;
+			-o-transition: opacity 0.4s;
 			-ie-transition: opacity 0.4s;
 			transition: opacity 0.4s;
 			opacity: 0.2;
@@ -64,6 +86,7 @@
 			width: 400px;
 			height: 40px;
 			background-color: rgba(255, 255, 255, 0.4);
+			display: none;
 		}
 		
 		#controls > div {
@@ -148,11 +171,14 @@
 -->
 	</head>
 	<body>
-		<div style="height: 100%; width: 100%">
+		<header>
+			<h1>Cultivating community:<br/> Urban farming in West Oakland</h1>
+		</header>
+		<div style="width: 100%">
 			<div id="main-container">
 				<div id="map" style="visibility: hidden" data-butter="target"></div>
-				<div id="video-container" style="">
-					<video id="video" data-butter="media">
+				<div id="video-container" style="visibility: visible">
+					<video id="video" data-butter="media" class="unshoop">
 						<source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
 						<source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm; codecs="vp8, vorbis"' />
 						
@@ -180,6 +206,7 @@
 			progressOuter,
 			playButton,
 			map,
+			playMarker,
 			video,
 			videoContainer,
 			videoPaused = true,
@@ -205,6 +232,29 @@
 		}
 		
 		function setUpMap() {
+			map.setOptions({
+				draggable: false
+			});
+			
+			var center = new google.maps.LatLng(37.81250111667474, -122.28639156254883);
+			
+			playMarker = new google.maps.Marker({
+				map: map,
+				position: center,
+				animation: google.maps.Animation.DROP,
+				icon: 'https://www.google.com/intl/en_ALL/mapfiles/marker_purple.png',
+				visible: true
+			});
+			map.setCenter(center);
+			google.maps.event.addListener(playMarker, 'click', function() {
+				videoPaused = false;
+				video.play();
+				videoContainer.style.opacity = '';
+			});
+			
+			//var georssLayer = new google.maps.KmlLayer('http://api.flickr.com/services/feeds/geo/?g=322338@N20&lang=en-us&format=feed-georss');
+			//georssLayer.setMap(map);
+			
 			google.maps.event.addListener(map, 'dragstart', function() {
 				var endListener;
 
@@ -221,7 +271,6 @@
 				if (!video.paused) {
 					video.pause();
 				}
-				//video.style.opacity = '0';
 			});
 
 			if (video.readyState >= 3) {
@@ -253,11 +302,13 @@
 			if (!map) {
 				map = options.map;
 				setUpMap();
-			}			
+			}
+			options.marker.setDraggable(false);
+			options.marker.setClickable(false);
 		}
 		
 		window.markerStart = function (options) {
-			activeEvents.push(options);			
+			activeEvents.push(options);
 			activeEvents[0].onFrame = doFadeyThing;
 		}
 
@@ -295,14 +346,7 @@
 			progress = document.getElementById('progress');
 			progressOuter = document.getElementById('progress-outer');
 			playButton = document.getElementById('play-button');
-/*			
-			var latlng = new google.maps.LatLng(-34.397, 150.644);
-			map = new google.maps.Map(document.getElementById("map"), {
-				zoom: 8,
-				center: latlng,
-				mapTypeId: google.maps.MapTypeId.ROADMAP
-			});
-*/			
+
 			var videoHover = false;
 			window.addEventListener('mousemove', function (e) {
 			//http://www.quirksmode.org/js/events_properties.html#position
@@ -335,11 +379,14 @@
 			}, false);
 
 			video.addEventListener('play', function() {
+				document.body.setAttribute('class', 'playing');
 				playButton.setAttribute('class', 'playing');
+				video.removeAttribute('class');
 			}, false);
 			
 			video.addEventListener('pause', function() {
 				playButton.removeAttribute('class');
+				document.body.removeAttribute('class');
 			}, false);
 			
 			video.addEventListener('progress', videoLoading, false);
