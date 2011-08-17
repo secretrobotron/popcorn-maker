@@ -105,6 +105,14 @@
 		var videoAspect = 16/9;
 		var videoSetup = false;
 		
+		document.getElementById('video').addEventListener('play', function() {
+			if (!videoSetup) {
+				videoSetup = true;
+				container.style.display = '';
+				VideoJS.setupAllWhenReady();
+			}
+		}, false);
+		
 		function loadEvent(butterId, options) {
 			deleteEvent(butterId);
 					
@@ -351,7 +359,7 @@
 		
 		doSearch();
 
-		document.getElementById('go').addEventListener('click', doSearch, false);		
+		document.getElementById('go').addEventListener('click', doSearch, false);
 	}());
 	
 	</script>
