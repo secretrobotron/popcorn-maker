@@ -267,6 +267,10 @@
         }
       },
       _teardown: function( options ) {
+        if (typeof options.onEnd === 'function') {
+          options.onEnd(options);
+        }
+
         if (container && container.parentNode) {
           container.parentNode.removeChild(container);
         }

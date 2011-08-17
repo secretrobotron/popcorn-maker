@@ -243,10 +243,17 @@
 		
 		function setUpMap() {
 			map.setOptions({
-				draggable: false
+				draggable: false,
+				mapTypeControl: false,
+				panControl: false,
+				scaleControl: false,
+				zoomControl: false,
+				streetViewControl: false,
+				disableDoubleClickZoom: true,
+				scrollwheel: false
 			});
 			
-			center = new google.maps.LatLng(37.81250111667474, -122.28639156254883);
+			center = new google.maps.LatLng(37.8169812, -122.28960699999999);
 			
 			playMarker = new google.maps.Marker({
 				map: map,
@@ -296,6 +303,13 @@
 		function doFadeyThing() {
 			var i, recent = -5;
 			
+			if (activeEvents.length) {
+				videoContainer.style.opacity = 0.1;
+			} else {
+				videoContainer.style.opacity = 1;
+			}
+			return;
+			
 			for (i = 0; i < activeEvents.length; i++) {
 				recent = Math.max(activeEvents[i].start, recent);
 			}
@@ -315,12 +329,21 @@
 			}
 			options.marker.setDraggable(false);
 			options.marker.setClickable(false);
-			map.setCenter(center);
+			
+			var bounds = map.getBounds() || options.mapBounds;
+			bounds = new google.maps.LatLngBounds(bounds.getSouthWest(), bounds.getNorthEast());
+			if (bounds) {
+				bounds.extend(center);	
+				map.fitBounds(bounds);
+			} else {
+				//map.setCenter(center);
+			}
 		}
 		
 		window.markerStart = function (options) {
 			activeEvents.push(options);
-			activeEvents[0].onFrame = doFadeyThing;
+			//activeEvents[0].onFrame = doFadeyThing;
+			doFadeyThing();
 		}
 
 		window.markerEnd = function (options) {
@@ -328,6 +351,8 @@
 			if (index >= 0) {
 				activeEvents.splice(index, 1);
 			}
+			doFadeyThing();
+			return;
 			
 			options.onFrame = null;
 			
@@ -383,6 +408,16 @@
 					videoHover = false;
 				}
 
+			}, false);
+			
+			window.addEventListener('mouseout', function (e) {
+				video.removeAttribute('class');
+				videoHover = false;
+			}, false);
+			
+			window.addEventListener('blur', function (e) {
+				video.removeAttribute('class');
+				videoHover = false;
 			}, false);
 			
 			video.addEventListener('timeupdate', function() {

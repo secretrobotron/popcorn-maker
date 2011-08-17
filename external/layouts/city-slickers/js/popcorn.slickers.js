@@ -61,9 +61,9 @@
 						while (waitingToLoad.length) {
 							(waitingToLoad.shift())();
 							
-							if (mapData && map && mapData.bounds) {
-								//map.fitBounds(mapData.bounds);
-							}
+							//if (mapData && map && mapData.bounds) {
+							//	map.fitBounds(mapData.bounds);
+							//}
 						}
 					};
 					Popcorn.getScript("http://maps.google.com/maps/api/js?sensor=false&callback=" + callbackName);
@@ -147,7 +147,7 @@
 			activeEvents = mapData.activeEvents;
 
 			mapData.bounds.extend(latLng);
-			//map.fitBounds(mapData.bounds);
+			map.fitBounds(mapData.bounds);
 
 			var marker = new google.maps.Marker({
 				map: map, 
@@ -158,6 +158,7 @@
 		
 			options.map = map;
 			options.marker = marker;
+			options.mapBounds = mapData.bounds;
 			if (typeof options.onLoad === 'function') {
 				options.onLoad(options);
 			}
@@ -274,12 +275,20 @@
 				}
 				
 				//zoomMap(mapData, options.map);
+				
+				if (popcorn.currentTime() < options.start && options.marker) {
+					options.marker.setVisible(false);
+				}
 
 				if (typeof options.onEnd === 'function') {
 					options.onEnd(options);
 				}
 			},
 			_teardown: function( event, opts ) {
+				if (typeof options.onEnd === 'function') {
+					options.onEnd(options);
+				}
+
 				mapDiv = null;
 				mapData = null;
 				map = null;
