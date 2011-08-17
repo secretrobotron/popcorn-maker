@@ -7,9 +7,7 @@
     var popcorn = Popcorn( document.getElementById('outerVideo') );
     var b = new Butter();
     b.comm();
-    var commClient = new b.CommClient( "previewerClient", function ( message ) {
-      console.log('in preview', message);
-    } );
+    var commClient = new b.CommClient( "previewerClient" );
     commClient.listen( "ping", function( message ) {
       commClient.send( Popcorn.instances.indexOf( popcorn ), "pong" );
     });

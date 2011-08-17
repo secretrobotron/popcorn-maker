@@ -369,7 +369,7 @@
     
 //    function loadProjectsFromServer(){
 //      //load stuff from bobby's server
-//    }
+//     }
 //    
 //    loadProjectsFromServer();
     
@@ -379,7 +379,7 @@
       
       try {
         var projectToSave = b.exportProject(),
-        overwrite = false,
+        overwrite = false,  
         title;
 
         projectToSave.layout = currentLayout;
@@ -615,12 +615,32 @@
       
         try {
           var data = JSON.parse( dataString );
-          b.clearProject();
-          b.clearPopcorn();
-          currentLayout = dataString.layout ? dataString.layout : layouts[ 0 ];
-          b.importProject( data );
-          $('.close-div').fadeOut('fast');
-          $('.popups').hide();
+          b.clearProject();         
+          currentLayout = data.layout ? data.layout : layouts[ 0 ];
+          (function ( data ) {
+            b.listen( "layoutloaded", function( e ) {
+              document.getElementById( "main" ).innerHTML = "";
+              b.buildPopcorn( b.getCurrentMedia() , function() {
+
+                var registry = b.getRegistry();
+                for( var i = 0, l = registry.length; i < l; i++ ) {
+                  b.addPlugin( { type: registry[ i ].type } );
+                }
+                $('.tiny-scroll').tinyscrollbar();
+                b.importProject( data );
+                $('.close-div').fadeOut('fast');
+                $('.popups').hide();
+              }, true );
+              b.unlisten( "layoutloaded", this );
+            });
+          })( data );
+          b.loadPreview( {
+            layout: "layouts/default.html",
+            target: "main",
+            media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+          });
+          return;
+
         }
         catch ( e ) {
           console.log ( "Error Loading in Data", e );
