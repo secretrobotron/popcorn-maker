@@ -589,6 +589,7 @@
         
         if ( localProjects && localProjects[ title ] ) {
           b.clearProject();         
+          b.clearPlugins();
           currentLayout = localProjects[ title ].layout;
           (function ( localProject ) {
             b.listen( "layoutloaded", function( e ) {
@@ -620,6 +621,7 @@
     
     $(".create-new-btn").click(function() {
       b.clearProject();
+      b.clearPlugins();
       b.setProjectDetails( "title", "Untitled Project");
       currentLayout = document.getElementById( 'layout-select' ).value;
       b.listen( "layoutloaded", function( e ) {
@@ -652,6 +654,7 @@
         try {
           var data = JSON.parse( dataString );
           b.clearProject();         
+          b.clearPlugins();
           currentLayout = data.layout ? data.layout : layouts[ 0 ];
           (function ( data ) {
             b.listen( "layoutloaded", function( e ) {
