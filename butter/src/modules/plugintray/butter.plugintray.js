@@ -39,6 +39,7 @@ THE SOFTWARE.
       options = options || {};
       var name = options.name || 'Plugin' + Date.now();
       this.type = options.type;
+      this.element = undefined;
       
       this.getName = function () {
         return name;
@@ -70,6 +71,7 @@ THE SOFTWARE.
         pluginElement.id = that.type;
         pluginElement.setAttribute( "data-trackliner-type", "butterapp" );
         $( pluginElement ).draggable({ helper: "clone", appendTo: "body", zIndex: 9001, revert: true, revertDuration: 0 });
+        this.element = pluginElement;
         return pluginElement;
       };
 
@@ -97,6 +99,14 @@ THE SOFTWARE.
     this.getPlugins = function () {
       return plugins;
     }; //getPlugins
+
+    this.clearPlugins = function () {
+      while ( plugins.length > 0 ) {
+        var plugin = plugins.pop();
+        container.removeChild( plugin.element );
+        this.trigger( "pluginremoved", plugin );
+      }
+    }; //clearPlugins
 
   }); //plugintray
 
