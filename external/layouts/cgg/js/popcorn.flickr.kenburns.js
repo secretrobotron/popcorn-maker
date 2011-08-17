@@ -164,6 +164,7 @@
         }
         
         container = document.createElement('div');
+        container.setAttribute('class', 'fkb');
         container.style.display = 'none';
         
         if (options.target && options.target.tagName) {
@@ -262,7 +263,13 @@
         }
       },
       _teardown: function( options ) {
-        options.target.removeChild(container);
+        if (container && container.parentNode) {
+          container.parentNode.removeChild(container);
+        }
+        options.image = null;
+        container = null;
+        image = null;
+        position = null;
       },
       manifest: {
         about:{

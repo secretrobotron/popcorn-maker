@@ -17,7 +17,7 @@
 			overflow: hidden;
 		}
 
-		#container > div {
+		#container > div.fkb {
 			position: absolute;
 			top: 0;
 			left: 0;
@@ -85,7 +85,7 @@
 		];
 		
 		var answers = [
-			'boobs',
+			'cats',
 			'pink'
 		];
 	
@@ -154,12 +154,12 @@
 			toLoad--;
 			loaded++;
 			if (loaded >= optionsCount) {
-				//if (loaded > 20 || loaded >= popcorn.duration() ) {
+				if (!videoSetup ) {
 					videoSetup = true;
 					container.style.display = '';
 					VideoJS.setupAllWhenReady();
 					//popcorn.play();
-				//}
+				}
 				load();
 			}
 		}
