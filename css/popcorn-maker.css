@@ -96,5 +96,32 @@ html, body {
 #layout-select {
   position: absolute;
   right: 0px;
-  top: 0px;
+  top: 100px;
 }
+
+#media-url {
+  position: absolute;
+  right: 0px;
+  top: 125px;
+}
+
+.create-new-btn {
+  position: absolute;
+  left: -60px;
+  top: 120px;
+}
+
+.load-code-btn {
+  position: absolute;
+  left: 0px;
+  top: 10px;
+}
+
+#load-create-popup {
+  height: 300px;
+}
+
+#load-create-popup-content {
+  height: 300px;
+}
+

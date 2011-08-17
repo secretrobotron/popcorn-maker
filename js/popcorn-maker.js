@@ -647,12 +647,12 @@
                 }
                 $('.tiny-scroll').tinyscrollbar();
                 b.importProject( data );
-                $('.close-div').fadeOut('fast');
-                $('.popups').hide();
               }, b.popcornFlag() );
               b.unlisten( "layoutloaded", this );
             });
           })( data );
+          $('.close-div').fadeOut('fast');
+          $('.popups').hide();
           b.loadPreview( {
             layout: currentLayout,
             target: "main",
