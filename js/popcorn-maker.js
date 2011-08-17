@@ -3,7 +3,8 @@
   var layouts = [
     "layouts/default.html",
     "layouts/default-basic.html",
-    "external/layouts/cgg/",
+    "external/layouts/city-slickers/index.html",
+    "external/layouts/cgg/index.html",
   ],
   currentLayout;
 
@@ -47,6 +48,7 @@
     b.timeline({ target: "timeline-div"});
     b.trackeditor({ target: "popup-5"});
 
+    b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
     b.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
 
     b.setProjectDetails("title", "Untitled Project" );
