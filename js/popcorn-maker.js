@@ -213,6 +213,14 @@
       scrubber.style.left = b.currentTimeInPixels() - tracksDiv.scrollLeft + "px";
     });
 
+    document.addEventListener( "keypress", function( event ) {
+      if( event.keyCode === 39 ) {
+        b.moveFrameRight();
+      } else if( event.keyCode === 37 ) {
+        b.moveFrameLeft();
+      }
+    }, false);
+
     var trackLayers = {};
     var editTrackTargets =  document.getElementById( "track-edit-target" );
     var trackJSONtextArea = document.getElementById( "track-edit-JSON" );
