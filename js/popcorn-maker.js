@@ -557,7 +557,7 @@
         localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
         title = projectsDrpDwn.val();
         
-        if ( localProjects && localProjects[ title ] ) {
+        if ( localProjects && localProjects[ title ] && localProjects[ title ].project.title !== b.getProjectDetails( "title" ) ) {
           b.clearProject();         
           (function ( localProject ) {
             b.listen( "layoutloaded", function( e ) {
