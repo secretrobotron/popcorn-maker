@@ -72,6 +72,7 @@
     var tracksDiv = document.getElementById( "tracks-div" );
     var progressBar = document.getElementById( "progress-bar" );
     var timelineDuration = document.getElementById( "timeline-duration" );
+    var timelineTarget = document.getElementById( "timeline-div" );
 
     function checkScrubber( event ) {
 
@@ -89,6 +90,7 @@
       if ( scrubberLeft > scrubberContainer.offsetWidth ) {
 
         progressBar.style.width = "100%";
+
         scrubber.style.left = scrubberContainer.offsetWidth + "px";
       }
 
@@ -111,9 +113,31 @@
       }
     });
 
-    document.getElementById( "tracks-div" ).addEventListener( "scroll", function( event ) {
+    var zoom = function( event ) {
 
-      scrubberLeft = checkScrubber( event );
+      if ( event.shiftKey ) {
+
+        event.preventDefault();
+        b.zoom( event.detail || event.wheelDelta );
+      }
+
+      var scrubberLeft = checkScrubber( event );
+
+      if ( scrubberLeft - 5 > scrubberContainer.offsetWidth || scrubberLeft < 0 ) {
+
+        scrubber.style.display = "none";
+      } else {
+
+        scrubber.style.display = "block";
+      }
+    };
+
+    tracksDiv.addEventListener( "DOMMouseScroll", zoom, false );
+    tracksDiv.addEventListener( "mousewheel", zoom, false );
+
+    tracksDiv.addEventListener( "scroll", function( event ) {
+
+      var scrubberLeft = checkScrubber( event );
 
       if ( scrubberLeft - 5 > scrubberContainer.offsetWidth || scrubberLeft < 0 ) {
 
@@ -143,12 +167,15 @@
 
         var scrubberPos = event.pageX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft;
 
-        if ( scrubberPos >= 0 ) {
+        if ( scrubberPos <= 0 ) {
 
-          b.currentTimeInPixels( scrubberPos );
+          b.currentTimeInPixels( 0 );
+        } else if ( scrubberPos >= timelineTarget.offsetWidth ) {
+
+          b.currentTimeInPixels( timelineTarget.offsetWidth );
         } else {
 
-          b.currentTime( 0 );
+          b.currentTimeInPixels( scrubberPos );
         }
       }
     }, false);
@@ -283,6 +310,14 @@
       layersDiv.removeChild( trackLayers[ "layer-" + event.data.getId() ] );
       layersDiv.insertBefore( trackLayers[ "layer-" + event.data.getId() ], layersDiv.children[ event.data.newPos ] );
     });
+
+    document.addEventListener( "keypress", function( event ) {
+
+      if ( event.charCode === 32 ) {
+
+        b.isPlaying() ? b.play() : b.pause();
+      }
+    }, false );
 
     function centerPopup( popup ) {
       popup.css( "margin-left", ( window.innerWidth / 2 ) - ( popup[0].clientWidth / 2 ) );
