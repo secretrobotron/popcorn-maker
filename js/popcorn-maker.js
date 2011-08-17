@@ -384,7 +384,8 @@
         }).appendTo( projectsDrpDwn );
         localStorage.setItem( "PopcornMaker.SavedProjects", JSON.stringify( localProjects ) );
         projectsDrpDwn[0].refresh()
-        window.alert( b.getProjectDetails( "title" ) + " was saved" );
+        $('.close-div').fadeOut('fast');
+        $('.popups').hide();
       }
       catch ( e ) {
         throw new Error("Saving Failed...");
@@ -572,7 +573,7 @@
               }, true );
               b.unlisten( "layoutloaded", this );
             });
-          })( localProjects[ i ] );
+          })( localProjects[ title ] );
           b.loadPreview( {
             layout: "layouts/default.html",
             target: "main",
