@@ -407,10 +407,29 @@
     this.pause = function() {
         ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ].media.pause();
     };
+    
+    this.mute = function() {
+      var video = ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ].media;
+      console.log( (iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ]);
+      video.muted = !video.muted;
+    };
 
     this.getRegistry = function() {
       var ifrme = iframe.contentWindow || iframe.contentDocument;
       return ifrme.Popcorn.registry;
+    };
+
+    this.clearPopcorn = function() {
+
+      var allPopcorn = ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances,
+          popcorn = ( iframe.contentWindow || iframe.contentDocument ).Popcorn;
+
+      for( var i = 0, l = allPopcorn.length; i < l; i ++ ) {
+       popcorn.removeInstance( allPopcorn[ i ] ); 
+      }
+      console.log(allPopcorn, ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances); 
+      console.log(popcorns, videoString );
+      videoString = {};
     };
   
     // fillIframe function used to populate the iframe with changes made by the user,
@@ -558,7 +577,7 @@
       }, "timeline" );
       
       this.listen( "mediacontentchanged", function( e ) {
-
+        console.log(e.data.getId());
         that.buildPopcorn( e.data );
 
       } );

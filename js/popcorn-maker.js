@@ -11,7 +11,7 @@
     b.previewer({
       layout: "layouts/default.html",
       target: "main",
-      media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm",
+      media: "http://www.youtube.com/watch?v=97o6zB9m1T4",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
@@ -370,6 +370,10 @@
     
     });
 
+    document.getElementsByClassName( "sound-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
+      b.mute();
+    }, false);
+
     document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
       b.isPlaying() ? b.play() : b.pause();
     }, false);
@@ -393,6 +397,7 @@
         for ( var i = 0, l = localProjects.length; i < l; i++ ) {
           if ( localProjects[ i ].project.title === projectsDrpDwn[0].value ) {
             b.clearProject();
+            b.clearPopcorn();
             b.importProject( localProjects[ i ] );
             return;
           }
