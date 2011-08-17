@@ -524,7 +524,7 @@
             commServer.send( "previewerCommClient", "ping", "ping" );
           } else {
 
-            if ( !win.Popcorn.instances[ 0 ] ) {
+            if ( win.Popcorn.instances.length === 0 ) {
               popcornScript = doc.createElement( "script" );
               popcornScript.innerHTML = popcornString;
               doc.head.appendChild( popcornScript );

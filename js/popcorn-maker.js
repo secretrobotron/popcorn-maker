@@ -3,10 +3,21 @@
   var layouts = [
     "layouts/default.html",
     "layouts/default-basic.html",
+    "external/layouts/city-slickers/index.html",
+    "external/layouts/cgg/index.html",
   ],
   currentLayout;
 
   window.addEventListener("DOMContentLoaded", function() {
+
+    function toggleLoadingScreen ( state ) {
+      if ( state ) {
+        $('#loading-overlay').show();
+      }
+      else {
+        $('#loading-overlay').hide();
+      }
+    }
 
     var layoutSelect = document.getElementById('layout-select');
     for ( var i=0; i<layouts.length; ++i ) {
@@ -37,6 +48,7 @@
           b.addPlugin( { type: registry[ i ].type } );
         }
         $('.tiny-scroll').tinyscrollbar();
+        toggleLoadingScreen( false );
       }, b.popcornFlag());
       b.unlisten( "layoutloaded", this );
     } );
@@ -47,6 +59,7 @@
     b.trackeditor({ target: "popup-5"});
 
     b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
+    b.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
 
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
@@ -576,6 +589,7 @@
         
         if ( localProjects && localProjects[ title ] && localProjects[ title ].project.title !== b.getProjectDetails( "title" ) ) {
           b.clearProject();         
+          b.clearPlugins();
           currentLayout = localProjects[ title ].layout;
           (function ( localProject ) {
             b.listen( "layoutloaded", function( e ) {
@@ -588,10 +602,12 @@
                 }
                 $('.tiny-scroll').tinyscrollbar();
                 b.importProject( localProject );
+                toggleLoadingScreen( false );
               }, true );
               b.unlisten( "layoutloaded", this );
             });
           })( localProjects[ title ] );
+          toggleLoadingScreen( true );
           b.loadPreview( {
             layout: currentLayout,
             target: "main",
@@ -605,8 +621,30 @@
     
     $(".create-new-btn").click(function() {
       b.clearProject();
-      b.clearPopcorn();
+      b.clearPlugins();
       b.setProjectDetails( "title", "Untitled Project");
+      currentLayout = document.getElementById( 'layout-select' ).value;
+      b.listen( "layoutloaded", function( e ) {
+        b.buildPopcorn( b.getCurrentMedia() , function() {
+
+          var registry = b.getRegistry();
+          for( var i = 0, l = registry.length; i < l; i++ ) {
+            b.addPlugin( { type: registry[ i ].type } );
+          }
+          $('.tiny-scroll').tinyscrollbar();
+          toggleLoadingScreen( false );
+        }, b.popcornFlag() );
+        b.unlisten( "layoutloaded", this );
+      });
+
+      toggleLoadingScreen( true );
+      b.loadPreview( {
+        layout: currentLayout,
+        target: "main",
+        media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+      });
+      $('.close-div').fadeOut('fast');
+      $('.popups').hide();
     });
     
     $(".load-code-btn").click(function() {
@@ -616,6 +654,7 @@
         try {
           var data = JSON.parse( dataString );
           b.clearProject();         
+          b.clearPlugins();
           currentLayout = data.layout ? data.layout : layouts[ 0 ];
           (function ( data ) {
             b.listen( "layoutloaded", function( e ) {
@@ -628,14 +667,14 @@
                 }
                 $('.tiny-scroll').tinyscrollbar();
                 b.importProject( data );
-                $('.close-div').fadeOut('fast');
-                $('.popups').hide();
-              }, true );
+              }, b.popcornFlag() );
               b.unlisten( "layoutloaded", this );
             });
           })( data );
+          $('.close-div').fadeOut('fast');
+          $('.popups').hide();
           b.loadPreview( {
-            layout: "layouts/default.html",
+            layout: currentLayout,
             target: "main",
             media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
           });

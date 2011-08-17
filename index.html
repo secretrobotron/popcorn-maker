@@ -265,10 +265,10 @@
         	<div class="popup-header">
           	<h3>Load / Create New Project</h3>
           </div>
-          <div class="popup-content">
+          <div id="load-create-popup" class="popup-content">
           	<textarea class="project-json"></textarea>
-            <p class="track-text">Press Load to Load in the project code!</p>
-            <div class="download-html">
+            <div id="load-create-popup-content" class="download-html">
+              <input id="media-url" type="text" value="http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm" />
               <select id="layout-select"></select>
 
               <input type="submit" class="load-code-btn" name="load-code-btn" value="Load Project from JSON">
@@ -297,6 +297,9 @@
     </div>
  </div>
 <!-- ########## END POPUPS ########## -->  
+<div id="loading-overlay">
+  <h1>Loading...</h1>
+</div>
   
 </body>
 </html>

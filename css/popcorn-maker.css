@@ -96,5 +96,55 @@ html, body {
 #layout-select {
   position: absolute;
   right: 0px;
+  top: 100px;
+}
+
+#media-url {
+  position: absolute;
+  right: 0px;
+  top: 125px;
+}
+
+.create-new-btn {
+  position: absolute;
+  left: -60px;
+  top: 120px;
+}
+
+.load-code-btn {
+  position: absolute;
+  left: 0px;
+  top: 10px;
+}
+
+#load-create-popup {
+  height: 300px;
+}
+
+#load-create-popup-content {
+  height: 300px;
+}
+
+#loading-overlay {
+  opacity: 0.8;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  position: fixed;
   top: 0px;
+  left: 0px;
+  z-index: 99999999;
+  background: #505050;
+  font: 200pt Helvetica;
+  color: #fff;
+}
+
+#loading-overlay h1 {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+#loading-overlay h2 {
 }
