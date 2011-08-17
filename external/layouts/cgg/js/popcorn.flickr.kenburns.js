@@ -15,7 +15,9 @@
       imageRecord,
       units,
       duration,
-      position, destination;
+      position, destination,
+      imageAspect,
+      videoAspect;
 
 		function load() {
 			var link, url = 'http://api.flickr.com/services/rest/?method=flickr.photos.getInfo';
@@ -61,12 +63,31 @@
 				container.appendChild(link);
 				
 				image.addEventListener('load', function () {
+					var divAspect;
+
+					//todo: calculate this on every frame, from offsets
+					videoAspect = popcorn.media.videoWidth / popcorn.media.videoHeight;
+
 					if (options.startPosition) {
 						container.style.position = 'absolute';
+						container.style.overflow = 'hidden';
 						container.style.top = position.top + '%';
 						container.style.left = position.left + '%';
-						container.style.width = position.scale + '%';
-						this.style.width = '100%';
+						container.style.width = position.width + '%';
+						container.style.height = position.height + '%';
+						
+						imageAspect = this.width / this.height;
+						divAspect = videoAspect * position.width / position.height;
+						
+						if (imageAspect > divAspect) {
+							//wider
+							this.style.height = '100%';
+							this.style.marginLeft = -(videoAspect / divAspect - 1) / 4 * 100 + '%';							
+						} else {
+							//taller
+							this.style.width = '100%';
+							this.style.marginTop = -(divAspect / videoAspect - 1) / 4 * 100 + '%';		
+						}
 					}
 	
 					loaded = true;
@@ -86,14 +107,16 @@
 			position = {
 				top: options.startPosition[0] || 10,
 				left: options.startPosition[1] || 10,
-				scale: options.startPosition[2] || 10
+				width: options.startPosition[2] || 10,
+				height: options.startPosition[3] || 10
 			};
 
 			if (options.endPosition) {
 				destination = {
 					top: options.endPosition[0] || position.top,
 					left: options.endPosition[1] || position.left,
-					scale: options.endPosition[2] || position.scale
+					width: options.endPosition[2] || position.width,
+					height: options.endPosition[3] || position.height
 				};
 			}
 		}
@@ -183,6 +206,7 @@
        * options variable
        */
       frame: function(event, options, time){
+      	var pos = {};
         if (!loaded) {
           return;
         }
@@ -197,10 +221,29 @@
         container.style.opacity = opacity;
 
         if (destination) {
-          container.style.top = fraction * (destination.top - position.top) + position.top + '%';
-          container.style.left = fraction * (destination.left - position.left) + position.left + '%';
-          container.style.width = fraction * (destination.scale - position.scale) + position.scale + '%';
+          pos.top = fraction * (destination.top - position.top) + position.top;
+          pos.left = fraction * (destination.left - position.left) + position.left;
+          pos.width = fraction * (destination.width - position.width) + position.width;
+          pos.height = fraction * (destination.height - position.height) + position.height;
+          
+          container.style.top = pos.top + '%';
+          container.style.left = pos.left + '%';
+          container.style.width = pos.width + '%';
+          container.style.height = pos.height + '%';
+
+			var divAspect = videoAspect * position.width / position.height;
+			
+			if (imageAspect > divAspect) {
+				//wider
+				image.style.height = '100%';
+				image.style.marginLeft = -(videoAspect / divAspect - 1) / 4 * 100 + '%';							
+			} else {
+				//taller
+				image.style.width = '100%';
+				image.style.marginTop = -(divAspect / videoAspect - 1) / 4 * 100 + '%';		
+			}
         }
+
         if (typeof options.onFrame === 'function') {
           options.onFrame(options, time);
         }
@@ -219,12 +262,7 @@
         }
       },
       _teardown: function( options ) {
-        if (container && container.parentNode) {
-          container.parentNode.removeChild(container);
-        }
-        container = null;
-        image = null;
-        imageRecord = null;
+        options.target.removeChild(container);
       },
       manifest: {
         about:{
