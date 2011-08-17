@@ -45,6 +45,21 @@ html, body {
   width: 100%;
 }
 
+.butter-track-event {
+  background-color: #FFFF33;
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(255,255,51)),
+		color-stop(1, rgb(140,215,90))
+	);
+	background-image: -moz-linear-gradient(
+		center bottom,
+		rgb(255,255,0) 0%,
+		rgb(200,200,0) 100%
+	);}
+
 .butter-track-event.footnote {
   background-color: #8dd75a;
 	background-image: -webkit-gradient(
