@@ -334,8 +334,8 @@
       var trackLinerTrackEvent = currentMediaInstance.trackLinerTrackEvents[ trackEvent.getId() ];
           trackLinerTrack = currentMediaInstance.trackLine.getTrack( trackLinerTrackEvent.trackId );
 
-      trackEvent.track.removeTrackEvent( trackEvent );
-      currentMediaInstance.butterTracks[ currentMediaInstance.lastTrack.id() ].addTrackEvent( trackEvent );
+      //trackEvent.track.removeTrackEvent( trackEvent );
+      //currentMediaInstance.butterTracks[ currentMediaInstance.lastTrack.id() ].addTrackEvent( trackEvent );
     });
 
     this.currentTimeInPixels = function( pixel ) {
