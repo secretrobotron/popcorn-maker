@@ -201,6 +201,11 @@
     });
     
     var addTrack = function( track ) {
+
+      if( !currentMediaInstance.trackLine ) {
+        return;
+      }
+
       var trackLinerTrack = currentMediaInstance.trackLine.createTrack( undefined, "butterapp");
       currentMediaInstance.trackLinerTracks[ track.getId() ] = trackLinerTrack;
       currentMediaInstance.lastTrack = trackLinerTrack;
@@ -223,17 +228,17 @@
       var trackLinerTrack = currentMediaInstance.trackLinerTracks[ track.getId() ],
           trackEvents = trackLinerTrack.getTrackEvents(),
           trackEvent;
-      for ( trackEvent in trackEvents ) {
-        if ( trackEvents.hasOwnProperty( trackEvent ) ) {
-          b.removeTrackEvent( track, currentMediaInstance.butterTrackEvents[ trackEvents[ trackEvent ].element.id ] );
-        }
-      }
+
       currentMediaInstance.trackLine.removeTrack( trackLinerTrack );
       delete currentMediaInstance.butterTracks[ trackLinerTrack.id() ];
       delete currentMediaInstance.trackLinerTracks[ track.getId() ];
     });
 
     var addTrackEvent = function( trackEvent ) {
+      if( !currentMediaInstance.trackLinerTracks ) {
+        return;
+      }
+
       var trackLinerTrackEvent = currentMediaInstance.trackLinerTracks[ trackEvent.track.getId() ].createTrackEvent( "butterapp", trackEvent );
       currentMediaInstance.trackLinerTrackEvents[ trackEvent.getId() ] = trackLinerTrackEvent;
       currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ]
@@ -265,10 +270,42 @@
     this.listen( "mediaadded", function( event ) {
       
       mediaInstances[ event.data.getId() ] = new MediaInstance( event.data );
+
+      function mediaChanged( event ) {
+
+        if ( currentMediaInstance !== mediaInstances[ event.data.getId() ] ) {
+          currentMediaInstance && currentMediaInstance.hide();
+          currentMediaInstance = mediaInstances[ event.data.getId() ];
+          currentMediaInstance && currentMediaInstance.show();
+          butter.trigger( "timelineready", {}, "timeline" );
+        }
+      }
+
+      function mediaRemoved( event ) {
+      
+        if ( mediaInstances[ event.data.getId() ] ) {
+          mediaInstances[ event.data.getId() ].destroy();
+        }
+
+        delete mediaInstances[ event.data.getId() ];
+        
+        
+        if ( event.data.getId() === currentMediaInstance.media.getId() ) {
+          currentMediaInstance = undefined;
+        }
+
+        butter.unlisten( "mediachanged", mediaChanged );
+        butter.unlisten( "mediaremoved", mediaRemoved );
+      }
+
+      butter.listen( "mediachanged", mediaChanged );
+      butter.listen( "mediaremoved", mediaRemoved );
+
+
     });
 
     this.listen( "mediaready", function( event ) {
-    
+    console.log(event.data.getId());
       var mi = mediaInstances[ event.data.getId() ];
       if ( !mi.initialized ) {
         mi.init();
@@ -288,30 +325,10 @@
         } //add Tracks
         butter.trigger( "timelineready", {}, "timeline" );
       }
+
+
     });
 
-    this.listen( "mediachanged", function( event ) {
-
-      if ( currentMediaInstance !== mediaInstances[ event.data.getId() ] ) {
-        currentMediaInstance && currentMediaInstance.hide();
-        currentMediaInstance = mediaInstances[ event.data.getId() ];
-        currentMediaInstance && currentMediaInstance.show();
-        butter.trigger( "timelineready", {}, "timeline" );
-      }
-    });
-
-    this.listen( "mediaremoved", function( event ) {
-    
-      if ( mediaInstances[ event.data.getId() ] ) {
-        mediaInstances[ event.data.getId() ].destroy();
-      }
-
-      delete mediaInstances[ event.data.getId() ];
-      
-      if ( event.data.getId() === currentMediaInstance.media.getId() ) {
-        currentMediaInstance = undefined;
-      }
-    });
 
     this.listen( "trackeventupdated", function( event ) {
 

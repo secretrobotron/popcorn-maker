@@ -10,7 +10,8 @@
         popcorns, originalBody,
         popcornScript;
       
-    originalHead = {};
+    this.loadPreview = function( options ) {
+      originalHead = {};
     popcornURL = options.popcornURL || "http://popcornjs.org/code/dist/popcorn-complete.js";
     urlRegex = /(?:http:\/\/www\.|http:\/\/|www\.|\.|^)(youtu|vimeo|soundcloud|baseplayer)/;
     layout = options.layout;
@@ -18,6 +19,8 @@
     userSetMedia = options.media;
     popcorns = {};
     videoString = {};
+    popcornString = undefined;
+    popcornScript = undefined;
 
     var that = this,
         targetSrc = document.getElementById( options.target );
@@ -36,7 +39,7 @@
 
       // begin scraping once iframe has loaded, remove listener when complete
       iframe.addEventListener( "load", function (e) {
-        that.scraper( iframe, options.callback );
+        that.scraper( iframe );
         this.removeEventListener( "load", arguments.callee, false );
       }, false);
 
@@ -46,14 +49,17 @@
       iframe.src = options.layout;
 
       targetSrc.addEventListener( "load", function (e) {
-        that.scraper( iframe, options.callback );
+        that.scraper( iframe );
         this.removeEventListener( "load", arguments.callee, false );
       }, false);
     } // else
+    };
+
+    this.loadPreview( options );
 
     // scraper function that scrapes all DOM elements of the given layout,
     // only scrapes elements with the butter-data attribute
-    this.scraper = function( iframe, callback ) {
+    this.scraper = function( iframe ) {
 
       // obtain a reference to the iframes body
       var win, doc, body, ifrmBody, that = this;
@@ -93,7 +99,7 @@
         } else {
           // begin scraping once body is actually there, call callback once done
           bodyReady( body[ 0 ].children );
-          callback();
+          that.trigger( "layoutloaded", null );
         } // else
       } // ensureLoaded
 
@@ -520,7 +526,7 @@
           } else {
             framePopcorn = popcorns[ media.getId() ]; 
           }
-
+          console.log(butterIds, e.getId());
           framePopcorn.removeTrackEvent( butterIds[ e.getId() ] );
 
           // add track events to the iframe verison of popcorn
@@ -533,56 +539,84 @@
         } );
       }
 
-      // listen for a trackeventadded
-      this.listen( "trackeventupdated", function ( e ) {
-        this.teAdded( e ); 
-      }); // listener
+     function trackeventupdated( e ) {
+      this.teAdded( e ); 
+     }
 
-      this.listen( "trackeventadded", function ( e ) {
+      // listen for a trackeventadded
+      this.listen( "trackeventupdated", trackeventupdated); // listener
+
+      function trackeventadded( e ) {
         e = e.data;
 
-          if ( !win.Popcorn ) {
-            throw new Error("Popcorn Not Available");
-          }
+        if ( !win.Popcorn ) {
+          throw new Error("Popcorn Not Available");
+        }
 
-          if( !popcorns[ media.getId() ] ) {
-            popcorns[ media.getId() ] = framePopcorn;
-          } else {
-            framePopcorn = popcorns[ media.getId() ]; 
-          }
-          framePopcorn[ e.type ]( ( iframe.contentWindow || iframe.contentDocument ).Popcorn.extend( {}, e.popcornOptions ) );
+        if( !popcorns[ media.getId() ] ) {
+          popcorns[ media.getId() ] = framePopcorn;
+        } else {
+          framePopcorn = popcorns[ media.getId() ]; 
+        }
+        framePopcorn[ e.type ]( ( iframe.contentWindow || iframe.contentDocument ).Popcorn.extend( {}, e.popcornOptions ) );
 
-          // add track events to the iframe verison of popcorn
-          
-          butterIds[ e.getId() ] = framePopcorn.getLastTrackEventId();
+        // add track events to the iframe verison of popcorn
+        
+        butterIds[ e.getId() ] = framePopcorn.getLastTrackEventId();
 
-          e.manifest = framePopcorn.getTrackEvent( butterIds[ e.getId() ] )._natives.manifest;
-      }); // listener
+        e.manifest = framePopcorn.getTrackEvent( butterIds[ e.getId() ] )._natives.manifest;
+      }
 
-      this.listen( "trackeventremoved", function( e ) {
+      this.listen( "trackeventadded", trackeventadded); // listener
+
+      function trackeventremoved( e ) {
         var ifrme = iframe.contentWindow || iframe.contentDocument;
-        ifrme[ "popcorn" + media.getId() ].removeTrackEvent( butterIds[ e.data.getId() ] );
-      } );
+        ifrme[ "popcorn" + media.getId() ].removeTrackEvent( butterIds[ e.data.getId() ] ); 
+      }
 
-      this.listen( "mediachanged", function( e ) {
+      this.listen( "trackeventremoved", trackeventremoved );
+
+      function mediachanged( e ) {
+
         that.buildPopcorn( e.data );
-      } );
+      }
 
-      this.listen( "trackupdated", function( e ) {
+      this.listen( "mediachanged", mediachanged );
+
+      function trackupdated( e ) {
         var trackEvents = e.data.getTrackEvents();
         for( var i = 0, l = e.data.getTrackEvents().length; i < l; i ++ ) {
           trackEvents[ i ].popcornOptions.target = e.data.target;
         }
-      } );
+      }
 
-      this.listen( "mediatimeupdate", function( e ) {
+      this.listen( "trackupdated", trackupdated );
+
+      function mediatimeupdate( e ) {
         iframe.contentWindow[ "popcorn" + media.getId() ].currentTime( e.data.currentTime() );
-      }, "timeline" );
-      
-      this.listen( "mediacontentchanged", function( e ) {
-        that.buildPopcorn( e.data );
+      }
 
-      } );
+      this.listen( "mediatimeupdate", mediatimeupdate, "timeline" );
+      
+      function mediacontentchanged( e ) {
+        that.buildPopcorn( e.data );
+      }
+
+      this.listen( "mediacontentchanged", mediacontentchanged );
+
+      function mediaremoved( e ) {
+console.log("ASDASD");
+        that.unlisten( "trackeventadded", trackeventadded);
+        that.unlisten( "trackeventupdated", trackeventupdated);
+        that.unlisten( "trackeventremoved", trackeventremoved);
+        that.unlisten( "mediachanged", mediachanged);
+        that.unlisten( "trackupdated", trackupdated);
+        that.unlisten( "mediatimeupdate", mediatimeupdate, "timeline" );  
+        that.unlisten( "medcontentchanged", mediacontentchanged);
+        that.unlisten( "mediaremoved", mediaremoved );
+      }
+
+      this.listen( "mediaremoved", mediaremoved);
 
     } // fillIframe
     
