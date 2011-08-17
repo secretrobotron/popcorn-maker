@@ -12,7 +12,7 @@
       layout: "layouts/default.html",
       target: "main",
       media: "../trailer.ogv",
-
+      popcornURL: "../lib/popcorn-complete.js",
       callback: function() {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
