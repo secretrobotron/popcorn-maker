@@ -32,6 +32,10 @@
           client.listen( "trackeventupdated", function( message ) {
             ( eventId === message.id ) && updateFields( message.options );
           });
+          
+          client.listen( "trackeventremoved", function( id ) {
+            ( eventId === id ) && client.send( "", "cancelclicked" );
+          });
 
           var closeBtn = document.getElementById("popup-close-btn");
           
