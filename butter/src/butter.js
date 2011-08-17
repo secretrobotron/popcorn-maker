@@ -253,13 +253,17 @@ THE SOFTWARE.
     };
 
     this.setUrl = function ( newUrl ) {
-      url = newUrl;
-      butter && butter.trigger( "mediacontentchanged", that );
+      if ( url !== newUrl ) {
+        url = newUrl;
+        butter && butter.trigger( "mediacontentchanged", that );
+      }
     };
 
     this.setTarget = function ( newTarget ) {
-      target = newTarget;
-      butter && butter.trigger( "mediatargetchanged", that );
+      if ( target !== newTarget ) {
+        target = newTarget;
+        butter && butter.trigger( "mediatargetchanged", that );
+      }
     };
 
     this.getName = function () {
@@ -424,12 +428,8 @@ THE SOFTWARE.
       };
 
       if ( events[ name ] ) {
-console.log(name);
         //for (var i=0, l=events[ name ].length; i<l; ++i) {
         for ( var i=events[ name ].length - 1; i>=0; --i ) {
-          if( !events[ name ][ i ] ) {
-            console.log(name, events[ name ], i, l);
-          }
           events[ name ][ i ].call( that, eventObj, domain );
         } //for
       } //if
@@ -642,9 +642,22 @@ console.log(name);
       projectDetails = projectData.project;
       if ( projectData.targets ) {
         for ( var i=0, l=projectData.targets.length; i<l; ++i ) {
-          var t = new Target();
-          t.importJSON( projectData.targets[ i ] );
-          that.addTarget( t );
+
+          var t, targets = that.getTargets(), targetData = projectData.targets[ i ];
+          for ( var k=0, j=targets.length; k<j; ++k ) {
+            if ( targets[ k ].getName() === targetData.name ) {
+              t = targets[ k ];
+            }
+          }
+
+          if ( !t ) {
+            t = new Target();
+            t.importJSON( projectData.targets[ i ] );
+            that.addTarget( t );
+          }
+          else {
+            t.importJSON( projectData.targets[ i ] );
+          }
         }
       }
       if ( projectData.media ) {

@@ -41,8 +41,18 @@ THE SOFTWARE.
         butter = this,
         editorSrc =  customEditors[ trackEvent.type ] || trackEvent.manifest.customEditor || defaultEditor,
         updateEditor = function( e ){
-          console.log( "event editor callback", e );
           commServer.send( "editorCommLink", { "id": e.data.getId(), "options": e.data.popcornOptions }, "trackeventupdated" );
+        },
+        checkRemoved = function( e ) {
+          commServer.send( "editorCommLink", e.data.getId(), "trackeventremoved" );
+        },
+        targetAdded = function( e ) {
+          commServer.send( "editorCommLink", butter.getTargets(), "domtargetsupdated" );
+        },
+        undoListeners = function() {
+          butter.unlisten ( "trackeventupdated", updateEditor );
+          butter.unlisten ( "targetadded", targetAdded );
+          butter.unlisten ( "trackeventremoved", checkRemoved );
         };
 
       editorTarget && clearTarget();
@@ -52,12 +62,13 @@ THE SOFTWARE.
         editorWindow = targetWindow || window.open( editorSrc, "", "width=" + editorWidth + ",height=" + editorHeight + ",menubar=no,toolbar=no,location=no,status=no" );
         setupServer();
         editorWindow.addEventListener( "beforeunload", function() {
-          butter.unlisten ( "trackeventupdated", updateEditor );
-          butter.trigger( "trackeditforcedclosed" );
+          undoListeners();
+          butter.trigger( "trackeditclosed" );
         }, false );
       } else if ( binding === "bindFrame" ) {
 
         editorWindow = document.createElement( "iframe" );
+        editorWindow.id = "butter-editor-iframe";
         editorWindow.style.width = editorWidth;
         editorWindow.style.height = editorHeight;
         setupServer();
@@ -70,15 +81,15 @@ THE SOFTWARE.
         commServer[ binding ]( "editorCommLink", editorWindow, function() {
 
           butter.listen( "trackeventupdated", updateEditor );
-          butter.listen( "targetadded", function() {
-            commServer.send( "editorCommLink", butter.getTargets(), "domtargetsupdated" );
-          });
+          butter.listen( "targetadded", targetAdded );
+          butter.listen( "trackeventremoved", checkRemoved );
+          
           commServer.listen( "editorCommLink", "okayclicked", function( newOptions ){
 
             trackEvent.popcornOptions = newOptions;
             editorWindow.close && editorWindow.close();
             editorWindow && editorWindow.parentNode && editorWindow.parentNode.removeChild( editorWindow );
-            butter.unlisten ( "trackeventupdated", updateEditor );
+            undoListeners();
             butter.trigger( "trackeditclosed" );
             butter.trigger( "trackeventupdated", trackEvent );
           });
@@ -92,14 +103,14 @@ THE SOFTWARE.
             butter.removeTrackEvent( trackEvent );
             editorWindow.close && editorWindow.close();
             editorWindow && editorWindow.parentNode && editorWindow.parentNode.removeChild( editorWindow );
-            butter.unlisten ( "trackeventupdated", updateEditor );
+            undoListeners();
             butter.trigger( "trackeditclosed" );
           });
           commServer.listen( "editorCommLink", "cancelclicked", function() {
 
             editorWindow.close && editorWindow.close();
             editorWindow && editorWindow.parentNode && editorWindow.parentNode.removeChild( editorWindow );
-            butter.unlisten ( "trackeventupdated", updateEditor );
+            undoListeners();
             butter.trigger( "trackeditclosed" );
           });
           commServer.listen( "editorCommLink", "clientdimsupdated", function( dims ) {
@@ -169,7 +180,7 @@ THE SOFTWARE.
      * instance methods
      ************************/
     this.editTrackEvent = function( trackEvent ) {
-             
+       
       if ( !trackEvent || !( trackEvent instanceof Butter.TrackEvent ) ) {
         return false;
       }

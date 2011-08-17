@@ -683,8 +683,8 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .tracks-drpdwn { position:absolute; z-index:999; left:150px; top:8px;}
 .tracks-drpdwn .dd .ddChild { top: 28px !important;}
 .tracks-drpdwn .dd .ddChild a { height:30px; line-height:30px}
-.popup-content .track-content { padding:10px; border:1px solid #ccc; background-color:#FFF; overflow: auto; height: 150px}
-
+.popup-content .track-content, .popup-content .project-json { padding:10px; border:1px solid #ccc; background-color:#FFF; overflow: auto; height: 150px}
+.popup-content .project-json { width: 95% }
 .popup-1, .popup-2, .popup-4, .popup-5{width:400px;
 	   -moz-box-shadow: 2px 2px 5px #000;
 	-webkit-box-shadow: 2px 2px 5px #000;
@@ -706,17 +706,24 @@ border-top: 1px solid #fff;	background-color:#eee;}
 }
 .popup-1 .popup-content, .popup-2 .popup-content, .popup-content { padding:20px;}
 .popup-1 .popup-header h3, .popup-2 .popup-header h3, .popup-header h3 { padding: 0 20px}
-.download-btn { position: absolute; right: 0; top: 12px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
-.save-project-data-btn { position: absolute; left: 0; top: 50px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
-.download-btn:hover, .save-project-data-btn:hover { color:#fff;}
+.download-btn, .load-code-btn { position: absolute; right: 0; top: 25px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
+.save-project-data-btn, .create-new-btn { position: absolute; left: 0; top: 57px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
+.create-new-btn { left: 120px}
+.save-project-data-btn { left: 125px !important }
+.project-title-textbox { position: absolute; left: 30px; top: 50px; margin:0; padding:7px 0; height:auto; width: 130px !important}
+.save-prj-lbl {position: absolute; left: 0; top: 50px; margin:0; padding:7px 0; height:auto !important}
+.download-btn:hover, .load-code-btn:hover, .save-project-data-btn:hover, .create-new-btn:hover { color:#fff;}
 .track-text {float: left; margin-top: 10px; width: 220px;}
-.download-html {float: right; height: 86px; overflow: hidden; position: relative; width: 200px;}
-.download-btn, .save-project-data-btn, .change-url-btn, .change-title-btn, .popup-btns input { float:left; margin-right:10px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC;
+.track-text.json-text.hide-text, .track-text.track-text.hide-text { display: none }
+.track-text.json-text.show-text, .track-text.track-text.show-text { display: inline }
+ 
+.download-html {float: right; height: 86px; overflow: hidden; position: relative; width: 330px;}
+.download-btn, .load-code-btn, .save-project-data-btn, .create-new-btn, .change-url-btn, .change-title-btn, .popup-btns input { float:left; margin-right:10px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC;
 	   -moz-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
 	-webkit-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
 	     -o-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
 	        box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;}
-.save-project-data-btn { float:left; margin-left:60px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC; }
+.save-project-data-btn, .create-new-btn { float:left; margin-left:60px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC; }
 /*----- pin -----*/
 .pin { background-color: #FFFF99; position: absolute; padding:10px 10px 10px 20px; display:inline;top:100px; left:50%; font-weight:bold;
 	   -moz-box-shadow: 0 1px 0 #666, inset 0 1px 0 #ccc;
@@ -743,7 +750,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 	-webkit-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;
 	     -o-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;
 	        box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;}
-.header-buttons li, .popup-close-btn, .download-btn, .save-project-data-btn, .change-url-btn, .change-title-btn, .popup-btns input {
+.header-buttons li, .popup-close-btn, .download-btn, .load-code-btn, .save-project-data-btn, .create-new-btn, .change-url-btn, .change-title-btn, .popup-btns input {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -756,7 +763,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		rgb(56,56,56) 0%,
 		rgb(97,97,97) 100%
 	);}
-.header-buttons li:hover, .download-btn:hover, .save-project-data-btn:hover, .change-url-btn:hover, .change-title-btn:hover, .popup-btns input:hover {
+.header-buttons li:hover, .download-btn:hover, .load-code-btn:hover, .save-project-data-btn:hover, .create-new-btn:hover, .change-url-btn:hover, .change-title-btn:hover, .popup-btns input:hover {
 	color: #fff;
 	background-image: -webkit-gradient(
 		linear,
@@ -770,7 +777,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		rgb(64,64,64) 0%,
 		rgb(112,112,112) 100%
 	);}
-.header-buttons li:active, .header-buttons li:focus, .download-btn:active, .download-btn:focus, .save-project-data-btn:active, .save-project-data-btn:focus, .change-url-btn:active, .change-url-btn:focus, .change-title-btn:active,  .change-title-btn:focus, .popup-btns input:focus, .popup-btns input:active {
+.header-buttons li:active, .header-buttons li:focus, .download-btn:active, .download-btn:focus, .load-code-btn:active, .load-code-btn:focus, .save-project-data-btn:active, .save-project-data-btn:focus, .create-new-btn:active, .create-new-btn:focus, .change-url-btn:active, .change-url-btn:focus, .change-title-btn:active,  .change-title-btn:focus, .popup-btns input:focus, .popup-btns input:active {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -821,7 +828,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		-webkit-border-radius: 0;
 			 -o-border-radius: 0;
 				border-radius: 0;}
-.enable-scroll.toolbox, .layer, .layer-btn, .download-btn, .save-project-data-btn, .change-url-btn, .change-title-btn, .popup-btns input {
+.enable-scroll.toolbox, .layer, .layer-btn, .download-btn, .load-code-btn, .save-project-data-btn, .create-new-btn, .change-url-btn, .change-title-btn, .popup-btns input {
 		   -moz-border-radius: 6px;
 		-webkit-border-radius: 6px;
 			 -o-border-radius: 6px;
@@ -841,12 +848,12 @@ ul.actions, .ttip, .ui-tooltip-content {
 	-webkit-transform: rotate(45deg);
 	     -o-transform: rotate(45deg);
 	       -transform: rotate(45deg);}
-.pop-up .popup-content p input, .popup-content .track-content, .popup-1, .popup-2, .popup-4 {
+.pop-up .popup-content p input, .popup-content .track-content, .popup-content .project-json, .popup-1, .popup-2, .popup-4 {
 	   -moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	     -o-border-radius: 10px;
 	        border-radius: 10px;}
-.pop-up .popup-content p input, .popup-content .track-content {
+.pop-up .popup-content p input, .popup-content .track-content, .popup-content .project-json {
 	   -moz-box-shadow: 0 1px 0 #fff, inset 0 2px 3px #eee;
 	-webkit-box-shadow: 0 1px 0 #fff, inset 0 2px 3px #eee;
 	     -o-box-shadow: 0 1px 0 #fff, inset 0 2px 3px #eee;

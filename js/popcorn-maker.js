@@ -1,18 +1,45 @@
 (function(){
 
-  window.addEventListener("DOMContentLoaded", function(){
-    
+  var layouts = [
+    "layouts/default.html",
+    "layouts/default-basic.html",
+    "external/layouts/city-slickers/index.html",
+    "external/layouts/cgg/index.html",
+  ],
+  currentLayout;
+
+  window.addEventListener("DOMContentLoaded", function() {
+
+    function toggleLoadingScreen ( state ) {
+      if ( state ) {
+        $('#loading-overlay').show();
+      }
+      else {
+        $('#loading-overlay').hide();
+      }
+    }
+
+    var layoutSelect = document.getElementById('layout-select');
+    for ( var i=0; i<layouts.length; ++i ) {
+      var option = document.createElement( 'option' );
+      option.value = layouts[ i ];
+      option.innerHTML = layouts[ i ];
+      layoutSelect.appendChild( option );
+    }
+
+    currentLayout = layouts[ 0 ];
+
     var b  = new Butter();
     document.getElementById( "main" ).style.height = window.innerHeight - document.getElementsByTagName( "HEADER" )[ 0 ].clientHeight - 5 + "px";
     b.comm();
 
-    b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html", editorWidth: "101%", editorHeight: "101%"  } );
+    b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html" } );
     b.previewer({
-      layout: "layouts/default.html",
+      layout: currentLayout,
       target: "main",
-      media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm",
+      media: "http://soundcloud.com/forss/flickermood",
+      popcornURL: "../lib/popcorn-complete.js"
     });
-
     b.listen( "layoutloaded", function( e ){
       b.buildPopcorn( b.getCurrentMedia() , function() {
 
@@ -21,7 +48,8 @@
           b.addPlugin( { type: registry[ i ].type } );
         }
         $('.tiny-scroll').tinyscrollbar();
-      }, true );
+        toggleLoadingScreen( false );
+      }, b.popcornFlag());
       b.unlisten( "layoutloaded", this );
     } );
 
@@ -31,6 +59,7 @@
     b.trackeditor({ target: "popup-5"});
 
     b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
+    b.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
 
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
@@ -40,23 +69,29 @@
     });
 
     b.listen( "clientdimsupdated", function( e ) {
-      $('#popup-4')
-      .css( "height", e.data.height + "px" )
+      var popup4 = $('#popup-4');
+      popup4.css( "height", e.data.height + "px" )
       .css("width", e.data.width + "px" );
-      centerPopup( $('#popup-4') );
+      $('#butter-editor-iframe')
+      .css("height", e.data.height + "px")
+      .css("width", e.data.width + "px" );
+      centerPopup( popup4 );
+      popup4.css("visibility", "visible");
     });
     
     b.listen ( "trackeditstarted", function() {
-      
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
-      $('#popup-4').show();
+      $('.popup-4').show();
       $(' .balck-overlay ').hide();
+      
     });
     
     b.listen ( "trackeditclosed", function() {
       $('.close-div').fadeOut('fast');
-      $('.popups').hide(); 
+      $('.popupDiv').hide();
+      $('popup-4').css("visibility", "hidden")
+      .css( "display", "" );
     });
 
     var scrubber = document.getElementById( "scrubber" );
@@ -330,7 +365,12 @@
     localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
     
     localProjects = localProjects ? JSON.parse( localProjects ) : localProjects;
-
+    
+    $( "<option/>", {
+        "value": undefined,
+        "html": "[select a project]"
+      }).appendTo( projectsDrpDwn );
+    
     localProjects && $.each( localProjects, function( index, oneProject ) {
       $( "<option/>", {
         "value": oneProject.project.title,
@@ -340,38 +380,42 @@
     
     create_msDropDown()
     
-    function loadProjectsFromServer(){
-      //load stuff from bobby's server
-    }
-    
-    loadProjectsFromServer();
+//    function loadProjectsFromServer(){
+//      //load stuff from bobby's server
+//     }
+//    
+//    loadProjectsFromServer();
     
     // Saving
 
     $(".save-project-data-btn").click(function(){
       
       try {
-        var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
-        projectToSave = b.exportProject(),
-        overwrite = false,
-        projectsDrpDwn = $( ".projects-dd" ) ;
+        var projectToSave = b.exportProject(),
+        overwrite = false,  
+        title;
+
+        projectToSave.layout = currentLayout;
         
-        localProjects = localProjects ? JSON.parse( localProjects ) : [];
+        localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
         
-        for ( var i = 0, l = localProjects.length; i < l; i++ ) {
-          if ( localProjects[ i ].project.title === projectToSave.project.title ) {
-            localProjects[ i ] = projectToSave;
-            overwrite = true;
-          }
-        }
-        !overwrite && localProjects.push( projectToSave ) && 
+        title = projectToSave.project.title = $('.project-title-textbox').val() || projectToSave.project.title;
+        
+        localProjects = localProjects ? JSON.parse( localProjects ) : {};
+        
+        overwrite = localProjects[ title ] ? true : false;
+        
+        localProjects[ title ] = projectToSave;
+
+        !overwrite &&
         $( "<option/>", {
           "value": projectToSave.project.title,
           "html": projectToSave.project.title
         }).appendTo( projectsDrpDwn );
         localStorage.setItem( "PopcornMaker.SavedProjects", JSON.stringify( localProjects ) );
         projectsDrpDwn[0].refresh()
-        window.alert( b.getProjectDetails( "title" ) + " was saved" );
+        $('.close-div').fadeOut('fast');
+        $('.popups').hide();
       }
       catch ( e ) {
         throw new Error("Saving Failed...");
@@ -394,45 +438,14 @@
     b.listen( "mediapaused", function( event ) {
       document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "0pt 0px";
     } );
-
-    $( ".edit-selected-project" ).click( function() {
-      var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
-      projectsDrpDwn = $( ".projects-dd" );
-
-      if ( projectsDrpDwn[0].selectedIndex > -1 ) {
-
-        localProjects = localProjects ? JSON.parse( localProjects ) : [];
-        
-        for ( var i = 0, l = localProjects.length; i < l; i++ ) {
-          if ( localProjects[ i ].project.title === projectsDrpDwn[0].value ) {
-            b.clearProject();
-            (function ( localProject ) {
-              b.listen( "layoutloaded", function( e ) {
-                document.getElementById( "main" ).innerHTML = "";
-                b.buildPopcorn( b.getCurrentMedia() , function() {
-
-                  var registry = b.getRegistry();
-                  for( var i = 0, l = registry.length; i < l; i++ ) {
-                    b.addPlugin( { type: registry[ i ].type } );
-                  }
-                  $('.tiny-scroll').tinyscrollbar();
-                  b.importProject( localProject );
-                }, true );
-                b.unlisten( "layoutloaded", this );
-              });
-            })( localProjects[ i ] );
-            b.loadPreview( {
-              layout: "layouts/default.html",
-              target: "main",
-              media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
-            });
-            return;
-          }
-        }
-      }
+    
+    $('.add-project-btn').click(function() {
+      $('.close-div').fadeOut('fast');
+      $('.popupDiv').fadeIn('slow');
+      $('#popup-add-project').show();
+      centerPopup( $('#popup-add-project') );
+      $(' .balck-overlay ').show();
     });
-
-    //$('.enable-scroll').tinyscrollbar();
 
     $(".collapse-btn").toggle(function() {
 
@@ -505,6 +518,7 @@
     $('.p-3').click(function(){
       
       $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
+      $('.project-title-textbox').val( b.getProjectDetails( "title" ) );
       
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
@@ -513,21 +527,46 @@
       $(' .balck-overlay ').show();
     });
     
-    $('.p-timeline-title').click(function(){
-      $('#project-title').val( b.getProjectDetails( "title" ) );
+    $('.edit-selected-project').click(function(){
+      if ( projectsDrpDwn[0].selectedIndex > 0 ) {
+        $('#project-title').val( $( ".projects-dd" ).val() );
 
-      $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
-      $('#popup-project-title').show();
-      centerPopup( $('#popup-project-title') );
-      $('.balck-overlay').hide();
+        $('.close-div').fadeOut('fast');
+        $('.popupDiv').fadeIn('slow');
+        $('#popup-project-title').show();
+        centerPopup( $('#popup-project-title') );
+        $('.balck-overlay').hide();
+      }
     });
     
     $(".change-title-btn").click( function() {
-      var title = $('#project-title').val();
-      if ( title.length > 0) {
-        b.setProjectDetails("title", title);
-        $(".p-timeline-title").html( title );
+      var newTitle = $('#project-title').val(),
+        oldTitle = $( ".projects-dd" ).val(),
+        idx = projectsDrpDwn[0].selectedIndex,
+        selectedOpt,
+        targetProject;
+
+      if ( newTitle.length > 0) {
+        localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
+    
+        localProjects = localProjects ? JSON.parse( localProjects ) : localProjects;
+        
+        ( b.getProjectDetails ( "title" ) === newTitle ) && b.setProjectDetails ( "title", newTitle );
+        
+        selectedOpt = projectsDrpDwn[0].options[ idx ];
+        
+        selectedOpt.value = newTitle;
+        selectedOpt.innerHTML = newTitle;
+        projectsDrpDwn[0].refresh();
+        
+        if ( localProjects[ oldTitle ] ) {
+          targetProject = localProjects[ oldTitle ];
+          delete localProjects[ oldTitle ];
+          targetProject.project.title = newTitle;
+          localProjects[ newTitle ] = targetProject;
+          localStorage.setItem( "PopcornMaker.SavedProjects", JSON.stringify( localProjects ) );
+        }
+        
         $('.close-div').fadeOut('fast');
         $('.popups').hide();
       }
@@ -537,7 +576,126 @@
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
     });
+    
+    $(".projects-dd").change(function() {
+    
+      var title;
+      localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
+      
+      if ( projectsDrpDwn[0].selectedIndex > 0 ) {
 
+        localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
+        title = projectsDrpDwn.val();
+        
+        if ( localProjects && localProjects[ title ] ) {
+          b.clearProject();         
+          b.clearPlugins();
+          currentLayout = localProjects[ title ].layout;
+          (function ( localProject ) {
+            b.listen( "layoutloaded", function( e ) {
+              document.getElementById( "main" ).innerHTML = "";
+              b.buildPopcorn( b.getCurrentMedia() , function() {
+
+                var registry = b.getRegistry();
+                for( var i = 0, l = registry.length; i < l; i++ ) {
+                  b.addPlugin( { type: registry[ i ].type } );
+                }
+                $('.tiny-scroll').tinyscrollbar();
+                b.importProject( localProject );
+                toggleLoadingScreen( false );
+              }, true );
+              b.unlisten( "layoutloaded", this );
+            });
+          })( localProjects[ title ] );
+          toggleLoadingScreen( true );
+          b.loadPreview( {
+            layout: currentLayout,
+            target: "main",
+            media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+          });
+          return;
+        }
+        
+      }
+    });
+    
+    $(".create-new-btn").click(function() {
+      b.clearProject();
+      b.clearPlugins();
+      b.setProjectDetails( "title", "Untitled Project");
+      currentLayout = document.getElementById( 'layout-select' ).value;
+      b.listen( "layoutloaded", function( e ) {
+        b.buildPopcorn( b.getCurrentMedia() , function() {
+
+          var registry = b.getRegistry();
+          for( var i = 0, l = registry.length; i < l; i++ ) {
+            b.addPlugin( { type: registry[ i ].type } );
+          }
+          $('.tiny-scroll').tinyscrollbar();
+          toggleLoadingScreen( false );
+        }, b.popcornFlag() );
+        b.unlisten( "layoutloaded", this );
+      });
+
+      toggleLoadingScreen( true );
+      b.loadPreview( {
+        layout: currentLayout,
+        target: "main",
+        media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+      });
+      $('.close-div').fadeOut('fast');
+      $('.popups').hide();
+    });
+    
+    $(".load-code-btn").click(function() {
+      var dataString = $(".project-json").val();
+      if ( dataString ) {
+      
+        try {
+          var data = JSON.parse( dataString );
+          b.clearProject();         
+          b.clearPlugins();
+          currentLayout = data.layout ? data.layout : layouts[ 0 ];
+          (function ( data ) {
+            b.listen( "layoutloaded", function( e ) {
+              document.getElementById( "main" ).innerHTML = "";
+              b.buildPopcorn( b.getCurrentMedia() , function() {
+
+                var registry = b.getRegistry();
+                for( var i = 0, l = registry.length; i < l; i++ ) {
+                  b.addPlugin( { type: registry[ i ].type } );
+                }
+                $('.tiny-scroll').tinyscrollbar();
+                b.importProject( data );
+              }, b.popcornFlag() );
+              b.unlisten( "layoutloaded", this );
+            });
+          })( data );
+          $('.close-div').fadeOut('fast');
+          $('.popups').hide();
+          b.loadPreview( {
+            layout: currentLayout,
+            target: "main",
+            media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+          });
+          return;
+
+        }
+        catch ( e ) {
+          console.log ( "Error Loading in Data", e );
+        }
+      }
+    });
+    
+    $(".show-json-btn").click(function() {
+      var exp = b.exportProject();
+      exp.layout = currentLayout;
+      $('.track-content').html( JSON.stringify( exp ) );
+    });
+
+    $(".show-html-btn").click(function() {
+      $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
+    });
     //$(function(){ $("label").inFieldLabels(); });
 
     $(function() {
@@ -556,6 +714,18 @@
     c = $("#contentheader");
 
     $('a[title!=""]', c).qtip(d.links);
+
+    $(window).bind("beforeunload", function( event ) {
+      return "Are you sure you want to leave Popcorn Maker?";
+    });
+
+    $(window).keypress( function( event ) {
+      var elem = event.srcElement || event.target;
+      if ( (event.which === 46 || event.which === 8) &&
+           (elem.nodeName !== "INPUT" && elem.nodeName !== "TEXTAREA") ) {
+        event.preventDefault();
+      }
+    });
 
   }, false);
 

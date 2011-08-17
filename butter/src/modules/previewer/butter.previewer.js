@@ -8,7 +8,8 @@
         userSetMedia, videoString,
         popcornURL, originalHead,
         popcorns, originalBody,
-        popcornScript, commServer;
+        popcornScript, commServer,
+        framePopcorn;
       
     this.loadPreview = function( options ) {
       originalHead = {};
@@ -154,6 +155,11 @@
       } // bodyReady
 
     }; // scraper
+
+    this.popcornFlag = function() {
+      var win = iframe.contentWindow || iframe.contentDocument;
+      return !!( win.Popcorn && win.Butter );
+    };
 
     // buildPopcorn function, builds an instance of popcorn in the iframe and also
     // a local version of popcorn
@@ -401,22 +407,22 @@
     };
 
     this.play = function() {
-        ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ].media.play();
+        framePopcorn.media.play();
     };
 
     this.isPlaying = function() {
-       var video = ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ].video;
+       var video = framePopcorn.video;
 
         video.paused = !video.paused;
         return video.paused;
     };
 
     this.pause = function() {
-        ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ].media.pause();
+        framePopcorn.media.pause();
     };
     
     this.mute = function() {
-      var video = ( iframe.contentWindow || iframe.contentDocument ).Popcorn.instances[ this.getCurrentMedia().getId() ].media;
+      var video = framePopcorn.media;
       video.muted = !video.muted;
     };
 
@@ -470,7 +476,7 @@
       //doc.write( "<html>\n" + iframeHead + body + "\n</html>" );
       //doc.close();
 
-      function $popcornReady ( framePopcorn ) {
+      function $popcornReady ( ) {
   
         var videoReady = function() {
           if( framePopcorn.media.readyState >= 2 || framePopcorn.media.duration > 0 ) {
@@ -493,11 +499,11 @@
             callback && callback();
           } else {
             setTimeout( function() {
-              videoReady( framePopcorn );
+              videoReady( );
             }, 10);
           }
         }
-        videoReady( framePopcorn );
+        videoReady( );
       } //$popcornReady
 
       var popcornReady = function( e, callback2 ) {
@@ -518,7 +524,7 @@
             commServer.send( "previewerCommClient", "ping", "ping" );
           } else {
 
-            if ( !win.Popcorn.instances[ 0 ] ) {
+            if ( win.Popcorn.instances.length === 0 ) {
               popcornScript = doc.createElement( "script" );
               popcornScript.innerHTML = popcornString;
               doc.head.appendChild( popcornScript );
@@ -628,12 +634,19 @@
       }
       this.listen( "trackeventremoved", trackeventremoved );
 
+      var lastMediaAdded;
+      this.listen( "mediaadded", function ( event ) {
+        lastMediaAdded = event.data;
+      });
+
       function mediachanged( e ) {
-        if ( commServer ) {
-          commServer.send( "previewerCommClient", e.data, "mediachanged" );
-        } else {
+        //if ( commServer ) {
+        //  commServer.send( "previewerCommClient", e.data, "mediachanged" );
+        //} else {
+        if ( lastMediaAdded !== e.data ) {
           that.buildPopcorn( e.data );
         }
+        //}
       }
       this.listen( "mediachanged", mediachanged );
 
@@ -651,20 +664,20 @@
       this.listen( "trackupdated", trackupdated );
 
       function mediatimeupdate( e ) {
-        if ( commServer ) {
-          commServer.send( "previewerCommClient", e.data, "mediatimeupdate" );
-        } else {
-          iframe.contentWindow[ "popcorn" + media.getId() ].currentTime( e.data.currentTime() );
-        }
+        //if ( commServer ) {
+        //  commServer.send( "previewerCommClient", e.data, "mediatimeupdate" );
+        //} else {
+          framePopcorn.currentTime( e.data.currentTime() );
+        //}
       }
       this.listen( "mediatimeupdate", mediatimeupdate, "timeline" );
       
       function mediacontentchanged( e ) {
-        if( commServer ) {
-          commServer.send( "previewerCommClient", e.data, "mediacontentchanged" );
-        } else {
+        //if( commServer ) {
+        //  commServer.send( "previewerCommClient", e.data, "mediacontentchanged" );
+        //} else {
           that.buildPopcorn( e.data );
-        }
+        //}
       }
       this.listen( "mediacontentchanged", mediacontentchanged );
 

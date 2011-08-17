@@ -10,7 +10,8 @@
 		<style type="text/css">
 		
 		body {
-			width: 800px;
+			width: 700px;
+			height: 380px;
 		}
 		
 		body, fieldset {
@@ -335,26 +336,26 @@
 
 				targets = newTargets || [];
 				
+				elements['target-fieldset'].style.display = '';
+				select = elements.target;
+				select.innerHTML = '<option>Default</option>';
+				
+				for (i = 0; i < targets.length; i++) {
+					option = document.createElement('option');
+					option.value = targets[i][0];
+					option.appendChild( document.createTextNode(targets[i][0]) );
+					select.appendChild(option);
+
+					if (targets[i][0] === trackEvent.target) {
+						option.selectedIndex = i;
+					}
+				}
+
 				if (targets.length <= 1) {
 					elements['target-fieldset'].style.display = 'none';
 
 					if (targets.length) {
-						trackEvent.target = targets[0];
-					}
-				} else {
-					elements['target-fieldset'].style.display = '';
-					select = elements.target;
-					select.innerHTML = '<option>Default</option>';
-					
-					for (i = 0; i < targets.length; i++) {
-						option = document.createElement('option');
-						option.value = targets[i][0];
-						option.appendChild( document.createTextNode(targets[i][0]) );
-						select.appendChild(option);
-
-						if (targets[i][0] === trackEvent.target) {
-							option.selectedIndex = i;
-						}
+						trackEvent.target = targets[0][0];
 					}
 				}
 			}
@@ -414,6 +415,10 @@
 					}
 				}
 				
+				if (targets.length === 1) {
+					trackEvent.target = targets[0][0];
+				}
+				
 				elements.target.value = trackEvent.target;
 
 			}
@@ -428,9 +433,13 @@
 					client = new butter.CommClient('defaultEditor');
 	
 					client.listen('edittrackevent', function (message) {
-						console.log(JSON.stringify(message));
+						client.send( {
+							width: 720,
+							height: 400
+						}, 'clientdimsupdated' );
 						targetsUpdated(message.targets);
 						editTrackEvent(message.trackEvent.popcornOptions);
+            //client.send( { "height": document.body.scrollHeight, "width": document.body.getClientRects()[0].width + 50 }, "clientdimsupdated" );
 					});
 	
 					client.listen( "domtargetsupdated", function( message ) {
@@ -438,7 +447,7 @@
 						console.log(JSON.stringify(message));
 						targetsUpdated(message);
 					});
-				}
+  			}
 
 				if (window.parent) {
 					try {
