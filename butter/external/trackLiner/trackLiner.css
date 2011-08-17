@@ -4,6 +4,7 @@
   border-top-right-radius: 6px;
   border-bottom-left-radius: 6px;
   border-top-left-radius: 6px;
+  border: 1px solid #111111 !important
   background-attachment: scroll;
   background-clip: border-box;
   background-color: transparent;
@@ -12,7 +13,7 @@
   background-position: 0 0;
   background-repeat: repeat;
   background-size: auto auto;
-  height: 27px;
+  height: 25px;
   margin-bottom: 6px;
   position: relative;
 }
