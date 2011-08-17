@@ -93,4 +93,8 @@ html, body {
   margin: 5px;
 }
 
-
+#layout-select {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}

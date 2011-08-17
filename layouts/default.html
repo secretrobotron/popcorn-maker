@@ -3,7 +3,7 @@
 <script src="../lib/popcorn-complete.js"></script>
 <script src="../lib/butter.js"></script>
 <script>
-  document.addEventListener( "DOMContentLoaded", function(){
+  document.addEventListener( "DOMContentLoaded", function() {
     var popcorn = Popcorn( document.getElementById('outerVideo') );
     var b = new Butter();
     b.comm();
@@ -38,7 +38,7 @@
 </head>
 <body>
   <div id="div1">
-    <video data-butter="media" id="outerVideo" width="300" height="200">
+    <video data-butter="media" id="outerVideo" width="300" height="200" controls>
       <source src="../../popcorn-js/test/trailer.ogv"/>
     </video>
     <div data-butter="target" id="div2" style="position:relative;float:left;width:400px;"></div>
