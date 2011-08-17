@@ -428,9 +428,10 @@
 					client = new butter.CommClient('defaultEditor');
 	
 					client.listen('edittrackevent', function (message) {
-						console.log(JSON.stringify(message));
+						console.log('joop joop joop!', JSON.stringify(message));
 						targetsUpdated(message.targets);
 						editTrackEvent(message.trackEvent.popcornOptions);
+            client.send( { "height": document.body.scrollHeight, "width": document.body.getClientRects()[0].width + 50 }, "clientdimsupdated" );
 					});
 	
 					client.listen( "domtargetsupdated", function( message ) {
@@ -438,7 +439,7 @@
 						console.log(JSON.stringify(message));
 						targetsUpdated(message);
 					});
-				}
+  			}
 
 				if (window.parent) {
 					try {
