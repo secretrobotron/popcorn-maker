@@ -501,15 +501,14 @@
           var mode = elements['map-mode'].value;
           trackEvent['map-mode'] = mode;
           if ( mode === "street" ) {
+            alert('SHAZAM!!');
             map.setStreetView(
-            // Pass a new StreetViewPanorama instance into our map
-
-              sView = new google.maps.StreetViewPanorama( document.getElementById('map'), {
-                position: new google.maps.LatLng(37.869085,-122.254775),
+              new google.maps.StreetViewPanorama( document.getElementById('map'), {
+                position: latLng,
                 pov: {
                   heading: 0,
                   pitch: 0,
-                  zoom: 8
+                  zoom: 1 
                 }
               })
             );
