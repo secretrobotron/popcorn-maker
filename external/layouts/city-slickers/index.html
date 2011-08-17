@@ -169,6 +169,12 @@
 
 		</style>
 -->
+	<script type="text/javascript">
+		if (window.parent) {
+			document.write('<script src="../../../lib/butter.js"><' + '/script>');
+		}
+
+	</script>
 	</head>
 	<body>
 		<header>
@@ -416,6 +422,47 @@
 			}, false);
 
 			var p = Popcorn('#video');
+			
+			if (window.Butter) {
+
+				var b = new Butter();
+				b.comm();
+	
+				var commClient = new b.CommClient( "previewerClient", function ( message ) {
+					console.log('in preview', message);
+				} );
+	
+				commClient.listen( "ping", function( message ) {
+					commClient.send( Popcorn.instances.indexOf( popcorn ), "pong" );
+				});
+	
+				commClient.listen( "trackeventadded", function ( message ) {
+					console.log('trackeventadded!!!!!!', message);
+				
+					var butterId = message.id;
+					popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) ); 
+				
+					var popcornEventId = popcorn.getLastTrackEventId();
+					commClient.send( { butterId: message.id, popcornId: popcorn.getLastTrackEventId() }, "trackeventadded" );
+				
+					commClient.listen( "trackeventupdated", function ( message ) {
+						if ( message.id === butterId ) {
+							popcorn.removeTrackEvent( popcornEventId );
+							popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) );
+							popcornEventId = popcorn.getLastTrackEventId();
+	
+							console.log('trackeventupdated', message);
+						}
+					});
+				
+					commClient.listen( "trackeventremoved", function ( message ) {
+						if ( message.id === butterId ) {
+							popcorn.removeTrackEvent( popcornEventId );
+							console.log('trackeventremoved', message);
+						}
+					});
+				});
+			}
 
 			p.slickers({
 				start: 4,
@@ -470,7 +517,6 @@
 			});
 
 		}, false);
-
 
 	}());
 	
