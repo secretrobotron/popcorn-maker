@@ -635,6 +635,18 @@
 
     $('a[title!=""]', c).qtip(d.links);
 
+    $(window).bind("beforeunload", function( event ) {
+      return "Are you sure you want to leave Popcorn Maker?";
+    });
+
+    $(window).keypress( function( event ) {
+      var elem = event.srcElement || event.target;
+      if ( (event.which === 46 || event.which === 8) &&
+           (elem.nodeName !== "INPUT" && elem.nodeName !== "TEXTAREA") ) {
+        event.preventDefault();
+      }
+    });
+
   }, false);
 
 
