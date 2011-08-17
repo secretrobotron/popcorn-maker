@@ -303,6 +303,13 @@
 		function doFadeyThing() {
 			var i, recent = -5;
 			
+			if (activeEvents.length) {
+				videoContainer.style.opacity = 0.1;
+			} else {
+				videoContainer.style.opacity = 1;
+			}
+			return;
+			
 			for (i = 0; i < activeEvents.length; i++) {
 				recent = Math.max(activeEvents[i].start, recent);
 			}
@@ -335,7 +342,8 @@
 		
 		window.markerStart = function (options) {
 			activeEvents.push(options);
-			activeEvents[0].onFrame = doFadeyThing;
+			//activeEvents[0].onFrame = doFadeyThing;
+			doFadeyThing();
 		}
 
 		window.markerEnd = function (options) {
@@ -343,6 +351,8 @@
 			if (index >= 0) {
 				activeEvents.splice(index, 1);
 			}
+			doFadeyThing();
+			return;
 			
 			options.onFrame = null;
 			
