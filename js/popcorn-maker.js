@@ -1,8 +1,8 @@
 (function(){
 
   var layouts = [
-    "layouts/default.html",
     "layouts/default-basic.html",
+    "layouts/default.html",
     "external/layouts/city-slickers/index.html",
     "external/layouts/cgg/index.html",
     "external/layouts/blackpanthers/default.html"
@@ -38,7 +38,8 @@
     b.previewer({
       layout: currentLayout,
       target: "main",
-      popcornURL: "../lib/popcorn-complete.js"
+      popcornURL: "../lib/popcorn-complete.js",
+      media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
     });
     b.listen( "layoutloaded", function( e ){
       b.buildPopcorn( b.getCurrentMedia() , function() {
@@ -60,6 +61,7 @@
 
     b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
     b.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
+    b.addCustomEditor( "external/layouts/city-slickers/editor.html", "googlestreets" );
 
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
@@ -641,7 +643,8 @@
       b.loadPreview( {
         layout: currentLayout,
         target: "main",
-        popcornURL: "../lib/popcorn-complete.js"
+        popcornURL: "../lib/popcorn-complete.js",
+        media: document.getElementById('media-url').value
       });
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
