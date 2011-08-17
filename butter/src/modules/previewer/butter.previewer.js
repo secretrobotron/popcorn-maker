@@ -158,6 +158,7 @@
     // buildPopcorn function, builds an instance of popcorn in the iframe and also
     // a local version of popcorn
     this.buildPopcorn = function( media, callback ) {
+      console.log('buildPopcorn');
       var that = this;
       // default to first butter-media tagged object if none is specified
       if ( !media ) {
@@ -467,7 +468,6 @@
       //doc.write( "<html>\n" + iframeHead + body + "\n</html>" );
       //doc.close();
 
-      var instancesBefore = win.Popcorn ? win.Popcorn.instances.length : 0;
       var popcornReady = function( e, callback2 ) {
         if ( !win.Popcorn ) {
           setTimeout( function() {
@@ -490,6 +490,7 @@
   
         var videoReady = function() {
           if( framePopcorn.media.readyState >= 2 || framePopcorn.media.duration > 0 ) {
+            console.log('SHAAAAAA!~!');
             that.duration( framePopcorn.media.duration );
             
             that.trigger( "mediaready", media );
@@ -519,14 +520,13 @@
       this.teAdded = function( event ) {
         var that = this, e = event.data;
 
-        popcornReady( e, function( framePopcorn ) { 
+        //popcornReady( e, function( framePopcorn ) { 
 
           if( !popcorns[ media.getId() ] ) {
               popcorns[ media.getId() ] = framePopcorn;
           } else {
             framePopcorn = popcorns[ media.getId() ]; 
           }
-          console.log(butterIds, e.getId());
           framePopcorn.removeTrackEvent( butterIds[ e.getId() ] );
 
           // add track events to the iframe verison of popcorn
@@ -536,12 +536,12 @@
 
           e.manifest = framePopcorn.getTrackEvent( butterIds[ e.getId() ] )._natives.manifest;
 
-        } );
+        //} );
       }
 
-     function trackeventupdated( e ) {
-      this.teAdded( e ); 
-     }
+      function trackeventupdated( e ) {
+        this.teAdded( e ); 
+      }
 
       // listen for a trackeventadded
       this.listen( "trackeventupdated", trackeventupdated); // listener
@@ -577,7 +577,6 @@
       this.listen( "trackeventremoved", trackeventremoved );
 
       function mediachanged( e ) {
-
         that.buildPopcorn( e.data );
       }
 
@@ -605,7 +604,6 @@
       this.listen( "mediacontentchanged", mediacontentchanged );
 
       function mediaremoved( e ) {
-console.log("ASDASD");
         that.unlisten( "trackeventadded", trackeventadded);
         that.unlisten( "trackeventupdated", trackeventupdated);
         that.unlisten( "trackeventremoved", trackeventremoved);

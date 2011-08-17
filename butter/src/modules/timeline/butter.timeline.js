@@ -281,6 +281,28 @@
         }
       }
 
+      function mediaReady ( event ) {
+        var mi = mediaInstances[ event.data.getId() ];
+        if ( !mi.initialized ) {
+          mi.init();
+          
+          var media = event.data,
+          tracks = media.getTracks();
+          
+          for ( var i = 0, tlength = tracks.length; i < tlength; i++ ) {
+            var t = tracks[ i ],
+            trackEvents = t.getTrackEvents();
+            
+            addTrack ( t );
+            
+            for ( var j = 0, teLength = trackEvents.length; j < teLength; j++ ) {
+              addTrackEvent( trackEvents [ j ] );
+            } // add Track Events per Track
+          } //add Tracks
+          butter.trigger( "timelineready", {}, "timeline" );
+        }
+      };
+
       function mediaRemoved( event ) {
       
         if ( mediaInstances[ event.data.getId() ] ) {
@@ -296,36 +318,12 @@
 
         butter.unlisten( "mediachanged", mediaChanged );
         butter.unlisten( "mediaremoved", mediaRemoved );
+        butter.unlisten( "mediaready", mediaReady );
       }
 
       butter.listen( "mediachanged", mediaChanged );
       butter.listen( "mediaremoved", mediaRemoved );
-
-
-    });
-
-    this.listen( "mediaready", function( event ) {
-    console.log(event.data.getId());
-      var mi = mediaInstances[ event.data.getId() ];
-      if ( !mi.initialized ) {
-        mi.init();
-        
-        var media = event.data,
-        tracks = media.getTracks();
-        
-        for ( var i = 0, tlength = tracks.length; i < tlength; i++ ) {
-          var t = tracks[ i ],
-          trackEvents = t.getTrackEvents();
-          
-          addTrack ( t );
-          
-          for ( var j = 0, teLength = trackEvents.length; j < teLength; j++ ) {
-            addTrackEvent( trackEvents [ j ] );
-          } // add Track Events per Track
-        } //add Tracks
-        butter.trigger( "timelineready", {}, "timeline" );
-      }
-
+      butter.listen( "mediaready", mediaReady );
 
     });
 

@@ -375,7 +375,6 @@
             (function ( localProject ) {
               b.listen( "layoutloaded", function( e ) {
                 document.getElementById( "main" ).innerHTML = "";
-                console.log("IN LAYOUTLOADED");
                 b.buildPopcorn( b.getCurrentMedia() , function() {
 
                   var registry = b.getRegistry();

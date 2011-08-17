@@ -424,7 +424,7 @@ THE SOFTWARE.
       };
 
       if ( events[ name ] ) {
-console.log(name, events[ name ]);
+console.log(name);
         //for (var i=0, l=events[ name ].length; i<l; ++i) {
         for ( var i=events[ name ].length - 1; i>=0; --i ) {
           if( !events[ name ][ i ] ) {
