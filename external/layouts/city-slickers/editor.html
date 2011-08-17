@@ -73,6 +73,14 @@
 				<input type="text" id="lng" class="small"/>
 			</fieldset>
 
+      <fieldset>
+        <label for="map-mode">Map Mode:</label>
+        <select id="map-mode">
+          <option value="map">Map View</option>
+          <option value="street">Street View</option>
+        </select>
+      </fieldset>
+
 			<fieldset id="target-fieldset">
 				<label for="target">Target:</label>
 				<select id="target"></select>
@@ -100,7 +108,7 @@
 				elements = {},
 				fields = [
 					'start', 'end', 'label', 'location', 'lat', 'lng',
-					'target', 'target-fieldset', 'geocode-button',
+					'target', 'target-fieldset', 'geocode-button', 'map-mode',
 					'cancel', 'ok', 'apply', 'delete'
 				],
 				butter, client;
@@ -323,7 +331,7 @@
 				trackEvent.location = elements.location.value;
 				trackEvent.location = trackEvent.location.replace(/^[\s\t\n\r ]+/, '');
 				trackEvent.location = trackEvent.location.replace(/[\s\t\n\r ]+$/, '');
-				
+
 				trackEvent.target = elements.target.value;
 				
 				if (map) {
@@ -488,6 +496,26 @@
 
 				elements.location.addEventListener('change', checkLocation, false);
 				elements.location.addEventListener('keypress', checkLocation, false);
+
+        elements['map-mode'].addEventListener('change', function ( e ) {
+          var mode = elements['map-mode'].value;
+          trackEvent['map-mode'] = mode;
+          if ( mode === "street" ) {
+            map.setStreetView(
+            // Pass a new StreetViewPanorama instance into our map
+
+              sView = new google.maps.StreetViewPanorama( document.getElementById('map'), {
+                pov: {
+                  heading: 0,
+                  pitch: 0,
+                  zoom: 8
+                }
+              })
+            );
+          }
+          else {
+          }
+        }, false );
 
 				//buttons
 				elements['geocode-button'].addEventListener('click', checkLocation, false);
