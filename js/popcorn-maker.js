@@ -22,7 +22,7 @@
           b.addPlugin( { type: registry[ i ].type } );
         }
         $('.tiny-scroll').tinyscrollbar();
-      }, true );
+      }, b.popcornFlag());
       b.unlisten( "layoutloaded", this );
     } );
 
