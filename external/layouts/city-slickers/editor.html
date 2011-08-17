@@ -111,7 +111,8 @@
 					'target', 'target-fieldset', 'geocode-button', 'map-mode',
 					'cancel', 'ok', 'apply', 'delete'
 				],
-				butter, client;
+				butter, client,
+        streetView;
 			
 			function saveLocation(loc) {
 				if (!loc) {
@@ -501,19 +502,26 @@
           var mode = elements['map-mode'].value;
           trackEvent['map-mode'] = mode;
           if ( mode === "street" ) {
-            alert('SHAZAM!!');
-            map.setStreetView(
-              new google.maps.StreetViewPanorama( document.getElementById('map'), {
-                position: latLng,
-                pov: {
-                  heading: 0,
-                  pitch: 0,
-                  zoom: 1 
-                }
-              })
-            );
+            if ( !streetView ) {
+              map.setStreetView(
+                streetView = new google.maps.StreetViewPanorama( document.getElementById('map'), {
+                  position: latLng,
+                  pov: {
+                    heading: 0,
+                    pitch: 0,
+                    zoom: 1 
+                  }
+                })
+              );
+              streetView.setVisible( true );
+            }
+            else {
+              streetView.setPosition( latLng );
+              streetView.setVisible( true );
+            }
           }
           else {
+            streetView.setVisible( false );
           }
         }, false );
 
