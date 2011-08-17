@@ -605,8 +605,27 @@
     
     $(".create-new-btn").click(function() {
       b.clearProject();
-      b.clearPopcorn();
       b.setProjectDetails( "title", "Untitled Project");
+      currentLayout = document.getElementById( 'layout-select' ).value;
+      b.listen( "layoutloaded", function( e ) {
+        b.buildPopcorn( b.getCurrentMedia() , function() {
+
+          var registry = b.getRegistry();
+          for( var i = 0, l = registry.length; i < l; i++ ) {
+            b.addPlugin( { type: registry[ i ].type } );
+          }
+          $('.tiny-scroll').tinyscrollbar();
+        }, b.popcornFlag() );
+        b.unlisten( "layoutloaded", this );
+      });
+
+      b.loadPreview( {
+        layout: currentLayout,
+        target: "main",
+        media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+      });
+      $('.close-div').fadeOut('fast');
+      $('.popups').hide();
     });
     
     $(".load-code-btn").click(function() {
@@ -630,12 +649,12 @@
                 b.importProject( data );
                 $('.close-div').fadeOut('fast');
                 $('.popups').hide();
-              }, true );
+              }, b.popcornFlag() );
               b.unlisten( "layoutloaded", this );
             });
           })( data );
           b.loadPreview( {
-            layout: "layouts/default.html",
+            layout: currentLayout,
             target: "main",
             media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
           });
