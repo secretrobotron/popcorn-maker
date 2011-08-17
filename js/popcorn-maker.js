@@ -8,12 +8,11 @@
 
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html" } );
     b.previewer({
-      layout: "layouts/default.html",
+      layout: "layouts/default-basic.html",
       target: "main",
       media: "http://soundcloud.com/forss/flickermood",
       popcornURL: "../lib/popcorn-complete.js"
     });
-console.log(b.popcornFlag());
     b.listen( "layoutloaded", function( e ){
       b.buildPopcorn( b.getCurrentMedia() , function() {
 
