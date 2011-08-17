@@ -5,6 +5,7 @@
     "layouts/default-basic.html",
     "external/layouts/city-slickers/index.html",
     "external/layouts/cgg/index.html",
+    "external/layouts/blackpanthers/default.html"
   ],
   currentLayout;
 
@@ -37,7 +38,6 @@
     b.previewer({
       layout: currentLayout,
       target: "main",
-      media: "http://soundcloud.com/forss/flickermood",
       popcornURL: "../lib/popcorn-complete.js"
     });
     b.listen( "layoutloaded", function( e ){
@@ -611,7 +611,7 @@
           b.loadPreview( {
             layout: currentLayout,
             target: "main",
-            media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+            popcornURL: "../lib/popcorn-complete.js"
           });
           return;
         }
@@ -641,7 +641,7 @@
       b.loadPreview( {
         layout: currentLayout,
         target: "main",
-        media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+        popcornURL: "../lib/popcorn-complete.js"
       });
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
@@ -676,7 +676,7 @@
           b.loadPreview( {
             layout: currentLayout,
             target: "main",
-            media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+            popcornURL: "../lib/popcorn-complete.js"
           });
           return;
 
