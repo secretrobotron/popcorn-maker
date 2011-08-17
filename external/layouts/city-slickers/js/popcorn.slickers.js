@@ -280,7 +280,22 @@
 					options.onEnd(options);
 				}
 			},
-			_teardown: function( event, options ) {
+			_teardown: function( event, opts ) {
+				mapDiv = null;
+				mapData = null;
+				map = null;
+				activeEvents = null;
+				latLng = null;
+				
+				if (options) {
+					if (options.marker) {
+						options.marker.setVisible(false);
+						options.marker.setMap(null);
+						options.marker = null;
+					}
+					options = null;
+				}
+				opts = null;
 			},
 			manifest: {
 				about: {
