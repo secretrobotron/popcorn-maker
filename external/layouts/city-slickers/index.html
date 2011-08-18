@@ -55,6 +55,7 @@
 		
 		#video.unshoop {
 			opacity: 0;
+			visibility: hidden;
 			-moz-transform: scale(0);
 		}
 
@@ -151,11 +152,41 @@
 		.endstuff {
 			display: none;
 			position: absolute;
-			top: 100px;
-			width: 650px;
+			top: 60px;
+			width: 900px;
+			min-height: 400px;
 			left: 50%;
-			margin-left: 325px;
+			padding: 16px;
+			border: solid white 2px;
+			margin-left: -450px;
 			background-color: rgba(0, 0, 0, 0.4);
+		}
+
+		.endstuff .gallery {
+			float: right;
+			max-height: 405px;
+			width: 100px;
+		}
+
+		.endstuff .gallery img {
+			width: 100%;
+			overflow-y: scroll;
+			margin-bottom: 10px;
+		}
+		
+		.endstuff > * {
+			margin: 4px;
+		}
+		
+		.endstuff video {
+			display: block;
+		}
+		
+		.endstuff .description {
+			background-color: #555;
+			padding: 20px;
+			color: white;
+			font-family: 'garamond', 'georgia';
 		}
 
 		</style>
@@ -342,6 +373,9 @@
 				for (i in allEvents) {
 					if (allEvents[i].endstuff && allEvents[i].endstuff !== container) {
 						allEvents[i].endstuff.style.display = '';
+						if (allEvents[i].vidElement) {
+							allEvents[i].vidElement.pause();
+						}
 					} else {
 						allEvents[i].endstuff.style.display = 'block';
 					}
@@ -349,6 +383,9 @@
 			}
 			
 			for (butterId in allEvents) {
+				function loadGallery(galleryId) {
+				}
+
 				options = allEvents[butterId];
 				if (!options.endstuff) {
 					container = document.createElement('div');
@@ -358,6 +395,8 @@
 					options.endstuff = container;
 
 					if (options.marker) {
+						options.marker.setVisible(true);
+						options.marker.setClickable(true);
 						(function(opt) {
 							google.maps.event.addListener(opt.marker, 'click', function() {
 								activate(opt.endstuff);
@@ -365,15 +404,44 @@
 						}(options));
 					}
 					
+					if (options.galleries && options.galleries.length) {
+						var i, url,
+							pieces,
+							galleries = {},
+							regex = /(https?:\/\/)?(www\.)?flickr\.com\/photos\/([A-Za-z0-9@]+)\/galleries\/(\d+)\/?/;
+						for (i = 0; i < options.galleries.length; i++) {
+							pieces = regex.exec(options.galleries[i]);
+							if (pieces) {
+								if (!galleries[ pieces[4] ]) {
+									url = 'http://api.flickr.com/services/rest/?method=flickr.galleries.getList&api_key=3b1a167af8d3b3a1874f50fba0860093&user_id=' + pieces[3] + '&format=json&jsoncallback=flickr' + pieces[3];
+		
+									Popcorn.xhr.getJSONP( url, function( data ) {
+									});
+								} else {
+									//galleries[ pieces[4] ];
+								}
+							}
+						}
+					}
+					
 					if (options.video) {
 						element = document.createElement('video');
-						video.setAttribute('controls', '');
+						element.setAttribute('controls', '');
 
 						//todo: multiple sources
-						video.setAttribute('src', options.video);
+						element.setAttribute('src', options.video);
 						//var basePath = options.video
 						
-						container.appendChild(video);
+						options.vidElement = element;
+						
+						container.appendChild(element);
+					}
+					
+					if (options.description) {
+						element = document.createElement('div');
+						element.setAttribute('class', 'description');
+						element.appendChild(document.createTextNode(options.description));
+						container.appendChild(element);
 					}
 				}
 			}
@@ -559,17 +627,18 @@
 					var butterId = message.id;
 					
 					//add callbacks
-					message.popcornOptions.onLoad = 'markerLoaded';
-					message.popcornOptions.onStart = 'markerStart';
-					message.popcornOptions.onEnd = 'markerEnd';
-					message.popcornOptions.target = 'map';
+					var options = Popcorn.extend( {}, message.popcornOptions );
+					options.onLoad = 'markerLoaded';
+					options.onStart = 'markerStart';
+					options.onEnd = 'markerEnd';
+					options.target = 'map';
 					
-					popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) ); 
+					popcorn[ message.type ]( options ); 
 				
 					var popcornEventId = popcorn.getLastTrackEventId();
 
 					butterTracks[butterId] = popcornEventId;
-					allEvents[butterId] = message.popcornOptions;
+					allEvents[butterId] = options;
 					
 					commClient.send( { butterId: message.id, popcornId: popcornEventId }, "trackeventadded" );				
 				});
@@ -582,17 +651,18 @@
 						popcorn.removeTrackEvent( popcornEventId );
 
 						//add callbacks
-						message.popcornOptions.onLoad = 'markerLoaded';
-						message.popcornOptions.onStart = 'markerStart';
-						message.popcornOptions.onEnd = 'markerEnd';
+						var options = Popcorn.extend( {}, message.popcornOptions );
+						options.onLoad = 'markerLoaded';
+						options.onStart = 'markerStart';
+						options.onEnd = 'markerEnd';
 						
-						popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) );
+						popcorn[ message.type ]( options );
 						popcornEventId = popcorn.getLastTrackEventId();
 
 						butterTracks[butterId] = popcornEventId;
 
 						//todo: remove/destroy/rebuild any "end" DOM nodes/events
-						allEvents[butterId] = message.popcornOptions;
+						allEvents[butterId] = options;
 
 						console.log('trackeventupdated', message);
 					}
