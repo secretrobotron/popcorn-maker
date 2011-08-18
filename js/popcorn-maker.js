@@ -230,26 +230,52 @@
       canvasDiv.height = canvasDiv.offsetHeight;
       canvasDiv.width = canvasDiv.offsetWidth;
 
-      var inc = canvasDiv.offsetWidth / b.duration() / 4,
-          heights = [ 10, 4, 7, 4 ],
+      var inc = canvasDiv.offsetWidth / b.duration(),
+          //heights = [ 10, 4, 7, 4 ],
           textWidth = context.measureText( b.secondsToSMPTE( 5 ) ).width,
-          lastTimeDisplayed = -textWidth / 2;
+          padding = 20,
+          lastPosition = 0,
+          lastTimeDisplayed = -( ( textWidth + padding ) / 2 );
 
       context.clearRect ( 0, 0, canvasDiv.width, canvasDiv.height );
 
       context.beginPath();
 
-      for ( var i = 1, l = b.duration() * 4; i < l; i++ ) {
+      for ( var i = 1, l = b.duration(); i < l; i++ ) {
 
         var position = i * inc;
+        var spaceBetween = -~( position ) - -~( lastPosition );
 
-        context.moveTo( -~position, 0 );
-        context.lineTo( -~position, heights[ i % 4 ] );
+        // ensure there is enough space to draw a seconds tick
+        if ( spaceBetween > 3 ) {
 
-        if ( i % 4 === 0 && ( position - lastTimeDisplayed ) > textWidth ) {
+          // ensure there is enough space to draw a half second tick
+          if ( spaceBetween > 6 ) {
 
-          lastTimeDisplayed = position;
-          context.fillText( b.secondsToSMPTE( i / 4 ), -~position - ( textWidth / 2 ), 21 );
+            context.moveTo( -~position - spaceBetween / 2, 0 );
+            context.lineTo( -~position - spaceBetween / 2, 7 );
+
+            // ensure there is enough space for quarter ticks
+            if ( spaceBetween > 12 ) {
+
+              context.moveTo( -~position - spaceBetween / 4 * 3, 0 );
+              context.lineTo( -~position - spaceBetween / 4 * 3, 4 );
+
+              context.moveTo( -~position - spaceBetween / 4, 0 );
+              context.lineTo( -~position - spaceBetween / 4, 4 );
+
+            }
+          }
+          context.moveTo( -~position, 0 );
+          context.lineTo( -~position, 10 );
+
+          if ( ( position - lastTimeDisplayed ) > textWidth + padding ) {
+
+            lastTimeDisplayed = position;
+            context.fillText( b.secondsToSMPTE( i ), -~position - ( textWidth / 2 ), 21 );
+          }
+
+          lastPosition = position;
         }
       }
       context.stroke();
