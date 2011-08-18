@@ -1,10 +1,11 @@
 (function(){
 
   var layouts = [
-    "layouts/default.html",
     "layouts/default-basic.html",
+    "layouts/default.html",
     "external/layouts/city-slickers/index.html",
     "external/layouts/cgg/index.html",
+    "external/layouts/blackpanthers/default.html"
   ],
   currentLayout;
 
@@ -37,8 +38,8 @@
     b.previewer({
       layout: currentLayout,
       target: "main",
-      media: "http://soundcloud.com/forss/flickermood",
-      popcornURL: "../lib/popcorn-complete.js"
+      popcornURL: "../lib/popcorn-complete.js",
+      media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
     });
     b.listen( "layoutloaded", function( e ){
       b.buildPopcorn( b.getCurrentMedia() , function() {
@@ -60,6 +61,7 @@
 
     b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
     b.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
+    b.addCustomEditor( "external/layouts/city-slickers/editor.html", "googlestreets" );
 
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
@@ -259,6 +261,14 @@
       drawCanvas();
     });
 
+    document.addEventListener( "keypress", function( event ) {
+      if( event.keyCode === 39 ) {
+        b.moveFrameRight();
+      } else if( event.keyCode === 37 ) {
+        b.moveFrameLeft();
+      }
+    }, false);
+
     var trackLayers = {};
     var editTrackTargets =  document.getElementById( "track-edit-target" );
     var trackJSONtextArea = document.getElementById( "track-edit-JSON" );
@@ -285,8 +295,15 @@
       deleteButton.className = "delete";
       deleteButton.innerHTML = "<a href=\"#\">delete</a>";
       deleteButton.addEventListener( "click", function( click ) {
-
-        b.removeTrack( track );
+        $('.close-div').fadeOut('fast');
+        $('.popupDiv').fadeIn('slow');
+        $('#popup-delete-track').show();
+        $('#deleteTrackBtn').click(function(){
+          b.removeTrack( track );
+          $('#popup-delete-track').hide();
+        });
+        centerPopup( $('#popup-delete-track') );
+        $('.balck-overlay').hide();
       }, false );
 
       trackJSONtextArea.addEventListener( "change", function() {
@@ -624,44 +641,49 @@
     });
     
     $(".projects-dd").change(function() {
-    
-      var title;
+      var title = projectsDrpDwn.val();
       localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
-      
-      if ( projectsDrpDwn[0].selectedIndex > 0 ) {
+      localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
+      if ( projectsDrpDwn[0].selectedIndex > 0 && localProjects[ title ] && localProjects[ title ].project.title !== b.getProjectDetails( "title" ) ) {
+        $('.close-div').fadeOut('fast');
+        $('.popupDiv').fadeIn('slow');
+        $('#load-confirmation-dialog').show();
+        centerPopup( $('#load-confirmation-dialog') );
+        $('.balck-overlay').hide();
+      }
+    });
+    
+    $(".confirm-load-btn").click(function() {
+      var title = projectsDrpDwn.val();
 
-        localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
-        title = projectsDrpDwn.val();
-        
-        if ( localProjects && localProjects[ title ] ) {
-          b.clearProject();         
-          b.clearPlugins();
-          currentLayout = localProjects[ title ].layout;
-          (function ( localProject ) {
-            b.listen( "layoutloaded", function( e ) {
-              document.getElementById( "main" ).innerHTML = "";
-              b.buildPopcorn( b.getCurrentMedia() , function() {
+      if ( localProjects && localProjects[ title ] && localProjects[ title ].project.title !== b.getProjectDetails( "title" ) ) {
+        b.clearProject();         
+        b.clearPlugins();
+        currentLayout = localProjects[ title ].layout;
+        (function ( localProject ) {
+          b.listen( "layoutloaded", function( e ) {
+            document.getElementById( "main" ).innerHTML = "";
+            b.buildPopcorn( b.getCurrentMedia() , function() {
 
-                var registry = b.getRegistry();
-                for( var i = 0, l = registry.length; i < l; i++ ) {
-                  b.addPlugin( { type: registry[ i ].type } );
-                }
-                $('.tiny-scroll').tinyscrollbar();
-                b.importProject( localProject );
-                toggleLoadingScreen( false );
-              }, true );
-              b.unlisten( "layoutloaded", this );
-            });
-          })( localProjects[ title ] );
-          toggleLoadingScreen( true );
-          b.loadPreview( {
-            layout: currentLayout,
-            target: "main",
-            media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+              var registry = b.getRegistry();
+              for( var i = 0, l = registry.length; i < l; i++ ) {
+                b.addPlugin( { type: registry[ i ].type } );
+              }
+              $('.tiny-scroll').tinyscrollbar();
+              b.importProject( localProject );
+              toggleLoadingScreen( false );
+            }, true );
+            b.unlisten( "layoutloaded", this );
           });
-          return;
-        }
-        
+        })( localProjects[ title ] );
+        toggleLoadingScreen( true );
+        b.loadPreview( {
+          layout: currentLayout,
+          target: "main",
+          popcornURL: "../lib/popcorn-complete.js",
+        });
+        $('.close-div').fadeOut('fast');
+        $('.popups').hide();     
       }
     });
     
@@ -687,7 +709,8 @@
       b.loadPreview( {
         layout: currentLayout,
         target: "main",
-        media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+        popcornURL: "../lib/popcorn-complete.js",
+        media: document.getElementById('media-url').value
       });
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
@@ -722,7 +745,7 @@
           b.loadPreview( {
             layout: currentLayout,
             target: "main",
-            media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+            popcornURL: "../lib/popcorn-complete.js"
           });
           return;
 
@@ -742,6 +765,7 @@
     $(".show-html-btn").click(function() {
       $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
     });
+    
     //$(function(){ $("label").inFieldLabels(); });
 
     $(function() {

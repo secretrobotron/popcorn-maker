@@ -336,7 +336,7 @@ border:1px solid #111111 !important;
 	-webkit-box-shadow: 0 1px 0 #737373, inset 0 1px 0 #545454;
 	     -o-box-shadow: 0 1px 0 #737373, inset 0 1px 0 #545454;
 	        box-shadow: 0 1px 0 #737373, inset 0 1px 0 #545454;}
-.change-url-btn:hover, .change-title-btn:hover { color:#fff;}
+.change-url-btn:hover, .change-title-btn:hover, .confirm-load-btn:hover { color:#fff;}
 .layer-btn:active, .layer-btn:focus {
 	background-image: -webkit-gradient(
 		linear,
@@ -717,7 +717,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .track-text.json-text.show-text, .track-text.track-text.show-text { display: inline }
  
 .download-html {float: right; height: 86px; overflow: hidden; position: relative; width: 330px;}
-.download-btn, .load-code-btn, .save-project-data-btn, .create-new-btn, .change-url-btn, .change-title-btn, .popup-btns input { float:left; margin-right:10px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC;
+.download-btn, .load-code-btn, .save-project-data-btn, .create-new-btn, .change-url-btn, .change-title-btn, .confirm-load-btn, .popup-btns input { float:left; margin-right:10px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC;
 	   -moz-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
 	-webkit-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
 	     -o-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
@@ -749,7 +749,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 	-webkit-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;
 	     -o-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;
 	        box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;}
-.header-buttons li, .popup-close-btn, .download-btn, .load-code-btn, .save-project-data-btn, .create-new-btn, .change-url-btn, .change-title-btn, .popup-btns input {
+.header-buttons li, .popup-close-btn, .download-btn, .load-code-btn, .save-project-data-btn, .create-new-btn, .change-url-btn, .change-title-btn, .confirm-load-btn, .popup-btns input {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -762,7 +762,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		rgb(56,56,56) 0%,
 		rgb(97,97,97) 100%
 	);}
-.header-buttons li:hover, .download-btn:hover, .load-code-btn:hover, .save-project-data-btn:hover, .create-new-btn:hover, .change-url-btn:hover, .change-title-btn:hover, .popup-btns input:hover {
+.header-buttons li:hover, .download-btn:hover, .load-code-btn:hover, .save-project-data-btn:hover, .create-new-btn:hover, .change-url-btn:hover, .change-title-btn:hover, .confirm-load-btn:hover, .popup-btns input:hover {
 	color: #fff;
 	background-image: -webkit-gradient(
 		linear,
@@ -776,7 +776,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		rgb(64,64,64) 0%,
 		rgb(112,112,112) 100%
 	);}
-.header-buttons li:active, .header-buttons li:focus, .download-btn:active, .download-btn:focus, .load-code-btn:active, .load-code-btn:focus, .save-project-data-btn:active, .save-project-data-btn:focus, .create-new-btn:active, .create-new-btn:focus, .change-url-btn:active, .change-url-btn:focus, .change-title-btn:active,  .change-title-btn:focus, .popup-btns input:focus, .popup-btns input:active {
+.header-buttons li:active, .header-buttons li:focus, .download-btn:active, .download-btn:focus, .load-code-btn:active, .load-code-btn:focus, .save-project-data-btn:active, .save-project-data-btn:focus, .create-new-btn:active, .create-new-btn:focus, .change-url-btn:active, .change-url-btn:focus, .change-title-btn:active,  .change-title-btn:focus, .confirm-load-btn:focus, .confirm-load-btn:active, .popup-btns input:focus, .popup-btns input:active {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -827,7 +827,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		-webkit-border-radius: 0;
 			 -o-border-radius: 0;
 				border-radius: 0;}
-.enable-scroll.toolbox, .layer, .layer-btn, .download-btn, .load-code-btn, .save-project-data-btn, .create-new-btn, .change-url-btn, .change-title-btn, .popup-btns input {
+.enable-scroll.toolbox, .layer, .layer-btn, .download-btn, .load-code-btn, .save-project-data-btn, .create-new-btn, .change-url-btn, .change-title-btn, .confirm-load-btn, .popup-btns input {
 		   -moz-border-radius: 6px;
 		-webkit-border-radius: 6px;
 			 -o-border-radius: 6px;
