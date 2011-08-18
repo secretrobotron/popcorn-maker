@@ -29,10 +29,16 @@
         if ( cornOptions.start > inc ) {
 
           cornOptions.start -= inc;
-          cornOptions.end -= inc;
+          if ( !event.ctrlKey ) {
+
+            cornOptions.end -= inc;
+          }
         } else {
 
-          cornOptions.end = cornOptions.end - cornOptions.start;
+          if ( !event.ctrlKey ) {
+
+            cornOptions.end = cornOptions.end - cornOptions.start;
+          }
           cornOptions.start = 0;
         }
 
@@ -50,10 +56,16 @@
         if ( cornOptions.end < b.duration() - inc ) {
 
           cornOptions.end += inc;
-          cornOptions.start += inc;
+          if ( !event.ctrlKey ) {
+
+            cornOptions.start += inc;
+          }
         } else {
 
-          cornOptions.start += b.duration() - cornOptions.end;
+          if ( !event.ctrlKey ) {
+
+            cornOptions.start += b.duration() - cornOptions.end;
+          }
           cornOptions.end = b.duration();
         }
 
