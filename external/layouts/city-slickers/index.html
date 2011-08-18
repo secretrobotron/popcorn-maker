@@ -147,6 +147,16 @@
 		#progress-outer:hover, #progress-outer:active {
 			background-color: rgba(40, 40, 80, 0.2);
 		}
+		
+		.endstuff {
+			display: none;
+			position: absolute;
+			top: 100px;
+			width: 650px;
+			left: 50%;
+			margin-left: 325px;
+			background-color: rgba(0, 0, 0, 0.4);
+		}
 
 		</style>
 		<!--
@@ -221,6 +231,7 @@
 			videoContainer,
 			videoPaused = true,
 			allLoaded = false,
+			allEvents = {},
 			activeEvents = [];
 
 		function getElementPosition(element) {
@@ -320,6 +331,52 @@
 				videoContainer.style.opacity = 1;
 			}
 
+		}
+		
+		function buildEndStuff() {
+			var butterId, options,
+				container, element;
+			
+			function activate(container) {
+				var i;
+				for (i in allEvents) {
+					if (allEvents[i].endstuff && allEvents[i].endstuff !== container) {
+						allEvents[i].endstuff.style.display = '';
+					} else {
+						allEvents[i].endstuff.style.display = 'block';
+					}
+				}
+			}
+			
+			for (butterId in allEvents) {
+				options = allEvents[butterId];
+				if (!options.endstuff) {
+					container = document.createElement('div');
+					container.setAttribute('class', 'endstuff');
+					document.body.appendChild(container);
+					
+					options.endstuff = container;
+
+					if (options.marker) {
+						(function(opt) {
+							google.maps.event.addListener(opt.marker, 'click', function() {
+								activate(opt.endstuff);
+							});
+						}(options));
+					}
+					
+					if (options.video) {
+						element = document.createElement('video');
+						video.setAttribute('controls', '');
+
+						//todo: multiple sources
+						video.setAttribute('src', options.video);
+						//var basePath = options.video
+						
+						container.appendChild(video);
+					}
+				}
+			}
 		}
 		
 		window.markerLoaded = function (options) {
@@ -460,6 +517,24 @@
 					video.pause();
 				}
 			}, false);
+			
+			video.addEventListener('ended', function() {
+				video.setAttribute('class', 'unshoop');
+				if (map) {
+					map.setOptions({
+						draggable: true,
+						mapTypeControl: true,
+						panControl: true,
+						//scaleControl: false,
+						zoomControl: true,
+						streetViewControl: true,
+						disableDoubleClickZoom: false,
+						scrollwheel: false
+					});
+				}
+				
+				buildEndStuff();
+			}, false);
 
 			var popcorn = Popcorn('#video');
 			
@@ -494,6 +569,7 @@
 					var popcornEventId = popcorn.getLastTrackEventId();
 
 					butterTracks[butterId] = popcornEventId;
+					allEvents[butterId] = message.popcornOptions;
 					
 					commClient.send( { butterId: message.id, popcornId: popcornEventId }, "trackeventadded" );				
 				});
@@ -515,6 +591,9 @@
 
 						butterTracks[butterId] = popcornEventId;
 
+						//todo: remove/destroy/rebuild any "end" DOM nodes/events
+						allEvents[butterId] = message.popcornOptions;
+
 						console.log('trackeventupdated', message);
 					}
 				});
@@ -527,6 +606,9 @@
 						popcorn.removeTrackEvent( popcornEventId );
 						
 						delete butterTracks[butterId];
+						
+						//todo: remove/destroy any "end" DOM nodes/events
+						delete allEvents[butterId];
 						
 						console.log('trackeventremoved', message);
 					}
