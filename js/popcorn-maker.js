@@ -640,44 +640,49 @@
     });
     
     $(".projects-dd").change(function() {
-    
-      var title;
+      var title = projectsDrpDwn.val();
       localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
-      
-      if ( projectsDrpDwn[0].selectedIndex > 0 ) {
+      localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
+      if ( projectsDrpDwn[0].selectedIndex > 0 && localProjects[ title ] && localProjects[ title ].project.title !== b.getProjectDetails( "title" ) ) {
+        $('.close-div').fadeOut('fast');
+        $('.popupDiv').fadeIn('slow');
+        $('#load-confirmation-dialog').show();
+        centerPopup( $('#load-confirmation-dialog') );
+        $('.balck-overlay').hide();
+      }
+    });
+    
+    $(".confirm-load-btn").click(function() {
+      var title = projectsDrpDwn.val();
 
-        localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
-        title = projectsDrpDwn.val();
-        
-        if ( localProjects && localProjects[ title ] ) {
-          b.clearProject();         
-          b.clearPlugins();
-          currentLayout = localProjects[ title ].layout;
-          (function ( localProject ) {
-            b.listen( "layoutloaded", function( e ) {
-              document.getElementById( "main" ).innerHTML = "";
-              b.buildPopcorn( b.getCurrentMedia() , function() {
+      if ( localProjects && localProjects[ title ] && localProjects[ title ].project.title !== b.getProjectDetails( "title" ) ) {
+        b.clearProject();         
+        b.clearPlugins();
+        currentLayout = localProjects[ title ].layout;
+        (function ( localProject ) {
+          b.listen( "layoutloaded", function( e ) {
+            document.getElementById( "main" ).innerHTML = "";
+            b.buildPopcorn( b.getCurrentMedia() , function() {
 
-                var registry = b.getRegistry();
-                for( var i = 0, l = registry.length; i < l; i++ ) {
-                  b.addPlugin( { type: registry[ i ].type } );
-                }
-                $('.tiny-scroll').tinyscrollbar();
-                b.importProject( localProject );
-                toggleLoadingScreen( false );
-              }, true );
-              b.unlisten( "layoutloaded", this );
-            });
-          })( localProjects[ title ] );
-          toggleLoadingScreen( true );
-          b.loadPreview( {
-            layout: currentLayout,
-            target: "main",
-            popcornURL: "../lib/popcorn-complete.js"
+              var registry = b.getRegistry();
+              for( var i = 0, l = registry.length; i < l; i++ ) {
+                b.addPlugin( { type: registry[ i ].type } );
+              }
+              $('.tiny-scroll').tinyscrollbar();
+              b.importProject( localProject );
+              toggleLoadingScreen( false );
+            }, true );
+            b.unlisten( "layoutloaded", this );
           });
-          return;
-        }
-        
+        })( localProjects[ title ] );
+        toggleLoadingScreen( true );
+        b.loadPreview( {
+          layout: currentLayout,
+          target: "main",
+          popcornURL: "../lib/popcorn-complete.js",
+        });
+        $('.close-div').fadeOut('fast');
+        $('.popups').hide();     
       }
     });
     
@@ -759,6 +764,7 @@
     $(".show-html-btn").click(function() {
       $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
     });
+    
     //$(function(){ $("label").inFieldLabels(); });
 
     $(function() {
