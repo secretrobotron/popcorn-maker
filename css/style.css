@@ -158,9 +158,9 @@ header { height:44px;
 /*------- Timeline ------- */
 .timeline{padding:0 160px 0 20px;}
 #properties-panel { background:url(../images/timeline-bg.jpg) repeat; float:left; height:270px; position:absolute; bottom:0; width:100%; overflow:hidden}
-#properties-panel .properties-header { padding:0 20px; height:36px; border:1px solid #353535; border-bottom-color:#030303; margin-bottom:15px; border-right:0; border-left:0;}
+#properties-panel .properties-header { padding:0 20px; height:36px; border:1px solid #353535; border-bottom-color:#030303; margin-bottom:5px; border-right:0; border-left:0;}
 .timeline-heading { float:left; position:relative; padding: 5px 35px 5px 10px; background: #000;margin: 5px 0;}
-.playback-controls { height:48px; width:100%; position: relative;}
+.playback-controls { height:58px; width:100%; position: relative;}
 .playback-controls .play-btn, .playback-controls .sound-btn { padding:3px;}
 .playback-controls .play-btn a, .playback-controls .sound-btn a { display:block; height:100%; width:17px; height:17px;
 	background-image: -webkit-gradient(
@@ -256,7 +256,7 @@ padding: 0 2px;
 	        box-shadow: 0 1px 0 #737373, inset 0 1px 1px #131313;}
 .play-btn { position: absolute; left: 0; z-index: 999;}
 .timeline-progress-wrapper {padding:7px 30px 0 120px;}
-.timing-notches-div { padding:0px 0px 0px 0px; height:15px;}
+.timing-notches-div { padding:0px 0px 0px 0px; height:27px;}
 .timeline-sound-td { position: absolute; top:0; right:0;}
 .timing-notches { width:100%; background:url(../images/timing-notches.png) repeat-x; height:15px}
 
