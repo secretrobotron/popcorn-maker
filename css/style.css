@@ -82,6 +82,7 @@ header { height:44px;
 	);}
 .logo { float:left; font: normal 24px/44px DroidSansBold,Helvetica, Arial, sans-serif; letter-spacing: -1px;}
 .logo a {color:#ccc;}
+.logo-popcorn-maker { margin:4px 10px 0 0;}
 .logo a:hover { color:#fff;}
 .header-right { float:right; padding-top:9px;}
 .my-projects-drpdwn { width:212px; margin-right:14px; float: left; position:relative}
@@ -89,12 +90,12 @@ header { height:44px;
 .header-right form { float:left}
 .projects-dd { width:177px !important}
 .header-buttons { float:left;}
-.header-buttons li, .popup-close-btn { float:left; margin-right:10px; width:24px; height:24px; border: 1px solid #282828 !important;
+.header-buttons li, .popup-close-btn, .help-close-btn { float:left; margin-right:10px; width:24px; height:24px; border: 1px solid #282828 !important;
 	   -moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	     -o-border-radius: 3px;
 	        border-radius: 3px;}
-.header-buttons li.add-btn {
+.header-buttons li.add-btn, div.add-btn {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -111,7 +112,7 @@ header { height:44px;
 	-webkit-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #86bf56;
 	     -o-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #86bf56;
 	        box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #86bf56;}
-.header-buttons li.add-btn:hover {
+.header-buttons li.add-btn:hover, div.add-btn:hover {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -124,7 +125,7 @@ header { height:44px;
 		rgb(85,126,52) 0%,
 		rgb(148,219,90) 100%
 	);}
-.header-buttons li.add-btn:active, .header-buttons li.add-btn:focus {
+.header-buttons li.add-btn:active, .header-buttons li.add-btn:focus, div.add-btn:active. div.add-btn:focus {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -141,10 +142,10 @@ header { height:44px;
 	-webkit-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #628445;
 	     -o-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #628445;
 	        box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #628445;}
-.header-buttons li input { display:block; height:100%; width:100%; background:url(../images/top-btns.png) no-repeat;}
-.header-buttons li.add-btn input { background-position: 5px 6px;}
-.header-buttons li.add-btn input:hover { background-position: 5px 6px;}
-.header-buttons li.add-btn input:active, .header-buttons li.add-btn input:focus { background-position: -174px 6px;}
+.header-buttons li input, .wizard-add-project-btn { display:block; height:100%; width:100%; background:url(../images/top-btns.png) no-repeat;}
+.header-buttons li.add-btn input, .wizard-add-project-btn { background-position: 5px 6px;}
+.header-buttons li.add-btn input:hover, .wizard-add-project-btn:hover { background-position: 5px 6px;}
+.header-buttons li.add-btn input:active, .header-buttons li.add-btn input:focus, .wizard-add-project-btn:active, .wizard-add-project-btn:focus { background-position: -174px 6px;}
 .header-buttons li.save-btn input { background-position: -30px 6px;}
 .header-buttons li.save-btn input:hover { background-position: -103px 6px;}
 .header-buttons li.save-btn input:active, .header-buttons li.save-btn input:focus { background-position: -209px 6px;}
@@ -609,7 +610,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .popupDiv { position:absolute; z-index:9999999; display:none; top:0; left:0; pointerEvents: none}
 .balck-overlay {background-color:#000; height:100%; width:100%; opacity:0.7; top:0; left:0}
 .popup-container { width:auto; height:auto; position:absolute; z-index:999; top:50px;}
-.popup-close-btn { position: absolute; z-index:99999; top:7px; right:7px; width:30px; height:24px; margin-right:1px;
+.popup-close-btn, .help-close-btn { position: absolute; z-index:99999; top:7px; right:7px; width:30px; height:24px; margin-right:1px;
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -623,7 +624,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		rgb(202,61,61) 100%
 	);}
 .popup-3 .popup-close-btn {height:30px; top:15px;right:10px;}
-.popup-close-btn:hover {
+.popup-close-btn:hover, .help-close-btn:hover {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -640,7 +641,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 	-webkit-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #f55e5e;
 	     -o-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #f55e5e;
 	        box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #f55e5e;}
-.popup-close-btn:active, .popup-close-btn:focus {
+.popup-close-btn:active, .popup-close-btn:focus, .help-close-btn:hover, .help-close-btn:active {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -657,7 +658,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 	-webkit-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #451212;
 	     -o-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #451212;
 	        box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #451212;}
-.popup-close-btn span { display:block; background:url(../images/popup-close.png) center center no-repeat; height:100%}
+.popup-close-btn span, .help-close-btn span { display:block; background:url(../images/popup-close.png) center center no-repeat; height:100%}
 .popup-header { width:100%; height:40px;
 	   -moz-border-radius: 10px 10px 0 0;
 	-webkit-border-radius: 10px 10px 0 0;
@@ -756,15 +757,148 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .ui-tooltip .ui-tooltip-tip { margin: 0 auto; overflow: hidden; background: transparent!important; border: 0 dashed transparent!important; z-index: 10;}
 .ui-tooltip .ui-tooltip-tip, .ui-tooltip .ui-tooltip-tip * { position: absolute; line-height: .1px!important; font-size: .1px!important; color: #123456; background: transparent;  border: 0 dashed transparent;}
 
+/*----------- Welcome Popups ----------*/
+#properties-panel, .hide-timeline, .pin, #welcome-popup, #help-popup { display:none;}
+#welcome-popup, #help-popup { width:700px; min-height:520px; position:absolute; z-index:999999; left:50%; top:50%; margin:-260px 0 0 -350px; background-color:#FFFFCC; text-align:center; overflow:hidden;
+	     -moz-box-shadow: 0 0 6px #333;
+	  -webkit-box-shadow: 0 0 6px #333;
+  	     -o-box-shadow: 0 0 6px #333;
+	          box-shadow: 0 0 6px #333;
+  border-radius: 10px 10px 10px 10px;
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(254,255,217)),
+		color-stop(1, rgb(255,255,255))
+	);
+	background-image: -moz-linear-gradient(
+		center bottom,
+		rgb(254,255,217) 0%,
+		rgb(255,255,255) 100%
+	);}
+#welcome-popup .scroll-popup-container, #help-popup .scroll-popup-container { width:1400px; position:absolute; left:0; top:0;}
+#welcome-popup .scroll-popup-container .padding-div, #help-popup .scroll-popup-container .padding-div {padding:40px; width:620px; float:left;}
+#welcome-popup h1, #help-popup .help-header h1 { font-size:40px; letter-spacing:-3px; color:#333; padding-top:20px;
+	   -moz-text-shadow: 0 -1px 0 #000, 0 1px 0 #fff;
+	-webkit-text-shadow: 0 -1px 0 #000, 0 1px 0 #fff;
+	     -o-text-shadow: 0 -1px 0 #000, 0 1px 0 #fff;
+	        text-shadow: 0 -1px 0 #000, 0 1px 0 #fff;}
+#welcome-popup h3{ font-size:22px; letter-spacing:-1px; margin-top:-8px;}
+#welcome-popup h4{ font-size: 18px; padding-top:30px; letter-spacing:-1px;}
+#welcome-popup p {}
+#welcome-popup p.copyright { width:380px; display:block; margin:0 auto; overflow:hidden;}
+#welcome-popup a{}
+#welcome-popup a.wizard-create-new-btn, #welcome-popup a.tutorial-btn {border: 1px solid #395c30 !important; padding:0 20px; height:38px; display:block; width:166px; line-height:38px; margin:8px auto; font-size:18px; color:#fff;
+	   -moz-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #86bf56;
+	-webkit-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #86bf56;
+	     -o-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #86bf56;
+	        box-shadow: 0 1px 0 #fff, inset 0 1px 0 #86bf56;
+	  -moz-text-shadow: 0 1px 0 #333;
+	-webkit-text-shadow: 0 1px 0 #333;
+	     -o-text-shadow: 0 1px 0 #333;
+	        text-shadow: 0 1px 0 #333;
+			}
+a.mozilla-logo {text-align:center; margin:5px 0 0; display:block} 			
+#welcome-popup a.mozilla-logo { margin:30px 0 10px; display:block} 
+p.copyright a { padding:0 6px; border-right:1px solid #999; color:#999}
+p.copyright a:hover { color:#666}
+p.copyright a:last-child { border:0;}
+#welcome-popup a.wizard-create-new-btn { margin-bottom:20px;}
+#welcome-popup .left-div { float:left; width:350px; padding:20px 0}
+#welcome-popup .left-div p.desc { display:block; font-weight:bold; padding-bottom:20px; text-align:left; font-size:16px;}
+#welcome-popup .left-div ul { overflow:visible; text-align:left;}	
+#welcome-popup .left-div li { margin-bottom: 20px; min-height: 55px; padding:5px 0 0 65px; position: relative; font-size:17px;}
+#welcome-popup .left-div li span {background-color: #333; display: block; font-size: 30px; height: 50px; left: 0; line-height: 50px; position: absolute; text-align: center; top: 0; width: 50px; border:1px solid #000; color:#fff;
+		   -moz-border-radius: 30px;
+		-webkit-border-radius: 30px;
+			 -o-border-radius: 30px;
+				border-radius: 30px;}
+#welcome-popup .left-div li .save-btn, #welcome-popup .left-div li .add-btn { display:inline-block; float:none; margin:-10px 10px 0 10px;}
+#welcome-popup .left-div li .save-btn { margin-top:-8px;}
+#welcome-popup .left-div li a { color:#80BA4E; font-style:italic}	
+#welcome-popup .left-div li a:hover { color:#4A6B2D;}
+#welcome-popup .left-div li img { float:right; margin:-1px -10px 0 0;}
+#welcome-popup .left-div li p { float:left;}
+#welcome-popup .left-div li:last-child { margin:0;}
+
+.popup-5 #new-projet-form { text-align:left; height:99%; display:block;  padding:20px; min-height:300px; position:relative;}
+.popup-5 h4 { font-size:18px; padding-bottom:10px;
+	   -moz-text-shadow: 0 1px 0 #fff;
+	-webkit-text-shadow: 0 1px 0 #fff;
+	     -o-text-shadow: 0 1px 0 #fff;
+	        text-shadow: 0 1px 0 #fff;}
+.popup-5 p { position:relative; overflow:hidden; padding-bottom:10px;}
+.popup-5 p label { position:absolute; z-index:999; left:10px; top:7px;}
+.popup-5 .new-project-box { position: relative; border-bottom:1px solid #ddd; padding:20px 0 10px;}
+.popup-5 { width:600px;}
+.popup-5 p { width:auto !important;}
+.popup-5 .box1 { height:50px;}
+.popup-5 .box1 p input { width:454px;}
+.popup-5 .box2 { width:220px; float:left; height:86px;}
+.popup-5 .box2 p input { width:200px;}
+.popup-5 .box3 { width:200px; float:right; padding:20px 0 10px; height:86px;}
+.popup-5 .template-dropdown {}
+.popup-5 .new-project-submit { bottom:20px; right:20px; top:auto; margin:0;}
+
+#help-popup .scroll-popup-container { top:110px;}
+#help-popup .padding-div { padding-top:0 !important;}
+#help-popup .help-header { height:60px; border-bottom:1px solid #ddd; margin: 10px 40px 10px;}
+#help-popup .help-header h1 { float:left; padding:0}
+#help-popup .help-header .social { float:right;}
+#help-popup .inner { text-align:left}
+#help-popup .inner h2 { font-size:20px;}
+#help-popup .inner p { padding:5px 0;}
+#help-popup .inner p.copyright {text-align:center;}
+#help-popup .inner .help-section { padding:14px 0 0}
+#help-popup .inner section { padding:0 0 20px}
+#help-popup .inner section ul { overflow: hidden}
+#help-popup .inner section h2 { border-bottom: 1px solid #DDDDDD; font-size: 18px; margin-bottom: 4px; padding-bottom: 4px;}
+#help-popup .inner section li { float:left; width:185px; margin-right:20px;}
+#help-popup .inner section li a { font-size:13px; color:#666; font-weight:bold;}
+#help-popup .inner section li.download-sdk a span { display:block; font-size:11px; font-weight:normal}
+#help-popup .inner section li:last-child { margin:0;}
+#help-popup .partners h2 { border-bottom:0 !important;}
+#help-popup .inner section.partners li { width:auto;}
+#help-popup .faq { clear:both; margin:80px 0 0; position:relative;}
+#help-popup .faq .faqs { width:400px; margin: 0 auto; height:auto; overflow:hidden}
+#help-popup .faq .faqs li { float:left; width:400px; height:180px; overflow:auto;}
+#help-popup .faq .pagination { display:none}
+#help-popup .faq a.prev, #help-popup .faq a.next { position:absolute; z-index:999; width:40px; height:40px; top:50%; margin-top:-20px; background:url(../images/prev-next.png) 0 0 no-repeat #333;}
+#help-popup .faq a.prev { left:35px; background-position: 0 0 }
+#help-popup .faq a.next { right:35px; background-position: -40px 0}
+#help-popup .faq a.prev:hover { background-position: 0 -40px }
+#help-popup .faq a.next:hover { background-position: -40px -40px}
+#help-popup .faq a.prev:active, #help-popup .faq a.prev:focus { background-position: 0 -80px }
+#help-popup .faq a.next:active, #help-popup .faq a.next:focus { background-position: -40px -80px}
+
+
+#help-popup .social li { float:left; margin-left:10px;}
+.social li.mozilla-labs a { display:block; width:81px; height:17px; overflow:hidden; background:url(../images/mozilla-labs.png) 0 0 no-repeat; margin-top:3px}
+.social li.mozilla-labs a:hover { background-position: 0 -23px;}
+.social li.twitter a, .social li.facebook a { display:block; width:26px; height:26px;}
+.social li.twitter a:hover, .social li.facebook a:hover { background-color:#999;}
+.social li.twitter a, .social li.facebook a { background:url(../images/twiter-facebook.png) 9px 6px no-repeat #ccc;}
+.social li.facebook a { background-position: -27px 6px}	
+.social li.twitter a:hover { background-position:9px -16px}
+.social li.facebook a:hover { background-position: -27px -16px}
+
+.mozilla-labs a, .facebook a, .twitter a, .prev, .next {
+  text-indent: -9999px;
+}
+
+.checkout p { float:left; padding:0 0 0 70px}
+.checkout .help-btn { float:right; margin: -1px 26px 0 0;}
+
 /*----common----*/
 .header-buttons li.help-btn a, .playback-controls .play-btn a span, .playback-controls .sound-btn a span, ul.actions li a { display:block; overflow:hidden; text-indent:-9999px;}
 .playback-controls .play-btn, .playback-controls .timeline-duration, .playback-controls .sound-btn  { background:url(../images/texture_1.png) repeat; font-size:11px; line-height:20px; text-align:center; color:#999;}
-.header-buttons li, .popup-close-btn, .dd .ddTitle span.arrow {
+.header-buttons li, .popup-close-btn, .help-close-btn, .dd .ddTitle span.arrow {
 	   -moz-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;
 	-webkit-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;
 	     -o-box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;
 	        box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #686868;}
-.header-buttons li, .popup-close-btn, .download-btn, .load-code-btn, .save-project-data-btn, .create-new-btn, .change-url-btn, .change-title-btn, .confirm-load-btn, .popup-btns input {
+.header-buttons li, .popup-close-btn, .help-close-btn, .download-btn, .load-code-btn, .save-project-data-btn, .create-new-btn, .change-url-btn, .change-title-btn, .confirm-load-btn, .popup-btns input {
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
@@ -872,6 +1006,59 @@ ul.actions, .ttip, .ui-tooltip-content {
 	-webkit-box-shadow: 0 1px 0 #fff, inset 0 2px 3px #eee;
 	     -o-box-shadow: 0 1px 0 #fff, inset 0 2px 3px #eee;
 	        box-shadow: 0 1px 0 #fff, inset 0 2px 3px #eee;}
+	        
+.pop-up .popup-content form p input, .popup-content .track-content, .popup-1, .popup-2, .popup-4, #welcome-popup a.wizard-create-new-btn, #welcome-popup a.tutorial-btn,  #new-projet-form {
+	   -moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	     -o-border-radius: 10px;
+	        border-radius: 10px;}
+.pop-up .popup-content form p input, .popup-content .track-content, #new-projet-form {
+	   -moz-box-shadow: 0 1px 0 #fff, inset 0 2px 3px #eee;
+	-webkit-box-shadow: 0 1px 0 #fff, inset 0 2px 3px #eee;
+	     -o-box-shadow: 0 1px 0 #fff, inset 0 2px 3px #eee;
+	        box-shadow: 0 1px 0 #fff, inset 0 2px 3px #eee;}
+.add-btn, .header-buttons li.add-btn, #welcome-popup a.wizard-create-new-btn, #welcome-popup a.tutorial-btn {
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(74,107,45)),
+		color-stop(1, rgb(128,186,78))
+	);
+	background-image: -moz-linear-gradient(
+		center bottom,
+		rgb(74,107,45) 0%,
+		rgb(128,186,78) 100%
+	);}
+
+.add-btn:hover, .header-buttons li.add-btn:hover, #welcome-popup a.wizard-create-new-btn:hover, #welcome-popup a.tutorial-btn:hover {
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(85,126,52)),
+		color-stop(1, rgb(148,219,90))
+	);
+	background-image: -moz-linear-gradient(
+		center bottom,
+		rgb(85,126,52) 0%,
+		rgb(148,219,90) 100%
+	);}
+.add-btn:active, .add-btn:focus, .header-buttons li.add-btn:focus, .header-buttons li.add-btn:active, #welcome-popup a.wizard-create-new-btn:active,#welcome-popup a.wizard-create-new-btn:focus, #welcome-popup a.tutorial-btn:active,#welcome-popup a.tutorial-btn:focus {
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(128,186,78)),
+		color-stop(1, rgb(74,107,45))
+	);
+	background-image: -moz-linear-gradient(
+		center bottom,
+		rgb(128,186,78) 0%,
+		rgb(74,107,45) 100%
+	);
+}
+
 .playback-controls .sound-btn { position: absolute; right: 0;}
 .playback-controls .sound-btn, .playback-controls .timeline-duration { top:14px; }
 .play-btn { top: 9px}

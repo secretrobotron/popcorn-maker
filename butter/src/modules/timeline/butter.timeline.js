@@ -312,7 +312,7 @@
         delete mediaInstances[ event.data.getId() ];
         
         
-        if ( event.data.getId() === currentMediaInstance.media.getId() ) {
+        if ( currentMediaInstance && ( event.data.getId() === currentMediaInstance.media.getId() ) ) {
           currentMediaInstance = undefined;
         }
 

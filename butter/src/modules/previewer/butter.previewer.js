@@ -177,7 +177,9 @@
         // default to first butter-media tagged object if none is specified
         videoTarget = media.getTarget();
 
-        bpIframe.getElementById( videoTarget ).innerHTML = "";
+        if ( videoTarget) {
+          bpIframe.getElementById( videoTarget ).innerHTML = "";
+        }
 
         // create a string that will create an instance of popcorn with the proper video source
         popcornString = "function startPopcorn () {\n";        

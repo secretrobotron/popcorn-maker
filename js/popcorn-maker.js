@@ -6,9 +6,48 @@
     "external/layouts/city-slickers/index.html",
     "external/layouts/cgg/index.html",
   ],
-  currentLayout;
+  currentLayout,
+  wizardRun = false;
 
   window.addEventListener("DOMContentLoaded", function() {
+  
+    $('#welcome-popup').fadeIn(2000);
+    $('#loading-overlay').hide();
+    //Carousel for Help inner page
+		$(function(){
+			$('.slides').slides({
+				preload: true,
+				generateNextPrev: true
+			});
+		});
+		
+		//Popup sliding
+    $('.tutorial-btn').click(function() {
+										 
+        $(this).parent().parent().animate({
+            left: '-700px'
+        }, 500);
+
+    });
+    $('.open-help, .help').click(function() {
+										 
+        $("#help-popup").fadeIn('slow');
+
+    });
+    
+    $('.help-close-btn').click(function() {
+										 
+        $("#help-popup").fadeOut('fast');
+
+    });
+    
+    $('#_user_manual').click(function() {
+										 
+        $("#help-popup .scroll-popup-container").animate({
+            left: '-700px'
+        }, 500);
+
+    });
 
     function toggleLoadingScreen ( state ) {
       if ( state ) {
@@ -30,16 +69,11 @@
     currentLayout = layouts[ 0 ];
 
     var b  = new Butter();
-    document.getElementById( "main" ).style.height = window.innerHeight - document.getElementsByTagName( "HEADER" )[ 0 ].clientHeight - 5 + "px";
+    document.getElementById( "main" ).style.height = window.innerHeight - document.getElementsByTagName( "HEADER" )[ 0 ].clientHeight - 15 + "px";
     b.comm();
 
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html" } );
-    b.previewer({
-      layout: currentLayout,
-      target: "main",
-      media: "http://soundcloud.com/forss/flickermood",
-      popcornURL: "../lib/popcorn-complete.js"
-    });
+
     b.listen( "layoutloaded", function( e ){
       b.buildPopcorn( b.getCurrentMedia() , function() {
 
@@ -445,6 +479,21 @@
       $('#popup-add-project').show();
       centerPopup( $('#popup-add-project') );
       $(' .balck-overlay ').show();
+    });  
+    $('.wizard-add-project-btn').click(function() {
+      $('.close-div').fadeOut('fast');
+      $('.popupDiv').fadeIn('slow');
+      $('#popup-add-project').show();
+      centerPopup( $('#popup-add-project') );
+      $(' .balck-overlay ').show();
+    });
+    
+    $('.wizard-create-new-btn').click(function() {
+      $('.close-div').fadeOut('fast');
+      $('.popupDiv').fadeIn('slow');
+      $('#popup-add-project').show();
+      centerPopup( $('#popup-add-project') );
+      $(' .balck-overlay ').show();
     });
 
     $(".collapse-btn").toggle(function() {
@@ -615,6 +664,7 @@
           });
         })( localProjects[ title ] );
         toggleLoadingScreen( true );
+        
         b.loadPreview( {
           layout: currentLayout,
           target: "main",
@@ -626,24 +676,54 @@
     });
     
     $(".create-new-btn").click(function() {
+      $("#welcome-popup").hide();
+      $("#help-popup").hide();
       b.clearProject();
       b.clearPlugins();
       b.setProjectDetails( "title", "Untitled Project");
       currentLayout = document.getElementById( 'layout-select' ).value;
       b.listen( "layoutloaded", function( e ) {
         b.buildPopcorn( b.getCurrentMedia() , function() {
-
           var registry = b.getRegistry();
           for( var i = 0, l = registry.length; i < l; i++ ) {
             b.addPlugin( { type: registry[ i ].type } );
           }
           $('.tiny-scroll').tinyscrollbar();
           toggleLoadingScreen( false );
+          
+//          if (!wizardRun) {
+            $("#properties-panel").css('height','38px');
+		
+            $("#properties-panel").css('display','block');
+
+            $(".hide-timeline").css('bottom','36px');	
+
+            $(".hide-timeline").css('display','block');
+
+            $("#properties-panel").animate({
+		
+                height: '270px'
+
+            }, 500);
+
+            $(".hide-timeline").animate({
+				
+                bottom: '268px'
+
+            }, 500);
+//            wizardRun = true;
+//          }
+		     
         }, b.popcornFlag() );
         b.unlisten( "layoutloaded", this );
       });
 
       toggleLoadingScreen( true );
+      b.previewer({
+          layout: currentLayout,
+          target: "main",
+          popcornURL: "../lib/popcorn-complete.js"
+        });
       b.loadPreview( {
         layout: currentLayout,
         target: "main",
