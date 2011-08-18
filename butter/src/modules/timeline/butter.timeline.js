@@ -20,17 +20,25 @@
     };
 
     this.moveFrameLeft = function() {
-      var cornOptions = targettedEvent.options.popcornOptions;
-      cornOptions.start > 0.25 ? cornOptions.start -= 0.25 : cornOptions.start = 0;
-      cornOptions.end -= 0.25;
-      this.trigger( "trackeventupdated", targettedEvent.options );
+
+      if ( targettedEvent ) {
+
+        var cornOptions = targettedEvent.options.popcornOptions;
+        cornOptions.start > 0.25 ? cornOptions.start -= 0.25 : cornOptions.start = 0;
+        cornOptions.end -= 0.25;
+        this.trigger( "trackeventupdated", targettedEvent.options );
+      }
     };
 
     this.moveFrameRight = function() {
-      var cornOptions = targettedEvent.options.popcornOptions;
-      cornOptions.end > 0.25 ? cornOptions.end += 0.25 : cornOptions.end = 0;
-      cornOptions.start += 0.25;
-      this.trigger( "trackeventupdated", targettedEvent.options );
+
+      if ( targettedEvent ) {
+
+        var cornOptions = targettedEvent.options.popcornOptions;
+        cornOptions.end > 0.25 ? cornOptions.end += 0.25 : cornOptions.end = 0;
+        cornOptions.start += 0.25;
+        this.trigger( "trackeventupdated", targettedEvent.options );
+      }
     };
     // Convert an SMPTE timestamp to seconds
     this.smpteToSeconds = function( smpte ) {
