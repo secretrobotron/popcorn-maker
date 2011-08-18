@@ -1,0 +1,762 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<!--
+		
+		I suppose you'll want to load butter.js here, but maybe it's more efficient to first try to grab window.parent.Butter
+		
+		-->
+		<script type="text/javascript" src="../../../lib/butter.js"></script>
+		<script type="text/javascript">
+		
+		var videoWidth, videoHeight;
+		
+		//Bobby, if you can get me the video dimensions some way, that'd be awesome.
+		//I'm gonna see if I can go ahead and grab this myself
+
+		if (!videoWidth || !videoHeight) {
+			(function() {
+				var video;
+				if (window.parent && window.parent.document) {
+					try {
+						video = window.parent.document.getElementsByTagName('video');
+					} catch (e) {
+					}
+	
+					if (video && video.length) {
+						videoWidth = video[0].videoWidth;
+						videoHeight = video[0].videoHeight;
+					}
+				}
+				
+				if (!videoWidth || !videoHeight) {
+					videoWidth = 16;
+					videoHeight = 9;
+				}
+			}());
+		}
+
+		</script>
+		<style type="text/css">
+		
+		body, fieldset {
+			background-color: rgba(0, 0, 0, 0.5);
+			font-family: arial;
+			color: white;
+		}
+		
+		#instructions {
+			background-color: rgba(255, 255, 255, 0.5);
+			padding: 2px;
+			font-size: 0.9em;
+			color: black;
+		}
+		
+		#video {
+			width: 400px;
+			height: 400px;
+			float: right;
+			border: gray solid 1px;
+			background-color: black;
+			position: relative;
+			overflow: hidden;
+		}
+		
+		.box {
+			position: absolute;
+			
+			top: 0;
+			left: 0;
+			width: 10%;
+			height: 10%;
+			
+			box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			-webkit-box-sizing: border-box;
+			-o-box-sizing: border-box;
+			-ie-box-sizing: border-box;
+
+			cursor: move;
+
+			border: rgba(255, 0, 0, 0.8) solid 1px;
+			background-color: rgba(255, 0, 0, 0.4);
+		}
+		
+		.handle {
+			position: absolute;
+			width: 4px;
+			height: 4px;
+			bottom: -3px;
+			right: -3px;
+			cursor: se-resize;
+
+			border: rgba(255, 0, 0, 0.8) solid 1px;
+			background-color: rgba(200, 0, 0, 1);
+			z-index: 50;
+		}
+		
+		#startBox.box {
+			border: rgba(255, 0, 0, 0.8) solid 1px;
+			background-color: rgba(255, 0, 0, 0.4);
+			z-index: 2;
+		}
+		
+		#startBox .handle {
+			border: rgba(255, 0, 0, 0.8) solid 1px;
+			background-color: rgba(200, 0, 0, 1);
+		}
+		
+		#endBox.box {
+			border: rgba(0, 0, 255, 0.8) solid 1px;
+			background-color: rgba(40, 40, 255, 0.5);
+			z-index: 1;
+		}
+		
+		#endBox .handle {
+			border: rgba(0, 0, 255, 0.8) solid 1px;
+			background-color: rgba(0, 0, 200, 1);
+		}
+		
+		input[type=text] {
+			width: 220px;
+		}
+		
+		input[type=text].small {
+			width: 80px;
+		}
+		
+		</style>
+	</head>
+	<body>
+		<div id="video">
+			<div class="box" id="startBox">
+				<div class="handle" id="start-handle"></div>
+			</div>
+			<div class="box" id="endBox">
+				<div class="handle" id="end-handle"></div>
+			</div>
+		</div>
+		<div id="form">
+			<fieldset>
+				<label for="start">From:</label>
+				<input type="text" id="start" class="small"/>
+
+				<label for="end">To:</label>
+				<input type="text" id="end" class="small"/>
+			</fieldset>
+			<!--
+			todo: fade in and fade out times
+			-->
+
+			<fieldset>
+				<label for="question">Question:</label>
+				<select id="question"></select>
+			</fieldset>
+
+			<fieldset>
+				<label style="font-weight: bold">Starting Position</label><br/>
+				<label for="startLeft">X:</label>
+				<input type="text" id="startLeft" class="small"/>%
+
+				<label for="startTop">Y:</label>
+				<input type="text" id="startTop" class="small"/>%
+
+				<br/>
+				<label for="startWidth">Width:</label>
+				<input type="text" id="startWidth" class="small"/>%
+
+				<label for="startHeight">Height:</label>
+				<input type="text" id="startHeight" class="small"/>%
+			</fieldset>
+
+			<fieldset>
+				<label style="font-weight: bold" for="enable-end">Ending Position</label>
+				<input type="checkbox" id="end-enabled"/>
+				<br/>
+				<label for="endLeft">X:</label>
+				<input type="text" id="endLeft" class="small"/>%
+
+				<label for="endTop">Y:</label>
+				<input type="text" id="endTop" class="small"/>%
+
+				<br/>
+				<label for="endWidth">Width:</label>
+				<input type="text" id="endWidth" class="small"/>%
+
+				<label for="endHeight">Height:</label>
+				<input type="text" id="endHeight" class="small"/>%
+			</fieldset>
+
+			<fieldset id="target-fieldset">
+				<label for="target">Target:</label>
+				<select id="target"></select>
+			</fieldset>
+
+			<fieldset>
+				<input type="button" value="Cancel" id="cancel"/>
+				<input type="button" value="OK" id="ok"/>
+				<input type="button" value="Apply" id="apply"/>
+				<input type="button" value="Delete" id="delete"/>
+			</fieldset>
+		</div>
+		<!--
+		<fieldset id="instructions">
+			<p>Enter an address or latitude and longitude to find your location.</p>
+			<p>A red icon shows your approximate location. A purple icon shows your entered latitude and longitude. Click or drag any icon to set precise location.</p>
+		</fieldset>
+		-->
+		<script type="text/javascript">
+		
+		(function() {
+			var trackEvent = {}, targets = [],
+				endEnabled,
+				mouseX, mouseY,
+				latLngTimeout, locationTimeout,
+				elements = {},
+				questions = [],
+				ids = [
+					'start', 'end', 'question',
+					'startTop', 'startLeft', 'startWidth', 'startHeight',
+					'endTop', 'endLeft', 'endWidth', 'endHeight',
+					'start-handle', 'end-handle',
+					'end-enabled',
+					'target', 'target-fieldset', 'startBox', 'endBox', 'handle', 'video',
+					'cancel', 'ok', 'apply', 'delete'
+				];
+
+			function applyMouseTouchHandlers(element, down, move, up) {
+				element.onmousedown = function(e) {
+					if (down) {
+						if (down.call(element, e || window.event)) {
+							if (e.preventDefault) {
+								e.preventDefault();
+							}
+							if (e.stopPropagation) {
+								e.stopPropagation();
+							}
+							e.returnValue = false;
+							e.cancelBubble = true;
+						} else {
+							return;
+						}
+					}
+					if (move) {
+						document.onmousemove = function(e) {
+							move.call(element, e || window.event);
+						};
+					}
+					document.onmouseup = function(e) {
+						if (up) {
+							up.call(element, e || window.event);
+						}
+						document.onmousemove = null;
+						document.onmouseup = null;
+					};
+				};
+				
+				element.ontouchstart = function(e) {
+					if (e.preventDefault) { e.preventDefault(); }
+					element.onmousedown = null;
+				
+					if (down) {
+						down.call(element, e.touches[0] || window.event);
+					}
+				
+					if (move) {
+						document.ontouchmove = function(e) {
+							move.call(element, e.touches[0] || window.event);
+							return false;
+						};
+					}
+					document.ontouchend = function(e) {
+						//up(e.touches[0]);
+						if (up) {
+							up.call(element);
+						}
+						document.ontouchmove = null;
+						document.ontouchend = null;
+					};
+				
+				};
+			}
+
+			function checkTime(event) {
+				//todo: SMTPE format
+
+				var id = this.id,
+					other, compare, otherId, otherElement,
+					element, value;
+
+				if (id === 'start') {
+					other = trackEvent.end;
+					otherId = 'end';
+					compare = 1;
+				} else if (id === 'end') {
+					other = trackEvent.start;
+					compare = -1;
+					otherId = 'start';
+				} else {
+					return;
+				}
+				
+				element = elements[id];
+				otherElement = elements[otherId];
+				value = parseFloat(element.value);
+				
+				if (isNaN(value) ||
+					value < 0
+					//todo: || value > duration
+					) {
+
+					element.style.backgroundColor = '#f11';
+				} else if (value * compare > other * compare) {
+					element.style.backgroundColor = '#f11';
+					otherElement.style.backgroundColor = '#f11';
+
+					trackEvent[id] = value;
+
+				} else {
+					element.style.backgroundColor = '#f11';
+					otherElement.style.backgroundColor = '#f11';
+
+					trackEvent[id] = value;
+					
+					//todo: if element does not have focus, update element.value
+				}
+			}
+			
+			function numbersOnly(event) {
+				var e = event || window.event,
+					key = e.keyCode || e.which,
+					ch = String.fromCharCode(key),
+					s;
+				
+				function blockKey() {
+					if (e.preventDefault) {
+						e.preventDefault();
+					}
+					if (e.stopPropagation) {
+						e.stopPropagation();
+					}
+					e.returnValue = false;
+					e.cancelBubble = true;
+					return false;
+				}
+				
+				if (key === 190) {
+					key = 0x2E;
+					ch = '.';
+				}
+
+				if (e.metaKey || e.altKey || key < 0x21 ||
+					e.keyLocation ||
+					!e.shiftKey && key <0x27 && ch !=='.' &&
+						ch !== '-' && key !== 189) {
+					return;
+				}
+				
+				s = this.value;
+				if (this.selectionStart !== this.selectionEnd) {
+					s = s.substring(0, this.selectionStart) + s.substring(this.selectionEnd, s.length);
+				}
+
+				if (key === 189 || ch === '-') {
+					if (this.selectionStart) {
+						return blockKey();
+					}
+
+					if (s.indexOf('-') >= 0) {
+						return blockKey();
+					}
+					
+					return true;
+				}
+
+				if (ch === '.') {
+					s = this.value;
+					if (s.indexOf('.') >= 0) {
+						return blockKey();
+					}
+					
+					return true;
+				}
+
+				ch = parseInt(ch, 10);
+				if (isNaN(ch)) {
+					return blockKey();
+				}
+				
+				if (s.indexOf('-') >= this.selectionStart) {
+					return blockKey();
+				}
+			}
+			
+			function updateBox(box, x, y, w, h) {
+				box.style.left = x + '%';
+				box.style.top = y + '%';
+				box.style.width = w + '%';
+				box.style.height = h + '%';
+			}
+			
+			function validateDimensions(event, updateElements) {
+				var pos, meh = ['start', 'end'], i, id;
+				for (i = 0; i < 2; i++) {
+					id = meh[i];
+					pos = trackEvent[ id + 'Position'];
+					
+					if (!pos || !pos.length || pos.length < 3) {
+
+						if (i) {
+							pos = trackEvent.startPosition.slice(0);
+							endEnabled = false;
+						} else {
+							pos = [10, 10, 80, 80 ];
+						}
+					} else {
+						if (pos.length < 4) {
+							pos.push(pos[2]);
+						}
+					
+						if (event) {
+							pos[0] = parseFloat(elements[id + 'Left'].value);
+							pos[1] = parseFloat(elements[id + 'Top'].value);
+							pos[2] = parseFloat(elements[id + 'Width'].value);
+							pos[3] = parseFloat(elements[id + 'Height'].value);
+						}
+
+						if (isNaN(pos[0])) {
+							pos[0] = 0;
+						} else {
+							pos[0] = Math.round(pos[0] * 100) / 100;
+						}
+		
+						if (isNaN(pos[1])) {
+							pos[1] = 0;
+						} else {
+							pos[1] = Math.round(pos[1] * 100) / 100;
+						}
+		
+						if (isNaN(pos[2])) {
+							pos[2] = 10;
+						} else {
+							pos[2] = Math.round(pos[2] * 100) / 100;
+						}
+		
+						if (isNaN(pos[3])) {
+							pos[3] = 10;
+						} else {
+							pos[3] = Math.round(pos[3] * 100) / 100;
+						}
+
+						if (updateElements) {
+							//yes, i'm using != here
+							if (elements[id + 'Left'].value != pos[0] || !pos[0]) {
+								elements[id + 'Left'].value = pos[0];
+							}
+							if (elements[id + 'Top'].value != pos[1] || !pos[1]) {
+								elements[id + 'Top'].value = pos[1];
+							}
+							if (elements[id + 'Width'].value != pos[2] || !pos[2]) {
+								elements[id + 'Width'].value = pos[2];
+							}
+							if (elements[id + 'Height'].value != pos[3] || !pos[3]) {
+								elements[id + 'Height'].value = pos[3];
+							}
+						}
+					}
+					
+					trackEvent[ id + 'Position'] = pos;
+					
+					updateBox( elements[id + 'Box'], pos[0], pos[1], pos[2], pos[3]);
+				}
+				
+				if (updateElements) {
+					if (endEnabled) {
+						elements['end-enabled'].checked = true;
+						elements.endLeft.disabled = false;
+						elements.endTop.disabled = false;
+						elements.endWidth.disabled = false;
+						elements.endHeight.disabled = false;
+					} else {
+						elements['end-enabled'].checked = false;
+						elements.endLeft.disabled = true;
+						elements.endTop.disabled = true;
+						elements.endWidth.disabled = true;
+						elements.endHeight.disabled = true;
+					}
+				}
+				
+				if (endEnabled) {
+					elements.endBox.style.display = '';
+				} else {
+					elements.endBox.style.display = 'none';
+				}
+			}
+
+			function saveEverything() {
+				/*
+					everything except question and target should already be saved by their own event handlers
+				*/				
+				
+				//if (questions.indexOf(elements.question.value) > -1) {
+					trackEvent.question = elements.question.value;
+				//}
+				
+				if (targets.indexOf(elements.target.value) > -1) {
+					trackEvent.target = elements.target.value;
+				}
+				
+				if (!elements['end-enabled'].value) {
+					trackEvent.endPosition = null;
+				}
+				
+			}
+			
+			function mouseDown(event) {
+				this.style.zIndex = 1000;
+				mouseX = event.screenX;
+				mouseY = event.screenY;
+				return true;
+			}
+
+			function mouseDrag(event) {
+				var pos, x, y;
+
+				x = event.screenX - mouseX;
+				y = event.screenY - mouseY;
+				x = (x / elements.video.offsetWidth) * 100;
+				y = (y / elements.video.offsetHeight) * 100;
+
+				if (this.id.substr(0, 5) === 'start') {
+					pos = trackEvent.startPosition;
+				} else if (this.id.substr(0, 3) === 'end') {
+					pos = trackEvent.endPosition;
+				} else {
+					return;
+				}
+				
+				if (this.id.substr(-3) === 'Box') {
+					//moving
+					pos[0] += x;
+					pos[1] += y;
+				} else {
+					//resizing
+					pos[2] += x;
+					pos[3] += y;
+				}
+				
+				mouseX = event.screenX;
+				mouseY = event.screenY;
+
+				validateDimensions(null, true);
+			}
+
+			function mouseUp(event) {
+				this.style.zIndex = '';
+			}
+
+			function questionsUpdated( newQuestions ) {
+				var i, select, option;
+
+				questions = newQuestions || [];
+				
+				select = elements.question;
+				select.innerHTML = '';
+				
+				for (i = 0; i < questions.length; i++) {
+					option = document.createElement('option');
+					option.value = i;
+					option.appendChild( document.createTextNode(questions[i]) );
+					select.appendChild(option);
+
+					if (questions[i] === trackEvent.question) {
+						option.selectedIndex = i;
+					}
+				}
+			}
+			
+			function targetsUpdated( newTargets ) {
+				var i, select, option;
+
+				targets = newTargets || [];
+				
+				if (targets.length <= 1) {
+					elements['target-fieldset'].style.display = 'none';
+
+					if (targets.length) {
+						trackEvent.target = targets[0][0];
+					}
+				} else {
+					elements['target-fieldset'].style.display = '';
+					select = elements.target;
+					select.innerHTML = '<option>Default</option>';
+					
+					for (i = 0; i < targets.length; i++) {
+						option = document.createElement('option');
+						option.value = targets[i][0];
+						option.appendChild( document.createTextNode(targets[i][0]) );
+						select.appendChild(option);
+
+						if (targets[i][0] === trackEvent.target) {
+							option.selectedIndex = i;
+						}
+					}
+				}
+			}
+			
+			function editTrackEvent( popcornOptions ) {
+				trackEvent = popcornOptions;
+				//todo: https://webmademovies.lighthouseapp.com/projects/65733/tickets/194-editor-dialogs-should-show-frame-accurate-times
+				
+				//todo: I'd also like to have the video duration so I can error-check against that as well.
+				if (isNaN(trackEvent.start) || trackEvent.start < 0) {
+					trackEvent.start = 0;
+				}
+				elements.start.value = trackEvent.start;
+
+				if (isNaN(trackEvent.end) || trackEvent.end < trackEvent.start) {
+					trackEvent.start = trackEvent.start + 5;
+				}
+				elements.end.value = trackEvent.end;
+
+				endEnabled = trackEvent.endPosition && trackEvent.endPosition.length > 2;
+				validateDimensions(null, true);
+
+				elements.target.value = trackEvent.target;
+			}
+			
+			function initialize() {
+				var i, j, element, f,
+					meh = ['start', 'end'],
+					dim = ['Left', 'Top', 'Width', 'Height'];
+
+				//set up a default trackEvent, even though this will probably be replaced
+				trackEvent = {
+					start: 0,
+					end: 5,
+					question: 0,
+					startPosition: [10, 10, 40, 50]
+				};
+
+				//set up butter
+				if (window.Butter) {
+					butter = new Butter();
+					butter.comm();
+					client = new butter.CommClient('defaultEditor');
+	
+					client.listen('edittrackevent', function (message) {
+						client.send( {
+							width: 800,
+							height: 400
+						}, 'clientdimsupdated' );
+
+						//console.log(JSON.stringify(message));
+						targetsUpdated(message.targets);
+						editTrackEvent(message.trackEvent.popcornOptions);
+					});
+	
+					client.listen( "domtargetsupdated", function( message ) {
+						console.log('domtargetsupdated');
+						console.log(JSON.stringify(message));
+						targetsUpdated(message);
+					});
+				}
+
+				for (i = 0; i < ids.length; i++) {
+					elements[ ids[i] ] = document.getElementById(ids[i]);
+				}
+				
+				elements.video.style.height = elements.video.offsetWidth * videoHeight / videoWidth + 'px';
+				
+				for (i = 0; i < meh.length; i++) {
+					for (j = 0; j < dim.length; j++) {
+						element = elements[ meh[i] + dim[j] ];
+						f = (function (m, index) {
+							return function(e) {
+								trackEvent[m + 'Position'][index] = parseFloat(this.value);
+								validateDimensions(e);
+							}
+						}( meh[i], j ) );
+						element.addEventListener('change', f, false);
+						element.addEventListener('keyup', f, false);
+						element.addEventListener('keydown', numbersOnly, true);
+					}
+				}
+
+				elements['end-enabled'].addEventListener('change', function() {
+					endEnabled = this.checked;
+					validateDimensions(null, true);
+				}, false);
+				
+				applyMouseTouchHandlers(elements.startBox, mouseDown, mouseDrag, mouseUp);
+				applyMouseTouchHandlers(elements.endBox, mouseDown, mouseDrag, mouseUp);
+				applyMouseTouchHandlers(elements['start-handle'], mouseDown, mouseDrag, mouseUp);
+				applyMouseTouchHandlers(elements['end-handle'], mouseDown, mouseDrag, mouseUp);
+
+				//buttons
+				elements.cancel.addEventListener('click', function() {
+					//tell butter we've cancelled
+					if (client) {
+						client.send( '', 'cancelclicked');
+					}
+				}, false);
+
+				elements.delete.addEventListener('click', function() {
+					//tell butter to delete
+					if (client) {
+						client.send( '', 'deleteclicked');
+					}
+				}, false);
+
+				elements.apply.addEventListener('click', function() {
+					saveEverything();
+					//send back to Butter
+					if (client) {
+						client.send( trackEvent, "applyclicked" );
+					}
+				}, false);
+
+				elements.ok.addEventListener('click', function() {
+					saveEverything();
+					//send back to Butter and close
+					if (client) {
+						client.send( trackEvent, "okayclicked" );
+					}
+				}, false);				
+			}
+			
+			initialize();
+
+			questionsUpdated([
+				'What is something you wish you could do?',
+				'How do you express yourself?',
+				'What do you find beautiful?',
+				'What character, animal or artist represents you?'
+			]);
+/*			
+			targetsUpdated([
+				'one',
+				'two'
+			]);
+			
+			questionsUpdated([
+				'What is your favorite color?',
+				'Where do you live?',
+				'What is your favorite food?'
+			]);
+			
+			editTrackEvent({
+				start: 31,
+				end: 37,
+				question: 2,
+				startPosition: [10, 10, 40, 50],
+//				endPosition: [10, 10, 40, 50],
+				target: 'one'
+			});
+*/		
+		}());
+		</script>
+	</body>
+</html>

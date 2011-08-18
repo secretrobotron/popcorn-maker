@@ -5,7 +5,7 @@
     var mediaInstances = {},
         currentMediaInstance,
         target = document.getElementById( options.target ) || options.target,
-        b = this;
+        b = this, targettedEvent;
 
     this.findAbsolutePosition = function (obj) {
 	    var curleft = curtop = 0;
@@ -17,6 +17,20 @@
 	    }
 	    return [curleft,curtop];
     //returns an array
+    };
+
+    this.moveFrameLeft = function() {
+      var cornOptions = targettedEvent.options.popcornOptions;
+      cornOptions.start > 0.25 ? cornOptions.start -= 0.25 : cornOptions.start = 0;
+      cornOptions.end -= 0.25;
+      this.trigger( "trackeventupdated", targettedEvent.options );
+    };
+
+    this.moveFrameRight = function() {
+      var cornOptions = targettedEvent.options.popcornOptions;
+      cornOptions.end > 0.25 ? cornOptions.end += 0.25 : cornOptions.end = 0;
+      cornOptions.start += 0.25;
+      this.trigger( "trackeventupdated", targettedEvent.options );
     };
     // Convert an SMPTE timestamp to seconds
     this.smpteToSeconds = function( smpte ) {
@@ -192,7 +206,10 @@
         b.trigger( "trackeventupdated", trackEventObj.options );
       },
       // called when a track event is clicked
-      click: function ( track, trackEventObj, event, ui ) {},
+      click: function ( track, trackEventObj, event, ui ) {
+        targettedEvent = trackEventObj;
+      },
+
       // called when a track event is double clicked
       dblclick: function( track, trackEventObj, event, ui ) {
 
@@ -331,8 +348,14 @@
     this.listen( "trackeventupdated", function( event ) {
 
       var trackEvent = event.data;
-      var trackLinerTrackEvent = currentMediaInstance.trackLinerTrackEvents[ trackEvent.getId() ];
-          trackLinerTrack = currentMediaInstance.trackLine.getTrack( trackLinerTrackEvent.trackId );
+      var trackLinerTrackEvent = currentMediaInstance.trackLinerTrackEvents[ trackEvent.getId() ],
+          elem = trackLinerTrackEvent.element,
+          trackLinerTrack = currentMediaInstance.trackLine.getTrack( trackLinerTrackEvent.trackId ),      
+          start = trackEvent.popcornOptions.start,
+          end = trackEvent.popcornOptions.end;
+          
+      trackLinerTrackEvent.element.style.width = ( end - start ) / currentMediaInstance.duration * target.offsetWidth + "px";
+      trackLinerTrackEvent.element.style.left = start / currentMediaInstance.duration * target.offsetWidth + "px";
 
       //trackEvent.track.removeTrackEvent( trackEvent );
       //currentMediaInstance.butterTracks[ currentMediaInstance.lastTrack.id() ].addTrackEvent( trackEvent );

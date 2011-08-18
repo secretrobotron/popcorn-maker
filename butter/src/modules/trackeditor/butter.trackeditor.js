@@ -78,9 +78,9 @@
 
         newArray = JSON.parse( "[" + data + "]" );
         b.clearTrack();
-
+        
         for ( var i = 0, l = newArray.length; i < l; i++ ) {
-
+        
           b.addTrackEvent( currentTrack, new Butter.TrackEvent({ popcornOptions: newArray[ i ].options, type: newArray[ i ].type }) )
         }
       };

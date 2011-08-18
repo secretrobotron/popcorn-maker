@@ -10,7 +10,8 @@
 		<style type="text/css">
 		
 		body {
-			width: 800px;
+			width: 740px;
+			height: 580px;
 		}
 		
 		body, fieldset {
@@ -39,6 +40,19 @@
 		
 		input[type=text].small {
 			width: 80px;
+		}
+		
+		#description {
+			width: 220px;
+			height: 100px;
+		}
+		
+		#flickr-galleries {
+			width: 220px;
+		}
+		
+		#form label {
+			vertical-align: top;
 		}
 		
 		</style>
@@ -71,10 +85,33 @@
 				<label for="lng">Longitude:</label>
 				<input type="text" id="lng" class="small"/>
 			</fieldset>
-
+<!--
+      <fieldset>
+        <label for="map-mode">Map Mode:</label>
+        <select id="map-mode">
+          <option value="map">Map View</option>
+          <option value="street">Street View</option>
+        </select>
+      </fieldset>
+-->
 			<fieldset id="target-fieldset">
 				<label for="target">Target:</label>
 				<select id="target"></select>
+			</fieldset>
+
+			<fieldset>
+				<label for="video-url">Video URL:</label>
+				<input type="text" id="video-url"/>
+			</fieldset>
+
+			<fieldset>
+				<label for="flickr-galleries">Flickr Galleries:</label>
+				<textarea id="flickr-galleries"></textarea>
+			</fieldset>
+
+			<fieldset>
+				<label for="description">Description:</label>
+				<textarea id="description"></textarea>
 			</fieldset>
 
 			<fieldset>
@@ -99,10 +136,12 @@
 				elements = {},
 				fields = [
 					'start', 'end', 'label', 'location', 'lat', 'lng',
-					'target', 'target-fieldset', 'geocode-button',
+					'target', 'target-fieldset', 'geocode-button', /*'map-mode', */
+					'video-url', 'flickr-galleries', 'description',
 					'cancel', 'ok', 'apply', 'delete'
 				],
-				butter, client;
+				butter, client /*,
+        streetView*/;
 			
 			function saveLocation(loc) {
 				if (!loc) {
@@ -319,11 +358,26 @@
 				trackEvent.label = trackEvent.label.replace(/^[\s\t\n\r ]+/, '');
 				trackEvent.label = trackEvent.label.replace(/[\s\t\n\r ]+$/, '');
 				
+				trackEvent.description = elements.description.value;
+				trackEvent.description = trackEvent.description.replace(/^[\s\t\n\r ]+/, '');
+				trackEvent.description = trackEvent.description.replace(/[\s\t\n\r ]+$/, '');
+				
 				trackEvent.location = elements.location.value;
 				trackEvent.location = trackEvent.location.replace(/^[\s\t\n\r ]+/, '');
 				trackEvent.location = trackEvent.location.replace(/[\s\t\n\r ]+$/, '');
-				
+
 				trackEvent.target = elements.target.value;
+				
+				//todo: validate URL
+				trackEvent.video = elements['video-url'].value;
+				
+				//todo: validate multiple URLs
+				var galleries = elements['flickr-galleries'].value;
+				galleries = galleries.replace(/^[\s\t\n\r ]+/, '');
+				galleries = galleries.replace(/[\s\t\n\r ]+$/, '');
+				galleries = galleries.replace(/[\s\t\n\r ]+/, '\r', 'g');
+
+				trackEvent.galleries = galleries.split(/[\n\r,]+/);
 				
 				if (map) {
 					trackEvent.zoom = map.getZoom();
@@ -335,26 +389,26 @@
 
 				targets = newTargets || [];
 				
+				elements['target-fieldset'].style.display = '';
+				select = elements.target;
+				select.innerHTML = '<option>Default</option>';
+				
+				for (i = 0; i < targets.length; i++) {
+					option = document.createElement('option');
+					option.value = targets[i][0];
+					option.appendChild( document.createTextNode(targets[i][0]) );
+					select.appendChild(option);
+
+					if (targets[i][0] === trackEvent.target) {
+						option.selectedIndex = i;
+					}
+				}
+
 				if (targets.length <= 1) {
 					elements['target-fieldset'].style.display = 'none';
 
 					if (targets.length) {
-						trackEvent.target = targets[0];
-					}
-				} else {
-					elements['target-fieldset'].style.display = '';
-					select = elements.target;
-					select.innerHTML = '<option>Default</option>';
-					
-					for (i = 0; i < targets.length; i++) {
-						option = document.createElement('option');
-						option.value = targets[i][0];
-						option.appendChild( document.createTextNode(targets[i][0]) );
-						select.appendChild(option);
-
-						if (targets[i][0] === trackEvent.target) {
-							option.selectedIndex = i;
-						}
+						trackEvent.target = targets[0][0];
 					}
 				}
 			}
@@ -392,7 +446,17 @@
 				
 				elements.label.value = trackEvent.label || '';
 
+				elements.description.value = trackEvent.description || '';
+
 				elements.location.value = trackEvent.location || '';
+				
+				elements['video-url'].value = trackEvent.video || '';
+				
+				if (!trackEvent.galleries) {
+					elements['flickr-galleries'].value = '';
+				} else {
+					elements['flickr-galleries'].value = trackEvent.galleries.join('\n');
+				}
 				
 				if (trackEvent.location && geocoder &&
 					(trackEvent.lat === undefined || trackEvent.lng === undefined) ) {
@@ -414,6 +478,10 @@
 					}
 				}
 				
+				if (targets.length === 1) {
+					trackEvent.target = targets[0][0];
+				}
+				
 				elements.target.value = trackEvent.target;
 
 			}
@@ -428,10 +496,13 @@
 					client = new butter.CommClient('defaultEditor');
 	
 					client.listen('edittrackevent', function (message) {
-						console.log('joop joop joop!', JSON.stringify(message));
+						client.send( {
+							width: 740,
+							height: 580
+						}, 'clientdimsupdated' );
 						targetsUpdated(message.targets);
 						editTrackEvent(message.trackEvent.popcornOptions);
-            client.send( { "height": document.body.scrollHeight, "width": document.body.getClientRects()[0].width + 50 }, "clientdimsupdated" );
+            //client.send( { "height": document.body.scrollHeight, "width": document.body.getClientRects()[0].width + 50 }, "clientdimsupdated" );
 					});
 	
 					client.listen( "domtargetsupdated", function( message ) {
@@ -480,7 +551,34 @@
 
 				elements.location.addEventListener('change', checkLocation, false);
 				elements.location.addEventListener('keypress', checkLocation, false);
-
+/*
+        elements['map-mode'].addEventListener('change', function ( e ) {
+          var mode = elements['map-mode'].value;
+          trackEvent['map-mode'] = mode;
+          if ( mode === "street" ) {
+            if ( !streetView ) {
+              map.setStreetView(
+                streetView = new google.maps.StreetViewPanorama( document.getElementById('map'), {
+                  position: latLng,
+                  pov: {
+                    heading: 0,
+                    pitch: 0,
+                    zoom: 1 
+                  }
+                })
+              );
+              streetView.setVisible( true );
+            }
+            else {
+              streetView.setPosition( latLng );
+              streetView.setVisible( true );
+            }
+          }
+          else {
+            streetView.setVisible( false );
+          }
+        }, false );
+*/
 				//buttons
 				elements['geocode-button'].addEventListener('click', checkLocation, false);
 				

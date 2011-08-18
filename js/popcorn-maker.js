@@ -1,17 +1,45 @@
 (function(){
 
-  window.addEventListener("DOMContentLoaded", function(){
-    
+  var layouts = [
+    "layouts/default-basic.html",
+    "layouts/default.html",
+    "external/layouts/city-slickers/index.html",
+    "external/layouts/cgg/index.html",
+    "external/layouts/blackpanthers/default.html"
+  ],
+  currentLayout;
+
+  window.addEventListener("DOMContentLoaded", function() {
+
+    function toggleLoadingScreen ( state ) {
+      if ( state ) {
+        $('#loading-overlay').show();
+      }
+      else {
+        $('#loading-overlay').hide();
+      }
+    }
+
+    var layoutSelect = document.getElementById('layout-select');
+    for ( var i=0; i<layouts.length; ++i ) {
+      var option = document.createElement( 'option' );
+      option.value = layouts[ i ];
+      option.innerHTML = layouts[ i ];
+      layoutSelect.appendChild( option );
+    }
+
+    currentLayout = layouts[ 0 ];
+
     var b  = new Butter();
     document.getElementById( "main" ).style.height = window.innerHeight - document.getElementsByTagName( "HEADER" )[ 0 ].clientHeight - 5 + "px";
     b.comm();
 
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html" } );
     b.previewer({
-      layout: "layouts/default-basic.html",
+      layout: currentLayout,
       target: "main",
-      media: "http://soundcloud.com/forss/flickermood",
-      popcornURL: "../lib/popcorn-complete.js"
+      popcornURL: "../lib/popcorn-complete.js",
+      media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
     });
     b.listen( "layoutloaded", function( e ){
       b.buildPopcorn( b.getCurrentMedia() , function() {
@@ -21,6 +49,7 @@
           b.addPlugin( { type: registry[ i ].type } );
         }
         $('.tiny-scroll').tinyscrollbar();
+        toggleLoadingScreen( false );
       }, b.popcornFlag());
       b.unlisten( "layoutloaded", this );
     } );
@@ -31,6 +60,8 @@
     b.trackeditor({ target: "popup-5"});
 
     b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
+    b.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
+    b.addCustomEditor( "external/layouts/blackpanthers/editor.html", "googlestreets" );
 
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
@@ -129,6 +160,8 @@
 
         scrubber.style.display = "block";
       }
+
+      drawCanvas();
     };
 
     tracksDiv.addEventListener( "DOMMouseScroll", zoom, false );
@@ -145,6 +178,8 @@
 
         scrubber.style.display = "block";
       }
+
+      document.getElementById( "timing-notches-canvas" ).style.left = -tracksDiv.scrollLeft + "px";
     }, false );
 
     var scrubberClicked = false;
@@ -184,6 +219,55 @@
       scrubber.style.left = b.currentTimeInPixels() - tracksDiv.scrollLeft + "px";
     });
 
+    var drawCanvas = function() {
+
+      var canvasDiv = document.getElementById( "timing-notches-canvas" );
+      canvasDiv.style.width = timelineTarget.style.width;
+
+      var context = canvasDiv.getContext( "2d" );
+
+      canvasDiv.height = canvasDiv.offsetHeight;
+      canvasDiv.width = canvasDiv.offsetWidth;
+
+      var inc = canvasDiv.offsetWidth / b.duration() / 4,
+          heights = [ 10, 4, 7, 4 ],
+          textWidth = context.measureText( b.secondsToSMPTE( 5 ) ).width,
+          lastTimeDisplayed = -textWidth / 2;
+
+      context.clearRect ( 0, 0, canvasDiv.width, canvasDiv.height );
+
+      context.beginPath();
+
+      for ( var i = 1, l = b.duration() * 4; i < l; i++ ) {
+
+        var position = i * inc;
+
+        context.moveTo( -~position, 0 );
+        context.lineTo( -~position, heights[ i % 4 ] );
+
+        if ( i % 4 === 0 && ( position - lastTimeDisplayed ) > textWidth ) {
+
+          lastTimeDisplayed = position;
+          context.fillText( b.secondsToSMPTE( i / 4 ), -~position - ( textWidth / 2 ), 21 );
+        }
+      }
+      context.stroke();
+      context.closePath();
+    };
+
+    b.listen( "timelineready", function( event ) {
+
+      drawCanvas();
+    });
+
+    document.addEventListener( "keypress", function( event ) {
+      if( event.keyCode === 39 ) {
+        b.moveFrameRight();
+      } else if( event.keyCode === 37 ) {
+        b.moveFrameLeft();
+      }
+    }, false);
+
     var trackLayers = {};
     var editTrackTargets =  document.getElementById( "track-edit-target" );
     var trackJSONtextArea = document.getElementById( "track-edit-JSON" );
@@ -210,8 +294,15 @@
       deleteButton.className = "delete";
       deleteButton.innerHTML = "<a href=\"#\">delete</a>";
       deleteButton.addEventListener( "click", function( click ) {
-
-        b.removeTrack( track );
+        $('.close-div').fadeOut('fast');
+        $('.popupDiv').fadeIn('slow');
+        $('#popup-delete-track').show();
+        $('#deleteTrackBtn').click(function(){
+          b.removeTrack( track );
+          $('#popup-delete-track').hide();
+        });
+        centerPopup( $('#popup-delete-track') );
+        $('.balck-overlay').hide();
       }, false );
 
       trackJSONtextArea.addEventListener( "change", function() {
@@ -353,7 +444,7 @@
     
 //    function loadProjectsFromServer(){
 //      //load stuff from bobby's server
-//    }
+//     }
 //    
 //    loadProjectsFromServer();
     
@@ -363,8 +454,10 @@
       
       try {
         var projectToSave = b.exportProject(),
-        overwrite = false,
+        overwrite = false,  
         title;
+
+        projectToSave.layout = currentLayout;
         
         localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
         
@@ -547,18 +640,91 @@
     });
     
     $(".projects-dd").change(function() {
-    
-      var title;
+      var title = projectsDrpDwn.val();
       localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
-      
-      if ( projectsDrpDwn[0].selectedIndex > 0 ) {
+      localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
+      if ( projectsDrpDwn[0].selectedIndex > 0 && localProjects[ title ] && localProjects[ title ].project.title !== b.getProjectDetails( "title" ) ) {
+        $('.close-div').fadeOut('fast');
+        $('.popupDiv').fadeIn('slow');
+        $('#load-confirmation-dialog').show();
+        centerPopup( $('#load-confirmation-dialog') );
+        $('.balck-overlay').hide();
+      }
+    });
+    
+    $(".confirm-load-btn").click(function() {
+      var title = projectsDrpDwn.val();
 
-        localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
-        title = projectsDrpDwn.val();
-        
-        if ( localProjects && localProjects[ title ] ) {
+      if ( localProjects && localProjects[ title ] && localProjects[ title ].project.title !== b.getProjectDetails( "title" ) ) {
+        b.clearProject();         
+        b.clearPlugins();
+        currentLayout = localProjects[ title ].layout;
+        (function ( localProject ) {
+          b.listen( "layoutloaded", function( e ) {
+            document.getElementById( "main" ).innerHTML = "";
+            b.buildPopcorn( b.getCurrentMedia() , function() {
+
+              var registry = b.getRegistry();
+              for( var i = 0, l = registry.length; i < l; i++ ) {
+                b.addPlugin( { type: registry[ i ].type } );
+              }
+              $('.tiny-scroll').tinyscrollbar();
+              b.importProject( localProject );
+              toggleLoadingScreen( false );
+            }, true );
+            b.unlisten( "layoutloaded", this );
+          });
+        })( localProjects[ title ] );
+        toggleLoadingScreen( true );
+        b.loadPreview( {
+          layout: currentLayout,
+          target: "main",
+          popcornURL: "../lib/popcorn-complete.js",
+        });
+        $('.close-div').fadeOut('fast');
+        $('.popups').hide();     
+      }
+    });
+    
+    $(".create-new-btn").click(function() {
+      b.clearProject();
+      b.clearPlugins();
+      b.setProjectDetails( "title", "Untitled Project");
+      currentLayout = document.getElementById( 'layout-select' ).value;
+      b.listen( "layoutloaded", function( e ) {
+        b.buildPopcorn( b.getCurrentMedia() , function() {
+
+          var registry = b.getRegistry();
+          for( var i = 0, l = registry.length; i < l; i++ ) {
+            b.addPlugin( { type: registry[ i ].type } );
+          }
+          $('.tiny-scroll').tinyscrollbar();
+          toggleLoadingScreen( false );
+        }, b.popcornFlag() );
+        b.unlisten( "layoutloaded", this );
+      });
+
+      toggleLoadingScreen( true );
+      b.loadPreview( {
+        layout: currentLayout,
+        target: "main",
+        popcornURL: "../lib/popcorn-complete.js",
+        media: document.getElementById('media-url').value
+      });
+      $('.close-div').fadeOut('fast');
+      $('.popups').hide();
+    });
+    
+    $(".load-code-btn").click(function() {
+      var dataString = $(".project-json").val();
+      if ( dataString ) {
+      
+        try {
+          var data = JSON.parse( dataString );
           b.clearProject();         
-          (function ( localProject ) {
+          b.clearPlugins();
+          currentLayout = data.layout ? data.layout : layouts[ 0 ];
+          (function ( data ) {
             b.listen( "layoutloaded", function( e ) {
               document.getElementById( "main" ).innerHTML = "";
               b.buildPopcorn( b.getCurrentMedia() , function() {
@@ -568,39 +734,20 @@
                   b.addPlugin( { type: registry[ i ].type } );
                 }
                 $('.tiny-scroll').tinyscrollbar();
-                b.importProject( localProject );
-              }, true );
+                b.importProject( data );
+              }, b.popcornFlag() );
               b.unlisten( "layoutloaded", this );
             });
-          })( localProjects[ title ] );
-          b.loadPreview( {
-            layout: "layouts/default.html",
-            target: "main",
-            media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
-          });
-          return;
-        }
-        
-      }
-    });
-    
-    $(".create-new-btn").click(function() {
-      b.clearProject();
-      b.clearPopcorn();
-      b.setProjectDetails( "title", "Untitled Project");
-    });
-    
-    $(".load-code-btn").click(function() {
-      var dataString = $(".project-json").val();
-      if ( dataString ) {
-      
-        try {
-          var data = JSON.parse( dataString );
-          b.clearProject();
-          b.clearPopcorn();
-          b.importProject( data );
+          })( data );
           $('.close-div').fadeOut('fast');
           $('.popups').hide();
+          b.loadPreview( {
+            layout: currentLayout,
+            target: "main",
+            popcornURL: "../lib/popcorn-complete.js"
+          });
+          return;
+
         }
         catch ( e ) {
           console.log ( "Error Loading in Data", e );
@@ -609,12 +756,15 @@
     });
     
     $(".show-json-btn").click(function() {
-      $('.track-content').html( JSON.stringify( b.exportProject() ) );
+      var exp = b.exportProject();
+      exp.layout = currentLayout;
+      $('.track-content').html( JSON.stringify( exp ) );
     });
 
     $(".show-html-btn").click(function() {
       $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
     });
+    
     //$(function(){ $("label").inFieldLabels(); });
 
     $(function() {
