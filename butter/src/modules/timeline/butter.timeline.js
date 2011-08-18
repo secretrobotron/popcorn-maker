@@ -25,8 +25,17 @@
 
         var cornOptions = targettedEvent.popcornOptions;
         var inc = event.shiftKey ? 2.5 : 0.25;
-        cornOptions.start > inc ? cornOptions.start -= inc : cornOptions.start = 0;
-        cornOptions.end -= inc;
+
+        if ( cornOptions.start > inc ) {
+
+          cornOptions.start -= inc;
+          cornOptions.end -= inc;
+        } else {
+
+          cornOptions.end = cornOptions.end - cornOptions.start;
+          cornOptions.start = 0;
+        }
+
         this.trigger( "trackeventupdated", targettedEvent );
       }
     };
@@ -37,11 +46,21 @@
 
         var cornOptions = targettedEvent.popcornOptions;
         var inc = event.shiftKey ? 2.5 : 0.25;
-        cornOptions.end > inc ? cornOptions.end += inc : cornOptions.end = 0;
-        cornOptions.start += inc;
+
+        if ( cornOptions.end < b.duration() - inc ) {
+
+          cornOptions.end += inc;
+          cornOptions.start += inc;
+        } else {
+
+          cornOptions.start += b.duration() - cornOptions.end;
+          cornOptions.end = b.duration();
+        }
+
         this.trigger( "trackeventupdated", targettedEvent );
       }
     };
+
     // Convert an SMPTE timestamp to seconds
     this.smpteToSeconds = function( smpte ) {
       var t = smpte.split(":");
