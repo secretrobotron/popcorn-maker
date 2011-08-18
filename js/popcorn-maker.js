@@ -94,19 +94,6 @@
 
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html" } );
 
-//    b.listen( "layoutloaded", function( e ){
-//      b.buildPopcorn( b.getCurrentMedia() , function() {
-
-//        var registry = b.getRegistry();
-//        for( var i = 0, l = registry.length; i < l; i++ ) {
-//          b.addPlugin( { type: registry[ i ].type } );
-//        }
-//        $('.tiny-scroll').tinyscrollbar();
-//        toggleLoadingScreen( false );
-//      }, b.popcornFlag());
-//      b.unlisten( "layoutloaded", this );
-//    } );
-
     b.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
     
     b.timeline({ target: "timeline-div"});
