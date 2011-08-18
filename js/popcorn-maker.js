@@ -98,6 +98,7 @@
     var layersDiv = document.getElementById( "layers-div" );
     var scrubberContainer = document.getElementById( "scrubber-container" );
     var tracksDiv = document.getElementById( "tracks-div" );
+    var timelineDiv = document.getElementById( "timeline" );
     var progressBar = document.getElementById( "progress-bar" );
     var timelineDuration = document.getElementById( "timeline-duration" );
     var timelineTarget = document.getElementById( "timeline-div" );
@@ -162,8 +163,8 @@
       drawCanvas();
     };
 
-    tracksDiv.addEventListener( "DOMMouseScroll", zoom, false );
-    tracksDiv.addEventListener( "mousewheel", zoom, false );
+    timelineDiv.addEventListener( "DOMMouseScroll", zoom, false );
+    timelineDiv.addEventListener( "mousewheel", zoom, false );
 
     tracksDiv.addEventListener( "scroll", function( event ) {
 
