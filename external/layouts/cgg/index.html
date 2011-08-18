@@ -198,7 +198,7 @@
 					fd = flickrData[options.question];
 					if (fd) {
 						for (j = 0, c = 0; c < 1 && j < fd.length; j++) {
-							if (fd[j].aspect && Math.abs(options.aspect - fd[j].aspect) < 0.2) {
+							if (fd[j].aspect && Math.abs(options.aspect - fd[j].aspect) < 0.3) {
 								options.id = fd[j].id;
 								options.flickrData = fd[j];
 								
