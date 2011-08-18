@@ -263,9 +263,9 @@
 
     document.addEventListener( "keypress", function( event ) {
       if( event.keyCode === 39 ) {
-        b.moveFrameRight();
+        b.moveFrameRight( event );
       } else if( event.keyCode === 37 ) {
-        b.moveFrameLeft();
+        b.moveFrameLeft( event );
       }
     }, false);
 

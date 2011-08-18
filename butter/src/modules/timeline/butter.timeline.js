@@ -24,8 +24,9 @@
       if ( targettedEvent ) {
 
         var cornOptions = targettedEvent.popcornOptions;
-        cornOptions.start > 0.25 ? cornOptions.start -= 0.25 : cornOptions.start = 0;
-        cornOptions.end -= 0.25;
+        var inc = event.shiftKey ? 2.5 : 0.25;
+        cornOptions.start > inc ? cornOptions.start -= inc : cornOptions.start = 0;
+        cornOptions.end -= inc;
         this.trigger( "trackeventupdated", targettedEvent );
       }
     };
@@ -35,8 +36,9 @@
       if ( targettedEvent ) {
 
         var cornOptions = targettedEvent.popcornOptions;
-        cornOptions.end > 0.25 ? cornOptions.end += 0.25 : cornOptions.end = 0;
-        cornOptions.start += 0.25;
+        var inc = event.shiftKey ? 2.5 : 0.25;
+        cornOptions.end > inc ? cornOptions.end += inc : cornOptions.end = 0;
+        cornOptions.start += inc;
         this.trigger( "trackeventupdated", targettedEvent );
       }
     };
