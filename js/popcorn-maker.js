@@ -431,7 +431,8 @@
     document.addEventListener( "keypress", function( event ) {
 
       if ( event.charCode === 32 ) {
-event.preventDefault();
+
+        event.preventDefault();
         b.isPlaying() ? b.play() : b.pause();
       }
     }, false );
