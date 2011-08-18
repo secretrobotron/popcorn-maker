@@ -166,6 +166,7 @@ html, body {
 }
 
 .timing-notches-div {
+  margin-top: 6px;
   overflow: hidden;
   position: relative;
 }
