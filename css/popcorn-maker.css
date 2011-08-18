@@ -46,6 +46,7 @@ html, body {
 }
 
 .butter-track-event {
+  overflow: hidden;
   background-color: #FFFF33;
 	background-image: -webkit-gradient(
 		linear,
