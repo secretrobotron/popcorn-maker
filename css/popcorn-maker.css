@@ -163,3 +163,15 @@ html, body {
 
 #loading-overlay h2 {
 }
+
+.timing-notches-div {
+  overflow: hidden;
+  position: relative;
+}
+
+#timing-notches-canvas {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+

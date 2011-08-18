@@ -158,6 +158,8 @@
 
         scrubber.style.display = "block";
       }
+
+      drawCanvas();
     };
 
     tracksDiv.addEventListener( "DOMMouseScroll", zoom, false );
@@ -174,6 +176,8 @@
 
         scrubber.style.display = "block";
       }
+
+      document.getElementById( "timing-notches-canvas" ).style.left = -tracksDiv.scrollLeft + "px";
     }, false );
 
     var scrubberClicked = false;
@@ -211,6 +215,47 @@
     b.listen( "mediatimeupdate", function() {
 
       scrubber.style.left = b.currentTimeInPixels() - tracksDiv.scrollLeft + "px";
+    });
+
+    var drawCanvas = function() {
+
+      var canvasDiv = document.getElementById( "timing-notches-canvas" );
+      canvasDiv.style.width = timelineTarget.style.width;
+
+      var context = canvasDiv.getContext( "2d" );
+
+      canvasDiv.height = canvasDiv.offsetHeight;
+      canvasDiv.width = canvasDiv.offsetWidth;
+
+      var inc = canvasDiv.offsetWidth / b.duration() / 4,
+          heights = [ 10, 4, 7, 4 ],
+          textWidth = context.measureText( b.secondsToSMPTE( 5 ) ).width,
+          lastTimeDisplayed = -textWidth / 2;
+
+      context.clearRect ( 0, 0, canvasDiv.width, canvasDiv.height );
+
+      context.beginPath();
+
+      for ( var i = 1, l = b.duration() * 4; i < l; i++ ) {
+
+        var position = i * inc;
+
+        context.moveTo( -~position, 0 );
+        context.lineTo( -~position, heights[ i % 4 ] );
+
+        if ( i % 4 === 0 && ( position - lastTimeDisplayed ) > textWidth ) {
+
+          lastTimeDisplayed = position;
+          context.fillText( b.secondsToSMPTE( i / 4 ), -~position - ( textWidth / 2 ), 21 );
+        }
+      }
+      context.stroke();
+      context.closePath();
+    };
+
+    b.listen( "timelineready", function( event ) {
+
+      drawCanvas();
     });
 
     var trackLayers = {};
