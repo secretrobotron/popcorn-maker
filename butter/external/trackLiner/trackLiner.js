@@ -46,7 +46,7 @@
 
       $( container ).sortable( { containment: "parent", tolerance: 'pointer', update: function( event, ui ) {
 
-        var type = ui.item[ 0 ].getAttribute('data-trackliner-type');
+        var type = ui.item[ 0 ].type;
 
         plugins[ type ].trackMoved( self.getTrack( ui.item[ 0 ].id ), ui.item.index() );
       } } ).droppable( { greedy: true } );
@@ -103,7 +103,7 @@
           element.appendChild( titleElement );
         } //if
 
-        element.setAttribute( 'data-trackliner-type', type );
+        element.type = type;
 
         tracks[ track.getElement().id ] = track;//.splice( ~index, 0, track );
         return track;

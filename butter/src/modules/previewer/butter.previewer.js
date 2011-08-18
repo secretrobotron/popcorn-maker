@@ -138,9 +138,15 @@
               });
             }
             else {
+              var vidUrl = userSetMedia;
+
+              if ( children[ i ].getAttribute( "data-butter-soundcloud" ) ) {
+                vidUrl = children[ i ].getAttribute( "data-butter-soundcloud" );
+              }
+
               that.addMedia( { 
                 target: children[ i ].id, 
-                url: userSetMedia
+                url: vidUrl 
               } );
             }
           } // else
@@ -169,7 +175,7 @@
       if ( !media ) {
         return;  
       }
-      
+
       if( !layoutPopcorn ) {
 
         videoURL = media.getUrl();
@@ -411,10 +417,8 @@
     };
 
     this.isPlaying = function() {
-       var video = framePopcorn.video;
 
-        video.paused = !video.paused;
-        return video.paused;
+        return framePopcorn.media.paused;
     };
 
     this.pause = function() {
