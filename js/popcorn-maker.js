@@ -11,6 +11,15 @@
 
   window.addEventListener("DOMContentLoaded", function() {
 
+    function buildRegistry() {
+      var registry = b.getRegistry();
+      for( var i = 0, l = registry.length; i < l; i++ ) {
+        if( registry[ i ].type !== "text" ) {
+          b.addPlugin( { type: registry[ i ].type } );
+        }
+      } 
+    }
+
     function toggleLoadingScreen ( state ) {
       if ( state ) {
         $('#loading-overlay').show();
@@ -44,10 +53,7 @@
     b.listen( "layoutloaded", function( e ){
       b.buildPopcorn( b.getCurrentMedia() , function() {
 
-        var registry = b.getRegistry();
-        for( var i = 0, l = registry.length; i < l; i++ ) {
-          b.addPlugin( { type: registry[ i ].type } );
-        }
+        buildRegistry();
         $('.tiny-scroll').tinyscrollbar();
         toggleLoadingScreen( false );
       }, b.popcornFlag());
@@ -664,10 +670,7 @@
             document.getElementById( "main" ).innerHTML = "";
             b.buildPopcorn( b.getCurrentMedia() , function() {
 
-              var registry = b.getRegistry();
-              for( var i = 0, l = registry.length; i < l; i++ ) {
-                b.addPlugin( { type: registry[ i ].type } );
-              }
+              buildRegistry();
               $('.tiny-scroll').tinyscrollbar();
               b.importProject( localProject );
               toggleLoadingScreen( false );
@@ -694,10 +697,7 @@
       b.listen( "layoutloaded", function( e ) {
         b.buildPopcorn( b.getCurrentMedia() , function() {
 
-          var registry = b.getRegistry();
-          for( var i = 0, l = registry.length; i < l; i++ ) {
-            b.addPlugin( { type: registry[ i ].type } );
-          }
+          buildRegistry();
           $('.tiny-scroll').tinyscrollbar();
           toggleLoadingScreen( false );
         }, b.popcornFlag() );
@@ -729,10 +729,7 @@
               document.getElementById( "main" ).innerHTML = "";
               b.buildPopcorn( b.getCurrentMedia() , function() {
 
-                var registry = b.getRegistry();
-                for( var i = 0, l = registry.length; i < l; i++ ) {
-                  b.addPlugin( { type: registry[ i ].type } );
-                }
+                buildRegistry();
                 $('.tiny-scroll').tinyscrollbar();
                 b.importProject( data );
               }, b.popcornFlag() );
