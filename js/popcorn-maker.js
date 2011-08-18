@@ -1,10 +1,11 @@
 (function(){
 
   var layouts = [
-    "layouts/default.html",
     "layouts/default-basic.html",
+    "layouts/default.html",
     "external/layouts/city-slickers/index.html",
     "external/layouts/cgg/index.html",
+    "external/layouts/blackpanthers/default.html"
   ],
   currentLayout,
   wizardRun = false;
@@ -94,6 +95,7 @@
 
     b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
     b.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
+    b.addCustomEditor( "external/layouts/blackpanthers/editor.html", "googlestreets" );
 
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
@@ -192,6 +194,8 @@
 
         scrubber.style.display = "block";
       }
+
+      drawCanvas();
     };
 
     tracksDiv.addEventListener( "DOMMouseScroll", zoom, false );
@@ -208,6 +212,8 @@
 
         scrubber.style.display = "block";
       }
+
+      document.getElementById( "timing-notches-canvas" ).style.left = -tracksDiv.scrollLeft + "px";
     }, false );
 
     var scrubberClicked = false;
@@ -247,6 +253,55 @@
       scrubber.style.left = b.currentTimeInPixels() - tracksDiv.scrollLeft + "px";
     });
 
+    var drawCanvas = function() {
+
+      var canvasDiv = document.getElementById( "timing-notches-canvas" );
+      canvasDiv.style.width = timelineTarget.style.width;
+
+      var context = canvasDiv.getContext( "2d" );
+
+      canvasDiv.height = canvasDiv.offsetHeight;
+      canvasDiv.width = canvasDiv.offsetWidth;
+
+      var inc = canvasDiv.offsetWidth / b.duration() / 4,
+          heights = [ 10, 4, 7, 4 ],
+          textWidth = context.measureText( b.secondsToSMPTE( 5 ) ).width,
+          lastTimeDisplayed = -textWidth / 2;
+
+      context.clearRect ( 0, 0, canvasDiv.width, canvasDiv.height );
+
+      context.beginPath();
+
+      for ( var i = 1, l = b.duration() * 4; i < l; i++ ) {
+
+        var position = i * inc;
+
+        context.moveTo( -~position, 0 );
+        context.lineTo( -~position, heights[ i % 4 ] );
+
+        if ( i % 4 === 0 && ( position - lastTimeDisplayed ) > textWidth ) {
+
+          lastTimeDisplayed = position;
+          context.fillText( b.secondsToSMPTE( i / 4 ), -~position - ( textWidth / 2 ), 21 );
+        }
+      }
+      context.stroke();
+      context.closePath();
+    };
+
+    b.listen( "timelineready", function( event ) {
+
+      drawCanvas();
+    });
+
+    document.addEventListener( "keypress", function( event ) {
+      if( event.keyCode === 39 ) {
+        b.moveFrameRight();
+      } else if( event.keyCode === 37 ) {
+        b.moveFrameLeft();
+      }
+    }, false);
+
     var trackLayers = {};
     var editTrackTargets =  document.getElementById( "track-edit-target" );
     var trackJSONtextArea = document.getElementById( "track-edit-JSON" );
@@ -273,8 +328,15 @@
       deleteButton.className = "delete";
       deleteButton.innerHTML = "<a href=\"#\">delete</a>";
       deleteButton.addEventListener( "click", function( click ) {
-
-        b.removeTrack( track );
+        $('.close-div').fadeOut('fast');
+        $('.popupDiv').fadeIn('slow');
+        $('#popup-delete-track').show();
+        $('#deleteTrackBtn').click(function(){
+          b.removeTrack( track );
+          $('#popup-delete-track').hide();
+        });
+        centerPopup( $('#popup-delete-track') );
+        $('.balck-overlay').hide();
       }, false );
 
       trackJSONtextArea.addEventListener( "change", function() {
@@ -637,7 +699,6 @@
         centerPopup( $('#load-confirmation-dialog') );
         $('.balck-overlay').hide();
       }
-      
     });
     
     $(".confirm-load-btn").click(function() {
@@ -668,7 +729,7 @@
         b.loadPreview( {
           layout: currentLayout,
           target: "main",
-          media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+          popcornURL: "../lib/popcorn-complete.js",
         });
         $('.close-div').fadeOut('fast');
         $('.popups').hide();     
@@ -727,7 +788,8 @@
       b.loadPreview( {
         layout: currentLayout,
         target: "main",
-        media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+        popcornURL: "../lib/popcorn-complete.js",
+        media: document.getElementById('media-url').value
       });
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
@@ -762,7 +824,7 @@
           b.loadPreview( {
             layout: currentLayout,
             target: "main",
-            media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+            popcornURL: "../lib/popcorn-complete.js"
           });
           return;
 

@@ -132,8 +132,7 @@
      <div class="timeline-progress-wrapper disable-select">
      <!-- ***** TIMING NOTCHES ***** -->  
        <div class="timing-notches-div disable-select">
-       	<div class="timing-notches disable-select">
-          </div>
+       	 <canvas id="timing-notches-canvas" class="disable-select"></canvas>
        </div>
      <!-- ***** END TIMING NOTCHES ***** -->  
        <div id="scrubber-container" class="disable-select" style="z-index: 1; position: relative;">
@@ -278,7 +277,17 @@
             </div>
           </div>
         </div><!-- end popup-add-project -->
-        
+        <div id="popup-delete-track" class="popup-project-title pop-up close-div draggable" style="display:none">
+          <a class="popup-close-btn" href="#"><span></span></a>
+          	<div class="popup-header">
+              	<h3>Delete Track</h3>
+              </div>
+              <div class="popup-content">
+                <br />
+                <input id="deleteTrackBtn" type="submit" class="change-title-btn" value="Yes">
+                <p class="desc">Are you sure you want to delete this track?</p>
+              </div>
+        </div>
         <div id="popup-project-title" class="popup-project-title pop-up close-div draggable" style="display:none"> <!-- popup-project-title -->
             <a class="popup-close-btn" href="#"><span></span></a>
         	<div class="popup-header">

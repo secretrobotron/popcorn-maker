@@ -68,6 +68,11 @@
 				
 				image.addEventListener('load', function () {
 					var divAspect;
+					
+					if (!container) {
+						//in case _teardown runs before image has loaded
+						return;
+					}
 
 					//todo: calculate this on every frame, from offsets
 					videoAspect = popcorn.media.videoWidth / popcorn.media.videoHeight;

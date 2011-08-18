@@ -10,8 +10,8 @@
 		<style type="text/css">
 		
 		body {
-			width: 740px;
-			height: 580px;
+			width: 700px;
+			height: 380px;
 		}
 		
 		body, fieldset {
@@ -40,19 +40,6 @@
 		
 		input[type=text].small {
 			width: 80px;
-		}
-		
-		#description {
-			width: 220px;
-			height: 100px;
-		}
-		
-		#flickr-galleries {
-			width: 220px;
-		}
-		
-		#form label {
-			vertical-align: top;
 		}
 		
 		</style>
@@ -85,7 +72,7 @@
 				<label for="lng">Longitude:</label>
 				<input type="text" id="lng" class="small"/>
 			</fieldset>
-<!--
+
       <fieldset>
         <label for="map-mode">Map Mode:</label>
         <select id="map-mode">
@@ -93,25 +80,10 @@
           <option value="street">Street View</option>
         </select>
       </fieldset>
--->
+
 			<fieldset id="target-fieldset">
 				<label for="target">Target:</label>
 				<select id="target"></select>
-			</fieldset>
-
-			<fieldset>
-				<label for="video-url">Video URL:</label>
-				<input type="text" id="video-url"/>
-			</fieldset>
-
-			<fieldset>
-				<label for="flickr-galleries">Flickr Galleries:</label>
-				<textarea id="flickr-galleries"></textarea>
-			</fieldset>
-
-			<fieldset>
-				<label for="description">Description:</label>
-				<textarea id="description"></textarea>
 			</fieldset>
 
 			<fieldset>
@@ -136,12 +108,11 @@
 				elements = {},
 				fields = [
 					'start', 'end', 'label', 'location', 'lat', 'lng',
-					'target', 'target-fieldset', 'geocode-button', /*'map-mode', */
-					'video-url', 'flickr-galleries', 'description',
+					'target', 'target-fieldset', 'geocode-button', 'map-mode',
 					'cancel', 'ok', 'apply', 'delete'
 				],
-				butter, client /*,
-        streetView*/;
+				butter, client,
+        streetView;
 			
 			function saveLocation(loc) {
 				if (!loc) {
@@ -358,29 +329,14 @@
 				trackEvent.label = trackEvent.label.replace(/^[\s\t\n\r ]+/, '');
 				trackEvent.label = trackEvent.label.replace(/[\s\t\n\r ]+$/, '');
 				
-				trackEvent.description = elements.description.value;
-				trackEvent.description = trackEvent.description.replace(/^[\s\t\n\r ]+/, '');
-				trackEvent.description = trackEvent.description.replace(/[\s\t\n\r ]+$/, '');
-				
 				trackEvent.location = elements.location.value;
 				trackEvent.location = trackEvent.location.replace(/^[\s\t\n\r ]+/, '');
 				trackEvent.location = trackEvent.location.replace(/[\s\t\n\r ]+$/, '');
 
 				trackEvent.target = elements.target.value;
 				
-				//todo: validate URL
-				trackEvent.video = elements['video-url'].value;
-				
-				//todo: validate multiple URLs
-				var galleries = elements['flickr-galleries'].value;
-				galleries = galleries.replace(/^[\s\t\n\r ]+/, '');
-				galleries = galleries.replace(/[\s\t\n\r ]+$/, '');
-				galleries = galleries.replace(/[\s\t\n\r ]+/, '\r', 'g');
-
-				trackEvent.galleries = galleries.split(/[\n\r,]+/);
-				
 				if (map) {
-					trackEvent.zoom = map.getZoom();
+					trackEvent.zoom = 1;
 				}
 			}
 			
@@ -416,10 +372,6 @@
 			function editTrackEvent( popcornOptions ) {
 				trackEvent = popcornOptions;
 				
-				//todo: https://webmademovies.lighthouseapp.com/projects/65733/tickets/194-editor-dialogs-should-show-frame-accurate-times
-				
-				//todo: I'd also like to have the video duration so I can error-check against that as well.
-				
 				if (isNaN(trackEvent.start) || trackEvent.start < 0) {
 					trackEvent.start = 0;
 				}
@@ -446,17 +398,7 @@
 				
 				elements.label.value = trackEvent.label || '';
 
-				elements.description.value = trackEvent.description || '';
-
 				elements.location.value = trackEvent.location || '';
-				
-				elements['video-url'].value = trackEvent.video || '';
-				
-				if (!trackEvent.galleries) {
-					elements['flickr-galleries'].value = '';
-				} else {
-					elements['flickr-galleries'].value = trackEvent.galleries.join('\n');
-				}
 				
 				if (trackEvent.location && geocoder &&
 					(trackEvent.lat === undefined || trackEvent.lng === undefined) ) {
@@ -497,8 +439,8 @@
 	
 					client.listen('edittrackevent', function (message) {
 						client.send( {
-							width: 740,
-							height: 580
+							width: 720,
+							height: 400
 						}, 'clientdimsupdated' );
 						targetsUpdated(message.targets);
 						editTrackEvent(message.trackEvent.popcornOptions);
@@ -551,7 +493,7 @@
 
 				elements.location.addEventListener('change', checkLocation, false);
 				elements.location.addEventListener('keypress', checkLocation, false);
-/*
+
         elements['map-mode'].addEventListener('change', function ( e ) {
           var mode = elements['map-mode'].value;
           trackEvent['map-mode'] = mode;
@@ -578,7 +520,7 @@
             streetView.setVisible( false );
           }
         }, false );
-*/
+
 				//buttons
 				elements['geocode-button'].addEventListener('click', checkLocation, false);
 				
