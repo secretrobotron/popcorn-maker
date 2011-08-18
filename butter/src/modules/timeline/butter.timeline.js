@@ -19,7 +19,7 @@
     //returns an array
     };
 
-    this.moveFrameLeft = function() {
+    this.moveFrameLeft = function( event ) {
 
       if ( targettedEvent ) {
 
@@ -30,7 +30,7 @@
       }
     };
 
-    this.moveFrameRight = function() {
+    this.moveFrameRight = function( event ) {
 
       if ( targettedEvent ) {
 
