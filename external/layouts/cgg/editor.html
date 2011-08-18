@@ -333,6 +333,18 @@
 					ch = String.fromCharCode(key),
 					s;
 				
+				function blockKey() {
+					if (e.preventDefault) {
+						e.preventDefault();
+					}
+					if (e.stopPropagation) {
+						e.stopPropagation();
+					}
+					e.returnValue = false;
+					e.cancelBubble = true;
+					return false;
+				}
+				
 				if (key === 190) {
 					key = 0x2E;
 					ch = '.';
@@ -340,39 +352,45 @@
 
 				if (e.metaKey || e.altKey || key < 0x21 ||
 					e.keyLocation ||
-					!e.shiftKey && key <0x27 && ch !=='.') {
+					!e.shiftKey && key <0x27 && ch !=='.' &&
+						ch !== '-' && key !== 189) {
 					return;
 				}
 				
-				if (ch === '-') {
-					
+				s = this.value;
+				if (this.selectionStart !== this.selectionEnd) {
+					s = s.substring(0, this.selectionStart) + s.substring(this.selectionEnd, s.length);
 				}
 
-				if (ch === '.') {
-					s = this.value;
-					if (s.indexOf('.') >= 0) {
-						if (e.preventDefault) {
-							e.preventDefault();
-						}
-						if (e.stopPropagation) {
-							e.stopPropagation();
-						}
-						e.returnValue = false;
-						e.cancelBubble = true;
-						return false;
+				if (key === 189 || ch === '-') {
+					if (this.selectionStart) {
+						return blockKey();
+					}
+
+					if (s.indexOf('-') >= 0) {
+						return blockKey();
 					}
 					
 					return true;
 				}
 
+				if (ch === '.') {
+					s = this.value;
+					if (s.indexOf('.') >= 0) {
+						return blockKey();
+					}
+					
+					return true;
+				}
+
+				ch = parseInt(ch, 10);
 				if (isNaN(ch)) {
-					e.preventDefault();
-					e.stopPropagation();
-					e.returnValue = false;
-					e.cancelBubble = true;
-					return false;
+					return blockKey();
 				}
 				
+				if (s.indexOf('-') >= this.selectionStart) {
+					return blockKey();
+				}
 			}
 			
 			function updateBox(box, x, y, w, h) {
@@ -410,53 +428,40 @@
 
 						if (isNaN(pos[0])) {
 							pos[0] = 0;
+						} else {
+							pos[0] = Math.round(pos[0] * 100) / 100;
 						}
 		
 						if (isNaN(pos[1])) {
 							pos[1] = 0;
+						} else {
+							pos[1] = Math.round(pos[1] * 100) / 100;
 						}
 		
 						if (isNaN(pos[2])) {
 							pos[2] = 10;
+						} else {
+							pos[2] = Math.round(pos[2] * 100) / 100;
 						}
 		
 						if (isNaN(pos[3])) {
 							pos[3] = 10;
+						} else {
+							pos[3] = Math.round(pos[3] * 100) / 100;
 						}
 
-/*
-						if (isNaN(pos[0]) || pos[0] < 0) {
-							pos[0] = 0;
-						} else if (pos[0] > 100) {
-							pos[0] = 100;
-						}
-		
-						if (isNaN(pos[1]) || pos[1] < 0) {
-							pos[1] = 0;
-						} else if (pos[1] > 100) {
-							pos[1] = 100;
-						}
-		
-						if (isNaN(pos[2]) || pos[2] + pos[0] > 100 || pos[2] < 0) {
-							pos[2] = Math.min(pos[0] + 10, 100) - pos[0];
-						}
-		
-						if (isNaN(pos[3]) || pos[3] + pos[1] > 100 || pos[3] < 0) {
-							pos[3] = Math.min(pos[1] + 10, 100) - pos[1];
-						}
-*/
 						if (updateElements) {
 							//yes, i'm using != here
-							if (elements[id + 'Left'].value != pos[0]) {
+							if (elements[id + 'Left'].value != pos[0] || !pos[0]) {
 								elements[id + 'Left'].value = pos[0];
 							}
-							if (elements[id + 'Top'].value != pos[1]) {
+							if (elements[id + 'Top'].value != pos[1] || !pos[1]) {
 								elements[id + 'Top'].value = pos[1];
 							}
-							if (elements[id + 'Width'].value != pos[2]) {
+							if (elements[id + 'Width'].value != pos[2] || !pos[2]) {
 								elements[id + 'Width'].value = pos[2];
 							}
-							if (elements[id + 'Height'].value != pos[3]) {
+							if (elements[id + 'Height'].value != pos[3] || !pos[3]) {
 								elements[id + 'Height'].value = pos[3];
 							}
 						}
@@ -643,7 +648,7 @@
 	
 					client.listen('edittrackevent', function (message) {
 						client.send( {
-							width: 720,
+							width: 800,
 							height: 400
 						}, 'clientdimsupdated' );
 
@@ -726,9 +731,9 @@
 
 			questionsUpdated([
 				'What is something you wish you could do?',
-				'How do you express yourself?'
+				'How do you express yourself?',
 				'What do you find beautiful?',
-				'What character, animal or artist represents you?',
+				'What character, animal or artist represents you?'
 			]);
 /*			
 			targetsUpdated([
