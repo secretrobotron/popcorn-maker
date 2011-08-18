@@ -115,7 +115,7 @@ var googleCallback;
               options.zoom = +options.zoom;
             }
 
-            options.zoom = options.zoom || 8; // default to 8
+            options.zoom = options.zoom || 1;
 
             map.setZoom( options.zoom );
 

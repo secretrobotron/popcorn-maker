@@ -61,7 +61,7 @@
 
     b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
     b.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
-    b.addCustomEditor( "external/layouts/city-slickers/editor.html", "googlestreets" );
+    b.addCustomEditor( "external/layouts/blackpanthers/editor.html", "googlestreets" );
 
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
