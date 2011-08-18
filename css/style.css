@@ -705,7 +705,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
   );
 }
 .popup-1 .popup-content, .popup-2 .popup-content, .popup-content { padding:20px;}
-.popup-1 .popup-header h3, .popup-2 .popup-header h3, .popup-header h3 { padding: 0 20px}
+.popup-1 .popup-header h3, .popup-2 .popup-header h3, .popup-header h3, h3.welcome-header { padding: 0 20px}
 .download-btn, .load-code-btn { position: absolute; right: 0; top: 25px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
 .save-project-data-btn, .create-new-btn { position: absolute; left: 0; top: 57px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
 .create-new-btn { left: 120px}
@@ -769,7 +769,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 	-webkit-text-shadow: 0 -1px 0 #000, 0 1px 0 #fff;
 	     -o-text-shadow: 0 -1px 0 #000, 0 1px 0 #fff;
 	        text-shadow: 0 -1px 0 #000, 0 1px 0 #fff;}
-#welcome-popup h3{ font-size:22px; letter-spacing:-1px; margin-top:-8px;}
+#welcome-popup h3.welcome-h3{ font-size:22px; letter-spacing:-1px; margin-top:-8px;}
 #welcome-popup h4{ font-size: 18px; padding-top:30px; letter-spacing:-1px;}
 #welcome-popup p {}
 #welcome-popup p.copyright { width:380px; display:block; margin:0 auto; overflow:hidden;}

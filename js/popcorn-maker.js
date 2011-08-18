@@ -7,11 +7,29 @@
     "external/layouts/cgg/index.html",
     "external/layouts/blackpanthers/default.html"
   ],
-  currentLayout,
-  wizardRun = false;
+  currentLayout;
 
   window.addEventListener("DOMContentLoaded", function() {
   
+    $("#properties-panel").css('height','38px');
+
+    $("#properties-panel").css('display','block');
+
+    $(".hide-timeline").css('bottom','36px');	
+
+    $(".hide-timeline").css('display','block');
+
+    $("#properties-panel").animate({
+
+      height: '270px'
+
+    }, 500);
+
+    $(".hide-timeline").animate({
+
+      bottom: '268px'
+
+    }, 500);  
     $('#welcome-popup').fadeIn(2000);
     $('#loading-overlay').hide();
     //Carousel for Help inner page
@@ -39,6 +57,7 @@
     $('.help-close-btn').click(function() {
 										 
         $("#help-popup").fadeOut('fast');
+        $("#welcome-popup").hide();
 
     });
     
@@ -751,29 +770,6 @@
           }
           $('.tiny-scroll').tinyscrollbar();
           toggleLoadingScreen( false );
-          
-//          if (!wizardRun) {
-            $("#properties-panel").css('height','38px');
-		
-            $("#properties-panel").css('display','block');
-
-            $(".hide-timeline").css('bottom','36px');	
-
-            $(".hide-timeline").css('display','block');
-
-            $("#properties-panel").animate({
-		
-                height: '270px'
-
-            }, 500);
-
-            $(".hide-timeline").animate({
-				
-                bottom: '268px'
-
-            }, 500);
-//            wizardRun = true;
-//          }
 		     
         }, b.popcornFlag() );
         b.unlisten( "layoutloaded", this );
