@@ -260,6 +260,14 @@
       drawCanvas();
     });
 
+    document.addEventListener( "keypress", function( event ) {
+      if( event.keyCode === 39 ) {
+        b.moveFrameRight();
+      } else if( event.keyCode === 37 ) {
+        b.moveFrameLeft();
+      }
+    }, false);
+
     var trackLayers = {};
     var editTrackTargets =  document.getElementById( "track-edit-target" );
     var trackJSONtextArea = document.getElementById( "track-edit-JSON" );
@@ -286,8 +294,15 @@
       deleteButton.className = "delete";
       deleteButton.innerHTML = "<a href=\"#\">delete</a>";
       deleteButton.addEventListener( "click", function( click ) {
-
-        b.removeTrack( track );
+        $('.close-div').fadeOut('fast');
+        $('.popupDiv').fadeIn('slow');
+        $('#popup-delete-track').show();
+        $('#deleteTrackBtn').click(function(){
+          b.removeTrack( track );
+          $('#popup-delete-track').hide();
+        });
+        centerPopup( $('#popup-delete-track') );
+        $('.balck-overlay').hide();
       }, false );
 
       trackJSONtextArea.addEventListener( "change", function() {
