@@ -1,28 +1,29 @@
 <html>
   <head>
-    <script type="text/javascript" src="butter.js"></script>
+    <script type="text/javascript" src="../../../src/butter.js"></script>
+    <script type="text/javascript" src="../butter.comm.js"></script>
     <script type="text/javascript">
       (function(){
-        var client,
-          butter,
-          targets = {};
-          document.addEventListener('DOMContentLoaded', function (e) {
+      var client,
+        butter,
+        targets = {};
+        
+      document.addEventListener('DOMContentLoaded', function (e) {
 
-          butter = new Butter();
+        butter = new Butter();
 
-          client = new Butter.CommClient( "defaultEditor" );
+        client = new Butter.CommClient( "defaultEditor" );
 
-          client.listen( "edittrackevent", function( message ) {
-            targets = message.targets;
-            //console.log("asdf", message);
-            constructDefaultEditor ( message.trackEvent );
-          });
-          
-          client.listen( "domtargetsupdated", function( message ) {
-            targets = message;
-          });
+        client.listen( "edittrackevent", function( message ) {
+          targets = message.targets;
+          constructDefaultEditor ( message.trackEvent );
+        });
+        
+        client.listen( "domtargetsupdated", function( message ) {
+          targets = message;
+        });
 
-        }, false);
+      }, false);
 
       var constructDefaultEditor = function( trackEvent ) {
 
@@ -55,6 +56,7 @@
             label = createLabel ( { innerHTML: elemLabel, attributes: { "for": elemLabel, "text": elemLabel } } );
 
             elements[ prop ] = elem;
+            console( options );
 
             if ( elemType === "input" ) {
 
@@ -67,6 +69,10 @@
               }
 
               elem.setAttribute( "value", attr );
+
+              if ( options.default ) {
+                elem.value = options.default;
+              }
             } else if ( elemType === "select" ) {
               attr = trackEvent.popcornOptions[ prop ];
               var populate = function( type ) {
@@ -107,7 +113,7 @@
         for ( var i = 0, l = DOMTargets.length; i < l; i++ ) {
           dt = DOMTargets[ i ];
           optionElement = document.createElement( "option" );
-          optionElement.value = optionElement.text = dt[0];
+          optionElement.value = optionElement.text = dt.getName();
           target.appendChild( optionElement );
         }
         
