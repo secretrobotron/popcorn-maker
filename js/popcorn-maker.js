@@ -681,7 +681,7 @@
       $(".sound-btn a span").css('backgroundPosition','0 0');
     });
 
-    $('.timeline-title.media-title-div').click(function(){
+    $('li.edit a').click(function(){
       $('#url').val( b.getCurrentMedia().getUrl() );
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
