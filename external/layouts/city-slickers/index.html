@@ -274,6 +274,7 @@
 			progressOuter,
 			playButton,
 			map,
+			georssLayer,
 			center,
 			playMarker,
 			video,
@@ -329,10 +330,9 @@
 				videoContainer.style.opacity = '';
 			});
 			
-			//var georssLayer = new google.maps.KmlLayer('http://api.flickr.com/services/feeds/geo/?g=322338@N20&lang=en-us&format=feed-georss');
-			//georssLayer.setMap(map);
-			
 			google.maps.event.addListener(map, 'dragstart', function() {
+				//they don't want this anymore
+				return;
 				var endListener;
 
 				function dragEnd() {
@@ -691,6 +691,14 @@
 						disableDoubleClickZoom: false,
 						scrollwheel: false
 					});
+
+					if (!georssLayer) {
+						georssLayer = new google.maps.KmlLayer('http://maps.google.com/maps/ms?authuser=0&vps=2&ie=UTF8&hl=en&oe=UTF8&msa=0&output=kml&msid=209141122663415148547.0004aaa733654145f04d1', {
+							preserveViewport: true
+						});
+					}
+					georssLayer.setMap(map);
+					
 				}
 				
 				buildEndStuff();
