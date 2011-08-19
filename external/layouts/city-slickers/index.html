@@ -8,7 +8,7 @@
 		body {
 			margin: 0;
 			background-color: #000;
-			font-family: Bell MT, garamond,georgia;
+			font-family: 'Bell MT', 'garamond', 'georgia';
 		}
 		
 		header {
@@ -155,6 +155,7 @@
 			top: 60px;
 			left: 50%;
 			margin-left: -450px;
+			border: solid white 2px;
 			overflow: hidden;
 		}
 		
@@ -164,8 +165,29 @@
 			max-height: 500px;
 			width: 900px;
 			padding: 16px;
-			border: solid white 2px;
 			background-color: rgba(0, 0, 0, 0.6);
+		}
+		
+		.endstuff .header {
+			background-color: black;
+			color: white;
+			position: relative;
+			padding: 16px;
+			font-size: 20px;
+			font-weight: bold;
+		}
+		
+		.endstuff .close {
+			color: white;
+			font-size: 14px;
+			position: absolute;
+			right: 16px;
+			top: 16px;
+			cursor: pointer;
+		}
+
+		.endstuff .close:hover {
+			text-decoration: underline;
 		}
 
 		.endstuff .gallery {
@@ -183,7 +205,7 @@
 			margin-bottom: 10px;
 		}
 		
-		.endstuff > * {
+		.endstuff-container > * {
 			margin: 4px;
 		}
 		
@@ -455,10 +477,28 @@
 					regex = /(https?:\/\/)?(www\.)?flickr\.com\/photos\/([A-Za-z0-9@]+)\/galleries\/(\d+)\/?/;
 
 				options = allEvents[butterId];
-				if (!options.endstuff) {
+				if (!options.endstuff && options.marker) {
 					container = document.createElement('div');
 					container.setAttribute('class', 'endstuff');
 					document.body.appendChild(container);
+					
+					element = document.createElement('div');
+					element.setAttribute('class', 'header');
+					element.appendChild(document.createTextNode(options.label));
+					container.appendChild(element);
+					
+					element = document.createElement('div');
+					element.setAttribute('class', 'close');
+					element.appendChild(document.createTextNode('close'));
+					(function(opt) {
+						element.addEventListener('click', function () {
+							opt.endstuff.parentNode.style.display = '';
+							if (opt.vidElement) {
+								opt.vidElement.pause();
+							}
+						}, false);
+					}(options));
+					container.appendChild(element);
 					
 					options.endstuff = document.createElement('div');
 					options.endstuff.setAttribute('class', 'endstuff-container');
