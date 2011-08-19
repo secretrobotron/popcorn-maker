@@ -5,7 +5,7 @@
     var mediaInstances = {},
         currentMediaInstance,
         target = document.getElementById( options.target ) || options.target,
-        b = this, targettedEvent;
+        b = this;
 
     this.findAbsolutePosition = function (obj) {
 	    var curleft = curtop = 0;
@@ -19,19 +19,60 @@
     //returns an array
     };
 
-    this.moveFrameLeft = function() {
-      var cornOptions = targettedEvent.options.popcornOptions;
-      cornOptions.start > 0.25 ? cornOptions.start -= 0.25 : cornOptions.start = 0;
-      cornOptions.end -= 0.25;
-      this.trigger( "trackeventupdated", targettedEvent.options );
+    this.moveFrameLeft = function( event ) {
+
+      if ( b.targettedEvent ) {
+
+        var cornOptions = b.targettedEvent.popcornOptions;
+        var inc = event.shiftKey ? 2.5 : 0.25;
+
+        if ( cornOptions.start > inc ) {
+
+          cornOptions.start -= inc;
+          if ( !event.ctrlKey ) {
+
+            cornOptions.end -= inc;
+          }
+        } else {
+
+          if ( !event.ctrlKey ) {
+
+            cornOptions.end = cornOptions.end - cornOptions.start;
+          }
+          cornOptions.start = 0;
+        }
+
+        this.trigger( "trackeventupdated", b.targettedEvent );
+      }
     };
 
-    this.moveFrameRight = function() {
-      var cornOptions = targettedEvent.options.popcornOptions;
-      cornOptions.end > 0.25 ? cornOptions.end += 0.25 : cornOptions.end = 0;
-      cornOptions.start += 0.25;
-      this.trigger( "trackeventupdated", targettedEvent.options );
+    this.moveFrameRight = function( event ) {
+
+      if ( b.targettedEvent ) {
+
+        var cornOptions = b.targettedEvent.popcornOptions;
+        var inc = event.shiftKey ? 2.5 : 0.25;
+
+        if ( cornOptions.end < b.duration() - inc ) {
+
+          cornOptions.end += inc;
+          if ( !event.ctrlKey ) {
+
+            cornOptions.start += inc;
+          }
+        } else {
+
+          if ( !event.ctrlKey ) {
+
+            cornOptions.start += b.duration() - cornOptions.end;
+          }
+          cornOptions.end = b.duration();
+        }
+
+        this.trigger( "trackeventupdated", b.targettedEvent );
+      }
     };
+
     // Convert an SMPTE timestamp to seconds
     this.smpteToSeconds = function( smpte ) {
       var t = smpte.split(":");
@@ -207,7 +248,7 @@
       },
       // called when a track event is clicked
       click: function ( track, trackEventObj, event, ui ) {
-        targettedEvent = trackEventObj;
+        b.targettedEvent = trackEventObj.options;
       },
 
       // called when a track event is double clicked
@@ -268,7 +309,8 @@
       }
 
       addTrackEvent( event.data );
-      
+      b.targettedEvent = event.data;
+
     });
 
     this.listen( "trackeventremoved", function( event ) {
@@ -329,7 +371,7 @@
         delete mediaInstances[ event.data.getId() ];
         
         
-        if ( event.data.getId() === currentMediaInstance.media.getId() ) {
+        if ( currentMediaInstance && ( event.data.getId() === currentMediaInstance.media.getId() ) ) {
           currentMediaInstance = undefined;
         }
 

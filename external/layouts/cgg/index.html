@@ -289,16 +289,13 @@
 			var b = new Butter();
 			b.comm();
 
-			var commClient = new b.CommClient( "previewerClient", function ( message ) {
-				console.log('in preview', message);
-			} );
+			var commClient = new b.CommClient( "previewerClient" );
 
 			commClient.listen( "ping", function( message ) {
 				commClient.send( Popcorn.instances.indexOf( popcorn ), "pong" );
 			});
 
 			commClient.listen( "trackeventadded", function ( message ) {
-				console.log('trackeventadded!!!!!!', message);
 			
 				var butterId = message.id;
 				
@@ -320,14 +317,12 @@
 
 					//butterTracks[butterId] = popcornEventId;
 
-					console.log('trackeventupdated', message);
 				//}
 			});
 		
 			commClient.listen( "trackeventremoved", function ( message ) {
 				var butterId = message.id;
 				deleteEvent(butterId);
-				console.log('trackeventremoved', message);
 			});
 
 			videoSetup = true;
