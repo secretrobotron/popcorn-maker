@@ -233,8 +233,7 @@ THE SOFTWARE.
   var Media = function ( options ) {
     options = options || {};
 
-    var tracksByName = {},
-        tracks = [],
+    var tracks = [],
         id = numMedia++,
         name = options.name || "Media" + id + Date.now(),
         url,
@@ -299,18 +298,13 @@ THE SOFTWARE.
       if ( !(track instanceof Track) ) {
         track = new Track( track );
       } //if
-      tracksByName[ track.getName() ] = track;
       tracks.push( track );
       butter && track.setButter( butter );
       return track;
     }; //addTrack
 
     this.getTrack = function ( name ) {
-      var track = tracksByName[ name ];
-      if ( track ) {
-         return track;
-      } //if
-
+      var track;
       for ( var i=0, l=tracks.length; i<l; ++i ) {
         if ( tracks[i].getName() === name ) {
           return tracks[i];
@@ -328,7 +322,6 @@ THE SOFTWARE.
       if ( idx > -1 ) {
         tracks.splice( idx, 1 );
         track.setButter( undefined );
-        delete tracksByName[ track.getName() ];
         var events = track.getTrackEvents();
         for ( var i=0, l=events.length; i<l; ++i ) {
           butter.trigger( "trackeventremoved", events[i] );
@@ -355,7 +348,7 @@ THE SOFTWARE.
       return duration;
     }; //duration
 
-    this.importJSON = function ( importData ) {
+    this.importJSON = function ( importData, noRecursion ) {
       if ( importData.name ) {
         name = importData.name;
       }
@@ -363,7 +356,7 @@ THE SOFTWARE.
       importData.url && that.setUrl( importData.url );
       
       //butter.listen( "timelineready", function(){
-        if ( importData.tracks ) {
+        if ( !noRecursion && importData.tracks ) {
           var importTracks = importData.tracks;
           for ( var i=0, l=importTracks.length; i<l; ++i ) {
             var newTrack = new Track();
@@ -401,10 +394,8 @@ THE SOFTWARE.
 
     var events = {},
         medias = [],
-        mediaByName = {},
         currentMedia,
         targets = [],
-        targetsByName = {},
         projectDetails = {},
         that = this;
         
@@ -592,7 +583,6 @@ THE SOFTWARE.
         target = new Target( target );
       } //if
 
-      targetsByName[ target.getName() ] = target;
       targets.push( target );
 
       that.trigger( "targetadded", target );
@@ -631,7 +621,12 @@ THE SOFTWARE.
 
     //getTarget - get a target object by its id
     this.getTarget = function ( name ) {
-      return targetsByName[ name ];
+      for ( var i=0; i<targets.length; ++i ) {
+        if ( targets[i].getName() === name ) {
+          return targetsByName[ name ];
+        }
+      } 
+      return undefined;
     };
 
     /****************************************************************
@@ -647,6 +642,7 @@ THE SOFTWARE.
           for ( var k=0, j=targets.length; k<j; ++k ) {
             if ( targets[ k ].getName() === targetData.name ) {
               t = targets[ k ];
+              break;
             }
           }
 
@@ -713,13 +709,11 @@ THE SOFTWARE.
     };
     
     this.clearProject = function() {
-      var allTargets = that.getTargets(),
-      allMedias = that.getAllMedia();
-      for ( var i = 0, l = allTargets.length; i < l; i++ ) {
-        that.removeTarget( allTargets[ i ] );
+      while ( targets.length > 0 ) {
+        that.removeTarget( targets[ 0 ] );
       }
-      for ( var i = 0, l = allMedias.length; i < l; i++ ) {
-        that.removeMedia( allMedias[ i ] );
+      while ( medias.length > 0 ) {
+        that.removeMedia( medias[ 0 ] );
       }
     };
 
@@ -745,10 +739,6 @@ THE SOFTWARE.
 
     //getMedia - get the media's information
     this.getMedia = function ( media ) {
-      if ( mediaByName[ media ] ) {
-        return mediaByName[ media ];
-      }
-
       for ( var i=0,l=medias.length; i<l; ++i ) {
         if ( medias[i].getName() === media ) {
           return medias[i];
@@ -784,7 +774,6 @@ THE SOFTWARE.
 
       var mediaName = media.getName();
       medias.push( media );
-      mediaByName[ mediaName ] = media;
 
       media.setButter( that );
       if ( !currentMedia ) {
@@ -802,7 +791,6 @@ THE SOFTWARE.
       var idx = medias.indexOf( media );
       if ( idx > -1 ) {
         medias.splice( idx, 1 );
-        delete mediaByName[ media.getName() ];
         var tracks = media.getTracks();
         for ( var i=0, l=tracks.length; i<l; ++i ) {
           that.trigger( "trackremoved", tracks[i] );
