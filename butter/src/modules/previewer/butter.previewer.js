@@ -149,23 +149,18 @@
                   vidUrl = thisChild.getAttribute( "data-butter-soundcloud" );
                 }
 
-                /*
                 if ( importMedia ) {
                   for ( var m=0; m<importMedia.length; ++m ) {
-                    if ( vidUrl === importMedia[ m ].url && thisChild.id === importMedia[ m ] ) {
-                      alert( vidUrl + ", " + thisChild.id );
+                    if ( thisChild.id === importMedia[ m ].target ) {
+                      vidUrl = importMedia[ m ].url;
                     }
                   }
                 }
-                */
 
-                if ( vidUrl ) {
-
-                  that.addMedia( { 
-                    target: thisChild.id, 
-                    url: vidUrl 
-                  } );
-                }
+                that.addMedia( { 
+                  target: thisChild.id, 
+                  url: vidUrl 
+                } );
 
               }
             } // else
