@@ -2,7 +2,7 @@
 <html lang="en-US">
 	<head>
 		<meta charset="UTF-8">
-		<title>Yo Momma</title>
+		<title>Creative Growth</title>
 		<style type="text/css">
 		
 		body {
@@ -100,6 +100,7 @@
 		
 		var toLoad = 0, loaded = 0;
 		var flickrData = {};
+		var flickrPages = {};
 		var time = 0.5;
 		var r = Math.random;
 		var container = document.getElementById('container');
@@ -197,7 +198,7 @@
 					fd = flickrData[options.question];
 					if (fd) {
 						for (j = 0, c = 0; c < 1 && j < fd.length; j++) {
-							if (fd[j].aspect && Math.abs(options.aspect - fd[j].aspect) < 0.2) {
+							if (fd[j].aspect && Math.abs(options.aspect - fd[j].aspect) < 0.3) {
 								options.id = fd[j].id;
 								options.flickrData = fd[j];
 								
@@ -238,26 +239,6 @@
 				}
 			}
 			
-			return;
-
-			for (i = 0; i < 10 && i < flickrData.length && time < p.duration(); i++) {
-/*
-				p.fkb({
-					start: time,
-					end: time + 2 + Math.random() * 2,
-					id: flickrData[0].id,
-					apikey: apikey,
-					target: 'container',
-					startPosition: [0, 0, 100, 100],
-					endPosition: [-10, -10, 120, 120],
-					onLoad: 'imageLoaded'
-				});
-*/
-				flickrData.shift();
-				toLoad++;
-				time += 6;
-			}
-			
 		}
 
 		document.getElementById('go').disabled = false;
@@ -281,8 +262,13 @@
 					if (!flickrData[index]) {
 						flickrData[index] = [];
 					}
+					
+					if (!flickrPages[index]) {
+						flickrPages[index] = 1;
+					}
 
-					var url = 'http://api.flickr.com/services/rest/?lang=en-us&format=json&method=flickr.photos.search&api_key=' + apikey + '&text=' + encodeURIComponent(search) + '&safe_search=1&sort=relevance&jsoncallback=flickr' + i;
+					var url = 'http://api.flickr.com/services/rest/?lang=en-us&format=json&method=flickr.photos.search&api_key=' + apikey + '&text=' + encodeURIComponent(search) + '&safe_search=1&sort=relevance&page=' + flickrPages[index] + '&jsoncallback=flickr' + i;
+					flickrPages[index]++;
 
 					Popcorn.xhr.getJSONP( url, function( data ) {
 						if (!data.photos) {
