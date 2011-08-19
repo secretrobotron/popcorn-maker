@@ -133,14 +133,14 @@
     duration = options.end - options.start;
 
     if (isNaN(options.fadeIn)) {
-      options.fadeIn = Math.min(0.25, duration / 8);
+      options.fadeIn = 0; //Math.min(0.25, duration / 8);
     } else if (options.fadeIn > duration) {
       options.fadeIn = duration;
     }
 
     duration -= options.fadeIn;
     if (isNaN(options.fadeOut)) {
-      options.fadeOut = Math.min(0.25, (options.end - options.start) / 8);
+      options.fadeOut = 0; //Math.min(0.25, (options.end - options.start) / 8);
     } else if (options.fadeOut > duration) {
       options.fadeIn = duration;
     }

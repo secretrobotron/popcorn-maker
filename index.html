@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en" class="no-js">
 <head> 
+  <link rel="icon" href="images/icon.ico" type="image/x-icon" />
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title>Popcorn Maker</title>
@@ -13,13 +14,14 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="lib/trackLiner.css">
   <link rel="stylesheet" href="css/popcorn-maker.css">
-  <link href="lib/jquery-ui-1.8.5.custom.css" rel="stylesheet" type="text/css">
+  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
 
   <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
 	<script src="lib/modernizr-1.5.min.js"></script>
 	<script src="lib/jquery.min.js"></script>
 	<script charset="utf-8" type="text/javascript" src="lib/jquery.infieldlabel.min.js"></script>
   <script type="text/javascript" src="lib/jquery.tinyscrollbar.min.js"></script>
+  <script type="text/javascript" src="lib/slides.min.jquery.js"></script>
 	<script type="text/javascript" src="lib/jquery_002.js"></script>
   <script src="lib/jquery-ui.js" type="text/javascript"></script>
 	<script type="text/javascript" src="lib/jquery.qtip.pack.js"></script>
@@ -34,9 +36,9 @@
 <!-- ########## START HEADER ########## -->
 <header>
 
- <h1 class="logo"><a href="#">Popcorn Maker</a></h1>
+  <h1 class="logo"><a href="index.html#"><img class="logo-popcorn-maker" src="images/popcorn-maker-logo.png" width="236" height="36" alt="Popcorn Maker"></a></h1>
  
- <div class="header-right">
+  <div class="header-right">
  
    <div class="my-projects-drpdwn">
    <select name="projects-dd" class="projects-dd" style="width:258px;" tabindex="1">
@@ -50,7 +52,7 @@
    <ul class="header-buttons">
    <li class="add-btn"><input type="button" class="add-project-btn" name="add-project" value="" ></li>
    <li class="save-btn"><input type="button" class="save-project-btn p-3" name="save-project" value="" ></li>
-   <li class="help-btn"><a href="#">help</a></li>
+   <li class="help-btn"><a class="open-help" href="#">help</a></li>
    </ul>
    </form>
    
@@ -120,7 +122,7 @@
     	
     	
 <!-- ***** START TIMELINE ***** -->    	
-  <div class="timeline">
+  <div id="timeline" class="timeline">
   
    <!-- ***** START PLAYBACK CONTROLS ***** -->
    <div class="playback-controls">
@@ -129,11 +131,6 @@
      <div class="timeline-duration" id="timeline-duration">00:00:00</div>
      
      <div class="timeline-progress-wrapper disable-select">
-     <!-- ***** TIMING NOTCHES ***** -->  
-       <div class="timing-notches-div disable-select">
-       	 <canvas id="timing-notches-canvas" class="disable-select"></canvas>
-       </div>
-     <!-- ***** END TIMING NOTCHES ***** -->  
        <div id="scrubber-container" class="disable-select" style="z-index: 1; position: relative;">
          <div id="scrubber-interact" class="disable-select" style="position: absolute; left: 0px; top: -10px; height: 400%; width: 100%;"></div>
          <div class="timeline-bar disable-select">
@@ -145,6 +142,11 @@
            </div>
          </div>
        </div>
+     <!-- ***** TIMING NOTCHES ***** -->  
+       <div class="timing-notches-div disable-select">
+       	 <canvas id="timing-notches-canvas" class="disable-select"></canvas>
+       </div>
+     <!-- ***** END TIMING NOTCHES ***** -->  
      </div>
      
      <div class="sound-btn"><a href="#"><span >play/pause</span></a></div>
@@ -155,7 +157,9 @@
    <div class="enable-scroll">
       
       <!-- ***** START VIEWPORT ***** -->               
-      <div style="color: white; overflow: hidden; position: absolute; width: 180px; height: 127px;"><div style="position: absolute;" class="timeline-div" id="layers-div" ></div></div>   
+      <div style="color: white; overflow: hidden; position: absolute; width: 180px; height: 108px;"><div style="position: absolute;" class="timeline-div" id="layers-div" >
+      </div></div> 
+<div align="center" style="position:absolute; bottom:0; margin-left:7px; width:93px; height:16px; margin-bottom:10px;"><div id="slider"></div></div>    
       <div class="viewport" id="tracks-div" style="position: absolute; overflow: scroll; left: 120px; right: 10px;">
         <!--<div class="timeline-left timeline-div"></div>-->
         
@@ -312,7 +316,7 @@
               <p class="desc">Loading the selected project will erase any unsaved changes to the current project. Ar you sure you wish to continue?</p>
               <input type="submit" class="confirm-load-btn" value="Load Project">
             </div>
-        </div
+        </div>
         
     </div>
  </div>
@@ -320,7 +324,129 @@
 <div id="loading-overlay">
   <h1>Loading...</h1>
 </div>
-  
+
+<!-- ###### FIRST RUN POPUPS ######## -->
+<div id="welcome-popup"><!-- welcome popup -->
+  <a class="help-close-btn" href="#"><span></span></a>
+	<div class="popup-header">
+    	<h3 class="welcome-header">Welcome</h3>
+  </div>
+	<div class="scroll-popup-container">
+    	<div class="padding-div">
+            <h1>Welcome to Popcorn Maker</h1>
+            <h3 class="welcome-h3">Let's make some popcorn.</h3>
+            <h4>I want to Jump Right in!</h4>
+            <a href="#" class="wizard-create-new-btn wizard-create-new-btn">New Project</a>
+            <p>OR</p>
+            <h4>Help me get started</h4>
+            <a href="#" class="tutorial-btn">Tutorial</a>
+            <a href="#" class="mozilla-logo"><img src="images/logo_mozilla.png" width="109" height="28" alt="Mozilla Logo"></a>
+            <p class="copyright">&copy;2011<a href="#">Terms of services</a><a href="#">Fork me</a><a href="#">Popcorn.js.home</a><a href="#">Contact</a></p>
+        </div>
+        <div class="padding-div">
+            <h1>Welcome to Popcorn Maker</h1>
+            <h3>Let's make some popcorn.</h3>
+            <div class="left-div">
+                <p class="desc">Popcorn Maker is a fun and easy way to make interactive open video pages. Here's how to get started:</p>
+            	<ul class="">
+                	<li><span>1</span><p>Make a new project with</p> <div class="add-btn"><input type="button" class="wizard-add-project-btn p-5" style="height: 24px; width: 24px;" name="add-project" value="" ></div> <p>You can pick a template or <a href="index.html#">design your own</a>.</p></li>
+                    <li><span>2</span><p>Use Popcorn Maker to add actions to the timeline of your video.</p></li>
+                    <li><span>3</span><p>When you're done, export using</p><img class="image-icon" src="images/save-btn.png" alt=""></li>
+                </ul>
+                <div class="checkout"> <p>for more, checkout the</p><div class="help-btn"><a class="open-help" href="#">user manual</a></div> </div>
+            </div>
+            <div class="right-div">
+            </div>
+        </div>
+    </div>
+</div><!-- End welcome popup -->
+
+<div id="help-popup"><!-- HELP popup -->
+  <a class="help-close-btn" href="#"><span></span></a>
+        	<div class="popup-header">
+            	<h3>Help</h3>
+            </div>
+    <div class="help-header">
+        <h1>Popcorn Maker Help</h1>
+        <div class="social">
+            <ul class="">
+                <li class="mozilla-labs"><a href="#" class="">Mozilla Labs</a></li>
+                <li class="twitter"><a href="#" class="">Twitter</a></li>
+                <li class="facebook"><a href="#" class="">Facebook</a></li>
+            </ul>
+        </div>
+    </div>
+	<div class="scroll-popup-container">
+
+        <div class="help-main padding-div">
+            <div class="inner">
+            	<h2>About Popcorn Maker</h2>
+                <p>Popcorn Maker is a fun and easy way to make interactive open video pages. You can use it here or install it on your own site. We have a final cut version available too.</p> <p>Crafted lovingly by the Mozilla Foundation and the popcorn.js team.<a href="index.html#" class="learn-more">Learn more &raquo;</a></p>
+                <div class="help-section">
+                    <section class="getting-started">
+                        <h2>Getting Started</h2>
+                        <ul class="">
+                            <li class="users-manual"><a href="#" id="_user_manual">Users Manual</a></li>
+                            <li class="tutorials"><a href="#" id="_tutorials">Tutorials</a></li>
+                        </ul>
+                    </section>
+                    <section class="contribute">
+                        <h2>Contribute</h2>
+                        <ul class="">
+                            <li class="submit-template"><a href="#" id="_submit_template">Submit a Template</a></li>
+                            <li class="file-a-bug"><a href="#" id="_file_a_bug">File a bug</a></li>
+                            <li class="download-sdk"><a href="#" id="_download_sdk">Download the Butter SDK <span>and integrate Popcorn into your app.</span></a></li>
+                        </ul>
+                    </section>
+                    <section class="partners">
+                        <h2>Partners</h2>
+                        <ul class="">
+                            <li class="">CDOT</li>
+                            <li class="">Zero Drive</li>
+                            <li class="">BAVC</li>
+                        </ul>
+                    </section>
+                    <a href="#" class="mozilla-logo"><img src="images/logo_mozilla.png" width="109" height="28" alt="Mozilla Logo"></a>
+                    <p class="copyright">&copy;2011<a href="#">Terms of services</a><a href="#">Fork me</a><a href="#">Popcorn.js.home</a><a href="#">Contact</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="popup-inner users_manual padding-div">
+        	<div class="inner">
+            	<h2>User's Manual</h2>
+                <div class="user-manual-dropdown">
+                   <select name="websites2" class="websites2" style="width:258px;" tabindex="1">
+                   <option name="one" value="msDropDown" >msDropDown</option>
+                   <option name="two" value="PrototypeCombobox" >Prototype Combobox</option>
+                   <option selected="selected" value="jQuery Tabs" >jQuery Tabs</option>
+                   <option value="Common Accordion" >Common Accordion</option>
+                   </select>            
+                </div>
+                <div class ="slides faq">
+                    <ul class="slides_container faqs">
+                        <li>
+                            <h2>Part I: What is Popcorn Maker?</h2>
+                            <p>Popcorn Maker is a fun and easy way to make interactive open video pages. You can use it here or install it on your own site. We have a final cut version available too.</p><p>Popcorn Maker is a fun and easy way to make interactive open video pages. You can use it here or install it on your own site. We have a final cut version available too.</p>
+                        </li>
+                        <li>
+                            <h2>Part 2: What is Popcorn Maker?</h2>
+                            <p>Popcorn Maker is a fun and easy way to make interactive open video pages. You can use it here or install it on your own site. We have a final cut version available too.</p><p>Popcorn Maker is a fun and easy way to make interactive open video pages. You can use it here or install it on your own site. We have a final cut version available too.</p>
+                        </li>
+                        <li>
+                            <h2>Part 3: What is Popcorn Maker?</h2>
+                            <p>Popcorn Maker is a fun and easy way to make interactive open video pages. You can use it here or install it on your own site. We have a final cut version available too.</p><p>Popcorn Maker is a fun and easy way to make interactive open video pages. You can use it here or install it on your own site. We have a final cut version available too.</p>
+                        </li>
+                        <li>
+                            <h2>Part 4: What is Popcorn Maker?</h2>
+                            <p>Popcorn Maker is a fun and easy way to make interactive open video pages. You can use it here or install it on your own site. We have a final cut version available too.</p><p>Popcorn Maker is a fun and easy way to make interactive open video pages. You can use it here or install it on your own site. We have a final cut version available too.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- END HELP popup -->
+<!-- ###### END FIRST RUN POPUPS ######## -->  
 </body>
 </html>
 

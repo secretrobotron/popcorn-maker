@@ -46,6 +46,7 @@ html, body {
 }
 
 .butter-track-event {
+  overflow: hidden;
   background-color: #FFFF33;
 	background-image: -webkit-gradient(
 		linear,
@@ -165,6 +166,7 @@ html, body {
 }
 
 .timing-notches-div {
+  margin-top: 6px;
   overflow: hidden;
   position: relative;
 }

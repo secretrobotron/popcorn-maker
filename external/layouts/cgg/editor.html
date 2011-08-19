@@ -625,6 +625,8 @@
 				validateDimensions(null, true);
 
 				elements.target.value = trackEvent.target;
+				
+				elements.question.value = trackEvent.question;
 			}
 			
 			function initialize() {
@@ -703,7 +705,7 @@
 					}
 				}, false);
 
-				elements.delete.addEventListener('click', function() {
+				elements['delete'].addEventListener('click', function() {
 					//tell butter to delete
 					if (client) {
 						client.send( '', 'deleteclicked');

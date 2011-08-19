@@ -11,6 +11,73 @@
   currentLayout;
 
   window.addEventListener("DOMContentLoaded", function() {
+  
+    $("#properties-panel").css('height','38px');
+
+    $("#properties-panel").css('display','block');
+
+    $(".hide-timeline").css('bottom','36px');	
+
+    $(".hide-timeline").css('display','block');
+
+    $("#properties-panel").animate({
+
+      height: '270px'
+
+    }, 500);
+
+    $(".hide-timeline").animate({
+
+      bottom: '268px'
+
+    }, 500);  
+    $('#welcome-popup').fadeIn(2000);
+    $('#loading-overlay').hide();
+    //Carousel for Help inner page
+		$(function(){
+			$('.slides').slides({
+				preload: true,
+				generateNextPrev: true
+			});
+		});
+		
+		//Popup sliding
+    $('.tutorial-btn').click(function() {
+										 
+        $(this).parent().parent().animate({
+            left: '-700px'
+        }, 500);
+
+    });
+    $('.open-help, .help').click(function() {
+										 
+        $("#help-popup").fadeIn('slow');
+
+    });
+    
+    $('.help-close-btn').click(function() {
+										 
+        $("#help-popup").fadeOut('fast');
+        $("#welcome-popup").hide();
+
+    });
+    
+    $('#_user_manual').click(function() {
+										 
+        $("#help-popup .scroll-popup-container").animate({
+            left: '-700px'
+        }, 500);
+
+    });
+
+    function buildRegistry() {
+      var registry = b.getRegistry();
+      for( var i = 0, l = registry.length; i < l; i++ ) {
+        if( registry[ i ].type !== "text" ) {
+          b.addPlugin( { type: registry[ i ].type } );
+        }
+      } 
+    }
 
     function toggleLoadingScreen ( state ) {
       if ( state ) {
@@ -32,28 +99,16 @@
     currentLayout = layouts[ 0 ];
 
     var b  = new Butter();
-    document.getElementById( "main" ).style.height = window.innerHeight - document.getElementsByTagName( "HEADER" )[ 0 ].clientHeight - 5 + "px";
+    document.getElementById( "main" ).style.height = window.innerHeight - document.getElementsByTagName( "HEADER" )[ 0 ].clientHeight - 15 + "px";
     b.comm();
 
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html" } );
+    
     b.previewer({
       layout: currentLayout,
       target: "main",
-      popcornURL: "../lib/popcorn-complete.js",
-      media: "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"
+      popcornURL: "../lib/popcorn-complete.js"
     });
-    b.listen( "layoutloaded", function( e ){
-      b.buildPopcorn( b.getCurrentMedia() , function() {
-
-        var registry = b.getRegistry();
-        for( var i = 0, l = registry.length; i < l; i++ ) {
-          b.addPlugin( { type: registry[ i ].type } );
-        }
-        $('.tiny-scroll').tinyscrollbar();
-        toggleLoadingScreen( false );
-      }, b.popcornFlag());
-      b.unlisten( "layoutloaded", this );
-    } );
 
     b.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
     
@@ -101,9 +156,11 @@
     var layersDiv = document.getElementById( "layers-div" );
     var scrubberContainer = document.getElementById( "scrubber-container" );
     var tracksDiv = document.getElementById( "tracks-div" );
+    var timelineDiv = document.getElementById( "timeline" );
     var progressBar = document.getElementById( "progress-bar" );
     var timelineDuration = document.getElementById( "timeline-duration" );
     var timelineTarget = document.getElementById( "timeline-div" );
+    var slideValue = 0;
 
     function checkScrubber( event ) {
 
@@ -165,8 +222,8 @@
       drawCanvas();
     };
 
-    tracksDiv.addEventListener( "DOMMouseScroll", zoom, false );
-    tracksDiv.addEventListener( "mousewheel", zoom, false );
+    timelineDiv.addEventListener( "DOMMouseScroll", zoom, false );
+    timelineDiv.addEventListener( "mousewheel", zoom, false );
 
     tracksDiv.addEventListener( "scroll", function( event ) {
 
@@ -188,6 +245,7 @@
     scrubberContainer.addEventListener( "mousedown", function( event ) {
 
       scrubberClicked = true;
+      b.targettedEvent = undefined;
       b.currentTimeInPixels( event.clientX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft );
     }, false);
 
@@ -221,7 +279,6 @@
     });
 
     var drawCanvas = function() {
-
       var canvasDiv = document.getElementById( "timing-notches-canvas" );
       canvasDiv.style.width = timelineTarget.style.width;
 
@@ -230,26 +287,52 @@
       canvasDiv.height = canvasDiv.offsetHeight;
       canvasDiv.width = canvasDiv.offsetWidth;
 
-      var inc = canvasDiv.offsetWidth / b.duration() / 4,
-          heights = [ 10, 4, 7, 4 ],
+      var inc = canvasDiv.offsetWidth / b.duration(),
+          //heights = [ 10, 4, 7, 4 ],
           textWidth = context.measureText( b.secondsToSMPTE( 5 ) ).width,
-          lastTimeDisplayed = -textWidth / 2;
+          padding = 20,
+          lastPosition = 0,
+          lastTimeDisplayed = -( ( textWidth + padding ) / 2 );
 
       context.clearRect ( 0, 0, canvasDiv.width, canvasDiv.height );
 
       context.beginPath();
 
-      for ( var i = 1, l = b.duration() * 4; i < l; i++ ) {
+      for ( var i = 1, l = b.duration(); i < l; i++ ) {
 
         var position = i * inc;
+        var spaceBetween = -~( position ) - -~( lastPosition );
 
-        context.moveTo( -~position, 0 );
-        context.lineTo( -~position, heights[ i % 4 ] );
+        // ensure there is enough space to draw a seconds tick
+        if ( spaceBetween > 3 ) {
 
-        if ( i % 4 === 0 && ( position - lastTimeDisplayed ) > textWidth ) {
+          // ensure there is enough space to draw a half second tick
+          if ( spaceBetween > 6 ) {
 
-          lastTimeDisplayed = position;
-          context.fillText( b.secondsToSMPTE( i / 4 ), -~position - ( textWidth / 2 ), 21 );
+            context.moveTo( -~position - spaceBetween / 2, 0 );
+            context.lineTo( -~position - spaceBetween / 2, 7 );
+
+            // ensure there is enough space for quarter ticks
+            if ( spaceBetween > 12 ) {
+
+              context.moveTo( -~position - spaceBetween / 4 * 3, 0 );
+              context.lineTo( -~position - spaceBetween / 4 * 3, 4 );
+
+              context.moveTo( -~position - spaceBetween / 4, 0 );
+              context.lineTo( -~position - spaceBetween / 4, 4 );
+
+            }
+          }
+          context.moveTo( -~position, 0 );
+          context.lineTo( -~position, 10 );
+
+          if ( ( position - lastTimeDisplayed ) > textWidth + padding ) {
+
+            lastTimeDisplayed = position;
+            context.fillText( b.secondsToSMPTE( i ), -~position - ( textWidth / 2 ), 21 );
+          }
+
+          lastPosition = position;
         }
       }
       context.stroke();
@@ -261,11 +344,38 @@
       drawCanvas();
     });
 
+      $( "#slider" ).slider({
+			value:0,
+			min: 0,
+			max: 6,
+			step: 1,
+			slide: function( event, ui ) {
+        b.zoom( slideValue - ui.value );
+        drawCanvas();
+        slideValue = ui.value;
+			}
+		});
+
     document.addEventListener( "keypress", function( event ) {
+
+      var inc = event.shiftKey ? 1 : 0.1;
+
       if( event.keyCode === 39 ) {
-        b.moveFrameRight();
+        if ( b.targettedEvent ) {
+
+          b.moveFrameRight( event );
+        } else {
+
+          b.currentTime( b.currentTime() + inc );
+        }
       } else if( event.keyCode === 37 ) {
-        b.moveFrameLeft();
+        if ( b.targettedEvent ) {
+
+          b.moveFrameLeft( event );
+        } else {
+
+          b.currentTime( b.currentTime() - inc );
+        }
       }
     }, false);
 
@@ -406,6 +516,7 @@
 
       if ( event.charCode === 32 ) {
 
+        event.preventDefault();
         b.isPlaying() ? b.play() : b.pause();
       }
     }, false );
@@ -487,11 +598,13 @@
     });
 
     document.getElementsByClassName( "sound-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
-      b.mute();
+      b.mute && b.mute();
     }, false);
 
     document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
-      b.isPlaying() ? b.play() : b.pause();
+      if ( b.isPlaying && b.play && b.pause ) {
+        b.isPlaying() ? b.play() : b.pause();
+      }
     }, false);
 
     b.listen( "mediaplaying", function( event ) {
@@ -503,6 +616,21 @@
     } );
     
     $('.add-project-btn').click(function() {
+      $('.close-div').fadeOut('fast');
+      $('.popupDiv').fadeIn('slow');
+      $('#popup-add-project').show();
+      centerPopup( $('#popup-add-project') );
+      $(' .balck-overlay ').show();
+    });  
+    $('.wizard-add-project-btn').click(function() {
+      $('.close-div').fadeOut('fast');
+      $('.popupDiv').fadeIn('slow');
+      $('#popup-add-project').show();
+      centerPopup( $('#popup-add-project') );
+      $(' .balck-overlay ').show();
+    });
+    
+    $('.wizard-create-new-btn').click(function() {
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-add-project').show();
@@ -644,7 +772,7 @@
       var title = projectsDrpDwn.val();
       localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
       localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
-      if ( projectsDrpDwn[0].selectedIndex > 0 && localProjects[ title ] && localProjects[ title ].project.title !== b.getProjectDetails( "title" ) ) {
+      if ( projectsDrpDwn[0].selectedIndex > 0 && localProjects[ title ] ) {
         $('.close-div').fadeOut('fast');
         $('.popupDiv').fadeIn('slow');
         $('#load-confirmation-dialog').show();
@@ -656,31 +784,31 @@
     $(".confirm-load-btn").click(function() {
       var title = projectsDrpDwn.val();
 
-      if ( localProjects && localProjects[ title ] && localProjects[ title ].project.title !== b.getProjectDetails( "title" ) ) {
+      if ( localProjects && localProjects[ title ] ) {
         b.clearProject();         
         b.clearPlugins();
         currentLayout = localProjects[ title ].layout;
         (function ( localProject ) {
           b.listen( "layoutloaded", function( e ) {
             document.getElementById( "main" ).innerHTML = "";
+
             b.buildPopcorn( b.getCurrentMedia() , function() {
 
-              var registry = b.getRegistry();
-              for( var i = 0, l = registry.length; i < l; i++ ) {
-                b.addPlugin( { type: registry[ i ].type } );
-              }
+              buildRegistry();
               $('.tiny-scroll').tinyscrollbar();
               b.importProject( localProject );
               toggleLoadingScreen( false );
-            }, true );
+            }, b.popcornFlag() );
             b.unlisten( "layoutloaded", this );
           });
         })( localProjects[ title ] );
         toggleLoadingScreen( true );
+        
         b.loadPreview( {
           layout: currentLayout,
           target: "main",
           popcornURL: "../lib/popcorn-complete.js",
+          importMedia: localProjects[ title ].media,
         });
         $('.close-div').fadeOut('fast');
         $('.popups').hide();     
@@ -688,24 +816,28 @@
     });
     
     $(".create-new-btn").click(function() {
+      $("#welcome-popup").hide();
+      $("#help-popup").hide();
       b.clearProject();
       b.clearPlugins();
       b.setProjectDetails( "title", "Untitled Project");
       currentLayout = document.getElementById( 'layout-select' ).value;
       b.listen( "layoutloaded", function( e ) {
         b.buildPopcorn( b.getCurrentMedia() , function() {
-
-          var registry = b.getRegistry();
-          for( var i = 0, l = registry.length; i < l; i++ ) {
-            b.addPlugin( { type: registry[ i ].type } );
-          }
+          buildRegistry();
           $('.tiny-scroll').tinyscrollbar();
           toggleLoadingScreen( false );
+		     
         }, b.popcornFlag() );
         b.unlisten( "layoutloaded", this );
       });
 
       toggleLoadingScreen( true );
+      b.previewer({
+          layout: currentLayout,
+          target: "main",
+          popcornURL: "../lib/popcorn-complete.js"
+        });
       b.loadPreview( {
         layout: currentLayout,
         target: "main",
@@ -722,7 +854,9 @@
       
         try {
           var data = JSON.parse( dataString );
-          b.clearProject();         
+          $("#welcome-popup").hide();
+          $("#help-popup").hide();
+          b.clearProject(); 
           b.clearPlugins();
           currentLayout = data.layout ? data.layout : layouts[ 0 ];
           (function ( data ) {
@@ -730,22 +864,22 @@
               document.getElementById( "main" ).innerHTML = "";
               b.buildPopcorn( b.getCurrentMedia() , function() {
 
-                var registry = b.getRegistry();
-                for( var i = 0, l = registry.length; i < l; i++ ) {
-                  b.addPlugin( { type: registry[ i ].type } );
-                }
+                buildRegistry();
                 $('.tiny-scroll').tinyscrollbar();
                 b.importProject( data );
+                toggleLoadingScreen( false );
               }, b.popcornFlag() );
               b.unlisten( "layoutloaded", this );
             });
           })( data );
+          toggleLoadingScreen( true );
           $('.close-div').fadeOut('fast');
           $('.popups').hide();
           b.loadPreview( {
             layout: currentLayout,
             target: "main",
-            popcornURL: "../lib/popcorn-complete.js"
+            popcornURL: "../lib/popcorn-complete.js",
+            importMedia: data.media,
           });
           return;
 

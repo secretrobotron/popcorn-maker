@@ -24,6 +24,9 @@ CSS_LIBS := \
   $(BUTTER_DIR)/dist/css/jquery-ui-1.8.5.custom.css \
   $(BUTTER_DIR)/dist/css/trackLiner.css
 
+MISC_LIBS := \
+  $(BUTTER_DIR)/dist/lib/defaultEditor.html
+
 $(POPMKR_DIST): $(DIST_DIR)
 	@@echo "Creating popcorn-maker"
 	@@cp -r $(JS_DIR) $(DIST_DIR)/js
@@ -31,6 +34,7 @@ $(POPMKR_DIST): $(DIST_DIR)
 	@@cd $(BUTTER_DIR); make clean; make; cd ..
 	@@cp $(JS_LIBS) $(LIB_DIR)
 	@@cp $(CSS_LIBS) $(LIB_DIR)
+	@@cp $(MISC_LIBS) $(LIB_DIR)
 	@@cp -r $(CSS_DIR) $(DIST_DIR)
 	@@cp -r $(LIB_DIR) $(DIST_DIR)
 	@@cp $(HTML_SRCS) $(DIST_DIR)

@@ -13,54 +13,54 @@
       
     this.loadPreview = function( options ) {
       originalHead = {};
-    popcornURL = options.popcornURL || "http://popcornjs.org/code/dist/popcorn-complete.js";
-    urlRegex = /(?:http:\/\/www\.|http:\/\/|www\.|\.|^)(youtu|vimeo|soundcloud|baseplayer)/;
-    layout = options.layout;
-    butterIds = {};
-    userSetMedia = options.media;
-    popcorns = {};
-    videoString = {};
-    popcornString = undefined;
-    popcornScript = undefined;
+      popcornURL = options.popcornURL || "http://popcornjs.org/code/dist/popcorn-complete.js";
+      urlRegex = /(?:http:\/\/www\.|http:\/\/|www\.|\.|^)(youtu|vimeo|soundcloud|baseplayer)/;
+      layout = options.layout;
+      butterIds = {};
+      userSetMedia = options.media;
+      popcorns = {};
+      videoString = {};
+      popcornString = undefined;
+      popcornScript = undefined;
 
-    var that = this,
-        targetSrc = document.getElementById( options.target );
+      var that = this,
+          targetSrc = document.getElementById( options.target );
 
-      // check if target is a div or iframe
-    if ( targetSrc.tagName === "DIV" ) {
+        // check if target is a div or iframe
+      if ( targetSrc.tagName === "DIV" ) {
 
-      target = document.getElementById( options.target );
+        target = document.getElementById( options.target );
 
-      // force iframe to fill parent and set source
-      iframe = document.createElement( "IFRAME" );
-      iframe.src = layout;
-      iframe.width = target.style.width;
-      iframe.height = target.style.height;
-      target.appendChild( iframe );
+        // force iframe to fill parent and set source
+        iframe = document.createElement( "IFRAME" );
+        iframe.src = layout;
+        iframe.width = target.style.width;
+        iframe.height = target.style.height;
+        target.appendChild( iframe );
 
-      // begin scraping once iframe has loaded, remove listener when complete
-      iframe.addEventListener( "load", function (e) {
-        that.scraper( iframe );
-        this.removeEventListener( "load", arguments.callee, false );
-      }, false);
+        // begin scraping once iframe has loaded, remove listener when complete
+        iframe.addEventListener( "load", function (e) {
+          that.scraper( iframe, options.importMedia );
+          this.removeEventListener( "load", arguments.callee, false );
+        }, false);
 
-    } else if ( targetSrc.tagName === "IFRAME" ) {
+      } else if ( targetSrc.tagName === "IFRAME" ) {
 
-      iframe = targetSrc;
-      iframe.src = options.layout;
+        iframe = targetSrc;
+        iframe.src = options.layout;
 
-      targetSrc.addEventListener( "load", function (e) {
-        that.scraper( iframe );
-        this.removeEventListener( "load", arguments.callee, false );
-      }, false);
-    } // else
+        targetSrc.addEventListener( "load", function (e) {
+          that.scraper( iframe, options.importMedia );
+          this.removeEventListener( "load", arguments.callee, false );
+        }, false);
+      } // else
     };
 
     this.loadPreview( options );
 
     // scraper function that scrapes all DOM elements of the given layout,
     // only scrapes elements with the butter-data attribute
-    this.scraper = function( iframe ) {
+    this.scraper = function( iframe, importMedia ) {
 
       // obtain a reference to the iframes body
       var win, doc, body, ifrmBody, that = this;
@@ -121,43 +121,57 @@
 
 
         // loop for every child of the body
-        for( var i = 0; i < children.length; i++ ) {
-          
+        for( var i=0; i<children.length; i++ ) {
+          var thisChild = children[ i ];
+
+          if ( !thisChild ) {
+            continue;
+          }
           // if DOM element has an data-butter tag that is equal to target or media,
           // add it to butters target list with a respective type
-          if( children[ i ].getAttribute( "data-butter" ) === "target" ) {
-            that.addTarget( { 
-              name: children[ i ].id, 
-              type: "target"
-            } );
-          } else if( children[ i ].getAttribute( "data-butter" ) === "media" ) {
-            if ( ["VIDEO", "AUDIO"].indexOf( children[ i ].nodeName ) > -1 ) {
-              that.addMedia({
-                target: children[ i ].id,
-                url: children[ i ].currentSrc,
-              });
-            }
-            else {
-              var vidUrl = userSetMedia;
-
-              if ( children[ i ].getAttribute( "data-butter-soundcloud" ) ) {
-                vidUrl = children[ i ].getAttribute( "data-butter-soundcloud" );
-              }
-
-              that.addMedia( { 
-                target: children[ i ].id, 
-                url: vidUrl 
+          if ( thisChild.getAttribute ) {
+            if( thisChild.getAttribute( "data-butter" ) === "target" ) {
+              that.addTarget( { 
+                name: thisChild.id, 
+                type: "target"
               } );
-            }
-          } // else
+            } else if( thisChild.getAttribute( "data-butter" ) === "media" ) {
+              if ( ["VIDEO", "AUDIO"].indexOf( thisChild.nodeName ) > -1 ) {
+                that.addMedia({
+                  target: thisChild.id,
+                  url: thisChild.currentSrc,
+                });
+              }
+              else {
+                var vidUrl = userSetMedia;
+
+                if ( thisChild.getAttribute( "data-butter-soundcloud" ) ) {
+                  vidUrl = thisChild.getAttribute( "data-butter-soundcloud" );
+                }
+
+                if ( importMedia ) {
+                  for ( var m=0; m<importMedia.length; ++m ) {
+                    if ( thisChild.id === importMedia[ m ].target ) {
+                      vidUrl = importMedia[ m ].url;
+                    }
+                  }
+                }
+
+                that.addMedia( { 
+                  target: thisChild.id, 
+                  url: vidUrl 
+                } );
+
+              }
+            } // else
+          }
 
           // ensure we get every child, search recursively
-          var child = children[ i ].children;
-          if ( child && child.length > 0 ) {
-
-            bodyReady( children[ i ].children );
+          if ( thisChild.children && thisChild.children.length > 0 ) {
+            bodyReady( thisChild.children );
           } // if
         } // for
+
       } // bodyReady
 
     }; // scraper
@@ -169,7 +183,7 @@
 
     // buildPopcorn function, builds an instance of popcorn in the iframe and also
     // a local version of popcorn
-    this.buildPopcorn = function( media, callback, layoutPopcorn ) {
+    this.buildPopcorn = function( media, callback, layoutPopcorn, importData ) {
       var that = this, bpIframe = ( iframe.contentWindow || iframe.contentDocument ).document;
       // default to first butter-media tagged object if none is specified
       if ( !media ) {
@@ -183,7 +197,9 @@
         // default to first butter-media tagged object if none is specified
         videoTarget = media.getTarget();
 
-        bpIframe.getElementById( videoTarget ).innerHTML = "";
+        if ( videoTarget) {
+          bpIframe.getElementById( videoTarget ).innerHTML = "";
+        }
 
         // create a string that will create an instance of popcorn with the proper video source
         popcornString = "function startPopcorn () {\n";        
