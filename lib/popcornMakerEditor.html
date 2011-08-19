@@ -84,8 +84,11 @@
 
               attr = trackEvent.popcornOptions[ prop ] || "";
 
-              elem.setAttribute( "value", attr );
-              if ( opt['default'] ) {
+              if ( attr ) {
+                elem.setAttribute( "value", attr );
+              }
+              else if ( opt['default'] ) {
+                console.log('replacing');
                 elem.value = opt['default'];
               }
 

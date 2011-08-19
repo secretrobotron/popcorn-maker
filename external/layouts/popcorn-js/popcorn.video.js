@@ -65,12 +65,14 @@
       start: function( event, options ) {
         if ( options.video ) {
           options.video.style.display = "block";
+          options.video.play();
         }
       },
 
       end: function( event, options ) {
         if ( options.video ) {
           options.video.style.display = "none";
+          options.video.pause();
         }
       },
 
