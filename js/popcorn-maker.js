@@ -57,6 +57,7 @@
     $('.open-help, .help').click(function() {
 										 
         $("#help-popup").fadeIn('slow');
+        $('.balck-overlay').show();
         escapeKeyEnabled = true;
 
     });
@@ -65,6 +66,7 @@
 										 
         $("#help-popup").fadeOut('fast');
         $("#welcome-popup").hide();
+        $('.balck-overlay').hide();
         escapeKeyEnabled = false;
 
     });
@@ -147,15 +149,15 @@
     
     b.listen ( "trackeditstarted", function() {
       $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
+      $('.popupDiv').fadeIn('slow').css("height", "0%").css("width","0%");
       $('.popup-4').show();
-      $(' .balck-overlay ').show();
+      
       
     });
     
     b.listen ( "trackeditclosed", function() {
       $('.close-div').fadeOut('fast');
-      $('.popupDiv').hide();
+      $('.popupDiv').hide().css("height", "").css("width","");
       $('popup-4').css("visibility", "hidden")
       .css( "display", "" );
     });
@@ -447,7 +449,7 @@
         editTrackTargets.value = b.getEditTrack().target;
 
         //$('.close-div').fadeOut('fast');
-        $('.popupDiv').fadeIn('slow');
+        $('.popupDiv').fadeIn('slow').css("height", "0%").css("width","0%");
         $('#popup-5').show();
         $(' .balck-overlay ').show();
         centerPopup( $('#popup-5') );
@@ -465,7 +467,7 @@
     var closeTrackEditor = function() {
 
       b.closeEditTrack();
-      $('.popupDiv').fadeOut( 'slow' );
+      $('.popupDiv').fadeOut( 'slow' ).css("height", "").css("width","");
       $('#popup-5').hide();
       $(' .balck-overlay ').hide();
     };
@@ -771,7 +773,7 @@
       }
     });
 
-    $('.popup-close-btn, .balck-overlay').click(function(){
+    $('.popup-close-btn').click(function(){
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
       escapeKeyEnabled = false;
@@ -786,7 +788,7 @@
         $('.popupDiv').fadeIn('slow');
         $('#load-confirmation-dialog').show();
         centerPopup( $('#load-confirmation-dialog') );
-        $('.balck-overlay').hide();
+        $('.balck-overlay').show();
         escapeKeyEnabled = true;
       }
     };
@@ -824,6 +826,7 @@
         });
         $('.close-div').fadeOut('fast');
         $('.popups').hide();
+        $('balck-overlay').show()
         escapeKeyEnabled = false;     
       }
     });
@@ -948,6 +951,7 @@
         $('.popups').hide();
         $("#help-popup").fadeOut('fast');
         $("#welcome-popup").hide();
+        $('.balck-overlay').hide();
         escapeKeyEnabled = false;
       }
     });
