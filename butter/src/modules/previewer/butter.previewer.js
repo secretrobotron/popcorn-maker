@@ -250,7 +250,9 @@
 
           bpIframe.getElementById( videoTarget ).appendChild( video );
 
-          originalBody = bpIframe.getElementsByTagName("body")[ 0 ].innerHTML;
+          if( !commServer ) {
+            originalBody = bpIframe.getElementsByTagName("body")[ 0 ].innerHTML;
+          }
 
 
           var vidId = "#" + video.id;      
@@ -420,13 +422,20 @@
 
     this.getHTML = function() {
       var doc = ( iframe.contentWindow || iframe.contentDocument ).document,
-          pcornString = this.getPopcorn();
-      var completePopcorn =  "<html>\n<head>\n" + originalHead + "\n" + 
-              "<script> document.addEventListener( 'DOMContentLoaded', function(){\n" + pcornString + "\n}, false); </script>\n";
-              if ( !commServer ) {
-                completePopcorn += "<script src='" + popcornURL + "'></script>\n</head>\n<body>\n";
-              }
-              completePopcorn += "\n</head>\n<body>\n" + originalBody + "\n</body>\n</html>";
+          pcornString = this.getPopcorn(), completePopcorn;
+      var trckEvents = this.getTrackEvents( true );
+      var tempHead = doc.createElement( "head" );
+          tempHead.innerHTML = originalHead;
+      //console.log(tempHead.children[ 0 ].src);
+
+      if ( !commServer ) {
+        completePopcorn =  "<html>\n<head>\n" + originalHead + "\n" + 
+        "<script> document.addEventListener( 'DOMContentLoaded', function(){\n" + pcornString + "\n}, false); </script>\n";
+        completePopcorn += "<script src='" + popcornURL + "'></script>\n</head>\n<body>" + originalBody + "</body></html>\n";
+      } else {
+        completePopcorn = "<html>\n<head>\n" + originalHead + "\n<script> window.butterProjectJSON = " + JSON.stringify(trckEvents) + "</script>\n" + 
+        "</head>\n<body>" + originalBody + "</body></html>\n";
+      }
 
       return completePopcorn;
     };

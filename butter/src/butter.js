@@ -490,14 +490,22 @@ THE SOFTWARE.
     }; //addTrackEvents
 
     //getTrackEvents - Get a list of Track Events
-    this.getTrackEvents = function () {
+    this.getTrackEvents = function ( flatten ) {
       checkMedia();
-      var tracks = currentMedia.getTracks();
-      var trackEvents = {};
-      for ( var i=0, l=tracks.length; i<l; ++i ) {
-        var track = tracks[i];
-        trackEvents[ track.getName() ] = track.getTrackEvents();
-      } //for
+      var tracks = currentMedia.getTracks(), trackEvents;
+      if( !flatten ) {
+        trackEvents = {};
+        for ( var i=0, l=tracks.length; i<l; ++i ) {
+          var track = tracks[i];
+          trackEvents[ track.getName() ] = track.getTrackEvents();
+        } //for
+      } else {
+        trackEvents = [];
+        for ( var i=0, l=tracks.length; i<l; ++i ) {
+          var track = tracks[i];
+          trackEvents = trackEvents.concat( track.getTrackEvents() );
+        } //for
+      }
       return trackEvents;
     }; //getTrackEvents
 
