@@ -62,6 +62,7 @@
 										 
         $("#help-popup").fadeOut('fast');
         $("#welcome-popup").hide();
+        escapeKeyEnabled = false;
 
     });
     
@@ -145,7 +146,7 @@
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('.popup-4').show();
-      $(' .balck-overlay ').hide();
+      $(' .balck-overlay ').show();
       
     });
     
@@ -445,7 +446,7 @@
         //$('.close-div').fadeOut('fast');
         $('.popupDiv').fadeIn('slow');
         $('#popup-5').show();
-        $(' .balck-overlay ').hide();
+        $(' .balck-overlay ').show();
         centerPopup( $('#popup-5') );
       }, false );
 
@@ -463,7 +464,7 @@
       b.closeEditTrack();
       $('.popupDiv').fadeOut( 'slow' );
       $('#popup-5').hide();
-      $(' .balck-overlay ').show();
+      $(' .balck-overlay ').hide();
     };
 
     var applyTrackEditor = function() {
@@ -586,6 +587,7 @@
         projectsDrpDwn[0].refresh()
         $('.close-div').fadeOut('fast');
         $('.popups').hide();
+        escapeKeyEnabled = false;
       }
       catch ( e ) {
         throw new Error("Saving Failed...");
@@ -696,6 +698,7 @@
       b.getCurrentMedia().setUrl( $('#url').val() );
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
+      escapeKeyEnabled = false;
     });
 
     $('.layer-btn .edit span').click(function(){
@@ -707,7 +710,6 @@
     });
 
     $('.p-3').click(function(){
-      
       $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
       $('.project-title-textbox').val( b.getProjectDetails( "title" ) );
       
@@ -762,12 +764,14 @@
         
         $('.close-div').fadeOut('fast');
         $('.popups').hide();
+        escapeKeyEnabled = false;
       }
     });
 
     $('.popup-close-btn, .balck-overlay').click(function(){
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
+      escapeKeyEnabled = false;
     });
     
     var ddLoadFunc = function() {
@@ -816,7 +820,8 @@
           importMedia: localProjects[ title ].media,
         });
         $('.close-div').fadeOut('fast');
-        $('.popups').hide();     
+        $('.popups').hide();
+        escapeKeyEnabled = false;     
       }
     });
     
@@ -847,6 +852,7 @@
       });
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
+      escapeKeyEnabled = false;
     });
     
     $(".load-code-btn").click(function() {
@@ -876,6 +882,7 @@
           toggleLoadingScreen( true );
           $('.close-div').fadeOut('fast');
           $('.popups').hide();
+          escapeKeyEnabled = false;
           b.loadPreview( {
             layout: currentLayout,
             target: "main",
