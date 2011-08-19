@@ -427,7 +427,7 @@ ul.actions li.bubble_pointer { position:absolute; display:block; top:9px; width:
 /*---------- Timeline Progress bar ------------*/
 .timeline-progress-bar { height:4px; width: 0px; position:relative; background-color:#999; top:2px;}
 .timeline-progress-bar .current-line, .timeline-progress-bar .current-white { position:absolute; z-index:99999;}
-.timeline-progress-bar .current-line { background-color:#ff0000; width:2px; height:146px; right:-1px;
+.timeline-progress-bar .current-line { background-color:#ff0000; width:2px; height:172px; right:-1px;
 	   -moz-box-shadow: -3px 3px 5px #222;
 	-webkit-box-shadow: -3px 3px 5px #222;
 	     -o-box-shadow: -3px 3px 5px #222;
