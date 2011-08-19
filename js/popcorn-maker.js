@@ -707,7 +707,7 @@
 
     $('.p-3').click(function(){
       
-      $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
+      $('#export-data').val( b.getHTML() );
       $('.project-title-textbox').val( b.getProjectDetails( "title" ) );
       
       $('.close-div').fadeOut('fast');
@@ -888,11 +888,11 @@
     $(".show-json-btn").click(function() {
       var exp = b.exportProject();
       exp.layout = currentLayout;
-      $('.track-content').html( JSON.stringify( exp ) );
+      $('#export-data').val( JSON.stringify( exp ) );
     });
 
     $(".show-html-btn").click(function() {
-      $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
+      $('#export-data').val( b.getHTML() );
     });
     
     //$(function(){ $("label").inFieldLabels(); });
