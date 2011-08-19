@@ -746,7 +746,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 
 /*----------- Welcome Popups ----------*/
 #properties-panel, .hide-timeline, .pin, #welcome-popup, #help-popup { display:none;}
-#welcome-popup, #help-popup { width:700px; min-height:520px; position:absolute; z-index:999999; left:50%; top:50%; margin:-260px 0 0 -350px; background-color:#FFFFCC; text-align:center; overflow:hidden;
+#welcome-popup, #help-popup { width:700px; min-height:520px; position:absolute; z-index:999999; left:50%; top:50%; margin: 0 0 0 170px; background-color:#FFFFCC; text-align:center; overflow:hidden;
 	     -moz-box-shadow: 0 0 6px #333;
 	  -webkit-box-shadow: 0 0 6px #333;
   	     -o-box-shadow: 0 0 6px #333;
@@ -764,6 +764,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		rgb(254,255,217) 0%,
 		rgb(255,255,255) 100%
 	);}
+#help-popup { margin: 0 0 0 170px; }
 #welcome-popup .scroll-popup-container, #help-popup .scroll-popup-container { width:1400px; position:absolute; left:0; top:0;}
 #welcome-popup .scroll-popup-container .padding-div, #help-popup .scroll-popup-container .padding-div {padding:40px; width:620px; float:left;}
 #welcome-popup h1, #help-popup .help-header h1 { font-size:40px; letter-spacing:-3px; color:#333; padding-top:20px;

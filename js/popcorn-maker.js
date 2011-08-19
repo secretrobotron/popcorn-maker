@@ -34,6 +34,7 @@
     
     if ( !localStorage.getItem( "PopcornMaker.SavedProjects" ) ) {
       $('#welcome-popup').fadeIn(2000);
+      $('.popupDiv').fadeIn('slow');
       var escapeKeyEnabled = true;
     }
       
@@ -57,6 +58,7 @@
     $('.open-help, .help').click(function() {
 										 
         $("#help-popup").fadeIn('slow');
+        $('.popupDiv').fadeIn('slow');
         $('.balck-overlay').show();
         escapeKeyEnabled = true;
 
@@ -66,6 +68,7 @@
 										 
         $("#help-popup").fadeOut('fast');
         $("#welcome-popup").hide();
+        $(".popupDiv").fadeOut("fast");
         $('.balck-overlay').hide();
         escapeKeyEnabled = false;
 
