@@ -69,6 +69,15 @@
 
     });
 
+    function buildRegistry() {
+      var registry = b.getRegistry();
+      for( var i = 0, l = registry.length; i < l; i++ ) {
+        if( registry[ i ].type !== "text" ) {
+          b.addPlugin( { type: registry[ i ].type } );
+        }
+      } 
+    }
+
     function toggleLoadingScreen ( state ) {
       if ( state ) {
         $('#loading-overlay').show();
@@ -94,11 +103,11 @@
 
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html" } );
     
-     b.previewer({
-            layout: currentLayout,
-            target: "main",
-            popcornURL: "../lib/popcorn-complete.js"
-          });
+    b.previewer({
+      layout: currentLayout,
+      target: "main",
+      popcornURL: "../lib/popcorn-complete.js"
+    });
 
     b.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
     
@@ -150,6 +159,7 @@
     var progressBar = document.getElementById( "progress-bar" );
     var timelineDuration = document.getElementById( "timeline-duration" );
     var timelineTarget = document.getElementById( "timeline-div" );
+    var slideValue = 0;
 
     function checkScrubber( event ) {
 
@@ -268,7 +278,6 @@
     });
 
     var drawCanvas = function() {
-
       var canvasDiv = document.getElementById( "timing-notches-canvas" );
       canvasDiv.style.width = timelineTarget.style.width;
 
@@ -333,6 +342,18 @@
 
       drawCanvas();
     });
+
+      $( "#slider" ).slider({
+			value:0,
+			min: 0,
+			max: 6,
+			step: 1,
+			slide: function( event, ui ) {
+        b.zoom( slideValue - ui.value );
+        drawCanvas();
+        slideValue = ui.value;
+			}
+		});
 
     document.addEventListener( "keypress", function( event ) {
 
@@ -772,10 +793,7 @@
 
             b.buildPopcorn( b.getCurrentMedia() , function() {
 
-              var registry = b.getRegistry();
-              for( var i = 0, l = registry.length; i < l; i++ ) {
-                b.addPlugin( { type: registry[ i ].type } );
-              }
+              buildRegistry();
               $('.tiny-scroll').tinyscrollbar();
               b.importProject( localProject );
               toggleLoadingScreen( false );
@@ -805,10 +823,7 @@
       currentLayout = document.getElementById( 'layout-select' ).value;
       b.listen( "layoutloaded", function( e ) {
         b.buildPopcorn( b.getCurrentMedia() , function() {
-          var registry = b.getRegistry();
-          for( var i = 0, l = registry.length; i < l; i++ ) {
-            b.addPlugin( { type: registry[ i ].type } );
-          }
+          buildRegistry();
           $('.tiny-scroll').tinyscrollbar();
           toggleLoadingScreen( false );
 		     
@@ -848,10 +863,7 @@
               document.getElementById( "main" ).innerHTML = "";
               b.buildPopcorn( b.getCurrentMedia() , function() {
 
-                var registry = b.getRegistry();
-                for( var i = 0, l = registry.length; i < l; i++ ) {
-                  b.addPlugin( { type: registry[ i ].type } );
-                }
+                buildRegistry();
                 $('.tiny-scroll').tinyscrollbar();
                 b.importProject( data );
                 toggleLoadingScreen( false );
