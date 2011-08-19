@@ -99,6 +99,12 @@
           return;
         } else {
           // begin scraping once body is actually there, call callback once done
+          //Butter.extend( originalHead, win.document.head );
+
+          originalBody = body[ 0 ].innerHTML;
+
+          originalHead = iframe.contentWindow.document.head.innerHTML;
+
           bodyReady( body[ 0 ].children );
           that.trigger( "layoutloaded", null );
         } // else
@@ -108,12 +114,6 @@
 
       // scraping is done here
       function bodyReady( children ) {
-
-        Butter.extend( originalHead, win.document.head );
-
-        originalBody = body[ 0 ].innerHTML;
-
-        //originalHead = iframe.contentWindow.document.head;
 
         // store original iframeBody incase we rebuild
         var ifrmBody = ( iframe.contentWindow || iframe.contentDocument ).document;
@@ -209,7 +209,7 @@
 
         players[ "youtu" ] = function() {
           bpIframe.getElementById( videoTarget ).innerHTML = "";
-          videoString[ media.getId() ] = "popcorn" + media.getId() + " = Popcorn( Popcorn.youtube( '" + videoTarget + "', '" +
+          videoString[ media.getId() ] = "popcorn = Popcorn( Popcorn.youtube( '" + videoTarget + "', '" +
             videoURL + "', {\n" + 
             "width: 430, height: 300\n" + 
           "} ) );\n";
@@ -217,7 +217,7 @@
 
         players[ "vimeo " ] = function() {
           bpIframe.getElementById( videoTarget ).innerHTML = "";
-          videoString[ media.getId() ] = "popcorn" + media.getId() + " = Popcorn( Popcorn.vimeo( '" + videoTarget + "', '" +
+          videoString[ media.getId() ] = "popcorn = Popcorn( Popcorn.vimeo( '" + videoTarget + "', '" +
           videoURL + "', {\n" +
             "css: {\n" +
               "width: '430px',\n" +
@@ -228,13 +228,13 @@
 
         players[ "soundcloud" ] = function() {
           bpIframe.getElementById( videoTarget ).innerHTML = "";
-          videoString[ media.getId() ] = "popcorn" + media.getId() + " = Popcorn( Popcorn.soundcloud( '" + videoTarget + "'," +
+          videoString[ media.getId() ] = "popcorn = Popcorn( Popcorn.soundcloud( '" + videoTarget + "'," +
           " '" + videoURL + "' ) );\n";
         };
 
         players[ "baseplayer" ] = function() {
           bpIframe.getElementById( videoTarget ).innerHTML = "";
-          videoString[ media.getId() ] = "popcorn" + media.getId() + " = Popcorn( Popcorn.baseplayer( '" + videoTarget + "' ) );\n";
+          videoString[ media.getId() ] = "popcorn = Popcorn( Popcorn.baseplayer( '" + videoTarget + "' ) );\n";
         };
 
         players[ undefined ] = function() {
@@ -242,7 +242,6 @@
               video = bpIframe.createElement( "video" );
 
           src.src = videoURL;
-
           video.style.width = bpIframe.getElementById( videoTarget ).style.width;
           video.style.height = bpIframe.getElementById( videoTarget ).style.height;
           video.appendChild( src );
@@ -251,10 +250,12 @@
 
           bpIframe.getElementById( videoTarget ).appendChild( video );
 
+          originalBody = bpIframe.getElementsByTagName("body")[ 0 ].innerHTML;
+
 
           var vidId = "#" + video.id;      
 
-          videoString[ media.getId() ] = "popcorn" + media.getId() + " = Popcorn( '" + vidId + "');\n";
+          videoString[ media.getId() ] = "popcorn = Popcorn( '" + vidId + "');\n";
         }; 
 
         // call certain player function depending on the regexResult
@@ -385,9 +386,8 @@
       
       // if for some reason the iframe is refreshed, we want the most up to date popcorn code
       // to be represented in the head of the iframe, incase someone views source
-      for( popcorn in popcorns ) {
 
-        var trackEvents = popcorns[ popcorn ].getTrackEvents();
+        var trackEvents = framePopcorn.getTrackEvents();
 
         if ( trackEvents ) {
 
@@ -396,7 +396,7 @@
             
             // obtain all of the options in the manifest
             var options = trackEvents[ k ]._natives.manifest.options;
-            popcornz += "popcorn" + popcorn + "." + trackEvents[ k ]._natives.type + "({\n"; 
+            popcornz += "Popcorn.instances[ 0 ]." + trackEvents[ k ]._natives.type + "({\n"; 
 
             // for each option
             for ( item in options ) {
@@ -413,7 +413,6 @@
 
           } // for
         } // if
-      }
 
       return popcornz;
 
@@ -422,10 +421,14 @@
     this.getHTML = function() {
       var doc = ( iframe.contentWindow || iframe.contentDocument ).document,
           pcornString = this.getPopcorn();
-      return "<html>\n<head>\n" + originalHead.innerHTML + "\n" + 
-              "<script> document.addEventListener( 'DOMContentLoaded', function(){\n" + pcornString + "\n}, false); </script>\n" + 
-              "<script src='" + popcornURL + "'></script>\n</head>\n<body>\n" +
-              originalBody + "\n</body>\n</html>";
+      var completePopcorn =  "<html>\n<head>\n" + originalHead + "\n" + 
+              "<script> document.addEventListener( 'DOMContentLoaded', function(){\n" + pcornString + "\n}, false); </script>\n";
+              if ( !commServer ) {
+                completePopcorn += "<script src='" + popcornURL + "'></script>\n</head>\n<body>\n";
+              }
+              completePopcorn += "\n</head>\n<body>\n" + originalBody + "\n</body>\n</html>";
+
+      return completePopcorn;
     };
 
     this.play = function() {

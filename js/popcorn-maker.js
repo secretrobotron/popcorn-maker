@@ -798,7 +798,7 @@
               b.importProject( localProject );
               toggleLoadingScreen( false );
             }, b.popcornFlag() );
-            b.unlisten( "layoutloaded", this );
+            b.unlisten( "layoutloaded" );
           });
         })( localProjects[ title ] );
         toggleLoadingScreen( true );
@@ -828,15 +828,11 @@
           toggleLoadingScreen( false );
 		     
         }, b.popcornFlag() );
-        b.unlisten( "layoutloaded", this );
+        b.unlisten( "layoutloaded" );
       });
 
       toggleLoadingScreen( true );
-      b.previewer({
-          layout: currentLayout,
-          target: "main",
-          popcornURL: "../lib/popcorn-complete.js"
-        });
+     
       b.loadPreview( {
         layout: currentLayout,
         target: "main",
@@ -868,7 +864,7 @@
                 b.importProject( data );
                 toggleLoadingScreen( false );
               }, b.popcornFlag() );
-              b.unlisten( "layoutloaded", this );
+              b.unlisten( "layoutloaded" );
             });
           })( data );
           toggleLoadingScreen( true );
