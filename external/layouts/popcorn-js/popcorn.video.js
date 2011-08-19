@@ -64,6 +64,7 @@
 
       start: function( event, options ) {
         if ( options.video ) {
+          document.getElementById( options.target ).style.backgroundColor = "black";
           options.video.style.display = "block";
           options.video.play();
         }
@@ -71,6 +72,7 @@
 
       end: function( event, options ) {
         if ( options.video ) {
+          document.getElementById( options.target ).style.backgroundColor = "";
           options.video.style.display = "none";
           options.video.pause();
         }
