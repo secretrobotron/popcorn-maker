@@ -188,6 +188,7 @@
     scrubberContainer.addEventListener( "mousedown", function( event ) {
 
       scrubberClicked = true;
+      b.targettedEvent = undefined;
       b.currentTimeInPixels( event.clientX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft );
     }, false);
 
@@ -288,10 +289,25 @@
     });
 
     document.addEventListener( "keypress", function( event ) {
+
+      var inc = event.shiftKey ? 1 : 0.1;
+
       if( event.keyCode === 39 ) {
-        b.moveFrameRight( event );
+        if ( b.targettedEvent ) {
+
+          b.moveFrameRight( event );
+        } else {
+
+          b.currentTime( b.currentTime() + inc );
+        }
       } else if( event.keyCode === 37 ) {
-        b.moveFrameLeft( event );
+        if ( b.targettedEvent ) {
+
+          b.moveFrameLeft( event );
+        } else {
+
+          b.currentTime( b.currentTime() - inc );
+        }
       }
     }, false);
 

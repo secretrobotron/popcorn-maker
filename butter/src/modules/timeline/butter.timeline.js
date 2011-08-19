@@ -5,7 +5,7 @@
     var mediaInstances = {},
         currentMediaInstance,
         target = document.getElementById( options.target ) || options.target,
-        b = this, targettedEvent;
+        b = this;
 
     this.findAbsolutePosition = function (obj) {
 	    var curleft = curtop = 0;
@@ -21,9 +21,9 @@
 
     this.moveFrameLeft = function( event ) {
 
-      if ( targettedEvent ) {
+      if ( b.targettedEvent ) {
 
-        var cornOptions = targettedEvent.popcornOptions;
+        var cornOptions = b.targettedEvent.popcornOptions;
         var inc = event.shiftKey ? 2.5 : 0.25;
 
         if ( cornOptions.start > inc ) {
@@ -42,15 +42,15 @@
           cornOptions.start = 0;
         }
 
-        this.trigger( "trackeventupdated", targettedEvent );
+        this.trigger( "trackeventupdated", b.targettedEvent );
       }
     };
 
     this.moveFrameRight = function( event ) {
 
-      if ( targettedEvent ) {
+      if ( b.targettedEvent ) {
 
-        var cornOptions = targettedEvent.popcornOptions;
+        var cornOptions = b.targettedEvent.popcornOptions;
         var inc = event.shiftKey ? 2.5 : 0.25;
 
         if ( cornOptions.end < b.duration() - inc ) {
@@ -69,7 +69,7 @@
           cornOptions.end = b.duration();
         }
 
-        this.trigger( "trackeventupdated", targettedEvent );
+        this.trigger( "trackeventupdated", b.targettedEvent );
       }
     };
 
@@ -248,7 +248,7 @@
       },
       // called when a track event is clicked
       click: function ( track, trackEventObj, event, ui ) {
-        targettedEvent = trackEventObj.options;
+        b.targettedEvent = trackEventObj.options;
       },
 
       // called when a track event is double clicked
@@ -309,7 +309,7 @@
       }
 
       addTrackEvent( event.data );
-      targettedEvent = event.data;
+      b.targettedEvent = event.data;
 
     });
 

@@ -342,6 +342,13 @@ THE SOFTWARE.
     this.currentTime = function ( time ) {
       if ( time !== undefined ) {
         currentTime = time;
+        if ( currentTime < 0 ) {
+          currentTime = 0;
+        }
+        if ( currentTime > duration ) {
+
+          currentTime = duration;
+        }
         butter && butter.trigger("mediatimeupdate", that);
       } //if
       return currentTime;
