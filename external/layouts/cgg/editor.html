@@ -3,6 +3,16 @@
 	<head>
 		<meta charset="UTF-8">
 		<title></title>
+		<script type="text/javascript">
+		//see if we need to emulate input[type=range]
+		(function(){
+			var test = document.createElement('input');
+			test.type = 'range';
+			if (test.type !== 'range') {
+				document.write('<script type="text/javascript" src="js/html5slider.js"><' + '/script>');
+			}
+		}());
+		</script>
 		<!--
 		
 		I suppose you'll want to load butter.js here, but maybe it's more efficient to first try to grab window.parent.Butter
@@ -123,8 +133,12 @@
 			width: 220px;
 		}
 		
+		input[type=range] {
+			width: 100px;
+		}
+		
 		input[type=text].small {
-			width: 80px;
+			width: 40px;
 		}
 		
 		</style>
@@ -146,9 +160,17 @@
 				<label for="end">To:</label>
 				<input type="text" id="end" class="small"/>
 			</fieldset>
-			<!--
-			todo: fade in and fade out times
-			-->
+
+			<fieldset>
+				<div style="float: right">
+					<label for="fade-out">Fade Out:</label><br/>
+					<input type="range" id="fade-out-range"/>
+					<input type="text" id="fade-out" class="small" min="0" max="1"/> s
+				</div>
+				<label for="fade-in">Fade In:</label><br/>
+				<input type="range" id="fade-in-range"/>
+				<input type="text" id="fade-in" class="small" min="0" max="1"/> s
+			</fieldset>
 
 			<fieldset>
 				<label for="question">Question:</label>
@@ -218,6 +240,7 @@
 				questions = [],
 				ids = [
 					'start', 'end', 'question',
+					'fade-in', 'fade-in-range', 'fade-out', 'fade-out-range',
 					'startTop', 'startLeft', 'startWidth', 'startHeight',
 					'endTop', 'endLeft', 'endWidth', 'endHeight',
 					'start-handle', 'end-handle',
@@ -352,8 +375,7 @@
 
 				if (e.metaKey || e.altKey || key < 0x21 ||
 					e.keyLocation ||
-					!e.shiftKey && key <0x27 && ch !=='.' &&
-						ch !== '-' && key !== 189) {
+					!e.shiftKey && key <0x27 && ch !=='.') {
 					return;
 				}
 				
@@ -362,7 +384,58 @@
 					s = s.substring(0, this.selectionStart) + s.substring(this.selectionEnd, s.length);
 				}
 
-				if (key === 189 || ch === '-') {
+				if (ch === '.') {
+					s = this.value;
+					if (s.indexOf('.') >= 0) {
+						return blockKey();
+					}
+					
+					return true;
+				}
+
+				ch = parseInt(ch, 10);
+				if (isNaN(ch)) {
+					return blockKey();
+				}
+				
+			}
+
+			function numbersOnlyNeg(event) {
+				var e = event || window.event,
+					key = e.keyCode || e.which,
+					ch = String.fromCharCode(key),
+					s;
+				
+				function blockKey() {
+					if (e.preventDefault) {
+						e.preventDefault();
+					}
+					if (e.stopPropagation) {
+						e.stopPropagation();
+					}
+					e.returnValue = false;
+					e.cancelBubble = true;
+					return false;
+				}
+				
+				if (key === 190) {
+					key = 0x2E;
+					ch = '.';
+				}
+
+				if (e.metaKey || e.altKey || key < 0x21 ||
+					e.keyLocation ||
+					!e.shiftKey && key <0x27 && ch !=='.' &&
+						ch !== '-' && key !== 189 && key !== 109) {
+					return;
+				}
+				
+				s = this.value;
+				if (this.selectionStart !== this.selectionEnd) {
+					s = s.substring(0, this.selectionStart) + s.substring(this.selectionEnd, s.length);
+				}
+
+				if (key === 189 || ch === '-' || key === 109) {
 					if (this.selectionStart) {
 						return blockKey();
 					}
@@ -400,6 +473,10 @@
 				box.style.height = h + '%';
 			}
 			
+			function validateTimes(event, updateElements) {
+				
+			}
+
 			function validateDimensions(event, updateElements) {
 				var pos, meh = ['start', 'end'], i, id;
 				for (i = 0; i < 2; i++) {
@@ -683,9 +760,16 @@
 						}( meh[i], j ) );
 						element.addEventListener('change', f, false);
 						element.addEventListener('keyup', f, false);
-						element.addEventListener('keydown', numbersOnly, true);
+						if (dim[j] === 'Width' || dim[j] === 'Height') {
+							element.addEventListener('keydown', numbersOnly, true);
+						} else {
+							element.addEventListener('keydown', numbersOnlyNeg, true);
+						}
 					}
 				}
+				
+				elements['fade-in'].addEventListener('keydown', numbersOnly, true);
+				elements['fade-out'].addEventListener('keydown', numbersOnly, true);
 
 				elements['end-enabled'].addEventListener('change', function() {
 					endEnabled = this.checked;
