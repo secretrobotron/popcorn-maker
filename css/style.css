@@ -247,6 +247,7 @@ header { height:44px;
 		rgb(180,180,180) 0%,
 		rgb(119,119,119) 100%
 	);}
+
 .playback-controls .timeline-duration { z-index: 1; height:20px; width:80px; margin:0 auto;  left:16px; position: absolute; padding: 0 2px 0 10px;} 
 .playback-controls .timeline-bar { height:8px; background:url(../images/texture_2.png) repeat;
 padding: 0 2px;
@@ -424,6 +425,7 @@ ul.actions li.bubble_pointer { position:absolute; display:block; top:9px; width:
 .tools li.facebook_tool a:active span, .tools li.facebook_tool a:focus span{ background-position: -220px -64px}
 
 /*---------- Timeline Progress bar ------------*/
+#slider {background:url(../images/texture_2.png) repeat;}
 .timeline-progress-bar { height:4px; width: 0px; position:relative; background-color:#999; top:2px;}
 .timeline-progress-bar .current-line, .timeline-progress-bar .current-white { position:absolute; z-index:99999;}
 .timeline-progress-bar .current-line { background-color:#ff0000; width:2px; height:146px; right:-1px;

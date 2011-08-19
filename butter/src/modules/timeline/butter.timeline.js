@@ -377,7 +377,6 @@
     var originalWidth = target.offsetWidth;
     var currentZoom = 1;
     this.zoom = function( detail ) {
-
       if ( detail < 0 && currentZoom < 6 ) {
 
         currentZoom++;
