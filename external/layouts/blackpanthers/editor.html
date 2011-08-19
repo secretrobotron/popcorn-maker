@@ -335,8 +335,16 @@
 
 				trackEvent.target = elements.target.value;
 				
-				if (map) {
+				if ( map ) {
 					trackEvent.zoom = 1;
+          if ( streetView ) {
+            var pov = streetView.getPov();
+            if ( pov ) {
+              trackEvent.heading = pov.heading;
+              trackEvent.pitch = pov.pitch;
+              trackEvent.zoom = pov.zoom;
+            }
+          }
 				}
 			}
 			
