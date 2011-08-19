@@ -93,6 +93,12 @@
     b.comm();
 
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html" } );
+    
+     b.previewer({
+            layout: currentLayout,
+            target: "main",
+            popcornURL: "../lib/popcorn-complete.js"
+          });
 
     b.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
     
@@ -832,13 +838,14 @@
       
         try {
           var data = JSON.parse( dataString );
+          $("#welcome-popup").hide();
+          $("#help-popup").hide();
           b.clearProject(); 
           b.clearPlugins();
           currentLayout = data.layout ? data.layout : layouts[ 0 ];
           (function ( data ) {
             b.listen( "layoutloaded", function( e ) {
               document.getElementById( "main" ).innerHTML = "";
-
               b.buildPopcorn( b.getCurrentMedia() , function() {
 
                 var registry = b.getRegistry();
