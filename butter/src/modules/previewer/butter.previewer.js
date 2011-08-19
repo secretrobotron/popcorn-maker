@@ -388,8 +388,11 @@
       
       // if for some reason the iframe is refreshed, we want the most up to date popcorn code
       // to be represented in the head of the iframe, incase someone views source
-
-        var trackEvents = framePopcorn.getTrackEvents();
+        if( framePopcorn ) {
+          var trackEvents = framePopcorn.getTrackEvents();
+        } else {
+          return "";
+        }
 
         if ( trackEvents ) {
 
