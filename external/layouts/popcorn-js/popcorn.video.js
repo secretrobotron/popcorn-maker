@@ -2,7 +2,7 @@
 
 (function (Popcorn) {
 
-  var videoOptionsRegex = /(\w+)="(\w*)"/;
+  var videoOptionsRegex = /(\w+)="([\w\%]*)"/;
 
   Popcorn.plugin( "spawnvideo", {
       manifest: {
@@ -48,7 +48,7 @@
             }
             options.video = video;
             targetElement.appendChild( video );
-            options.video.display = "none";
+            options.video.style.display = "none";
             if ( options.videoOptions ) {
               var splitOptions = options.videoOptions.split(" ");
               for ( var opt in splitOptions ) {

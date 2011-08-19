@@ -33,6 +33,18 @@ background-color: black;
 	height: 70%;
 	width: 100%;
 	background-color: grey;
+	z-index: 50
+}
+
+#video-area {
+  position: absolute;
+  top: 75;
+  left: 0;
+	bottom: 100px;
+	height: 70%;
+	width: 100%;
+	background: transparent;
+	z-index: 100
 }
 
 #timeline_area {
@@ -215,6 +227,7 @@ background-color: black;
 }
 #additional-image-container {
   width: 310px;
+  z-index: 150px;
 }
 .float-left {
   float: left;
