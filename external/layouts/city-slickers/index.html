@@ -92,7 +92,15 @@
 		#controls > div {
 			cursor: pointer;
 		}
-
+		#caption {
+			position: absolute;
+			bottom: 40px;
+			left: 40px;
+			z-index: 1000;
+			color: white;
+			font-size: 30px;
+			font-family: verdana;
+		}
 		#play-button {
 			float: left;
 			width: 30px;
@@ -194,6 +202,9 @@
 						-->
 					</video>
 				</div>
+				<div id="caption" data-butter="target">
+				Test
+				</div>
 				<div id="controls">
 					<div id="play-button"><span></span></div>
 					<div id="progress-outer"><div id="progress"></div></div>
@@ -206,6 +217,7 @@
 -->
 	<script type="text/javascript" src="../popcorn-js/popcorn.js"></script>
 	<script type="text/javascript" src="js/popcorn.slickers.js"></script>
+	<script type="text/javascript" src="js/popcorn.footnote.js"></script>
 	<script type="text/javascript">
 	
 	(function() {
