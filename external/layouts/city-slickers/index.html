@@ -358,7 +358,7 @@
 				map: map,
 				position: center,
 				animation: google.maps.Animation.DROP,
-				icon: 'https://www.google.com/intl/en_ALL/mapfiles/marker_purple.png',
+				icon: 'images/home_pin.png',
 				visible: true
 			});
 			map.setCenter(center);
@@ -462,6 +462,11 @@
 							link = document.createElement('a');
 							link.setAttribute('href', 'http://www.flickr.com/photos/' + photo.owner + '/' + photo.id + '/');
 							link.setAttribute('target', '_new');
+							link.addEventListener('click', function() {
+								if (options.vidElement) {
+									options.vidElement.pause();
+								}
+							}, true);
 							
 							link.appendChild(img);
 							gallery.appendChild(link);
