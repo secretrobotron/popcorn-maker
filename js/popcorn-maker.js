@@ -787,6 +787,7 @@
         b.clearProject();         
         b.clearPlugins();
         currentLayout = localProjects[ title ].layout;
+        console.log( localProjects[ title ] );
         (function ( localProject ) {
           b.listen( "layoutloaded", function( e ) {
             document.getElementById( "main" ).innerHTML = "";
