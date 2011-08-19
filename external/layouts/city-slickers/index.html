@@ -191,6 +191,15 @@
 			display: block;
 		}
 		
+		#footnote {
+			position:absolute; 
+			bottom:20px; 
+			left:20px; 
+			color:white; 
+			z-index:1000; 
+			font-family:verdana;
+		}
+		
 		.endstuff .description {
 			background-color: #444;
 			padding: 10px;
@@ -253,17 +262,24 @@
 						-->
 					</video>
 				</div>
+				<div id="footnote" data-butter="target">
+		</div>
+		
 				<div id="controls">
 					<div id="play-button"><span></span></div>
 					<div id="progress-outer"><div id="progress"></div></div>
 				</div>
+				
 			</div>
 		</div>
+		
+		
 	</body>
 <!--
 	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> 
 -->
 	<script type="text/javascript" src="../popcorn-js/popcorn.js"></script>
+	<script type="text/javascript" src="../popcorn-js/popcorn.footnote.js"></script>
 	<script type="text/javascript" src="js/popcorn.slickers.js"></script>
 	<script type="text/javascript">
 	
