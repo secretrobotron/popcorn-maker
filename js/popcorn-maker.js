@@ -30,10 +30,13 @@
       bottom: '268px'
 
     }, 500);
-      
-    $('#welcome-popup').fadeIn(2000);
-    var escapeKeyEnabled = true;
     
+    
+    if ( !localStorage.getItem( "PopcornMaker.SavedProjects" ) ) {
+      $('#welcome-popup').fadeIn(2000);
+      var escapeKeyEnabled = true;
+    }
+      
     $('#loading-overlay').hide();
     //Carousel for Help inner page
 		$(function(){
