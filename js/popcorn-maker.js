@@ -526,11 +526,13 @@
     });
 
     document.getElementsByClassName( "sound-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
-      b.mute();
+      b.mute && b.mute();
     }, false);
 
     document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
-      b.isPlaying() ? b.play() : b.pause();
+      if ( b.isPlaying && b.play && b.pause ) {
+        b.isPlaying() ? b.play() : b.pause();
+      }
     }, false);
 
     b.listen( "mediaplaying", function( event ) {
