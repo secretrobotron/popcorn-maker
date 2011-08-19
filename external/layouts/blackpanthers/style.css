@@ -44,7 +44,8 @@ background-color: black;
 	height: 70%;
 	width: 100%;
 	background: transparent;
-	z-index: 100
+	z-index: 100;
+	pointer-events: none;
 }
 
 #timeline_area {
