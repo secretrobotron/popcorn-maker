@@ -627,6 +627,8 @@
       escapeKeyEnabled = true;
     });  
     $('.wizard-add-project-btn').click(function() {
+      $("#help-popup").fadeOut('fast');
+      $("#welcome-popup").hide();
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-add-project').show();
@@ -636,6 +638,8 @@
     });
     
     $('.wizard-create-new-btn').click(function() {
+      $("#help-popup").fadeOut('fast');
+      $("#welcome-popup").hide();
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-add-project').show();
