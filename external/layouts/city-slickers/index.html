@@ -153,19 +153,28 @@
 			display: none;
 			position: absolute;
 			top: 60px;
-			width: 900px;
-			min-height: 400px;
 			left: 50%;
+			margin-left: -450px;
+			overflow: hidden;
+		}
+		
+		.endstuff-container {
+			position:relative;
+			min-height: 400px;
+			max-height: 500px;
+			width: 900px;
 			padding: 16px;
 			border: solid white 2px;
-			margin-left: -450px;
-			background-color: rgba(0, 0, 0, 0.4);
+			background-color: rgba(0, 0, 0, 0.6);
 		}
 
 		.endstuff .gallery {
 			float: right;
-			max-height: 405px;
-			width: 100px;
+			max-height: 472px;
+			width: 140px;
+			background-color: #444;
+			padding: 8px;
+			overflow-y: auto;
 		}
 
 		.endstuff .gallery img {
@@ -183,10 +192,19 @@
 		}
 		
 		.endstuff .description {
-			background-color: #555;
-			padding: 20px;
+			background-color: #444;
+			padding: 10px;
 			color: white;
 			font-family: 'garamond', 'georgia';
+			overflow-y: auto;
+			max-height: 55px;
+			margin-top: 10px;
+			width: 700px;
+		}
+		
+		.endstuff .gallery + .description,
+		.endstuff .gallery + video + .description {
+			margin-right: 176px;
 		}
 
 		</style>
@@ -368,23 +386,66 @@
 			var butterId, options,
 				container, element;
 			
-			function activate(container) {
+			function activate(endstuff) {
 				var i;
 				for (i in allEvents) {
-					if (allEvents[i].endstuff && allEvents[i].endstuff !== container) {
-						allEvents[i].endstuff.style.display = '';
+					if (allEvents[i].endstuff && allEvents[i].endstuff !== endstuff) {
+						allEvents[i].endstuff.parentNode.style.display = '';
 						if (allEvents[i].vidElement) {
 							allEvents[i].vidElement.pause();
 						}
 					} else {
-						allEvents[i].endstuff.style.display = 'block';
+						allEvents[i].endstuff.parentNode.style.display = 'block';
+						if (allEvents[i].vidElement) {
+							allEvents[i].vidElement.play();
+						}
 					}
 				}
 			}
 			
+			function loadGallery(options, gallery) {
+				var url = 'http://api.flickr.com/services/rest/?method=flickr.galleries.getPhotos&api_key=3b1a167af8d3b3a1874f50fba0860093&gallery_id=' + gallery.id + '&format=json&jsoncallback=flickrGallery' + Date.now();
+			
+				Popcorn.xhr.getJSONP( url, function( data ) {
+					var photos, i, photo,
+						link, img,
+						gallery;
+					try {
+						photos = data.photos.photo;
+					} catch (e) {
+						return;
+					}
+					
+					if (!photos) {
+						return;
+					}
+					
+					gallery = document.createElement('div');
+					gallery.setAttribute('class', 'gallery');
+					options.endstuff.insertBefore(gallery, options.endstuff.firstChild);
+					
+					for (i = 0; i < photos.length; i++) {
+						photo = photos[i];
+						if (photo.ispublic) {
+							img = document.createElement('img');
+							img.src = 'http://farm' + photo.farm + '.static.flickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '_s.jpg';
+							
+							link = document.createElement('a');
+							link.setAttribute('href', 'http://www.flickr.com/photos/' + photo.owner + '/' + photo.id + '/');
+							link.setAttribute('target', '_new');
+							
+							link.appendChild(img);
+							gallery.appendChild(link);
+						}
+					}
+				});
+			}
+
 			for (butterId in allEvents) {
-				function loadGallery(galleryId) {
-				}
+				var i, url,
+					pieces,
+					galleries = {},
+					regex = /(https?:\/\/)?(www\.)?flickr\.com\/photos\/([A-Za-z0-9@]+)\/galleries\/(\d+)\/?/;
 
 				options = allEvents[butterId];
 				if (!options.endstuff) {
@@ -392,7 +453,11 @@
 					container.setAttribute('class', 'endstuff');
 					document.body.appendChild(container);
 					
-					options.endstuff = container;
+					options.endstuff = document.createElement('div');
+					options.endstuff.setAttribute('class', 'endstuff-container');
+					container.appendChild(options.endstuff);
+					
+					container = options.endstuff;
 
 					if (options.marker) {
 						options.marker.setVisible(true);
@@ -405,20 +470,33 @@
 					}
 					
 					if (options.galleries && options.galleries.length) {
-						var i, url,
-							pieces,
-							galleries = {},
-							regex = /(https?:\/\/)?(www\.)?flickr\.com\/photos\/([A-Za-z0-9@]+)\/galleries\/(\d+)\/?/;
 						for (i = 0; i < options.galleries.length; i++) {
 							pieces = regex.exec(options.galleries[i]);
 							if (pieces) {
 								if (!galleries[ pieces[4] ]) {
-									url = 'http://api.flickr.com/services/rest/?method=flickr.galleries.getList&api_key=3b1a167af8d3b3a1874f50fba0860093&user_id=' + pieces[3] + '&format=json&jsoncallback=flickr' + pieces[3];
-		
-									Popcorn.xhr.getJSONP( url, function( data ) {
-									});
+									/*
+									todo: right now, this might unnecessarily load the same query multiple times, so make this more efficient
+									*/
+									url = 'http://api.flickr.com/services/rest/?method=flickr.galleries.getList&api_key=3b1a167af8d3b3a1874f50fba0860093&user_id=' + pieces[3] + '&format=json&jsoncallback=flickrGallery' + pieces[4];
+									
+									(function (opt, gid) {
+
+										Popcorn.xhr.getJSONP( url, function( data ) {
+											var i, id;
+											for (i = 0; i < data.galleries.gallery.length; i++) {
+												try {
+													id = data.galleries.gallery[i].id.split('-')[1];
+													galleries[id] = data.galleries.gallery[i];
+												} catch (e) {
+													return;
+												}
+											}
+											
+											loadGallery(opt, galleries[ gid ] );
+										});
+									}(options, pieces[4]));
 								} else {
-									//galleries[ pieces[4] ] ;
+									loadGallery(options, galleries[ pieces[4] ] );
 								}
 							}
 						}
@@ -518,6 +596,7 @@
 					y0 = vpos.y,
 					x1 = video.offsetWidth + x0,
 					y1 = video.offsetHeight + y0 - 30;
+				var i, c;
 				
 				mouseX = event.pageX;
 				mouseY = event.pageY;
@@ -525,23 +604,47 @@
 				if (mouseX >= x0 && mouseX <= x1 &&
 					mouseY >= y0 && mouseY <= y1) {
 					if (!videoHover && video.currentTime) {
-						video.setAttribute('class', 'hover');
+						c = video.getAttribute('class') || '';
+						c = c.split(' ');				
+						i = c.indexOf('hover');
+						if (i < 0 ) {
+							c.push('hover');
+							video.setAttribute('class', c.join(' ') );
+						}
 						videoHover = true;
 					}
 				} else if (videoHover) {
-					video.removeAttribute('class');
+					c = video.getAttribute('class') || '';
+					c = c.split(' ');				
+					i = c.indexOf('hover');
+					if (i >= 0 ) {
+						c.splice(i, 1);
+						video.setAttribute('class', c.join(' ') );
+					}
 					videoHover = false;
 				}
 
 			}, false);
 			
 			window.addEventListener('mouseout', function (e) {
-				video.removeAttribute('class');
+				var i, c = video.getAttribute('class') || '';
+				c = c.split(' ');
+				i = c.indexOf('hover');
+				if (i >= 0 ) {
+					c.splice(i, 1);
+				}
+				video.setAttribute('class', c.join(' ') );
 				videoHover = false;
 			}, false);
 			
 			window.addEventListener('blur', function (e) {
-				video.removeAttribute('class');
+				var i, c = video.getAttribute('class') || '';
+				c = c.split(' ');
+				i = c.indexOf('hover');
+				if (i >= 0 ) {
+					c.splice(i, 1);
+				}
+				video.setAttribute('class', c.join(' ') );
 				videoHover = false;
 			}, false);
 			
