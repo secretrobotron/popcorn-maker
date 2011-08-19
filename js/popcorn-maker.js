@@ -29,8 +29,11 @@
 
       bottom: '268px'
 
-    }, 500);  
+    }, 500);
+      
     $('#welcome-popup').fadeIn(2000);
+    var escapeKeyEnabled = true;
+    
     $('#loading-overlay').hide();
     //Carousel for Help inner page
 		$(function(){
@@ -51,6 +54,7 @@
     $('.open-help, .help').click(function() {
 										 
         $("#help-popup").fadeIn('slow');
+        escapeKeyEnabled = true;
 
     });
     
@@ -92,6 +96,7 @@
       var option = document.createElement( 'option' );
       option.value = layouts[ i ];
       option.innerHTML = layouts[ i ];
+      option.class = "ddprojects-option";
       layoutSelect.appendChild( option );
     }
 
@@ -552,14 +557,6 @@
     });
     
     create_msDropDown()
-    
-//    function loadProjectsFromServer(){
-//      //load stuff from bobby's server
-//     }
-//    
-//    loadProjectsFromServer();
-    
-    // Saving
 
     $(".save-project-data-btn").click(function(){
       
@@ -620,6 +617,7 @@
       $('#popup-add-project').show();
       centerPopup( $('#popup-add-project') );
       $(' .balck-overlay ').show();
+      escapeKeyEnabled = true;
     });  
     $('.wizard-add-project-btn').click(function() {
       $('.close-div').fadeOut('fast');
@@ -627,6 +625,7 @@
       $('#popup-add-project').show();
       centerPopup( $('#popup-add-project') );
       $(' .balck-overlay ').show();
+      escapeKeyEnabled = true;
     });
     
     $('.wizard-create-new-btn').click(function() {
@@ -635,6 +634,7 @@
       $('#popup-add-project').show();
       centerPopup( $('#popup-add-project') );
       $(' .balck-overlay ').show();
+      escapeKeyEnabled = true;
     });
 
     $(".collapse-btn").toggle(function() {
@@ -681,13 +681,14 @@
       $(".sound-btn a span").css('backgroundPosition','0 0');
     });
 
-    $('li.edit a').click(function(){
+    $('li.edit a.edit-timeline-media').click(function(){
       $('#url').val( b.getCurrentMedia().getUrl() );
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-1').show();
       centerPopup( $('#popup-1') );
       $(' .balck-overlay ').hide();
+      escapeKeyEnabled = true;
     });
     
     $('.change-url-btn').click(function(){
@@ -715,6 +716,7 @@
       $('#popup-3').show();
       centerPopup( $('#popup-3') );
       $(' .balck-overlay ').show();
+      escapeKeyEnabled = true;
     });
     
     $('.edit-selected-project').click(function(){
@@ -726,6 +728,7 @@
         $('#popup-project-title').show();
         centerPopup( $('#popup-project-title') );
         $('.balck-overlay').hide();
+        escapeKeyEnabled = true;
       }
     });
     
@@ -767,7 +770,7 @@
       $('.popups').hide();
     });
     
-    $(".projects-dd").change(function() {
+    var ddLoadFunc = function() {
       var title = projectsDrpDwn.val();
       localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
       localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
@@ -777,9 +780,12 @@
         $('#load-confirmation-dialog').show();
         centerPopup( $('#load-confirmation-dialog') );
         $('.balck-overlay').hide();
+        escapeKeyEnabled = true;
       }
-    });
+    };
     
+    $(".projects-dd").change(ddLoadFunc);
+
     $(".confirm-load-btn").click(function() {
       var title = projectsDrpDwn.val();
 
@@ -926,6 +932,15 @@
       }
     });
 
+    $(window).keypress( function ( event ) {
+      if ( event.keyCode === 27 && escapeKeyEnabled ) {
+        $('.close-div').fadeOut('fast');
+        $('.popups').hide();
+        $("#help-popup").fadeOut('fast');
+        $("#welcome-popup").hide();
+        escapeKeyEnabled = false;
+      }
+    });
   }, false);
 
 
