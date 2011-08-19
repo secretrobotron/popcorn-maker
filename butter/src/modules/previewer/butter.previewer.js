@@ -379,6 +379,26 @@
       }, false );
     };
 
+    this.getScriptPaths = function(){
+      var doc = ( iframe.contentWindow || iframe.contentDocument ).document,
+          tempHead = doc.createElement( "head" ),
+          srcs = [];
+          
+      tempHead.innerHTML = originalHead;
+      for( var i = 0, l = tempHead.children.length; i < l; i++ ) {
+        if( tempHead.children[ i ].src ) {
+          if( tempHead.children[ i ].src.split("popcorn-maker", 2)[ 1 ] ) { 
+            srcs[ tempHead.children[ i ].getAttribute('src') ] = "popcorn-maker" + tempHead.children[ i ].src.split("popcorn-maker", 2)[ 1 ];
+          }
+        } else if( tempHead.children[ i ].href ) {
+           if( tempHead.children[ i ].href.split("popcorn-maker", 2)[ 1 ] ) { 
+            srcs[ tempHead.children[ i ].getAttribute('href') ] = "popcorn-maker" + tempHead.children[ i ].href.split("popcorn-maker", 2)[ 1 ];
+          }
+        }
+      }
+      return srcs;
+    };
+
     this.getPopcorn = function( callback ) {
       var popcornz = "";
       
@@ -427,9 +447,6 @@
       var doc = ( iframe.contentWindow || iframe.contentDocument ).document,
           pcornString = this.getPopcorn(), completePopcorn;
       var trckEvents = this.getTrackEvents( true );
-      var tempHead = doc.createElement( "head" );
-          tempHead.innerHTML = originalHead;
-      //console.log(tempHead.children[ 0 ].src);
 
       if ( !commServer ) {
         completePopcorn =  "<html>\n<head>\n" + originalHead + "\n" + 
@@ -440,6 +457,7 @@
         "</head>\n<body>" + originalBody + "</body></html>\n";
       }
 
+      console.log(this.getScriptPaths());
       return completePopcorn;
     };
 

@@ -177,3 +177,8 @@ html, body {
   position: absolute;
 }
 
+#export-data {
+  width: 99%;
+  height: 98%;
+  border: none;
+}
