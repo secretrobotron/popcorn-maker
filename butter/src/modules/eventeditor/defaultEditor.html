@@ -7,7 +7,8 @@
       var client,
         butter,
         targets = {};
-        document.addEventListener('DOMContentLoaded', function (e) {
+        
+      document.addEventListener('DOMContentLoaded', function (e) {
 
         butter = new Butter();
 
@@ -55,6 +56,7 @@
             label = createLabel ( { innerHTML: elemLabel, attributes: { "for": elemLabel, "text": elemLabel } } );
 
             elements[ prop ] = elem;
+            console( options );
 
             if ( elemType === "input" ) {
 
@@ -67,6 +69,10 @@
               }
 
               elem.setAttribute( "value", attr );
+
+              if ( options.default ) {
+                elem.value = options.default;
+              }
             } else if ( elemType === "select" ) {
               attr = trackEvent.popcornOptions[ prop ];
               var populate = function( type ) {

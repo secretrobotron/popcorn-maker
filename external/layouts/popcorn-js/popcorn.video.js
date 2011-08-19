@@ -2,6 +2,8 @@
 
 (function (Popcorn) {
 
+  var videoOptionsRegex = /(\w+)="(\w*)"/;
+
   Popcorn.plugin( "spawnvideo", {
       manifest: {
         about:{
@@ -28,34 +30,52 @@
           videoOptions: {
             elem: "input",
             type: "text",
-            label: "Video Tag Options"
+            label: "Video Tag Options",
+            default: 'controls="true" width="300" height="200" autobuffer="true" preload="auto"'
           },
-          target: {
-            elem: "input", 
-            type: "text",   
-            label: "Target"
-          },
+          target: "video-container"
         }
       },
       _setup: function( options ) {
-        var video = document.createElement( "video" );
-        if ( options.src ) {
-          var src = document.createElement( "src" );
-          video.appendChild( src );
-        }
-        options.video = video;
-      },
+        if ( options.target ) {
+          var targetElement = document.getElementById( options.target );
+          if ( targetElement ) {
+            var video = document.createElement( "video" );
+            if ( options.src ) {
+              var src = document.createElement( "source" );
+              src.src = options.src;
+              video.appendChild( src );
+            }
+            options.video = video;
+            targetElement.appendChild( video );
+            options.video.display = "none";
+            if ( options.videoOptions ) {
+              var splitOptions = options.videoOptions.split(" ");
+              for ( var opt in splitOptions ) {
+                var matches = splitOptions[opt].match( videoOptionsRegex ),
+                    attr = matches[1],
+                    val = matches[2];
+                video.setAttribute( attr, val );
+              } //for
+            } //if
+          } //if
+        } //if
+      }, //setup
 
       start: function( event, options ) {
-        options.video.style.display = "block";
+        if ( options.video ) {
+          options.video.style.display = "block";
+        }
       },
 
       end: function( event, options ) {
-        options.video.style.display = "none";
+        if ( options.video ) {
+          options.video.style.display = "none";
+        }
       },
 
       _teardown: function( options ) {
-        if ( document.getElementById( options.target ) ) {
+        if ( options.target && document.getElementById( options.target ) ) {
           document.getElementById( options.target ).removeChild( options.video );
         }
       }

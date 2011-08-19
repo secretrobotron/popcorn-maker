@@ -85,6 +85,10 @@
               attr = trackEvent.popcornOptions[ prop ] || "";
 
               elem.setAttribute( "value", attr );
+              if ( opt['default'] ) {
+                elem.value = opt['default'];
+              }
+
             } else if ( elemType === "select" ) {
               attr = trackEvent.popcornOptions[ prop ];
               var populate = function( type ) {
