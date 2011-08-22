@@ -29,8 +29,15 @@
 
       bottom: '268px'
 
-    }, 500);  
-    $('#welcome-popup').fadeIn(2000);
+    }, 500);
+    
+    
+    if ( !localStorage.getItem( "PopcornMaker.SavedProjects" ) ) {
+      $('#welcome-popup').fadeIn(2000);
+      $('.popupDiv').fadeIn('slow');
+      var escapeKeyEnabled = true;
+    }
+      
     $('#loading-overlay').hide();
     //Carousel for Help inner page
 		$(function(){
@@ -51,6 +58,9 @@
     $('.open-help, .help').click(function() {
 										 
         $("#help-popup").fadeIn('slow');
+        $('.popupDiv').fadeIn('slow');
+        $('.balck-overlay').show();
+        escapeKeyEnabled = true;
 
     });
     
@@ -58,6 +68,9 @@
 										 
         $("#help-popup").fadeOut('fast');
         $("#welcome-popup").hide();
+        $(".popupDiv").fadeOut("fast");
+        $('.balck-overlay').hide();
+        escapeKeyEnabled = false;
 
     });
     
@@ -92,6 +105,7 @@
       var option = document.createElement( 'option' );
       option.value = layouts[ i ];
       option.innerHTML = layouts[ i ];
+      option.class = "ddprojects-option";
       layoutSelect.appendChild( option );
     }
 
@@ -138,15 +152,15 @@
     
     b.listen ( "trackeditstarted", function() {
       $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
+      $('.popupDiv').fadeIn('slow').css("height", "0%").css("width","0%");
       $('.popup-4').show();
-      $(' .balck-overlay ').hide();
+      
       
     });
     
     b.listen ( "trackeditclosed", function() {
       $('.close-div').fadeOut('fast');
-      $('.popupDiv').hide();
+      $('.popupDiv').hide().css("height", "").css("width","");
       $('popup-4').css("visibility", "hidden")
       .css( "display", "" );
     });
@@ -438,9 +452,9 @@
         editTrackTargets.value = b.getEditTrack().target;
 
         //$('.close-div').fadeOut('fast');
-        $('.popupDiv').fadeIn('slow');
+        $('.popupDiv').fadeIn('slow').css("height", "0%").css("width","0%");
         $('#popup-5').show();
-        $(' .balck-overlay ').hide();
+        $(' .balck-overlay ').show();
         centerPopup( $('#popup-5') );
       }, false );
 
@@ -456,9 +470,9 @@
     var closeTrackEditor = function() {
 
       b.closeEditTrack();
-      $('.popupDiv').fadeOut( 'slow' );
+      $('.popupDiv').fadeOut( 'slow' ).css("height", "").css("width","");
       $('#popup-5').hide();
-      $(' .balck-overlay ').show();
+      $(' .balck-overlay ').hide();
     };
 
     var applyTrackEditor = function() {
@@ -552,14 +566,6 @@
     });
     
     create_msDropDown()
-    
-//    function loadProjectsFromServer(){
-//      //load stuff from bobby's server
-//     }
-//    
-//    loadProjectsFromServer();
-    
-    // Saving
 
     $(".save-project-data-btn").click(function(){
       
@@ -589,6 +595,7 @@
         projectsDrpDwn[0].refresh()
         $('.close-div').fadeOut('fast');
         $('.popups').hide();
+        escapeKeyEnabled = false;
       }
       catch ( e ) {
         throw new Error("Saving Failed...");
@@ -620,21 +627,28 @@
       $('#popup-add-project').show();
       centerPopup( $('#popup-add-project') );
       $(' .balck-overlay ').show();
+      escapeKeyEnabled = true;
     });  
     $('.wizard-add-project-btn').click(function() {
+      $("#help-popup").fadeOut('fast');
+      $("#welcome-popup").hide();
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-add-project').show();
       centerPopup( $('#popup-add-project') );
       $(' .balck-overlay ').show();
+      escapeKeyEnabled = true;
     });
     
     $('.wizard-create-new-btn').click(function() {
+      $("#help-popup").fadeOut('fast');
+      $("#welcome-popup").hide();
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-add-project').show();
       centerPopup( $('#popup-add-project') );
       $(' .balck-overlay ').show();
+      escapeKeyEnabled = true;
     });
 
     $(".collapse-btn").toggle(function() {
@@ -681,13 +695,14 @@
       $(".sound-btn a span").css('backgroundPosition','0 0');
     });
 
-    $('.timeline-title.media-title-div').click(function(){
+    $('li.edit a.edit-timeline-media').click(function(){
       $('#url').val( b.getCurrentMedia().getUrl() );
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-1').show();
       centerPopup( $('#popup-1') );
       $(' .balck-overlay ').hide();
+      escapeKeyEnabled = true;
     });
     
     $('.change-url-btn').click(function(){
@@ -695,6 +710,7 @@
       b.getCurrentMedia().setUrl( $('#url').val() );
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
+      escapeKeyEnabled = false;
     });
 
     $('.layer-btn .edit span').click(function(){
@@ -706,8 +722,7 @@
     });
 
     $('.p-3').click(function(){
-      
-      $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
+      $('#export-data').val( b.getHTML() );
       $('.project-title-textbox').val( b.getProjectDetails( "title" ) );
       
       $('.close-div').fadeOut('fast');
@@ -715,6 +730,7 @@
       $('#popup-3').show();
       centerPopup( $('#popup-3') );
       $(' .balck-overlay ').show();
+      escapeKeyEnabled = true;
     });
     
     $('.edit-selected-project').click(function(){
@@ -726,6 +742,7 @@
         $('#popup-project-title').show();
         centerPopup( $('#popup-project-title') );
         $('.balck-overlay').hide();
+        escapeKeyEnabled = true;
       }
     });
     
@@ -759,15 +776,17 @@
         
         $('.close-div').fadeOut('fast');
         $('.popups').hide();
+        escapeKeyEnabled = false;
       }
     });
 
-    $('.popup-close-btn, .balck-overlay').click(function(){
+    $('.popup-close-btn').click(function(){
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
+      escapeKeyEnabled = false;
     });
     
-    $(".projects-dd").change(function() {
+    var ddLoadFunc = function() {
       var title = projectsDrpDwn.val();
       localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
       localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
@@ -776,10 +795,13 @@
         $('.popupDiv').fadeIn('slow');
         $('#load-confirmation-dialog').show();
         centerPopup( $('#load-confirmation-dialog') );
-        $('.balck-overlay').hide();
+        $('.balck-overlay').show();
+        escapeKeyEnabled = true;
       }
-    });
+    };
     
+    $(".projects-dd").change(ddLoadFunc);
+
     $(".confirm-load-btn").click(function() {
       var title = projectsDrpDwn.val();
 
@@ -787,6 +809,7 @@
         b.clearProject();         
         b.clearPlugins();
         currentLayout = localProjects[ title ].layout;
+        console.log( localProjects[ title ] );
         (function ( localProject ) {
           b.listen( "layoutloaded", function( e ) {
             document.getElementById( "main" ).innerHTML = "";
@@ -810,7 +833,9 @@
           importMedia: localProjects[ title ].media,
         });
         $('.close-div').fadeOut('fast');
-        $('.popups').hide();     
+        $('.popups').hide();
+        $('balck-overlay').show()
+        escapeKeyEnabled = false;     
       }
     });
     
@@ -841,6 +866,7 @@
       });
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
+      escapeKeyEnabled = false;
     });
     
     $(".load-code-btn").click(function() {
@@ -870,6 +896,7 @@
           toggleLoadingScreen( true );
           $('.close-div').fadeOut('fast');
           $('.popups').hide();
+          escapeKeyEnabled = false;
           b.loadPreview( {
             layout: currentLayout,
             target: "main",
@@ -888,11 +915,11 @@
     $(".show-json-btn").click(function() {
       var exp = b.exportProject();
       exp.layout = currentLayout;
-      $('.track-content').html( JSON.stringify( exp ) );
+      $('#export-data').val( JSON.stringify( exp ) );
     });
 
     $(".show-html-btn").click(function() {
-      $('.track-content').html( $('<div/>').text( b.getHTML() ).html() );
+      $('#export-data').val( b.getHTML() );
     });
     
     //$(function(){ $("label").inFieldLabels(); });
@@ -926,6 +953,16 @@
       }
     });
 
+    $(window).keypress( function ( event ) {
+      if ( event.keyCode === 27 && escapeKeyEnabled ) {
+        $('.close-div').fadeOut('fast');
+        $('.popups').hide();
+        $("#help-popup").fadeOut('fast');
+        $("#welcome-popup").hide();
+        $('.balck-overlay').hide();
+        escapeKeyEnabled = false;
+      }
+    });
   }, false);
 
 
