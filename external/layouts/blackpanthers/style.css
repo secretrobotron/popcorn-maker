@@ -168,7 +168,7 @@ background-color: black;
 }
 #lightbox img {
   position: relative;
-  top: 20px;
+  top: 200px;
 }
 #lightbox img:hover {
   cursor: pointer;
