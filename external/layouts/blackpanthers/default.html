@@ -48,6 +48,7 @@
         options.link = document.createElement( "a" );
         options.link.style.position = "relative";
         options.link.style.textDecoration = "none";
+        options.link.className = "grow-opacity";
 
         if ( document.getElementById( options.target ) ) {
           // add the widget's div to the target div
@@ -81,6 +82,7 @@
 
           divText.innerHTML = options.text || "";
           options.link.appendChild( divText );
+          options.img = img;
           options.link.appendChild( img );
           divText.style.top = ( img.height / 2 ) - ( divText.offsetHeight / 2 ) + "px"; 
           options.link.style.display = "none";
@@ -108,6 +110,27 @@
        * options variable
        */
       start: function( event, options ) {
+
+	var requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function(callback, element){
+                window.setTimeout(callback, 1000 / 60);
+              };
+    })();
+
+		var opacity = 0;
+		function growOpacity() {
+			if ( opacity < 1 ) {
+				opacity += 0.01;
+				options.img.style.opacity = opacity;
+				requestAnimFrame( growOpacity );
+			}
+		}
+		growOpacity();
         options.link.style.display = "block";
       },
       /**
@@ -134,10 +157,11 @@
 <div id="topbar">
 		<!-- FACTORY SPECIFIC -->
   <img src="factory.png" class="factory">
+  <img src="tw.png" class="twitter">
+  <img src="fb.png" class="facebook">
 		<!-- FACTORY SPECIFIC -->
 
-  <div class="toptext">History in these streets</div>
-  <div id="chapter_title" data-butter="target"></div>
+  <div class="toptext"><img src="logo.png"></div>
 </div>
 
 <div id="tour_area" data-butter="target">
@@ -165,10 +189,10 @@
 <!-- End sidebar -->
 
 <div id="timeline_area">
+  <div id="chapter_title" data-butter="target"></div>
   <div id="narration" data-butter="media" data-butter-soundcloud="http://soundcloud.com/huey-p-newton-project/huey">
   </div>
 </div>
-
 <div id="footernav">
 Watch the doc - Learn more - Contact
 </div>

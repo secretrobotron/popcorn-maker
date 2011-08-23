@@ -1,0 +1,474 @@
+<html>
+<head>
+<script src="http://popcornjs.org/code/players/soundcloud/lib/soundcloud.player.api.js"></script><script src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+  <link href="style.css" rel="stylesheet" type="text/css">
+  <title>History in These Streets - The Factory at BAVC</title>
+  <style type="text/css">
+  </style>
+  <script src="../popcorn-js/popcorn.js"></script>
+  <script src="../popcorn-js/popcorn.soundcloud.js"></script>
+  <script src="../popcorn-js/popcorn.video.js"></script>
+  <script src="../popcorn-js/popcorn.footnote.js"></script>
+  <script src="../popcorn-js/popcorn.facebook.js"></script>
+  <script src="js/popcorn.googlestreets.js"></script>
+  <script>
+// PLUGIN: IMAGE
+
+(function (Popcorn) {
+
+  var requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function(callback, element){
+                window.setTimeout(callback, 1000 / 60);
+              };
+  })();
+
+  Popcorn.plugin( "image", {
+      manifest: {
+        about:{
+          name: "Popcorn image Plugin",
+          version: "0.1",
+          author: "Scott Downe",
+          website: "http://scottdowne.wordpress.com/"
+        },
+        options: {
+          start: {
+            elem: "input",
+            type: "number",
+            label: "In"
+          },
+          end: {
+            elem: "input",
+            type: "number",
+            label: "Out"
+          },
+          target: "image-container",
+          src: {
+            elem: "input", 
+            type: "text",   
+            label: "Source URL"
+          }
+        }
+      },
+      _setup: function( options ) {
+        var img = document.createElement( "img" );
+
+        options.link = document.createElement( "a" );
+        options.link.style.position = "relative";
+        options.link.style.textDecoration = "none";
+        options.link.className = "grow-opacity";
+
+        if ( document.getElementById( options.target ) ) {
+          // add the widget's div to the target div
+          document.getElementById( options.target ).appendChild( options.link );
+        }
+
+        img.addEventListener( "load", function() {
+
+          // borders look really bad, if someone wants it they can put it on their div target
+          img.style.borderStyle = "none";
+          
+          if ( options.href ) {
+            options.link.href = options.href;
+          }
+
+          options.link.target = "_blank";
+
+          var fontHeight = ( img.height / 12 ) + "px", 
+              divText = document.createElement( "div" );
+          
+          Popcorn.extend( divText.style, {
+
+            color: "black",
+            fontSize: fontHeight,
+            fontWeight: "bold",
+            position: "relative",
+            textAlign: "center",
+            width: img.width + "px",
+            zIndex: "10"
+          });
+
+          divText.innerHTML = options.text || "";
+          options.link.appendChild( divText );
+          options.img = img;
+          options.link.appendChild( img );
+          divText.style.top = ( img.height / 2 ) - ( divText.offsetHeight / 2 ) + "px"; 
+          options.img.style.display = "none";
+          img.style.opacity = 0;
+        }, false );
+
+        img.src = options.src;
+        img.addEventListener( 'click', function( e ) {
+          var lightbox = document.getElementById('lightbox');
+          lightbox.innerHTML = "";
+          var lightboxImage = document.createElement('img');
+          lightboxImage.src = options.src;
+          lightbox.appendChild( lightboxImage );
+          lightbox.style.display = "block";
+          lightboxImage.addEventListener( 'click', function( e ) {
+            lightbox.innerHTML = "";
+            lightbox.style.display = "none";
+          }, false );
+        }, false );
+      },
+
+      /**
+       * @member image 
+       * The start function will be executed when the currentTime 
+       * of the video  reaches the start time provided by the 
+       * options variable
+       */
+      start: function( event, options ) {
+        var opacity = 0;
+        options.img.style.display = "block";
+        options.img.style.opacity = 0;
+        function growOpacity() {
+          if ( opacity < 1 ) {
+            opacity += 0.025;
+            options.img.style.opacity = opacity;
+            requestAnimFrame( growOpacity );
+          }
+        }
+        growOpacity();
+      },
+      /**
+       * @member image 
+       * The end function will be executed when the currentTime 
+       * of the video  reaches the end time provided by the 
+       * options variable
+       */
+      end: function( event, options ) {
+        options.link.style.display = "none";
+      },
+      _teardown: function( options ) {
+        document.getElementById( options.target ) && document.getElementById( options.target ).removeChild( options.link );
+      }
+  });
+})(Popcorn);
+  </script>
+
+<script> document.addEventListener( 'DOMContentLoaded', function(){
+var popcorn = Popcorn( Popcorn.soundcloud( 'narration', 'http://soundcloud.com/huey-p-newton-project/huey' ) );
+
+Popcorn.instances[ 0 ].googlestreets({
+start: '0',
+end: '36.08921505376344',
+target: 'tour_area',
+type: 'undefined',
+zoom: '0',
+lat: '37.835802',
+lng: '-122.26928900000001',
+location: '4722 west street Oakland 94608',
+heading: '116.7',
+pitch: '3.599999999999996',
+});
+Popcorn.instances[ 0 ].image({
+start: '0.2571927651139742',
+end: '35.492601585728444',
+target: 'image1',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/hilliardhome.jpg',
+});
+Popcorn.instances[ 0 ].image({
+start: '0.2571927651139742',
+end: '35.492601585728444',
+target: 'image3',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/bppgrouppic.png',
+});
+Popcorn.instances[ 0 ].image({
+start: '0.2571927651139742',
+end: '35.23540882061447',
+target: 'image2',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/bppmemberspostedup.png',
+});
+Popcorn.instances[ 0 ].image({
+start: '0.2571927651139742',
+end: '35.492601585728444',
+target: 'image4',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/bppfacingprovidence.jpg',
+});
+Popcorn.instances[ 0 ].footnote({
+start: '4.629469772051536',
+end: '34.72102329038652',
+text: 'Mr. Hilliard’s childhood home plays as one of the backdrops to the origin of the Black Panther Party. Here is where the unification of the leadership grew to become strong enough to lead a demographic to a new plateau. <a href="http://en.wikipedia.org/wiki/Black_Panther_Party#Origins">Read more about the origin of the Black Panther Party</a> ',
+target: 'chapter_title',
+});
+Popcorn.instances[ 0 ].spawnvideo({
+start: '37.12027384020618',
+end: '88.95489046391752',
+src: 'http://videos-origin.mozilla.org/serv/webmademovies/bavc/newton1-seale.webm',
+videoOptions: 'controls="true" width="100%" height="100%" autobuffer="true" preload="auto"',
+target: 'video-area',
+});
+Popcorn.instances[ 0 ].googlestreets({
+start: '88.62047358247423',
+end: '142.12717461340208',
+target: 'tour_area',
+type: 'undefined',
+zoom: '1',
+lat: '37.8430375',
+lng: '-122.27036479999998',
+location: '5700 Martin Luther King Jr. Way Oakland CA',
+heading: '94.5',
+pitch: '-7.8',
+});
+Popcorn.instances[ 0 ].image({
+start: '88.78768202319587',
+end: '141.95996617268042',
+target: 'image1',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/foundingmembersmerrit.jpg',
+});
+Popcorn.instances[ 0 ].image({
+start: '88.78768202319587',
+end: '142.29438305412373',
+target: 'image3',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/bppmemberspostedmerrit.gif',
+});
+Popcorn.instances[ 0 ].image({
+start: '88.95489046391752',
+end: '142.12717461340208',
+target: 'image2',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/bppstudyingredbook.jpg',
+});
+Popcorn.instances[ 0 ].image({
+start: '88.95489046391752',
+end: '142.12717461340208',
+target: 'image4',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/bppcrewpostedagainmerrit.jpg',
+});
+Popcorn.instances[ 0 ].footnote({
+start: '95.6432280927835',
+end: '142.12717461340208',
+text: 'Education was the initial key to the power of the Black Panther Party, and it was here where their educational journey began and the party was formed. As a result of their efforts Oakland City College was the first to offer ethnic studies which is now found in colleges across the nation.<a href="http://panthercub.net/56401/index.html"> Read more about the former Merritt College of Oakland and the Black Panther Party</a>',
+target: 'chapter_title',
+});
+Popcorn.instances[ 0 ].googlestreets({
+start: '142.46159149484538',
+end: '194.630625',
+target: 'tour_area',
+type: 'undefined',
+zoom: '0',
+lat: '37.8387154',
+lng: '-122.26922239999999',
+location: '5350 Martin Luther King Jr. Way',
+heading: '60',
+pitch: '-3.3000000000000016',
+});
+Popcorn.instances[ 0 ].image({
+start: '142.79600837628865',
+end: '193.9617912371134',
+target: 'image1',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/eastbaylicquor.jpg',
+});
+Popcorn.instances[ 0 ].image({
+start: '143.13042525773196',
+end: '194.2962081185567',
+target: 'image2',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/bppboycottlicquorstore.jpg',
+});
+Popcorn.instances[ 0 ].image({
+start: '144.13367590206187',
+end: '194.2962081185567',
+target: 'image3',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/bppmembersliquorstore.jpg',
+});
+Popcorn.instances[ 0 ].footnote({
+start: '148.9146110009911',
+end: '194.18053766105055',
+text: 'Here is the site of the implication of the strategic and organized Black Panther Party. It was acts like these that gained the Black Panther Party their legitimacy of a strong force that were very serious about their cause. <a href="http://www.hadnotfoundation.org/articles/BlackBacklashHitsPantherLiquorStoreBoycott.pdf">Read this article about this historical boycott</a>',
+target: 'chapter_title',
+});
+Popcorn.instances[ 0 ].spawnvideo({
+start: '195.6338756443299',
+end: '247.1340753865979',
+src: 'http://videos-origin.mozilla.org/serv/webmademovies/bavc/newton2-2ndhq.webm',
+videoOptions: 'controls="true" width="100%" height="100%" autobuffer="true" preload="auto"',
+target: 'video-area',
+});
+Popcorn.instances[ 0 ].googlestreets({
+start: '248.47174291237113',
+end: '301.978443943299',
+target: 'tour_area',
+type: 'undefined',
+zoom: '1',
+lat: '37.8392539',
+lng: '-122.27387880000003',
+location: '5500 market, street oakland',
+heading: '-218.70000000000005',
+pitch: '3.0000000000000036',
+});
+Popcorn.instances[ 0 ].image({
+start: '248.70540386521307',
+end: '300.1439568880079',
+target: 'image1',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/BPPReadyforWar-Stoplight.jpg',
+});
+Popcorn.instances[ 0 ].image({
+start: '248.70540386521307',
+end: '300.65834241823586',
+target: 'image2',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/OldBlackPantherSign-stoplight.jpg',
+});
+Popcorn.instances[ 0 ].image({
+start: '249.219789395441',
+end: '301.17272794846383',
+target: 'image3',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/Stoplight5.jpg',
+});
+Popcorn.instances[ 0 ].image({
+start: '249.476982160555',
+end: '301.42992071357776',
+target: 'image4',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/Stoplight1.jpg',
+});
+Popcorn.instances[ 0 ].footnote({
+start: '256.93557234886026',
+end: '301.6871134786918',
+text: 'After a prolonged back and forth Oakland city citizens were tired of asking for something to prevent their children from being hit when crossing Market st. and it was time for action. Due to the action the Black Panther Party a stoplight was installed and kids no longer had to cross the street in fear of their lives. <a href="http://www.tacticalmagic.org/CTM/project%20pages/BPP.htm">Read more about this momumental advancement in Oakland</a>',
+target: 'chapter_title',
+});
+Popcorn.instances[ 0 ].image({
+start: '301.17272794846383',
+end: '364.9565336967294',
+target: 'image2',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/bppdefremery.jpg',
+});
+Popcorn.instances[ 0 ].image({
+start: '301.9443062438057',
+end: '366.4996902874133',
+target: 'image1',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/childwithposter.jpg',
+});
+Popcorn.instances[ 0 ].image({
+start: '301.978443943299',
+end: '365.51765141752577',
+target: 'image3',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/hueyrallydefermery.jpg',
+});
+Popcorn.instances[ 0 ].googlestreets({
+start: '302.3128608247423',
+end: '365.51765141752577',
+target: 'tour_area',
+type: 'undefined',
+zoom: '1',
+lat: '37.8113958',
+lng: '-122.28549279999999',
+location: '1651 Adeline Street',
+heading: '-71.98516755526452',
+pitch: '4.799999999999995',
+});
+Popcorn.instances[ 0 ].image({
+start: '302.6472777061856',
+end: '365.18323453608247',
+target: 'image4',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/black_panther_party_rally_in_de_fremery_park_oakland_july_28_1968.jpg',
+});
+Popcorn.instances[ 0 ].footnote({
+start: '311.71763131813674',
+end: '366.24249752229935',
+text: 'De Fremery Park was home for many Black Panther Party sponsored events including the Free Huey rally in 1968. It is also known to those of the Black Panther era as the Lil Bobby Hutton park after the death of the young freedom fighter.<a href="http://en.wikipedia.org/wiki/West_Oakland,_Oakland,_California">Read more about this iconic park</a>',
+target: 'chapter_title',
+});
+Popcorn.instances[ 0 ].spawnvideo({
+start: '366.1864851804124',
+end: '463.1673807989691',
+src: 'http://videos-origin.mozilla.org/serv/webmademovies/bavc/newton3-hutton.webm',
+videoOptions: 'controls="true" width="100%" height="100%" autobuffer="true" preload="auto"',
+target: 'video-area',
+});
+Popcorn.instances[ 0 ].image({
+start: '463.71855550049554',
+end: '518.500614469772',
+target: 'video-area',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/hueypnewtonpowertothepeople.jpg',
+});
+Popcorn.instances[ 0 ].image({
+start: '464.23294103072345',
+end: '518.500614469772',
+target: 'video-area',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/hueysolidinthepin.jpg',
+});
+Popcorn.instances[ 0 ].image({
+start: '467.0620614469772',
+end: '517.7290361744301',
+target: 'image2',
+src: 'http://bavc.org/sites/live/files/factory/historyinthestreets/timelineimages/hueynewtonredimage.gif',
+});
+Popcorn.instances[ 0 ].footnote({
+start: '467.8336397423191',
+end: '516.9574578790882',
+text: 'Let the images before you be not just a photo of what used to be, but a mirror of whom you are and can be. Us too can continue the legacy. <a href="http://www.blackpanther.org/">Learn more about the Black Panther Party and how YOU can be involved.</a>',
+target: 'chapter_title',
+});
+Popcorn.instances[ 0 ].googlestreets({
+start: '469.37679633300297',
+end: '502.0402775024777',
+target: 'tour_area',
+type: 'undefined',
+zoom: '2',
+lat: '37.808209',
+lng: '-122.29425700000002',
+location: '949 center street oakland 94607',
+heading: '-59.55',
+pitch: '0.45000000000000107',
+});
+
+}, false); </script>
+</head>
+<body>
+
+
+
+
+<div id="topbar">
+    <!-- FACTORY SPECIFIC -->
+  <img src="factory.png" class="factory">
+  <img src="tw.png" class="twitter">
+  <img src="fb.png" class="facebook">
+    <!-- FACTORY SPECIFIC -->
+
+  <div class="toptext"><img src="logo.png"></div>
+</div>
+
+<div id="tour_area" data-butter="target">
+</div>
+
+<div id="video-area" data-butter="target">
+</div>
+
+<div id="additional">
+  <div class="toptext">
+  on-site photos
+  </div>
+  <div id="additional-image-container">
+    <div class="float-left">
+      <div id="image1" class="showbox showoff" data-butter="target"></div>
+      <div id="image2" class="showbox showoff" data-butter="target"></div>
+    </div>
+    <div style="">
+      <div id="image3" class="showbox showoff" data-butter="target"></div>
+      <div id="image4" class="showbox showoff" data-butter="target"></div>
+    </div>
+  </div>
+</div>
+<!-- End sidebar -->
+
+<div id="timeline_area">
+  <div id="chapter_title" data-butter="target"></div>
+  <div id="narration" data-butter="media" data-butter-soundcloud="http://soundcloud.com/huey-p-newton-project/huey">
+  </div>
+</div>
+<div id="footernav">
+Watch the doc - Learn more - Contact
+</div>
+
+<div id="lightbox">
+</div>
+
+
+
+</body></html>
+

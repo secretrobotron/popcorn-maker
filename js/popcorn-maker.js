@@ -5,7 +5,8 @@
     "layouts/default.html",
     "external/layouts/city-slickers/index.html",
     "external/layouts/cgg/index.html",
-    "external/layouts/blackpanthers/default.html"
+    "external/layouts/blackpanthers/default.html",
+    "external/layouts/bookreport/index.html",
   ],
   currentLayout;
 
