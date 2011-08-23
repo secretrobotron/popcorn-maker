@@ -1,14 +1,26 @@
 html, body {
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
+background-image:url('bg.jpg');
+background-repeat:none;
+background-attachment:fixed;
+background-position:left bottom; 
+background-size: cover;
+-webkit-background-size: cover;
+-moz-background-size: cover;
+-o-background-size: cover;
+width: 100%;
+padding: 0;
+margin: 0;
 }
 
 body {
-background-color: black;
+background-color: #444444;
 }
-
+                
+               
+#additional img {
+	opacity: 0;
+}
+               
 .toptext {
 	color: white;
 	font-size: 20px;
@@ -20,25 +32,44 @@ background-color: black;
 	position: absolute;
 	top: 0;
 	left: 0;
-	height: 75px;
+	min-height: 75px;
+	height: 10%;
 	width: 100%;
-	background-color: black;
+}
+
+#chapter_title {
+	position: absolute;
+	font-family: verdana;
+	font-size: 22px;
+	background:rgba(0,0,0,.6);
+	bottom:100px;
+	z-index: 1000;
+	color: white;
+	width:100%; 
+	text-align:center;
+}
+
+#chapter_title a {
+	color: #c0c0c0;
+}
+
+#chapter_title a:hover {
+	color: #cccccc;
 }
 
 #tour_area {
 	position: absolute;
-	top: 75px;
 	left: 0;
-	bottom: 100px;
+	bottom: 150px;
 	height: 70%;
 	width: 100%;
-	background-color: grey;
 }
 
 #timeline_area {
 	position: absolute;
 	bottom: 50px;
 	height: 100px;
+	background:rgba(0,0,0,.6);
 	left: 0px;
 	width: 100%;
 }
@@ -58,100 +89,21 @@ height: 96px;
 
 #footernav {
 	color: white;
+	font-size: 20px;
 	font-family: verdana;
 	position: absolute;
 	bottom: 10px;
-	margin: 0 auto;
+	width:100%; 
+	text-align:center
 }
 .factory {
 height:50px; position: absolute; right: 10px; padding-top: 10px;}
+.facebook {
+height:50px; position: absolute; right: 200px; padding-top: 10px;}
+.twitter {
+height:50px; position: absolute; right: 150px; padding-top: 10px;}
 
 background-color: black;
-}
-
-#dana {
-	background-color: black;
-	border: 4px solid;
-	border-bottom-color:#555;
-    border-right-color:#333;
-    border-top-color:#ddd;
-    border-left-color:#bbb;
-	margin: 1em;
-	position: absolute;
-	bottom: 50px;
-	left: 100px;
-	width: 320px;
-	height: 180px;
-	z-index: 2000;
-}
-
-#secondary {
-	background-color: black;
-	border: 4px solid;
-	border-bottom-color:#555;
-    border-right-color:#333;
-    border-top-color:#ddd;
-    border-left-color:#bbb;
-	margin: 1em;
-	position: absolute;
-	bottom: 50px;
-	left: 440px;
-	width: 320px;
-	height: 180px;
-	z-index: 2000;
-
-}
-
-#tertiary {
-	margin: 1em;
-	position: absolute;
-	bottom: 50px;
-	left: 780px;
-	width: 480px;
-	height: 270px;
-	z-index: 2000;
-
-}
-
-#webpage {
-	width: 100%;
-	height: 90%;
-}
-
-.subtitles {
-	position: absolute; 
-	left: 120px; 
-	bottom: 20px; 
-	border: 1px grey solid; 
-	padding: 6px; 
-	min-height: 25px;
-	min-width: 650px;
-	color: white;
-	background-color: black; 
-	font-size: 18px;
-	font-family: arial; 
-}
-#accessibility {
-	position: absolute; 
-	right: 125px; 
-	top: 20px; 
-	border: 1px grey solid; 
-	padding: 6px; 
-	color: white;
-	background-color: black; 
-	font-size: 24px;
-	font-family: arial; 
-}
-#language {
-	position: absolute; 
-	right: 10px; 
-	top: 20px; 
-	border: 1px grey solid; 
-	padding: 6px; 
-	color: white;
-	background-color: black; 
-	font-size: 14px;
-	font-family: arial; 
 }
 .hover:hover:
     -webkit-transform: scale(2);
