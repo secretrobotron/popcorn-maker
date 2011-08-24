@@ -1,0 +1,1164 @@
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <title>City Slickers</title>
+    <style type="text/css">
+
+    body {
+      margin: 0;
+      background-color: #000;
+      font-family: 'Bell MT', 'garamond', 'georgia';
+    }
+
+    header {
+      color: #FFFFFF;
+      padding: 0 40px;
+    }
+
+    #header-facebook {
+      position: absolute;
+      right: 0px;
+      top: 20px;
+    }
+
+    .playing h1, .playing #header-facebook {
+      opacity: 0;
+      -moz-transition: opacity 0.4s;
+      -webkit-transition: opacity 0.4s;
+      -o-transition: opacity 0.4s;
+      -ie-transition: opacity 0.4s;
+      transition: opacity 0.4s;
+    }
+    
+    #map {
+      background-color: #000;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    
+    #main-container {
+      position: relative;
+      white-space-collapse: discard;
+    }
+    
+    #video {
+      width: 100%;
+      display: block;
+      opacity: 1;
+      -moz-transition: opacity 0.4s, -moz-transform 0.5s;
+      -webkit-transition: opacity 0.4s, -webkit-transform 0.5s;
+      -o-transition: opacity 0.4s, -o-transform 0.5s;
+      -ie-transition: opacity 0.4s, -ie-transform 0.5s;
+      transition: opacity 0.4s, transform 0.5s;
+
+      -moz-transform: scale(1);
+    }
+    
+    #video.unshoop {
+      opacity: 0;
+      visibility: hidden;
+      -moz-transform: scale(0);
+    }
+
+    #video-container {
+      position: relative;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 1;
+      -moz-transition: opacity 0.4s;
+      -webkit-transition: opacity 0.4s;
+      -o-transition: opacity 0.4s;
+      -ie-transition: opacity 0.4s;
+      transition: opacity 0.4s;
+    }
+    
+    #video:hover, #video.hover {
+      -webkit-transition: opacity 0.4s;
+      -o-transition: opacity 0.4s;
+      -ie-transition: opacity 0.4s;
+      transition: opacity 0.4s;
+      opacity: 0.2;
+    }
+    
+    #controls {
+      position: absolute;
+      z-index: 99;
+      right: 0px;
+      bottom: 0px;
+      width: 400px;
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0.4);
+      display: none;
+    }
+    
+    #controls > div {
+      cursor: pointer;
+    }
+    #caption {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      z-index: 1000;
+      color: white;
+      font-size: 30px;
+      font-family: verdana;
+    }
+    #play-button {
+      float: left;
+      width: 30px;
+      height: 30px;
+      margin: 5px;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    
+    #play-button:hover, #play-button:active {
+      background-color: rgba(40, 40, 80, 0.4);
+    }
+
+    #play-button > span {
+      border-bottom: 7px solid transparent;
+      border-left: 12px solid #fff;
+      border-top: 7px solid transparent;
+      display: block;
+      font-size: 0;
+      height: 0;
+      line-height: 0;
+      margin: 8px 0 0 10px;
+      width: 0;
+    }
+
+    #play-button.playing > span {
+      border-bottom: none;
+      border-top: none;
+      border-left: 4px solid #fff;
+      border-right: 4px solid #fff;
+      display: block;
+      font-size: 0;
+      height: 14px;
+      line-height: 0;
+      margin: 8px 0 0 10px;
+      width: 3px;
+    }
+    
+    #progress-outer {
+      float: left;
+      width: 320px;
+      height: 30px;
+      margin: 5px 5px 5px 0;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    #progress {
+      width: 0%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.25);
+    }
+
+    #progress-outer:hover, #progress-outer:active {
+      background-color: rgba(40, 40, 80, 0.2);
+    }
+    
+    .endstuff {
+      display: none;
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      margin-left: -450px;
+      border: solid white 2px;
+      overflow: hidden;
+    }
+    
+    .endstuff-container {
+      position:relative;
+      min-height: 400px;
+      max-height: 500px;
+      width: 900px;
+      padding: 16px;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+    
+    .endstuff .header {
+      background-color: black;
+      color: white;
+      position: relative;
+      padding: 16px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    
+    .endstuff .close {
+      color: white;
+      font-size: 14px;
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      cursor: pointer;
+    }
+
+    .endstuff .close:hover {
+      text-decoration: underline;
+    }
+
+    .endstuff .gallery {
+      float: right;
+      max-height: 472px;
+      width: 140px;
+      background-color: #444;
+      padding: 8px;
+      overflow-y: auto;
+    }
+
+    .endstuff .gallery img {
+      width: 100%;
+      overflow-y: scroll;
+      margin-bottom: 10px;
+    }
+    
+    .endstuff-container > * {
+      margin: 4px;
+    }
+    
+    .endstuff video {
+      display: block;
+    }
+    
+    #footnote {
+      position:absolute; 
+      bottom:20px;
+      left:20px; 
+      color:white; 
+      z-index:1000; 
+      font-family:verdana;
+    }
+    
+    .endstuff .description {
+      background-color: #444;
+      padding: 10px;
+      color: white;
+      font-family: 'garamond', 'georgia';
+      overflow-y: auto;
+      max-height: 55px;
+      margin-top: 10px;
+      width: 700px;
+    }
+    
+    .endstuff .gallery + .description,
+    .endstuff .gallery + video + .description {
+      margin-right: 176px;
+    }
+
+    </style>
+<script>
+ window.butterProjectJSON = [{
+     "start": 0,
+     "end": 0,
+     "type": "slickers",
+     "popcornOptions": {
+         "start": 163.90387144362487,
+         "end": 165.58096733403582,
+         "target": "map",
+         "lat": 37.826817,
+         "lng": -122.28294699999998,
+         "label": "Herb Farm",
+         "location": "3434 Haven Street, Oakland CA",
+         "zoom": 16,
+         "description": "\"The Herb Farm is located at the intersection of West Oakland and Emeryville. It has been used for years to engage children and youth in the art of gardening and is now the home of our culinary herb garden. The site comes with a playground for children to use. Because the site is not hooked up to a water meter (we receive water from a neighbor), we are utilizing water drums and hand watering.\"\n- City Slicker Farms",
+         "video": "",
+         "galleries": ["http://www.flickr.com/photos/66489205@N06/galleries/72157627339153747/"]
+     },
+     "track": {},
+     "manifest": {}
+ }, {
+     "start": 0,
+     "end": 0,
+     "type": "slickers",
+     "popcornOptions": {
+         "start": 141.94660794044665,
+         "end": 144.2250446650124,
+         "target": "map",
+         "lat": 37.8125818,
+         "lng": -122.29236559999998,
+         "label": "Farmstand",
+         "location": "16th and Center Streets, Oakland CA",
+         "zoom": 16,
+         "description": "\"Willow Rosenthal purchased this garbage and crabgrass infested lot in 2000 and worked with the community to create a varied demonstration garden and community meeting place. The Farm is home to chickens, beehives, 11 fruit trees, a vermicomposting operation, a biointensive market garden, and a native wildlife habitat perennial border. The Center Street Farm is also home to our weekly Farm Stand where we distribute locally grown produce to West Oakland community members at sliding scale prices. The Saturday market day is an event teeming with neighbors catching up with each other as they make their purchases and neighborhood children getting their hands dirty planting crops and feeding the chickens.\"\n- City Slicker Farms",
+         "video": "http://videos-origin.mozilla.org/serv/webmademovies/bavc/cityslickers-centerstreet.webm",
+         "galleries": ["http://www.flickr.com/photos/66489205@N06/galleries/72157627463421554/"]
+     },
+     "track": {},
+     "manifest": {}
+ }, {
+     "start": 0,
+     "end": 0,
+     "type": "slickers",
+     "popcornOptions": {
+         "start": 246.0197642585551,
+         "end": 247.95937135614702,
+         "target": "map",
+         "lat": 37.81331,
+         "lng": -122.287037,
+         "label": "The Greenhouse",
+         "location": "1240 18th St, Oakland CA",
+         "zoom": 16,
+         "description": "\"Our nursery and garden at Ralph Bunche Continuation School, a collaboration with The Oakland Unified School District, serves the dual purpose of producing plants for our operations and providing a site for educating youth about organic farming. Science teachers use the site to teach students about organic gardening, environmental issues, and nutrition. City Slicker Farms cultivates over 15,000 seedlings in our greenhouse each year for use on our Community Market Farms, Backyard Garden Program, and for sale to the public.\"\n- City Slicker Farms",
+         "video": "http://videos-origin.mozilla.org/serv/webmademovies/bavc/cityslickers-bunche.webm",
+         "galleries": ["http://www.flickr.com/photos/66489205@N06/galleries/72157627463416156/"]
+     },
+     "track": {},
+     "manifest": {}
+ }, {
+     "start": 0,
+     "end": 0,
+     "type": "slickers",
+     "popcornOptions": {
+         "start": 306.1387797752809,
+         "end": 307.78949438202244,
+         "target": "map",
+         "lat": 37.83611399999999,
+         "lng": -122.27131400000002,
+         "label": "Secret Garden",
+         "location": "5105 Genoa Street, Oakland CA",
+         "zoom": 16,
+         "description": "\"This backyard community farm at the home of a local architect is located right above the underground Temescal Creek. This is our second largest farm and produces an abundance of organic vegetables for the City Slicker Farms Farm Stand. A large bulk of the space is used for compost production, native plants and storage.\" \n- City Slicker Farms",
+         "video": "http://videos-origin.mozilla.org/serv/webmademovies/bavc/cityslickers-secretgarden.webm",
+         "galleries": ["http://www.flickr.com/photos/66489205@N06/galleries/72157627339109089/", "http://www.flickr.com/photos/66489205@N06/galleries/72157627463437806/"]
+     },
+     "track": {},
+     "manifest": {}
+ }, {
+     "start": 0,
+     "end": 0,
+     "type": "slickers",
+     "popcornOptions": {
+         "start": 203.34840811153356,
+         "end": 205.75352091254754,
+         "target": "map",
+         "lat": 37.805487,
+         "lng": -122.29842300000001,
+         "label": "WOW Farm",
+         "location": "537 Lewis Street Oakland, CA",
+         "zoom": 16,
+         "description": "\"Founded by an artist/horticulturalist, West Oakland Woods Farm is home to a beautiful array of native plants, annual and perennial crops and fruit trees. Under the BART tracks at 7th and Peralta Streets, this garden attracts birds, butterflies, bees, and neighbors to soak in the beautiful colors and clean air of the garden. Tucked away in the back is an open area with a table perfect for a garden-side gathering.\"\n- City Slicker Farms",
+         "video": "http://videos-origin.mozilla.org/serv/webmademovies/bavc/cityslickers-wow.webm",
+         "galleries": ["http://www.flickr.com/photos/66489205@N06/galleries/72157627463451498/"]
+     },
+     "track": {},
+     "manifest": {}
+ }, {
+     "start": 0,
+     "end": 0,
+     "type": "slickers",
+     "popcornOptions": {
+         "start": 253.15751837769326,
+         "end": 255.3298783269962,
+         "target": "map",
+         "lat": 37.82567541662639,
+         "lng": -122.2827212111145,
+         "label": "Fitzgerald and Union Plaza Parks",
+         "location": "34th Street and Peralta Street Oakland, CA",
+         "zoom": 16,
+         "description": "\"City Slicker Farms is constructing a new market farm at the City of Oakland Fitzgerald and Union Plaza Parks. Our partnership with the City of Oakland Office of Parks and Recreation represents the first community market farm to be developed on Oakland parkland. This will be used as a model to explore how best to use parkland to grow produce for the community, specifically for those who have the least access to fresh fruits and vegetables.\"\n- City Slicker Farms",
+         "video": "http://videos-origin.mozilla.org/serv/webmademovies/bavc/cityslickers-fitzgerald.webm",
+         "galleries": ["http://www.flickr.com/photos/66489205@N06/galleries/72157627463428646/"]
+     },
+     "track": {},
+     "manifest": {}
+ }, {
+     "start": 0,
+     "end": 0,
+     "type": "slickers",
+     "popcornOptions": {
+         "start": 15.590082397003744,
+         "end": 16.965677902621724,
+         "target": "map",
+         "label": "",
+         "description": "7th Street was the main location of Oakland's Historic Jazz District. The city-long street held such venues that hosted artists and musicians such as Jimmie Witherspoon, Sugar Pie DeSanto, B. B. King and Aretha Franklin.",
+         "location": "7th Street, West Oakland, CA",
+         "video": "",
+         "galleries": [""],
+         "zoom": 12,
+         "lat": 37.80491231321855,
+         "lng": -122.29401185507811
+     },
+     "track": {},
+     "manifest": {}
+ }, {
+     "start": 0,
+     "end": 0,
+     "type": "slickers",
+     "popcornOptions": {
+         "start": 38.277736972704716,
+         "end": 40.708069478908186,
+         "target": "map",
+         "lat": 37.82631402040493,
+         "lng": -122.27723884643558,
+         "label": "",
+         "description": "Named in honor of WWII General Douglas MacArthur in the stretch between the San Francisco-East Bay Area and Castro Valley, this segment of Interstate 580 was constructed in the 1960's. The interstate is considered apart of the \"MacArthur Maze\" which consists of 3 highway split-offs to San Francisco and Oakland.",
+         "location": "West Oakland, CA",
+         "video": "",
+         "galleries": [""],
+         "zoom": 13
+     },
+     "track": {},
+     "manifest": {}
+ }, {
+     "start": 0,
+     "end": 0,
+     "type": "slickers",
+     "popcornOptions": {
+         "start": 38.745940074906365,
+         "end": 41.15323220973782,
+         "target": "map",
+         "lat": 37.81356738809283,
+         "lng": -122.30195808471683,
+         "label": "",
+         "description": "Interstate 880 is officially known as the \"Nimitz Freeway,\" named after WWII fleet admiral Chester Nimitz, who later retired to Yerba Buena Island. I-880 is a popular freeway for commerce trucks as it trails through San Jose to the San Francisco-Oakland area, providing access to the Port of Oakland at the West Oakland shore.",
+         "location": "West Oakland, CA",
+         "video": "",
+         "galleries": [""],
+         "zoom": 13
+     },
+     "track": {},
+     "manifest": {}
+ }, {
+     "start": 0,
+     "end": 0,
+     "type": "slickers",
+     "popcornOptions": {
+         "start": 48.45475434243176,
+         "end": 50.73319106699752,
+         "target": "map",
+         "lat": 37.8088494861607,
+         "lng": -122.312184753125,
+         "label": "",
+         "description": "",
+         "location": "Port of Oakland, CA",
+         "video": "",
+         "galleries": [""],
+         "zoom": 12
+     },
+     "track": {},
+     "manifest": {}
+ }, {
+     "start": 0,
+     "end": 0,
+     "type": "footnote",
+     "popcornOptions": {
+         "start": "0.1",
+         "end": "6.877977528089888",
+         "text": "[to view map roll cursor over video]",
+         "target": "footnote"
+     },
+     "track": {}
+ }, {
+     "start": 0,
+     "end": 0,
+     "type": "footnote",
+     "popcornOptions": {
+         "start": "19",
+         "end": "23",
+         "text": "[pins will drop throughout the film to show specific locations, watch until the end to get more information, view videos and pictures about the locations]",
+         "target": "footnote"
+     },
+     "track": {},
+     "manifest": {
+         "about": {
+             "name": "Popcorn footnote Plugin",
+             "version": "0.2",
+             "author": "@annasob, @rwaldron",
+             "website": "annasob.wordpress.com"
+         },
+         "options": {
+             "start": {
+                 "elem": "input",
+                 "type": "text",
+                 "label": "In"
+             },
+             "end": {
+                 "elem": "input",
+                 "type": "text",
+                 "label": "Out"
+             },
+             "text": {
+                 "elem": "input",
+                 "type": "text",
+                 "label": "Text"
+             },
+             "target": "footnote-container"
+         }
+     }
+ }]
+</script>
+</head>
+<body>
+    <header>
+      <h1>Cultivating Community:<br> Urban farming in West Oakland</h1>
+      <div id="header-facebook">
+        <div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like-box href="https://www.facebook.com/pages/Cultivating-Community/157119827701803" width="400" show_faces="false" border_color="" stream="false" colorscheme="light" header="false"></fb:like-box>
+      </div>
+    </header>
+    <div style="width: 100%">
+      <div id="main-container">
+        <div id="map" data-butter="target"></div>
+        <div id="video-container" style="visibility: visible;">
+          <video id="video" data-butter="media" class="unshoop">
+            <source src="http://videos-origin.mozilla.org/serv/webmademovies/bavc/cityslickers.mp4" type="video/mp4; codecs=&quot;avc1.42E01E, mp4a.40.2&quot;">
+            <source src="http://videos-origin.mozilla.org/serv/webmademovies/bavc/cityslickers.webm" type="video/webm; codecs=&quot;vp8, vorbis&quot;">
+            <!--
+            <source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm; codecs="vp8, vorbis"' />
+            
+            <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg; codecs="theora, vorbis"' />
+            -->
+          </video>
+        </div>
+        
+        <div id="footnote" data-butter="target">
+        </div>
+        <div id="controls">
+          <div id="play-button"><span></span></div>
+          <div id="progress-outer"><div id="progress"></div></div>
+        </div>
+        
+      </div>
+
+    </div>
+
+    
+  
+<!--
+  <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> 
+-->
+  <script type="text/javascript" src="../popcorn-js/popcorn.js"></script>
+  <script type="text/javascript" src="js/popcorn.slickers.js"></script>
+  <script type="text/javascript" src="js/popcorn.footnote.js"></script>
+  <script type="text/javascript">
+  
+  (function() {
+  
+    var controls,
+      progress,
+      progressOuter,
+      playButton,
+      map,
+      georssLayer,
+      center,
+      playMarker,
+      video,
+      videoContainer,
+      videoPaused = true,
+      allLoaded = false,
+      allEvents = {},
+      activeEvents = [];
+
+    function getElementPosition(element) {
+      var parent = element,
+        x = element.offsetLeft,
+        y = element.offsetTop;
+
+
+      while (parent.offsetParent) {
+        parent = parent.offsetParent;
+        x += parent.offsetLeft;
+        y += parent.offsetTop;
+      }
+      
+      return {
+        x: x,
+        y: y
+      };
+    }
+    
+    function setUpMap() {
+      map.setOptions({
+        draggable: false,
+        mapTypeControl: false,
+        panControl: false,
+        scaleControl: false,
+        zoomControl: false,
+        streetViewControl: false,
+        disableDoubleClickZoom: true,
+        scrollwheel: false
+      });
+      
+      center = new google.maps.LatLng(37.8169812, -122.28960699999999);
+      
+      playMarker = new google.maps.Marker({
+        map: map,
+        position: center,
+        animation: google.maps.Animation.DROP,
+        icon: 'images/home_pin.png',
+        visible: true
+      });
+      map.setCenter(center);
+      google.maps.event.addListener(playMarker, 'click', function() {
+        videoPaused = false;
+        video.play();
+        videoContainer.style.opacity = '';
+      });
+      
+      google.maps.event.addListener(map, 'dragstart', function() {
+        //they don't want this anymore
+        return;
+        var endListener;
+
+        function dragEnd() {
+          google.maps.event.removeListener(endListener);
+          video.style.opacity = '';
+          if (!videoPaused) {
+            video.play();
+          }
+        }
+
+        endListener = google.maps.event.addListener(map, 'dragend', dragEnd);
+
+        if (!video.paused) {
+          video.pause();
+        }
+      });
+    }
+
+    function doFadeyThing() {
+      var i, recent = -5;
+      
+      if (activeEvents.length) {
+        videoContainer.style.opacity = 0.1;
+      } else {
+        videoContainer.style.opacity = 1;
+      }
+      return;
+      
+      for (i = 0; i < activeEvents.length; i++) {
+        recent = Math.max(activeEvents[i].start, recent);
+      }
+      
+      if (video.currentTime - recent  < 1) {
+        videoContainer.style.opacity = 0.1;
+      } else {
+        videoContainer.style.opacity = 1;
+      }
+
+    }
+    
+    function buildEndStuff() {
+      var butterId, options,
+        container, element;
+      
+      function activate(endstuff) {
+        var i;
+        for (i in allEvents) {
+          if ( allEvents[i].endstuff ) {
+            if ( allEvents[i].endstuff !== endstuff) {
+              allEvents[i].endstuff.parentNode.style.display = '';
+              if (allEvents[i].vidElement) {
+                allEvents[i].vidElement.pause();
+              }
+            } else {
+              allEvents[i].endstuff.parentNode.style.display = 'block';
+              if (allEvents[i].vidElement) {
+                allEvents[i].vidElement.play();
+              }
+            }
+          }
+        }
+      }
+      
+      function loadGallery(options, gallery, galleryContainer) {
+        var url = 'http://api.flickr.com/services/rest/?method=flickr.galleries.getPhotos&api_key=3b1a167af8d3b3a1874f50fba0860093&gallery_id=' + gallery.id + '&format=json&jsoncallback=flickrGallery' + Date.now();
+      
+        Popcorn.xhr.getJSONP( url, function( data ) {
+          var photos, i, photo,
+            link, img,
+            gallery;
+          try {
+            photos = data.photos.photo;
+          } catch (e) {
+            return;
+          }
+          
+          if (!photos) {
+            return;
+          }
+          
+          //gallery = document.createElement('div');
+          //gallery.setAttribute('class', 'gallery');
+          //options.endstuff.insertBefore(gallery, options.endstuff.firstChild);
+          
+          for (i = 0; i < photos.length; i++) {
+            photo = photos[i];
+            if (photo.ispublic) {
+              img = document.createElement('img');
+              img.src = 'http://farm' + photo.farm + '.static.flickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '_s.jpg';
+              
+              link = document.createElement('a');
+              link.setAttribute('href', 'http://www.flickr.com/photos/' + photo.owner + '/' + photo.id + '/');
+              link.setAttribute('target', '_new');
+              link.addEventListener('click', function() {
+                if (options.vidElement) {
+                  options.vidElement.pause();
+                }
+              }, true);
+              
+              link.appendChild(img);
+              galleryContainer.appendChild(link);
+            }
+          }
+        });
+      }
+
+      for (butterId in allEvents) {
+        var i, url,
+          pieces,
+          galleries = {},
+          regex = /(https?:\/\/)?(www\.)?flickr\.com\/photos\/([A-Za-z0-9@]+)\/galleries\/(\d+)\/?/;
+
+        options = allEvents[butterId];
+        if (!options.endstuff && options.marker) {
+          container = document.createElement('div');
+          container.setAttribute('class', 'endstuff');
+          document.body.appendChild(container);
+          
+          element = document.createElement('div');
+          element.setAttribute('class', 'header');
+          element.appendChild(document.createTextNode(options.label));
+          container.appendChild(element);
+          
+          element = document.createElement('div');
+          element.setAttribute('class', 'close');
+          element.appendChild(document.createTextNode('close'));
+          (function(opt) {
+            element.addEventListener('click', function () {
+              opt.endstuff.parentNode.style.display = '';
+              if (opt.vidElement) {
+                opt.vidElement.pause();
+              }
+            }, false);
+          }(options));
+          container.appendChild(element);
+          
+          options.endstuff = document.createElement('div');
+          options.endstuff.setAttribute('class', 'endstuff-container');
+          container.appendChild(options.endstuff);
+          
+          container = options.endstuff;
+
+          if (options.marker) {
+            options.marker.setVisible(true);
+            options.marker.setClickable(true);
+            (function(opt) {
+              google.maps.event.addListener(opt.marker, 'click', function() {
+                activate(opt.endstuff);
+              });
+            }(options));
+          }
+          
+          if (options.galleries && options.galleries.length) {
+            var galleryContainer = document.createElement('div');
+            galleryContainer.setAttribute('class', 'gallery');
+            galleryContainer.id = Math.random();
+            for (i = 0; i < options.galleries.length; i++) {
+              pieces = regex.exec(options.galleries[i]);
+              if (pieces) {
+                if (!galleries[ pieces[4] ]) {
+                  /*
+                  todo: right now, this might unnecessarily load the same query multiple times, so make this more efficient
+                  */
+                  url = 'http://api.flickr.com/services/rest/?method=flickr.galleries.getList&api_key=3b1a167af8d3b3a1874f50fba0860093&user_id=' + pieces[3] + '&format=json&jsoncallback=flickrGallery' + pieces[4];
+                  
+                  (function (opt, gid, gc) {
+
+                    Popcorn.xhr.getJSONP( url, function( data ) {
+                      var i, id;
+                      for (i = 0; i < data.galleries.gallery.length; i++) {
+                        try {
+                          id = data.galleries.gallery[i].id.split('-')[1];
+                          galleries[id] = data.galleries.gallery[i];
+                        } catch (e) {
+                          return;
+                        }
+                      }
+                      
+                      loadGallery(opt, galleries[ gid ], gc );
+                    });
+                  }(options, pieces[4], galleryContainer));
+                } else {
+                  loadGallery(options, galleries[ pieces[4] ], galleryContainer );
+                }
+              }
+            }
+            options.endstuff.appendChild(galleryContainer);
+          }
+          
+          if (options.video) {
+            element = document.createElement('video');
+            element.setAttribute('controls', '');
+
+            //todo: multiple sources
+            element.setAttribute('src', options.video);
+            //var basePath = options.video
+            
+            options.vidElement = element;
+            
+            container.appendChild(element);
+          }
+          
+          if (options.description) {
+            element = document.createElement('div');
+            element.setAttribute('class', 'description');
+            element.appendChild(document.createTextNode(options.description));
+            container.appendChild(element);
+            if ( !options.video ) {
+              element.style.maxHeight = "100%";
+            }
+          }
+        }
+      }
+    }
+    
+    window.markerLoaded = function (options) {
+      if (!map) {
+        map = options.map;
+        setUpMap();
+      }
+      options.marker.setDraggable(false);
+      options.marker.setClickable(false);
+      
+      var bounds = map.getBounds() || options.mapBounds;
+      bounds = new google.maps.LatLngBounds(bounds.getSouthWest(), bounds.getNorthEast());
+      if (bounds) {
+        bounds.extend(center);  
+        map.fitBounds(bounds);
+      }
+    }
+    
+    window.markerStart = function (options) {
+      activeEvents.push(options);
+      //activeEvents[0].onFrame = doFadeyThing;
+      doFadeyThing();
+      map.setCenter( center );
+    }
+
+    window.markerEnd = function (options) {
+      var index = activeEvents.indexOf(options);
+      if (index >= 0) {
+        activeEvents.splice(index, 1);
+      }
+      doFadeyThing();
+      return;
+      
+      options.onFrame = null;
+      
+      if (activeEvents.length) {
+        activeEvents[0].onFrame = doFadeyThing;
+      }
+    }
+    
+    function videoLoading() {
+      var range, ranges = video.buffered, max = 0;
+      
+      for (i = 0; i < ranges.length; i++) {
+        max = Math.max(ranges.end(i));
+      }
+      
+      progressOuter.style.width = (320 * max / video.duration) + 'px';
+      
+      if (max === video.duration) {
+        video.removeEventListener('progress', videoLoading, false);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      controls = document.getElementById('controls');
+      video = document.getElementById('video');
+      videoContainer = document.getElementById('video-container');
+      progress = document.getElementById('progress');
+      progressOuter = document.getElementById('progress-outer');
+      playButton = document.getElementById('play-button');
+
+      var videoHover = false;
+      window.addEventListener('mousemove', function (e) {
+      //http://www.quirksmode.org/js/events_properties.html#position
+        var event = e || window.event;
+        var vpos = getElementPosition(video);
+        var mouseX, mouseY;
+        var x0 = vpos.x,
+          y0 = vpos.y,
+          x1 = video.offsetWidth + x0,
+          y1 = video.offsetHeight + y0 - 30;
+        var i, c;
+        
+        mouseX = event.pageX;
+        mouseY = event.pageY;
+        
+        if (mouseX >= x0 && mouseX <= x1 &&
+          mouseY >= y0 && mouseY <= y1) {
+          if (!videoHover && video.currentTime) {
+            c = video.getAttribute('class') || '';
+            c = c.split(' ');       
+            i = c.indexOf('hover');
+            if (i < 0 ) {
+              c.push('hover');
+              video.setAttribute('class', c.join(' ') );
+            }
+            videoHover = true;
+          }
+        } else if (videoHover) {
+          c = video.getAttribute('class') || '';
+          c = c.split(' ');       
+          i = c.indexOf('hover');
+          if (i >= 0 ) {
+            c.splice(i, 1);
+            video.setAttribute('class', c.join(' ') );
+          }
+          videoHover = false;
+        }
+
+      }, false);
+      
+      window.addEventListener('mouseout', function (e) {
+        var i, c = video.getAttribute('class') || '';
+        c = c.split(' ');
+        i = c.indexOf('hover');
+        if (i >= 0 ) {
+          c.splice(i, 1);
+        }
+        video.setAttribute('class', c.join(' ') );
+        videoHover = false;
+      }, false);
+      
+      window.addEventListener('blur', function (e) {
+        var i, c = video.getAttribute('class') || '';
+        c = c.split(' ');
+        i = c.indexOf('hover');
+        if (i >= 0 ) {
+          c.splice(i, 1);
+        }
+        video.setAttribute('class', c.join(' ') );
+        videoHover = false;
+      }, false);
+      
+      video.addEventListener('timeupdate', function() {
+        progress.style.width = (320 * video.currentTime / video.duration) + 'px';
+      }, false);
+
+      video.addEventListener('play', function() {
+        document.body.setAttribute('class', 'playing');
+        playButton.setAttribute('class', 'playing');
+        video.removeAttribute('class');
+      }, false);
+      
+      video.addEventListener('pause', function() {
+        playButton.removeAttribute('class');
+        document.body.removeAttribute('class');
+      }, false);
+      
+      video.addEventListener('progress', videoLoading, false);
+      
+      video.addEventListener('canplaythrough', function() {
+        setTimeout(function() {
+          document.getElementById('map').style.visibility = '';
+//          videoContainer.style.opacity = 0.5;
+        }, 500);
+
+        return;
+        if (map) {
+          videoPaused = false;
+          video.play();
+        }
+      }, false);
+
+      playButton.addEventListener('click', function() {
+        if (video.paused) {
+          videoPaused = false;
+          video.play();
+          videoContainer.style.opacity = '';
+        } else {
+          videoPaused = true;
+          video.pause();
+        }
+      }, false);
+      
+      video.addEventListener('ended', function() {
+        video.setAttribute('class', 'unshoop');
+        if (map) {
+          map.setOptions({
+            draggable: true,
+            mapTypeControl: true,
+            panControl: true,
+            //scaleControl: false,
+            zoomControl: true,
+            streetViewControl: true,
+            disableDoubleClickZoom: false,
+            scrollwheel: false
+          });
+
+          if (!georssLayer) {
+            georssLayer = new google.maps.KmlLayer('http://maps.google.com/maps/ms?authuser=0&vps=2&ie=UTF8&hl=en&oe=UTF8&msa=0&output=kml&msid=209141122663415148547.0004aaa733654145f04d1', {
+              preserveViewport: true
+            });
+          }
+          georssLayer.setMap(map);
+          
+        }
+        
+        buildEndStuff();
+      }, false);
+
+      var popcorn = Popcorn('#video');
+
+      if ( window.butterProjectJSON ) {
+        var id = 0;
+
+        for ( var i=0; i<window.butterProjectJSON.length; ++i ) {
+
+          var trackEvent = window.butterProjectJSON[ i ];
+          var options = Popcorn.extend( {}, trackEvent.popcornOptions );
+          options.onLoad = 'markerLoaded';
+          options.onStart = 'markerStart';
+          options.onEnd = 'markerEnd';
+          
+          popcorn[ trackEvent.type ]( options );
+          allEvents[id++] = options;
+        }
+
+      }
+      else if (window.Butter) {
+
+        var butterTracks = {};
+
+        var b = new Butter();
+        b.comm();
+  
+        var commClient = new b.CommClient( "previewerClient"  );
+  
+        commClient.listen( "ping", function( message ) {
+          commClient.send( Popcorn.instances.indexOf( popcorn ), "pong" );
+        });
+  
+        commClient.listen( "trackeventadded", function ( message ) {
+        
+          var butterId = message.id;
+          
+          //add callbacks
+          var options = Popcorn.extend( {}, message.popcornOptions );
+          options.onLoad = 'markerLoaded';
+          options.onStart = 'markerStart';
+          options.onEnd = 'markerEnd';
+          options.target = 'map';
+          
+          popcorn[ message.type ]( options ); 
+        
+          var popcornEventId = popcorn.getLastTrackEventId();
+
+          butterTracks[butterId] = popcornEventId;
+          allEvents[butterId] = options;
+          
+          commClient.send( { butterId: message.id, popcornId: popcornEventId }, "trackeventadded" );        
+        });
+
+        commClient.listen( "trackeventupdated", function ( message ) {
+          var butterId = message.id;
+          var popcornEventId = butterTracks[butterId]
+          
+          if ( popcornEventId ) {
+            popcorn.removeTrackEvent( popcornEventId );
+
+            //add callbacks
+            var options = Popcorn.extend( {}, message.popcornOptions );
+            options.onLoad = 'markerLoaded';
+            options.onStart = 'markerStart';
+            options.onEnd = 'markerEnd';
+            
+            popcorn[ message.type ]( options );
+            popcornEventId = popcorn.getLastTrackEventId();
+
+            butterTracks[butterId] = popcornEventId;
+
+            //todo: remove/destroy/rebuild any "end" DOM nodes/events
+            allEvents[butterId] = options;
+          }
+        });
+      
+        commClient.listen( "trackeventremoved", function ( message ) {
+          var butterId = message.id;
+          var popcornEventId = butterTracks[butterId]
+          
+          if ( popcornEventId ) {
+            popcorn.removeTrackEvent( popcornEventId );
+            
+            delete butterTracks[butterId];
+            
+            //todo: remove/destroy any "end" DOM nodes/events
+            delete allEvents[butterId];
+          }
+        });
+
+      } else {
+  
+        popcorn.slickers({
+          start: 4,
+          end: 10,
+          location: '﻿﻿5105 genoa street, oakland, ca',
+          lat: 37.80436370,
+          lng: -122.27111370,
+          label: 'Secret Garden',
+          target: 'map',
+          onLoad: 'markerLoaded',
+          onStart: 'markerStart',
+          onEnd: 'markerEnd'
+        });
+  
+        popcorn.slickers({
+          start: 14,
+          end: 20,
+          location: '﻿﻿1580 5th Street, oakland, ca',
+          lat: 37.8047831,
+          lng: -122.29823920000001,
+          label: 'Annex Farm',
+          target: 'map',
+          onLoad: 'markerLoaded',
+          onStart: 'markerStart',
+          onEnd: 'markerEnd'
+        });
+  
+        popcorn.slickers({
+          start: 23,
+          end: 29,
+          location: '﻿﻿537 Lewis Street, oakland, ca',
+          lat: 37.805487,
+          lng: -122.29842300000001,
+          label: 'West Oakland Woods',
+          target: 'map',
+          onLoad: 'markerLoaded',
+          onStart: 'markerStart',
+          onEnd: 'markerEnd'
+        });
+  
+        popcorn.slickers({
+          start: 31,
+          end: 37,
+          location: '﻿﻿16th Street and Center Street, oakland, ca',
+          lat: 37.8125818,
+          lng: -122.29236559999998,
+          label: 'Center Street Farm',
+          target: 'map',
+          onLoad: 'markerLoaded',
+          onStart: 'markerStart',
+          onEnd: 'markerEnd'
+        });
+        
+      }
+
+    }, false);
+
+  }());
+  
+  
+  </script>
+
+</body></html>
+

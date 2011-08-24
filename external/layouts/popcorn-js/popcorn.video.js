@@ -52,10 +52,14 @@
             if ( options.videoOptions ) {
               var splitOptions = options.videoOptions.split(" ");
               for ( var opt in splitOptions ) {
-                var matches = splitOptions[opt].match( videoOptionsRegex ),
-                    attr = matches[1],
-                    val = matches[2];
-                video.setAttribute( attr, val );
+                try {
+                  var matches = splitOptions[opt].match( videoOptionsRegex ),
+                      attr = matches[1],
+                      val = matches[2];
+                  video.setAttribute( attr, val );
+                }
+                catch (e) {
+                }
               } //for
             } //if
           } //if

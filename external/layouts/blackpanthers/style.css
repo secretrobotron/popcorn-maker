@@ -10,6 +10,7 @@ background-size: cover;
 width: 100%;
 padding: 0;
 margin: 0;
+height: 100%;
 }
 
 body {
@@ -181,3 +182,30 @@ background-color: black;
   float: left;
 }
 
+#narration {
+  visibility: hidden;
+}
+
+#play-button-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 400px;
+  height: 400px;
+  margin-left: -200px;
+  margin-top: -200px;
+  z-index: 99999999;
+  opacity: .1;
+  -webkit-transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+}
+
+#play-button-container:hover {
+  opacity: .4;
+  cursor: pointer;
+}
+
+#photo-title {
+  visibility: hidden;
+}

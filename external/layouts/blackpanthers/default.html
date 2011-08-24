@@ -172,7 +172,7 @@
 <!-- Sidebar -->
 
 <div id="additional">
-	<div class="toptext">
+	<div id="photo-title" class="toptext">
 	on-site photos
 	</div>
   <div id="additional-image-container">
@@ -187,6 +187,31 @@
   </div>
 </div>
 <!-- End sidebar -->
+
+<div id="play-button-container">
+<canvas id="play-button" width="400" height="400"></canvas>
+</div>
+<script>
+  var canvas = document.getElementById( 'play-button' ),
+      ctx = canvas.getContext( '2d' ),
+      w = canvas.width,
+      h = canvas.height;
+  
+  ctx.fillStyle = "#fff";
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(0, h);
+  ctx.lineTo(w, h/2);
+  ctx.lineTo(0, 0);
+  ctx.fill();
+
+  canvas.addEventListener( 'click', function( e ) {
+    document.getElementById( 'narration' ).style.display = "block";
+    document.getElementById( 'photo-title' ).style.visibility = "visible";
+    Popcorn.instances[ 0 ].play();
+  }, false );
+
+</script>
 
 <div id="timeline_area">
   <div id="chapter_title" data-butter="target"></div>
