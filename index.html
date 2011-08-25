@@ -259,23 +259,8 @@
           <button id="clear-track-edit" class="edit-track-button">clear</button>
         </div><!-- end popup 5 -->
         
-        <div id="popup-add-project" class="popup-5 pop-up close-div draggable" style="display:none"> <!-- popup-add-project -->
-          <a class="popup-close-btn" href="#"><span></span></a>
-        	<div class="popup-header">
-          	<h3>Load / Create New Project</h3>
-          </div>
-          <div id="load-create-popup" class="popup-content">
-          	<textarea class="project-json"></textarea>
-            <div id="load-create-popup-content" class="download-html">
-              <input id="media-url" type="text" value="http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm" />
-              <select id="layout-select"></select>
-
-              <input type="submit" class="load-code-btn" name="load-code-btn" value="Load Project from JSON">
-              <input type="submit" class="create-new-btn" name="create-new-btn" value="New Project">
-                  
-            </div>
-          </div>
-        </div><!-- end popup-add-project -->
+        
+        
         <div id="popup-delete-track" class="popup-project-title pop-up close-div draggable" style="display:none">
           <a class="popup-close-btn" href="#"><span></span></a>
           	<div class="popup-header">
@@ -311,6 +296,49 @@
             <div class="popup-content">
               <p class="desc">Loading the selected project will erase any unsaved changes to the current project. Ar you sure you wish to continue?</p>
               <input type="submit" class="confirm-load-btn" value="Load Project">
+            </div>
+        </div>
+        
+        <div id="popup-add-project" style="display:none;"><!-- welcome popup -->
+          <a class="help-close-btn" href="#"><span></span></a>
+          <div class="popup-header">
+            	<h3 class="welcome-header">Create / Import Project</h3>
+          </div>
+          <div class="scroll-popup-container spc-add-project">
+            <div class="padding-div add-project-padding-div">
+                <div class="proj-title-div">
+                  <span class="input-title-text">Project Title</span><br />
+              	  <input type="text" class="proj-title-input" id="title-input-box"></input>
+              	</div>
+              	<br />
+              	<div class="timeline-media-div">
+              	  <span class="input-title-text">Timeline Media</span><br />
+              	  <input type="text" class=proj-title-input" id="timeline-media-input-box"> </input><br />
+              	  <span class="tip-text-new-project"> Show us where your media file lives. Youtube, Vimeo,<br /> 
+              	    and Soundcloud URLs work too.<br /><br />
+              	    <a href="#">Learn more about what kinds of media work in Popcorn Maker.</a>
+              	  </span>
+              	</div>
+              	<br />
+                <div  class="template-select-div">
+                  <span class="input-title-text">Choose a Template</span><br />
+                  <select id="layout-select"></select>
+                </div>
+                <br /><br />
+                <div class="new-proj-button-div">
+                  <span class="import-screen-toggle"><a href="#" class="import-scroll-toggler" >Import Project..</a></span>
+                  <input type="submit" class="create-new-btn" name="create-new-btn" value="Create">
+                </div>
+              </div>
+              <div class="padding-div add-project-padding-div">
+                <div class="import-json-div" >
+                  <textarea rows="21" cols="51" id="import-json-area"></textarea><br />
+                  <div class="new-proj-button-div" >
+                    <span class="new-proj-screen-toggle"><a href="#" class="import-scroll-back-toggler" >..Create Project</a></span>
+                    <input type="button" class="load-code-btn" id="import-json-btn" value="Import from JSON"></input>
+                  </div>
+                </div>
+              </div>
             </div>
         </div>
         

@@ -709,8 +709,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .popup-1 .popup-content, .popup-2 .popup-content, .popup-content { padding:20px;}
 .popup-1 .popup-header h3, .popup-2 .popup-header h3, .popup-header h3, h3.welcome-header { padding: 0 20px}
 .download-btn, .load-code-btn { position: absolute; right: 0; top: 25px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
-.save-project-data-btn, .create-new-btn { position: absolute; left: 0; top: 57px; color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
-.create-new-btn { left: 120px}
+.save-project-data-btn, .create-new-btn { color:#999; font-weight:bold; margin:0; padding:7px 0; height:auto !important;}
 .save-project-data-btn { left: 125px !important }
 .project-title-textbox { position: absolute; left: 30px; top: 50px; margin:0; padding:7px 0; height:auto; width: 130px !important}
 .save-prj-lbl {position: absolute; left: 0; top: 50px; margin:0; padding:7px 0; height:auto !important}
@@ -720,12 +719,17 @@ border-top: 1px solid #fff;	background-color:#eee;}
 .track-text.json-text.show-text, .track-text.track-text.show-text { display: inline }
  
 .download-html {float: right; height: 86px; overflow: hidden; position: relative; width: 330px;}
-.download-btn, .load-code-btn, .save-project-data-btn, .create-new-btn, .change-url-btn, .change-title-btn, .confirm-load-btn, .popup-btns input { float:left; margin-right:10px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC;
+.download-btn, .load-code-btn, .save-project-data-btn, .change-url-btn, .change-title-btn, .confirm-load-btn, .popup-btns input { float:left; margin-right:10px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC;
 	   -moz-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
 	-webkit-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
 	     -o-box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;
 	        box-shadow: 0 1px 0 #fff, inset 0 1px 0 #737373;}
-.save-project-data-btn, .create-new-btn { float:left; margin-left:60px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC; }
+.save-project-data-btn { float:left; margin-left:60px; border: 1px solid #282828 !important; padding:5px 10px; color:#CCC; }
+.create-new-btn { border: 1px solid #282828 !important; padding:5px 10px; color:#CCC; margin-right: 5%; width: 120px; float: right }
+.input-title-text { font-weight: bolder; }
+.import-screen-toggle, .new-proj-screen-toggle { position: relative; margin-top: 6px; vertical-align: center; top: 8px }
+.import-scroll-back-toggler {}
+.new-proj-button-div { height: 35px; }
 /*----- pin -----*/
 .pin { background-color: #FFFF99; position: absolute; padding:10px 10px 10px 20px; display:inline;top:100px; left:50%; font-weight:bold;
 	   -moz-box-shadow: 0 1px 0 #666, inset 0 1px 0 #ccc;
@@ -746,7 +750,7 @@ border-top: 1px solid #fff;	background-color:#eee;}
 
 /*----------- Welcome Popups ----------*/
 #properties-panel, .hide-timeline, .pin, #welcome-popup, #help-popup { display:none;}
-#welcome-popup, #help-popup { width:700px; min-height:520px; position:absolute; z-index:999999; left:50%; top:50%; margin: 0 0 0 170px; background-color:#FFFFCC; text-align:center; overflow:hidden;
+#welcome-popup, #help-popup, #popup-add-project { width:700px; min-height:520px; position:absolute; z-index:999999;  top:50%; background-color:#FFFFCC; text-align:center; overflow:hidden;
 	     -moz-box-shadow: 0 0 6px #333;
 	  -webkit-box-shadow: 0 0 6px #333;
   	     -o-box-shadow: 0 0 6px #333;
@@ -764,9 +768,43 @@ border-top: 1px solid #fff;	background-color:#eee;}
 		rgb(254,255,217) 0%,
 		rgb(255,255,255) 100%
 	);}
+#popup-add-project { width: 400px; text-align: left; min-height: 370px;
+	   -moz-border-radius: 10px 10px 10px 10px;
+	-webkit-border-radius: 10px 10px 10px 10px;
+	     -o-border-radius: 10px 10px 10px 10px;
+	        border-radius: 10px 10px 10px 10px;
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(238,238,238)),
+		color-stop(1, rgb(255,255,255))
+	);
+	background-image: -moz-linear-gradient(
+		center bottom,
+		rgb(238,238,238) 0%,
+		rgb(255,255,255) 100%
+	);
+}
+
+.spc-add-project {
+  margin: 10px 10px 10px 10px;
+  width: 1400px;
+  left: 0;
+  position: absolute;
+  top: 40px;
+  width: 1400px;
+}
+
+#import-json-area {
+  height: 240px;
+  width: 355px;
+}
+
 #help-popup { margin: 0 0 0 170px; }
 #welcome-popup .scroll-popup-container, #help-popup .scroll-popup-container { width:1400px; position:absolute; left:0; top:0;}
 #welcome-popup .scroll-popup-container .padding-div, #help-popup .scroll-popup-container .padding-div {padding:40px; width:620px; float:left;}
+.add-project-padding-div {padding:10px; width:390px; float:left;}
 #welcome-popup h1, #help-popup .help-header h1 { font-size:40px; letter-spacing:-3px; color:#333; padding-top:20px;
 	   -moz-text-shadow: 0 -1px 0 #000, 0 1px 0 #fff;
 	-webkit-text-shadow: 0 -1px 0 #000, 0 1px 0 #fff;
@@ -1045,7 +1083,7 @@ ul.actions, .ttip, .ui-tooltip-content {
 		rgb(128,186,78) 0%,
 		rgb(74,107,45) 100%
 	);
-}
+}z
 
 .playback-controls .sound-btn { position: absolute; right: 0;}
 .playback-controls .sound-btn, .playback-controls .timeline-duration { top:14px; }

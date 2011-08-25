@@ -36,6 +36,7 @@
     if ( !localStorage.getItem( "PopcornMaker.SavedProjects" ) ) {
       $('#welcome-popup').fadeIn(2000);
       $('.popupDiv').fadeIn('slow');
+      centerPopup($('#welcome-popup'));
       var escapeKeyEnabled = true;
     }
       
@@ -49,6 +50,21 @@
 		});
 		
 		//Popup sliding
+    $('.import-scroll-toggler').click(function() {
+										 
+        $(".scroll-popup-container.spc-add-project").animate({
+            "margin-left": '-400px'
+        }, 750);
+    });
+    
+    $('.import-scroll-back-toggler').click(function() {
+										 
+        $(".scroll-popup-container.spc-add-project").animate({
+            "margin-left": '0px'
+        }, 750);
+    });
+    
+    //Popup sliding
     $('.tutorial-btn').click(function() {
 										 
         $(this).parent().parent().animate({
@@ -56,6 +72,7 @@
         }, 500);
 
     });
+    
     $('.open-help, .help').click(function() {
 										 
         $("#help-popup").fadeIn('slow');
@@ -729,6 +746,7 @@
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-3').show();
+      $('#popup-add-project').hide();
       centerPopup( $('#popup-3') );
       $(' .balck-overlay ').show();
       escapeKeyEnabled = true;
@@ -841,11 +859,10 @@
     });
     
     $(".create-new-btn").click(function() {
-      $("#welcome-popup").hide();
-      $("#help-popup").hide();
+      $("#welcome-popup, #help-popup, #popup-add-project").hide();
       b.clearProject();
       b.clearPlugins();
-      b.setProjectDetails( "title", "Untitled Project");
+      b.setProjectDetails( "title", ( $( "title-input-box" ).val() || "Untitled Project" ) );
       currentLayout = document.getElementById( 'layout-select' ).value;
       b.listen( "layoutloaded", function( e ) {
         b.buildPopcorn( b.getCurrentMedia() , function() {
@@ -863,15 +880,15 @@
         layout: currentLayout,
         target: "main",
         popcornURL: "../lib/popcorn-complete.js",
-        media: document.getElementById('media-url').value
+        media: document.getElementById('timeline-media-input-box').value
       });
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
       escapeKeyEnabled = false;
     });
     
-    $(".load-code-btn").click(function() {
-      var dataString = $(".project-json").val();
+    $("#import-json-btn").click(function() {
+      var dataString = $("#import-json-area").val();
       if ( dataString ) {
       
         try {
