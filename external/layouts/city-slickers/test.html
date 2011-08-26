@@ -22,6 +22,39 @@
       top: 20px;
     }
 
+    #play-controls {
+      opacity: 0;
+      position: absolute;
+      z-index: 20000;
+      top: 30px;
+      left: 30px;
+    }
+
+    #pause-canvas {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      display: block;
+      cursor: pointer;
+    }
+
+    #ff-canvas {
+      position: absolute;
+      left: 100px;
+      top: 0px;
+      display: block;
+      cursor: pointer;
+    }
+
+    .playing #play-controls {
+      opacity: 1;
+      -moz-transition: opacity 0.4s;
+      -webkit-transition: opacity 0.4s;
+      -o-transition: opacity 0.4s;
+      -ie-transition: opacity 0.4s;
+      transition: opacity 0.4s;
+    }
+
     .playing h1, .playing #header-facebook {
       opacity: 0;
       -moz-transition: opacity 0.4s;
@@ -501,6 +534,57 @@
       <div id="header-facebook">
         <div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like-box href="https://www.facebook.com/pages/Cultivating-Community/157119827701803" width="400" show_faces="false" border_color="" stream="false" colorscheme="light" header="false"></fb:like-box>
       </div>
+      <div id="play-controls">
+        <canvas width="50" height="50" id="ff-canvas"></canvas>
+        <canvas width="50" height="50" id="pause-canvas"></canvas>
+        <script>
+          var canvas, ctx;
+
+          canvas = document.getElementById( 'ff-canvas' );
+          ctx = canvas.getContext( '2d' );
+          ctx.fillStyle = "#fff";
+          ctx.beginPath();
+          ctx.moveTo( 0, 0 );
+          ctx.lineTo( 0, canvas.height );
+          ctx.lineTo( canvas.width/4, canvas.height );
+          ctx.lineTo( canvas.width/4, 0 );
+          ctx.lineTo( 0, 0 );
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo( canvas.width/3, 0 );
+          ctx.lineTo( canvas.width/3, canvas.height );
+          ctx.lineTo( canvas.width, canvas.height/2 );
+          ctx.lineTo( canvas.width/3, 0 );
+          ctx.fill();
+
+          canvas = document.getElementById( 'pause-canvas' );
+          ctx = canvas.getContext( '2d' );
+          ctx.fillStyle = "#fff";
+          ctx.beginPath();
+          ctx.moveTo( 0, 0 );
+          ctx.lineTo( 0, canvas.height );
+          ctx.lineTo( canvas.width/3, canvas.height );
+          ctx.lineTo( canvas.width/3, 0 );
+          ctx.lineTo( 0, 0 );
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo( 2*canvas.width/3, 0 );
+          ctx.lineTo( 2*canvas.width/3, canvas.height );
+          ctx.lineTo( canvas.width, canvas.height );
+          ctx.lineTo( canvas.width, 0 );
+          ctx.lineTo( 0, 0 );
+          ctx.fill();
+
+          document.getElementById( 'pause-canvas' ).addEventListener( 'click', function( e ) {
+            //document.getElementById( 'pause-canvas' ).style.display = "none";
+            //document.getElementById( 'play-canvas' ).style.display = "block";
+            Popcorn.instances[ 0 ].pause();
+          }, false );
+          document.getElementById( 'ff-canvas' ).addEventListener( 'click', function( e ) {
+            Popcorn.instances[ 0 ].currentTime( 367 );
+          }, false );
+        </script>
+      </div>
     </header>
     <div style="width: 100%">
       <div id="main-container">
@@ -949,6 +1033,7 @@
         document.body.setAttribute('class', 'playing');
         playButton.setAttribute('class', 'playing');
         video.removeAttribute('class');
+        document.getElementById('play-controls').setAttribute('class', 'playing-controls');
       }, false);
       
       video.addEventListener('pause', function() {
@@ -1009,6 +1094,7 @@
       }, false);
 
       var popcorn = Popcorn('#video');
+      popcorn.volume(0);
 
       if ( window.butterProjectJSON ) {
         var id = 0;

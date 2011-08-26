@@ -438,7 +438,9 @@
 		}
 
     if ( window.butterProjectJSON ) {
-      
+      for ( var i=0, l=5; i<l; ++i ) {
+				loadEvent(butterId, Popcorn.extend( {}, message.popcornOptions ) );
+      }
     }
 		else if (window.Butter) {
 
