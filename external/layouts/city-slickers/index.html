@@ -786,10 +786,13 @@
 					
 					//add callbacks
 					var options = Popcorn.extend( {}, message.popcornOptions );
-					options.onLoad = 'markerLoaded';
-					options.onStart = 'markerStart';
-					options.onEnd = 'markerEnd';
-					options.target = 'map';
+					
+					if (message.type === 'slickers') {
+						options.onLoad = 'markerLoaded';
+						options.onStart = 'markerStart';
+						options.onEnd = 'markerEnd';
+						options.target = 'map';
+					}
 					
 					popcorn[ message.type ]( options ); 
 				
