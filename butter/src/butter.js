@@ -881,6 +881,58 @@ THE SOFTWARE.
   Butter.TrackEvent = TrackEvent;
   Butter.Target = Target;
 
+  Butter.EventManager = function( options ) {
+    var domain = options.name,
+        events = {};
+
+    this.dispatch = function( name, options ) {
+      var eventObj = {
+        type: name,
+        domain: domain,
+        data: options
+      };
+
+      if ( events[ name ] ) {
+        for ( var i=events[ name ].length - 1; i>=0; --i ) {
+          events[ name ][ i ].call( that, eventObj, domain );
+        } //for
+      } //if
+      if ( domain ) {
+        name = name + domain;
+        if ( events[ name ] ) {
+          for ( var i=events[ name ].length - 1; i>=0; --i ) {
+            events[ name ][ i ].call( that, eventObj, domain );
+          } //for
+        } //if
+      } //if
+    }; //dispatch
+
+    this.listen = function( name, handler, domain ) {
+      domain = domain || "";
+      name = name + domain;
+      if ( !events[ name ] ) {
+        events[ name ] = [];
+      } //if
+      events[ name ].push( handler );
+    }; //listen
+
+    this.unlisten = function( name, handler, domain ) {
+      domain = domain || "";
+      name = name + domain;
+      var handlerList = events[ name ];
+      if ( handlerList ) {
+        if ( handler ) {
+          var idx = handlerList.indexOf( handler );
+          handlerList.splice( idx, 1 );
+        }
+        else {
+          events[ name ] = [];
+        } //if
+      } //if
+    }; //unlisten
+
+  }; //EventManager
+
   window.Butter = Butter;
 
 })( window, document, undefined );

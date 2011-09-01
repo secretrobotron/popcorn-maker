@@ -1,126 +1,200 @@
-(function (window, document, undefined, Butter) {
+(function (window, document, undefined, Butter, debug) {
 
-  var urlRegex = /(?:http:\/\/www\.|http:\/\/|www\.|\.|^)(youtu|vimeo|soundcloud|baseplayer)/;
+  Butter.prototype.previewer = function( options ) {
+    var butter = this;
 
-  Butter.prototype.Preview = function( options ) {
-    var that = this;
+    var popcornUrl = options.popcornUrl || "http://popcornjs.org/code/dist/popcorn-complete.js";
+        butterUrl = options.butterUrl;
 
     var target = document.getElementById( options.target );
     if ( !target ) {
       throw new Error( "Previewer target, " + options.target + " does not exist");
     }
 
-    var popcornUrl = options.popcornUrl || "http://popcornjs.org/code/dist/popcorn-complete.js";
+    if ( !butterUrl ) {
+      throw new Error( "Previewer requires a valid buttter lib (butterUrl)." );
+    } //if
 
-    function StandardLink() {
-      var currentPopcorn,
-          link = new Butter.Link();
+    butter.Preview = function( options ) {
+
+      var that = this,
+          link,
+          previewIframe,
+          defaultMedia = options.defaultMedia,
+          forcePopcorn = options.forcePopcorn || false,
+          onload = options.onload;
+
+      function PreviewerLink( options ) {
+        var isPlaying = false,
+            server = new Butter.CommServer(),
+            registry,
+            that = this;
+
+        function setup( iframeWindow ) {
+
+          server.bindClientWindow( "link", iframeWindow, function( message ) {
+          });
+          
+          that.play = function() {
+            server.send( "link", "play", "controls" );
+          }; //play
+
+          Object.defineProperty( this, "isPlaying", {
+            get: function() {
+              return isPlaying;
+            }
+          });
+
+          that.pause = function() {
+            server.send( "link", "pause", "controls" );
+          }; //pause
+
+          that.mute = function() {
+            server.send( "link", "mute", "controls" );
+          }; //mute
+
+          that.scrape = function() {
+            server.send( "link", "scrape", "setup" );
+          }; //scrape
+
+          that.build = function( media, onready ) {
+            function ready( message ) {
+              registry = message.registry;
+              onready && onready();
+              server.forget( "link", "build", ready );
+            } //ready
+            server.listen( "link", "build", ready );
+            server.send( "link", media.exportJSON(), "build" );
+          }; //build
+
+          server.listen( "link", "controls", function( message ) {
+            console.log( 'controls', message );
+          });
+
+          server.listen( "link", "setup", function( message ) {
+            if ( message === "ready" ) {
+              server.send( "link", {
+                defaultMedia: defaultMedia,
+                forcePopcorn: forcePopcorn
+              }, "start" );
+            }
+          });
+
+          server.listen( "link", "layoutloaded", function( message ) {
+            butter.trigger( "layoutloaded", null );
+            if ( onload ) {
+              onload();
+            } //if
+          });
+          server.listen( "link", "mediaready", function( message ) {
+          });
+          server.listen( "link", "mediapaused", function( message ) {
+          });
+          server.listen( "link", "mediaplaying", function( message ) {
+          });
+          server.listen( "link", "mediatimeupdate", function( message ) {
+            butter.currentTime( message );
+          });
+
+          server.listen( "link", "addmedia", function( message ) {
+            var media = butter.addMedia( message );
+          });
+          server.listen( "link", "addtarget", function( message ) {
+            var target = butter.addTarget( message );
+          });
+
+        } //setup
+
+        this.insertLink = function() {
+          var iframeWindow = previewIframe.contentWindow || previewIframe.contentDocument;
+          var linkScript = document.createElement( 'script' );
+          linkScript.src = butterUrl;
+          iframeWindow.document.head.appendChild( linkScript );
+          setup( iframeWindow );
+          server.send( "link", "ready", "setup" );
+        };
+
+        Object.defineProperty( this, "registry", {
+          get: function() {
+            return registry;
+          }
+        });
+      } //PreviewLink
+
+      Object.defineProperty( this, "independent", {
+        get: function() {
+          var iframeWindow = previewIframe.contentWindow || previewIframe.contentDocument;
+          return !!( iframeWindow.Popcorn && iframeWindow.Butter );
+        }
+      });
+
+      function loadIframe( iframe, template ) {
+        previewIframe = iframe;
+        iframe.src = template;
+        function onLoad( e ) {
+          if ( this.independent ) {
+            link = new PreviewerLink();
+          }
+          else {
+            link = new PreviewerLink();
+          }
+          link.insertLink();
+          //link.scrape( iframe, options.importData );
+          iframe.removeEventListener( "load", onLoad, false ); 
+        } //onLoad
+        iframe.addEventListener( "load", onLoad, false ); 
+      } //loadIfram
+
+      if ( target.tagName === "DIV" ) {
+        var rect = target.getClientRects()[ 0 ];
+        var iframe = document.createElement( "IFRAME" );
+        iframe.width = rect.width;
+        iframe.height = rect.height;
+        loadIframe( iframe, options.template );
+        target.appendChild( iframe );
+      }
+      else if ( target.tagName === "IFRAME" ) {
+        loadIframe( target, options.template );
+      } // else
+
+      Object.defineProperty( this, "properties", {
+        get: function() {
+          return {
+            independent: this.independent,
+            target: link.target,
+            template: link.template,
+            registry: link.registry
+          };
+        }
+      });
+
+      this.build = function( media, onready ) {
+        link.build( media, onready );
+      };
 
       this.play = function() {
-        currentPopcorn.media.play();
+        link.play();
       };
 
       this.isPlaying = function() {
-        return currentPopcorn.media.paused;
+        return link.isPlaying();
       };
 
       this.pause = function() {
-        currentPopcorn.media.pause();
+        link.pause();
       };
       
       this.mute = function() {
-        currentPopcorn.media.muted = !currentPopcorn.media.muted;
+        link.mute();
       };
 
-      this.scrape = link.scrape;
+      this.destroy = function() {
+        link.destroy();
+      };
 
-    } //StandardLink
+    }; //Preview
 
-    function CommLink() {
-      var commServer;     
-    } //CommLink
+  }; //loadPreview
 
-    function loadIframe( iframe ) {
-      function onLoad( e ) {
-        link = new StandardLink();
-        link.scrape( iframe, options.importData );
-        iframe.removeEventListener( "load", onLoad, false ); 
-      } //onLoad
-      iframe.addEventListener( "load", onLoad, false ); 
-    } //loadIfram
-
-    if ( target.tagName === "DIV" ) {
-
-      var rect = target.getClientRects()[ 0 ];
-
-      var iframe = document.createElement( "IFRAME" );
-      iframe.src = options.template;
-      iframe.width = rect.width;
-      iframe.height = rect.height;
-      target.appendChild( iframe );
-
-      loadIframe( iframe );
-
-    }
-    else if ( target.tagName === "IFRAME" ) {
-      target.src = options.template;
-      loadIframe( target );
-    } // else
-
-    Object.defineProperty( this. "independent", {
-      get: function() {
-        return !!( iframeWindow.Popcorn && iframeWindow.Butter );
-      }
-    });
-
-    Object.defineProperty( this, "properties", {
-      get: function() {
-        return {
-          independent: that.independent,
-          target: options.target,
-          template: options.template,
-          registry: currentPopcorn ? currentPopcorn.registry : undefined
-        };
-      }
-    });
-
-    this.insertPopcorn = function() {
-      var popcornSourceScript = iframeDocument.createElement( "script" );
-      popcornSourceScript.src = popcornUrl;
-      iframeDocument.head.appendChild( popcornSourceScript );
-    };
-
-    this.clearPopcorn = function() {
-      while( iframeWindow.Popcorn && iframeWindow.Popcorn.instances.length > 0 ) {
-        iframeWindow.removeInstance( iframeWindow.Popcorn.instances[ 0 ] );
-      }     
-    };
-
-    this.destroyPopcorn = function() {
-      iframeDocument.head.removeChild( popcornScript );
-    };
-
-    this.play = function() {
-      this.link.play();
-    };
-
-    this.isPlaying = function() {
-      return this.link.isPlaying();
-    };
-
-    this.pause = function() {
-      this.link.pause();
-    };
-    
-    this.mute = function() {
-      this.link.mute();
-    };
-
-
-  }; //Preview
-
-  Butter.previewer = function( options ) {
-  };
-
-})(window, document, undefined, Butter);
+})(window, document, undefined, window.Butter, window.debug);
 

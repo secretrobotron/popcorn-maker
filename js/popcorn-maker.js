@@ -8,7 +8,7 @@
     "external/layouts/blackpanthers/default.html",
     "external/layouts/bookreport/index.html",
   ],
-  currentLayout;
+  currentLayout, currentPreview;
 
   window.addEventListener("DOMContentLoaded", function() {
   
@@ -83,8 +83,7 @@
 
     });
 
-    function buildRegistry() {
-      var registry = b.getRegistry();
+    function buildRegistry( registry ) {
       for( var i = 0, l = registry.length; i < l; i++ ) {
         if( registry[ i ].type !== "text" ) {
           b.addPlugin( { type: registry[ i ].type } );
@@ -119,9 +118,9 @@
     b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html" } );
     
     b.previewer({
-      layout: currentLayout,
       target: "main",
-      popcornURL: "../lib/popcorn-complete.js"
+      popcornUrl: "../lib/popcorn-complete.js",
+      butterUrl: "../lib/butter.js"
     });
 
     b.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
@@ -847,24 +846,20 @@
       b.clearPlugins();
       b.setProjectDetails( "title", "Untitled Project");
       currentLayout = document.getElementById( 'layout-select' ).value;
-      b.listen( "layoutloaded", function( e ) {
-        b.buildPopcorn( b.getCurrentMedia() , function() {
-          buildRegistry();
-          $('.tiny-scroll').tinyscrollbar();
-          toggleLoadingScreen( false );
-		     
-        }, b.popcornFlag() );
-        b.unlisten( "layoutloaded" );
-      });
-
       toggleLoadingScreen( true );
-     
-      b.loadPreview( {
-        layout: currentLayout,
-        target: "main",
-        popcornURL: "../lib/popcorn-complete.js",
-        media: document.getElementById('media-url').value
-      });
+      var currentPreview = new b.Preview({
+        template: currentLayout,
+        defaultMedia: document.getElementById( 'media-url' ).value,
+        onload: function( e ) {
+          currentPreview.build( b.getCurrentMedia(), function() {
+            var props = currentPreview.properties;
+            buildRegistry( props.registry );
+            $('.tiny-scroll').tinyscrollbar();
+            toggleLoadingScreen( false );
+          });
+        } //onload
+      }); //Preview
+
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
       escapeKeyEnabled = false;
@@ -890,7 +885,7 @@
                 $('.tiny-scroll').tinyscrollbar();
                 b.importProject( data );
                 toggleLoadingScreen( false );
-              }, b.popcornFlag() );
+              });
               b.unlisten( "layoutloaded" );
             });
           })( data );
