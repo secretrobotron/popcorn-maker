@@ -27,7 +27,6 @@
       function PreviewerLink( options ) {
         var isPlaying = false,
             server = new Butter.CommServer(),
-            registry,
             that = this;
 
         function setup( iframeWindow ) {
@@ -36,40 +35,26 @@
           });
           
           that.play = function() {
-            server.send( "link", "play", "controls" );
+            server.send( "link", "play", "play" );
           }; //play
 
-          Object.defineProperty( this, "isPlaying", {
+          Object.defineProperty( this, "playing", {
             get: function() {
               return isPlaying;
             }
           });
 
           that.pause = function() {
-            server.send( "link", "pause", "controls" );
+            server.send( "link", "pause", "pause" );
           }; //pause
 
           that.mute = function() {
-            server.send( "link", "mute", "controls" );
+            server.send( "link", "mute", "mute" );
           }; //mute
 
           that.scrape = function() {
             server.send( "link", "scrape", "setup" );
           }; //scrape
-
-          that.build = function( media, onready ) {
-            function ready( message ) {
-              registry = message.registry;
-              onready && onready();
-              server.forget( "link", "build", ready );
-            } //ready
-            server.listen( "link", "build", ready );
-            server.send( "link", media.exportJSON(), "build" );
-          }; //build
-
-          server.listen( "link", "controls", function( message ) {
-            console.log( 'controls', message );
-          });
 
           server.listen( "link", "setup", function( message ) {
             if ( message === "ready" ) {
@@ -80,12 +65,25 @@
             }
           });
 
-          server.listen( "link", "layoutloaded", function( message ) {
-            butter.trigger( "layoutloaded", null );
-            if ( onload ) {
-              onload();
-            } //if
+          server.listen( "link", "loaded", function( message ) {
+            var numMedia = butter.media.length, numReady = 0;
+            butter.trigger( "previewloaded", null );
+
+            server.listen( "link", "build", function( message ) {
+              var media = butter.getMedia( { id: message.id } );
+              if ( media ) {
+                media.registry = message.registry;
+                media.duration = message.duration;
+                butter.trigger( "mediaready", media, "previewer" );
+              } //if
+              ++numReady;
+              if ( numMedia === numReady ) {
+                butter.trigger( "previewready", that );
+                onload && onload( that );
+              } //if
+            });
           });
+          
           server.listen( "link", "mediaready", function( message ) {
           });
           server.listen( "link", "mediapaused", function( message ) {
@@ -93,7 +91,7 @@
           server.listen( "link", "mediaplaying", function( message ) {
           });
           server.listen( "link", "mediatimeupdate", function( message ) {
-            butter.currentTime( message );
+            butter.currentTime = message;
           });
 
           server.listen( "link", "addmedia", function( message ) {
@@ -101,6 +99,44 @@
           });
           server.listen( "link", "addtarget", function( message ) {
             var target = butter.addTarget( message );
+          });
+
+          butter.listen( "mediaadded", function( e ) {
+            var mediaExport = e.data.json;
+            server.send( "link", mediaExport, "mediaadded" );
+          });
+
+          butter.listen( "mediachanged", function( e ) {
+            var mediaExport = e.data.json;
+            server.send( "link", mediaExport, "mediachanged" );
+          });
+
+          butter.listen( "mediaremoved", function( e ) {
+            var mediaExport = e.data.json;
+            server.send( "link", mediaExport, "mediaremoved" );
+          });
+
+          butter.listen( "mediatimeupdate", function( e ) {
+            var mediaExport = e.data.json;
+            server.send( "link", mediaExport, "mediatimeupdate" );
+          });
+
+          butter.listen( "trackeventadded", function( e ) {
+            var trackEventExport = e.data.json;
+            server.send( "link", trackEventExport, "trackeventadded" );
+          });
+          butter.listen( "trackeventremoved", function( e ) {
+            var trackEventExport = e.data.json;
+            server.send( "link", trackEventExport, "trackeventremoved" );
+          });
+          butter.listen( "trackeventupdated", function( e ) {
+            var trackEventExport = e.data.json;
+            server.send( "link", trackEventExport, "trackeventupdated" );
+          });
+
+          butter.listen( "trackupdated", function( e ) {
+            var trackExport = e.data.json;
+            server.send( "link", trackExport, "trackupdated" );
           });
 
         } //setup
@@ -113,12 +149,6 @@
           setup( iframeWindow );
           server.send( "link", "ready", "setup" );
         };
-
-        Object.defineProperty( this, "registry", {
-          get: function() {
-            return registry;
-          }
-        });
       } //PreviewLink
 
       Object.defineProperty( this, "independent", {
@@ -163,21 +193,26 @@
             independent: this.independent,
             target: link.target,
             template: link.template,
-            registry: link.registry
           };
         }
       });
 
-      this.build = function( media, onready ) {
-        link.build( media, onready );
-      };
+      Object.defineProperty( this, "playing", {
+        get: function() {
+          return link.playing;
+        },
+        set: function( val ) {
+          if ( val ) {
+            link.play();
+          }
+          else {
+            link.pause();
+          }
+        }
+      });
 
       this.play = function() {
         link.play();
-      };
-
-      this.isPlaying = function() {
-        return link.isPlaying();
       };
 
       this.pause = function() {

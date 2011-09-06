@@ -33,6 +33,8 @@
     this.duration = 0;
     this.popcorn = undefined;
 
+    var butterMapping = {};
+
     this.generatePopcornString = function() {
       var regexResult = urlRegex.exec( that.url ) || "",
           players = [];
@@ -122,6 +124,34 @@
 
     }; //generatePopcornString
 
+    this.trackEventAddedHandler = function( message ) {
+      that.popcorn[ message.type ]( message.popcornOptions );
+      butterMapping[ message.id ] = that.popcorn.getLastTrackEventId();
+    }; //trackEventAddedHandler
+    this.trackEventUpdatedHandler = function( message ) {
+      if ( butterMapping[ message.id ] ) {
+        that.popcorn.removeTrackEvent( butterMapping[ message.id ] );
+      }
+      that.popcorn[ message.type ]( message.popcornOptions );
+    }; //trackEventUpdatedHandler
+    this.trackEventRemovedHandler = function( message ) {
+      if ( butterMapping[ message.id ] ) {
+        that.popcorn.removeTrackEvent( butterMapping[ message.id ] );
+      }
+    }; //trackEventRemovedHandler
+
+    this.play = function( message ) {
+      that.popcorn.play();
+    };
+
+    this.pause = function( message ) {
+      that.popcorn.pause();
+    };
+
+    this.mute = function( message ) {
+      that.popcorn.mute( message );
+    };
+
   } //Media
 
   Butter.Link = function( options ) {
@@ -138,13 +168,54 @@
         that = this,
         comm = options.comm;
 
-    comm.listen( "build", function( message ) {
-      that.buildMedia( message, function( media ){
-        comm.send({
-          registry: media.Popcorn.registry
-        }, "build" );
-      });
-    });
+    var mediaChangedHandler = function( message ) {
+      if ( currentMedia ) {
+        comm.forget( 'trackeventadded', currentMedia.trackEventAddedHandler );
+        comm.forget( 'trackeventupdated', currentMedia.trackEventUpdatedHandler );
+        comm.forget( 'trackeventremoved', currentMedia.trackEventRemovedHandler );
+        comm.forget( 'play', currentMedia.play );
+        comm.forget( 'pause', currentMedia.pause );
+        comm.forget( 'mute', currentMedia.mute );
+      }
+      currentMedia = medias[ message.id ];
+      if ( currentMedia ) {
+        comm.listen( 'trackeventadded', currentMedia.trackEventAddedHandler );
+        comm.listen( 'trackeventupdated', currentMedia.trackEventUpdatedHandler );
+        comm.listen( 'trackeventremoved', currentMedia.trackEventRemovedHandler );
+        comm.listen( 'play', currentMedia.play );
+        comm.listen( 'pause', currentMedia.pause );
+        comm.listen( 'mute', currentMedia.mute );
+      }
+    };
+
+    var mediaAddedHandler = function( message ) {
+      if ( !medias[ message.id ] ) {
+        var media = medias[ message.id ] = new Media( message );
+        buildMedia( media, function( media ) {
+          comm.send({
+            registry: media.Popcorn.registry,
+            id: media.id,
+            duration: media.duration,
+          }, "build");
+        });
+      }
+      else {
+        console.log('media', message.id, 'already exists');
+      }
+    };
+
+    var mediaRemovedHandler = function( message ) {
+      console.log('media removed!');
+    };
+
+    var mediaTimeUpdateHandler = function( message ) {
+      currentMedia.popcorn.currentTime( message.currentTime );
+    };
+
+    comm.listen( 'mediachanged', mediaChangedHandler );
+    comm.listen( 'mediaadded', mediaAddedHandler );
+    comm.listen( 'mediaremoved', mediaRemovedHandler );
+    comm.listen( 'mediatimeupdate', mediaTimeUpdateHandler );
 
     this.scrape = function( iframe, importData ) {
       function bodyReady() {
@@ -222,6 +293,7 @@
         if ( importData ) {
           that.importProject( importData );
         }
+
       } // bodyReady
 
       var tries = 0;
@@ -244,7 +316,7 @@
         }
         else {
           bodyReady();
-          comm.send("layoutloaded", "layoutloaded");
+          comm.send("loaded", "loaded");
         } // else
       } // ensureLoaded
 
@@ -252,17 +324,8 @@
 
     }; //scrape
 
-    this.buildMedia = function( inputMedia, callback, importData ) {
+    var buildMedia = function( media, callback, importData ) {
 
-      if ( !inputMedia ) {
-        throw new Error( "Can't build preview without a media target" );
-      }
-
-      var media;
-      if ( !medias[ inputMedia.id ] ) {
-        media = medias[ inputMedia.id ] = new Media( inputMedia );
-      }
- 
       // create a script within the iframe and populate it with our popcornString
       if ( forcePopcorn || forcePopcorn === undefined ) {
 
@@ -296,7 +359,6 @@
             var popcorn = media.popcorn;
             if( popcorn.media.readyState >= 2 || popcorn.media.duration > 0 ) {
               media.duration = popcorn.media.duration;
-              comm.send( media, "mediaready" );
               popcorn.media.addEventListener( "timeupdate", function() {
                 comm.send( popcorn.media.currentTime, "mediatimeupdate" );                
               },false);

@@ -1,97 +1,74 @@
 (function() {
 
-  var target = document.createElement( "div" ),
-      b = {},
-      display,
-      currentTrack;
-
   Butter.registerModule( "trackeditor", function( options ) {
-    //setup: function( options ) {
 
-      // target is the div that contains the editor
-      target = document.getElementById( options.target ) || options.target;
-      b = this;
-      display = target.style.display;
+    // target is the div that contains the editor
+    var target = document.getElementById( options.target ) || options.target,
+        b = this;
 
-      target.style.display = "none";
-
+    b.TrackEditor = function( track ) {
+      var that = this;
+      
       b.listen( "trackremoved", function( event ) {
-
-        if ( currentTrack && event.data.getId() === currentTrack.getId() ) {
-
-          b.closeEditTrack();
+        if ( event.data.id === track.id ) {
+          that.close();
         }
       });
-    //},
-    //extend: {
-      // displays the editor div
-      // sets focus on the track being requested edit
-      this.openEditTrack = function( track ) {
 
-        target.style.display = display;
-        currentTrack = track;
+      Object.defineProperty( this, "track", {
+        get: function() {
+          return track;
+        }
+      });
+
+      this.close = function() {
       };
-      // returns the track that is currently being editied
-      this.getEditTrack = function() {
 
-        return currentTrack;
+      this.remove = function() {
+        b.removeTrack( track );
       };
-      // hides the editor div
-      this.closeEditTrack = function() {
 
-        currentTrack = null;
-        display = target.style.display;
-        target.style.display = "none";
-      };
-      // deletes the track
-      // this will also distroy all events on it
-      this.deleteTrack = function() {
-
-        b.removeTrack && b.removeTrack( currentTrack );
-      };
-      // destroys all events on the track
-      this.clearTrack = function() {
-
-        var trackEvents = currentTrack.getTrackEvents();
-
+      this.clear = function() {
+        var trackEvents = track.trackEvents;
         while ( trackEvents.length ) {
+          b.removeTrackEvent( track, trackEvents[ 0 ] );
+        } //while
+      };
 
-          b.removeTrackEvent( currentTrack, trackEvents[ 0 ] );
+      Object.defineProperty( this, "json", {
+        get: function() {
+          var trackEvents = track.trackEvents,
+              returnArray = [];
+          for ( var i = 0, l = trackEvents.length; i < l; i++ ) {
+            returnArray.push( JSON.stringify( { type: trackEvents[ i ].type, options: trackEvents[ i ].popcornOptions } ) );
+          }
+          return returnArray;
+        },
+        set: function( val ) {
+          that.clear();
+          var newArray = JSON.parse( "[" + data + "]" );
+          for ( var i = 0, l = newArray.length; i < l; i++ ) {
+            track.addTrackEvent( new Butter.TrackEvent({ popcornOptions: newArray[ i ].options, type: newArray[ i ].type }) )
+          }
         }
-      };
-      // gets a string of JSON containing the track
-      this.getTrackJSON = function() {
+      });
 
-        var trackEvents = currentTrack.getTrackEvents(),
-            returnArray = [];
-
-        for ( var i = 0, l = trackEvents.length; i < l; i++ ) {
-
-          returnArray.push( JSON.stringify( { type: trackEvents[ i ].type, options: trackEvents[ i ].popcornOptions } ) );
+      Object.defineProperty( this, "target", {
+        get: function() {
+          return track.target;
+        },
+        set: function( val ) {
+          track.target = val;
+          var trackEvents = track.getTrackEvents();
+          for( var i = 0, l = track.getTrackEvents().length; i < l; i ++ ) {
+            trackEvents[ i ].popcornOptions.target = val;
+            b.trigger( "trackeventupdated", trackEvents[ i ], "trackeditor" );
+          }
+          b.trigger( "trackupdated", track, "trackeditor" );
         }
+      });
 
-        return returnArray;
-      };
-      // clears the track of all events
-      // parses data into events
-      this.setTrackJSON = function( data ) {
-
-        newArray = JSON.parse( "[" + data + "]" );
-        b.clearTrack();
-        
-        for ( var i = 0, l = newArray.length; i < l; i++ ) {
-        
-          b.addTrackEvent( currentTrack, new Butter.TrackEvent({ popcornOptions: newArray[ i ].options, type: newArray[ i ].type }) )
-        }
-      };
-      // sets the current track's target
-      // triggers a track updated
-      this.setTrackTarget = function( target ) {
-
-        currentTrack.target = target;
-        b.trigger( "trackupdated", currentTrack, "trackeditor" );
-      };
-    //}
+    }; //TrackEditor
   });
 }());
 
