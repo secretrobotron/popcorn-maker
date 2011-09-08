@@ -4,36 +4,94 @@
 <script src="../external/layouts/popcorn-js/popcorn.image.js"></script>
 <script src="../external/layouts/popcorn-js/popcorn.footnote.js"></script>
 <script src="../lib/butter.js"></script>
+<script type="text/json" data-butter="project-data">
+{"project":{"title":"shimmy"},"targets":[{"id":1,"name":"div2"}],"media":[{"id":1,"name":"Media01315501910662","url":"http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm","target":"main","duration":178.378,"tracks":[{"name":"Track1315501913141","id":1,"trackEvents":[{"id":1,"start":0,"end":0,"type":"image","popcornOptions":{"start":137.52368387096774,"end":141.52368387096774},"track":"Track1315501913141","name":"Track1315501913146"}]}]}],"layout":"layouts/default-basic.html"}
+</script>
 <script>
-  document.addEventListener( "DOMContentLoaded", function() {
-    var popcorn = Popcorn( document.getElementById('outerVideo') );
-    var b = new Butter();
-    b.comm();
-    var commClient = new b.CommClient( "previewerClient" );
-    commClient.listen( "ping", function( message ) {
-      commClient.send( Popcorn.instances.indexOf( popcorn ), "pong" );
-    });
-    commClient.listen( "trackeventadded", function ( message ) {
-      var butterId = message.id;
-      popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) ); 
-      var popcornEventId = popcorn.getLastTrackEventId();
-      commClient.send( { butterId: message.id, popcornId: popcorn.getLastTrackEventId() }, "trackeventadded" );
-
-      commClient.listen( "trackeventupdated", function ( message ) {
-        if ( message.id === butterId ) {
-          popcorn.removeTrackEvent( popcornEventId );
-          popcorn[ message.type ]( Popcorn.extend( {}, message.popcornOptions ) );
-          popcornEventId = popcorn.getLastTrackEventId();
-        }
-      });
-      commClient.listen( "trackeventremoved", function ( message ) {
-        if ( message.id === butterId ) {
-          popcorn.removeTrackEvent( popcornEventId );
-        }
-      });
-    });
-    
-  }, false );
+(function() {
+  var butterMapping = [];
+  var template = new Butter.Template({
+    loadFromData: function( importData ) {
+      var medias = importData.media;
+      if ( medias ) {
+        for ( var m=0; m<medias.length; ++m ) {
+          var media = medias[ m ],
+              popcorn = Popcorn( media.url );
+          if ( media.tracks ) {
+            for ( var t=0; t<media.tracks.length; ++t ) {
+              var track = media.tracks[ t ];
+              if ( track.trackEvents ) {
+                for ( var e=0; e<track.trackEvents.length; ++e ) {
+                  var trackEvent = track.trackEvents[ e ];
+                  popcorn[ trackEvent.type ]( trackEvent.popcornOptions );
+                  console.log( popcorn.getTrackEvent( popcorn.getLastTrackEventId() ) );
+                } //for trackEvents
+              } //if trackEvents
+            } //for tracks
+          } //if tracks
+        } //for medias
+      } //if medias
+    },
+    onfetchhtml: function( message ) {
+      return template.link.getHTML();
+    },
+    onmediaremoved: function( message ) {
+      template.link.removeMedia( template.link.getMedia( message.id ) );
+    },
+    onmediatimeupdate: function( message ) {
+      template.link.currentMedia.popcorn.currentTime( message.currentTime );
+    },
+    onmediachanged: function( message ) {
+      if ( template.link.currentMedia ) {
+        template.link.currentMedia.removeHandlers( template.link.comm );
+      }
+      var currentMedia = template.link.currentMedia = template.link.getMedia( message.id );
+      if ( currentMedia ) {
+        currentMedia.addHandlers( template.link.comm, {
+          'trackeventadded': function( message ) {
+            var media = template.link.currentMedia;
+            media.popcorn[ message.type ]( message.popcornOptions );
+            butterMapping[ message.id ] = media.popcorn.getLastTrackEventId();
+          },
+          'trackeventupdated': function( message ) {
+            var media = template.link.currentMedia;
+            if ( butterMapping[ message.id ] ) {
+              media.popcorn.removeTrackEvent( butterMapping[ message.id ] );
+            }
+            media.popcorn[ message.type ]( message.popcornOptions );
+            butterMapping[ message.id ] = media.popcorn.getLastTrackEventId();
+          },
+          'trackeventremoved': function( message ) {
+            var media = template.link.currentMedia;
+            if ( butterMapping[ message.id ] ) {
+              media.popcorn.removeTrackEvent( butterMapping[ message.id ] );
+            }
+          },
+          'play': currentMedia.play,
+          'pause': currentMedia.pause,
+          'mute': currentMedia.mute
+        });
+      }
+    },
+    onmediaadded: function( message ) {
+      var link = template.link;
+      if ( !link.getMedia( message.id ) ) {
+        var media = new Butter.TemplateMedia( message );
+        link.addMedia( media );
+        media.popcornString = media.generatePopcornString();
+        media.createPopcorn();
+        media.waitForPopcorn( function( popcorn ) {
+          media.setupPopcornHandlers( link.comm );
+          link.sendMedia( media );
+        });
+      }
+    },
+    onsetup: function( options ) {
+      template.link.sendImportData( options.importData );
+      template.link.scrape();
+    }
+  });
+})();
 </script>
 </head>
 <body>

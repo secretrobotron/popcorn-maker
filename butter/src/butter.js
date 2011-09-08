@@ -59,6 +59,7 @@ THE SOFTWARE.
       set: function( b ) {
         butter = b;
         if ( butter ) {
+          butter.logger.debug( "Track added" );
           butter.trigger( "trackadded", that );
           var events = that.trackEvents;
           for ( var i=0, l=events.length; i<l; ++i ) {
@@ -178,6 +179,7 @@ THE SOFTWARE.
       set: function( b ) {
         butter = b;
         if ( butter ) {
+          butter.logger.debug( "TrackEvent added" );
           butter.trigger( "trackeventadded", that );
         }
       }
@@ -327,6 +329,7 @@ THE SOFTWARE.
         if ( b !== butter ) {      
           butter = b;
           if ( butter ) {
+            butter.logger.debug( "Media added" );
             butter.trigger( "mediaadded", that );
             var tracks = that.tracks;
             for ( var i=0, l=tracks.length; i<l; ++i ) {
@@ -434,8 +437,12 @@ THE SOFTWARE.
         if ( importData.name ) {
           name = importData.name;
         }
-        importData.target && that.setTarget( importData.target );
-        importData.url && that.setUrl( importData.url );
+        if ( importData.target ) {
+          that.target = importData.target;
+        }
+        if ( importData.url ) {
+          that.url = importData.url;
+        }
         if ( importData.tracks ) {
           var importTracks = importData.tracks;
           for ( var i=0, l=importTracks.length; i<l; ++i ) {
@@ -445,7 +452,7 @@ THE SOFTWARE.
           }
         }
       }
-    });
+    }); //json
 
     Object.defineProperty( this, "registry", {
       get: function() {
@@ -474,6 +481,30 @@ THE SOFTWARE.
 
   }; //Media
 
+  var Logger = function ( options ) {
+    options = options || {};
+    var name = options.name || "NoName";
+    var quiet = options.quiet !== undefined ? options.quiet : false;
+    var debugFn = function( message ) {
+      console.log( "[" + name + "]: " + message );
+    };
+    var errorFn = function( message ) {
+      throw new Error( "[" + name + "]: " + message );
+    };
+    var that = this;
+    this.debug = !quiet && ( Logger.level & Logger.DEBUG ) ? debugFn : function() {};
+    this.error = !quiet && ( Logger.level & Logger.ERROR ) ? errorFn : function() {};
+    if ( options.object && !options.object.log ) {
+      options.object.log = function( message ) {
+        that.debug( message );
+      };
+    }
+  };
+  Logger.NONE = 0x0;
+  Logger.DEBUG = 0x1;
+  Logger.ERROR = 0x2;
+  Logger.level = Logger.DEBUG | Logger.ERROR;
+
   /****************************************************************************
    * Butter
    ****************************************************************************/
@@ -486,8 +517,17 @@ THE SOFTWARE.
         targets = [],
         projectDetails = {},
         that = this;
+
+    options = options || {};
         
     this.id = "Butter" + numButters++;
+
+    var logger = this.logger = new Logger( { 
+      name: "Butter", 
+      object: this, 
+      quiet: options.logger
+    } );
+    logger.debug( "Starting" );
 
     function checkMedia() {
       if ( !currentMedia ) {
@@ -690,10 +730,11 @@ THE SOFTWARE.
 
       targets.push( target );
 
+      logger.debug( "Target added" );
       that.trigger( "targetadded", target );
 
       return target;
-    };
+    }; //addTarget
 
     //removeTarget - remove a target object
     this.removeTarget = function ( target ) {
@@ -708,7 +749,7 @@ THE SOFTWARE.
         return target;
       } //if
       return undefined;
-    };
+    }; //removeTarget
 
     Object.defineProperty( this, "targets", {
       get: function() {
@@ -735,7 +776,7 @@ THE SOFTWARE.
         }
       } 
       return undefined;
-    };
+    }; //getTaget
 
     /****************************************************************
      * Project methods
@@ -767,9 +808,11 @@ THE SOFTWARE.
       if ( projectData.media ) {
         for ( var i=0, l=projectData.media.length; i<l; ++i ) {
 
-          var m, medias = that.media, mediaData = projectData.media[ i ];
+          var mediaData = projectData.media[ i ],
+              m = that.getMedia( { target: mediaData.target } );
+          
           for( var k = 0, j = medias.length; k < j; k++ ) { 
-            if( medias[ k ].getTarget() === mediaData.target && medias[ k ].url === mediaData.url ) {
+            if( medias[ k ].target === mediaData.target && medias[ k ].url === mediaData.url ) {
               m = medias[ k ];  
             }
           }
@@ -783,9 +826,9 @@ THE SOFTWARE.
             m.json = projectData.media[ i ];
           }
           
-        }
-      }
-    };
+        } //for
+      } //if projectData.media
+    }; //importProject
 
     //exportProject - Export project data
     this.exportProject = function () {
@@ -870,6 +913,7 @@ THE SOFTWARE.
 
         if ( media && medias.indexOf( media ) > -1 ) {
           currentMedia = media;
+          logger.debug( "Media Changed" );
           that.trigger( "mediachanged", media );
           return currentMedia;
         } //if
@@ -881,6 +925,7 @@ THE SOFTWARE.
       for ( var i=0,l=medias.length; i<l; ++i ) {
         if (  ( media.id !== undefined && medias[ i ].id === media.id ) || 
               ( media.name && medias[ i ].name === media.name ) ||
+              ( media.target && medias[ i ].target === media.target ) ||
               medias[ i ].name === media ) {
           return medias[ i ];
         }
@@ -979,6 +1024,7 @@ THE SOFTWARE.
   Butter.Track = Track;
   Butter.TrackEvent = TrackEvent;
   Butter.Target = Target;
+  Butter.Logger = Logger;
 
   window.Butter = Butter;
 

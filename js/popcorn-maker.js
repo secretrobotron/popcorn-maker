@@ -1,8 +1,8 @@
 (function(){
 
   var layouts = [
-    "layouts/default-basic.html",
     "layouts/default.html",
+    "layouts/default-basic.html",
     "external/layouts/city-slickers/index.html",
     "external/layouts/cgg/index.html",
     "external/layouts/blackpanthers/default.html",
@@ -202,7 +202,7 @@
 
       var scrubberLeft = checkScrubber( event );
 
-      timelineDuration.innerHTML = b.secondsToSMPTE( b.currentTime() );
+      timelineDuration.innerHTML = b.secondsToSMPTE( b.currentTime );
 
       scrubber.style.display = "block";
       if ( scrubberLeft >= scrubberContainer.offsetWidth ) {
@@ -379,7 +379,7 @@
           b.moveFrameRight( event );
         } else {
 
-          b.currentTime( b.currentTime() + inc );
+          b.currentTime = b.currentTime + inc;
         }
       } else if( event.keyCode === 37 ) {
         if ( b.targettedEvent ) {
@@ -387,7 +387,7 @@
           b.moveFrameLeft( event );
         } else {
 
-          b.currentTime( b.currentTime() - inc );
+          b.currentTime = b.currentTime - inc;
         }
       }
     }, false);
@@ -531,7 +531,7 @@
       if ( event.charCode === 32 ) {
 
         event.preventDefault();
-        currentPreview.playing ? currentPreview.play() : currentPreview.pause();
+        currentPreview.playing ? currentPreview.pause() : currentPreview.play();
       }
     }, false );
 
@@ -609,14 +609,14 @@
     }, false);
 
     document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
-      currentPreview.playing ? currentPreview.play() : currentPreview.pause();
+      currentPreview.playing ? currentPreview.pause() : currentPreview.play();
     }, false);
 
-    b.listen( "mediaplaying", function( event ) {
+    b.listen( "mediapaused", function( event ) {
       document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "0pt -25px";
     } );
 
-    b.listen( "mediapaused", function( event ) {
+    b.listen( "mediaplaying", function( event ) {
       document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "0pt 0px";
     } );
     
@@ -721,15 +721,16 @@
     });
 
     $('.p-3').click(function(){
-      $('#export-data').val( b.getHTML() );
-      $('.project-title-textbox').val( b.getProjectDetails( "title" ) );
-      
-      $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
-      $('#popup-3').show();
-      centerPopup( $('#popup-3') );
-      $(' .balck-overlay ').show();
-      escapeKeyEnabled = true;
+      currentPreview.fetchHTML( function( html ) {
+        $('#export-data').val( html );
+        $('.project-title-textbox').val( b.getProjectDetails( "title" ) );
+        $('.close-div').fadeOut('fast');
+        $('.popupDiv').fadeIn('slow');
+        $('#popup-3').show();
+        centerPopup( $('#popup-3') );
+        $(' .balck-overlay ').show();
+        escapeKeyEnabled = true;
+      });
     });
     
     $('.edit-selected-project').click(function(){
@@ -809,33 +810,24 @@
         b.clearPlugins();
         currentLayout = localProjects[ title ].layout;
         console.log( localProjects[ title ] );
-        (function ( localProject ) {
-          b.listen( "layoutloaded", function( e ) {
-            document.getElementById( "main" ).innerHTML = "";
 
-            b.buildPopcorn( b.currentMedia , function() {
-
-              buildRegistry();
-              $('.tiny-scroll').tinyscrollbar();
-              b.importProject( localProject );
-              toggleLoadingScreen( false );
-            }, b.popcornFlag() );
-            b.unlisten( "layoutloaded" );
-          });
-        })( localProjects[ title ] );
         toggleLoadingScreen( true );
-        
-        b.loadPreview( {
-          layout: currentLayout,
-          target: "main",
-          popcornURL: "../lib/popcorn-complete.js",
-          importMedia: localProjects[ title ].media,
-        });
         $('.close-div').fadeOut('fast');
         $('.popups').hide();
         $('balck-overlay').show()
-        escapeKeyEnabled = false;     
-      }
+        escapeKeyEnabled = false;
+
+        currentPreview = new b.Preview({
+          template: currentLayout,
+          defaultMedia: document.getElementById( 'media-url' ).value,
+          importData: localProjects[ title ],
+          onload: function( preview ) {
+            buildRegistry( b.currentMedia.registry );
+            $('.tiny-scroll').tinyscrollbar();
+            toggleLoadingScreen( false );
+          } //onload
+        }); //Preview
+      } //if
     });
     
     $(".create-new-btn").click(function() {
@@ -872,31 +864,22 @@
           b.clearProject(); 
           b.clearPlugins();
           currentLayout = data.layout ? data.layout : layouts[ 0 ];
-          (function ( data ) {
-            b.listen( "layoutloaded", function( e ) {
-              document.getElementById( "main" ).innerHTML = "";
-              b.buildPopcorn( b.currentMedia , function() {
-
-                buildRegistry();
-                $('.tiny-scroll').tinyscrollbar();
-                b.importProject( data );
-                toggleLoadingScreen( false );
-              });
-              b.unlisten( "layoutloaded" );
-            });
-          })( data );
           toggleLoadingScreen( true );
           $('.close-div').fadeOut('fast');
           $('.popups').hide();
           escapeKeyEnabled = false;
-          b.loadPreview( {
-            layout: currentLayout,
-            target: "main",
-            popcornURL: "../lib/popcorn-complete.js",
-            importMedia: data.media,
-          });
-          return;
 
+          currentPreview = new b.Preview({
+            template: currentLayout,
+            defaultMedia: document.getElementById( 'media-url' ).value,
+            importData: data,
+            onload: function( preview ) {
+              buildRegistry( b.currentMedia.registry );
+              $('.tiny-scroll').tinyscrollbar();
+              toggleLoadingScreen( false );
+            } //onload
+          }); //Preview
+          return;
         }
         catch ( e ) {
           console.log ( "Error Loading in Data", e );
@@ -911,11 +894,11 @@
     });
 
     $(".show-html-btn").click(function() {
-      $('#export-data').val( b.getHTML() );
+      currentPreview.fetchHTML( function( html ) {
+        $('#export-data').val( html );
+      });
     });
     
-    //$(function(){ $("label").inFieldLabels(); });
-
     $(function() {
       $( ".draggable" ).draggable();
     });

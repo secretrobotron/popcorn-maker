@@ -1,17 +1,25 @@
 (function (window, document, Butter, undefined) {
 
+  var MESSAGE_PREFIX = "BUTTER", MESSAGE_PREFIX_LENGTH = MESSAGE_PREFIX.length;
+
   if ( !Butter ) {
     Butter = window.Butter = {};
   } //if
 
+  var parseEvent = Butter.parseCommEvent = function ( e, win ) {
+    if ( e.source !== win && e.data.indexOf( MESSAGE_PREFIX ) === 0 ) {
+      return JSON.parse( e.data.substring( MESSAGE_PREFIX_LENGTH ) );
+    } //if
+  }; //parseEvent
+
   Butter.CommClient = function ( name, onmessage ) {
 
     var listeners = {},
-    self = this;
+        that = this;
 
-    window.addEventListener('message', function (e) {
-      if ( e.source !== window ) {
-        var data = JSON.parse( e.data );
+    window.addEventListener('message', function ( e ) {
+      var data = parseEvent( e, window );
+      if ( data ) {
         if ( data.type && listeners[ data.type ] ) {
           var list = listeners[ data.type ];
           for ( var i=0; i<list.length; ++i ) {
@@ -51,23 +59,39 @@
 
     this.send = function ( message, type ) {
       if ( !type ) {
-        postMessage( JSON.stringify( message ), "*" );
+        postMessage( MESSAGE_PREFIX + JSON.stringify( message ), "*" );
       }
       else {
-        postMessage( JSON.stringify( { type: type, message: message } ), "*" );
+        postMessage( MESSAGE_PREFIX + JSON.stringify( { type: type, message: message } ), "*" );
       } //if
-    };
+    }; //send
+
+    this.async = function( message, type, handler ) {
+      var wrapper = function( message ) {
+        that.forget( type, wrapper );
+        handler( message );
+      }; //wrapper
+      that.listen( type, wrapper ); 
+      that.send( message, type );
+    }; //async
+
+    this.returnAsync = function( type, handler ) {
+      that.listen( type, function( message ) {
+        that.send( handler( message ), type );
+      });
+    }; //returnAsync
 
   }; //CommClient
 
   Butter.CommServer = function () {
 
-    var clients = {};
-    var that = this;
+    var clients = {},
+        that = this;
 
     function Client ( name, client, callback ) {
 
-      var listeners = {};
+      var listeners = {},
+          that = this;
 
       this.getName = function () {
         return name;
@@ -84,7 +108,7 @@
         else {
           throw new Error('Must provide a type and callback for CommServer listeners');
         } //if
-      };
+      }; //listen
 
       this.forget = function ( type, callback ) {
         if ( !callback ) {
@@ -98,21 +122,29 @@
             return callback;
           } //if
         } //if
-      };
+      }; //forget
 
       this.send = function ( message, type ) {
         if ( !type ) {
-          client.postMessage( JSON.stringify( message ), "*" );
+          client.postMessage( MESSAGE_PREFIX + JSON.stringify( message ), "*" );
         }
         else {
-          client.postMessage( JSON.stringify( { type: type, message: message } ), "*" );
+          client.postMessage( MESSAGE_PREFIX + JSON.stringify( { type: type, message: message } ), "*" );
         } //if
-        
       }; //send
 
-      client.addEventListener( "message", function (e) {
-        if ( e.source === client ) {
-          var data = JSON.parse( e.data );
+      this.async = function( message, type, handler ) {
+        var wrapper = function( message ) {
+          that.forget( type, wrapper );
+          handler( message );
+        }; //wrapper
+        that.listen( type, wrapper ); 
+        that.send( message, type );
+      }; //async
+
+      client.addEventListener( "message", function ( e ) {
+        var data = parseEvent( e, window );
+        if ( data ) {
           if ( data.type && listeners[ data.type ] ) {
             var list = listeners[ data.type ];
             for ( var i=0; i<list.length; ++i ) {
@@ -153,6 +185,10 @@
 
     this.send = function ( name, message, type ) {
       clients[ name ] && clients[ name ].send( message, type );
+    };
+
+    this.async = function( name, message, type, handler ) {
+      clients[ name ] && clients[ name ].async( message, type, handler );
     };
 
   } //CommServer
