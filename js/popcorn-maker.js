@@ -3,6 +3,7 @@
   var layouts = [
     "layouts/default-basic.html",
     "layouts/default.html",
+    "external/layouts/knell/index.html",
     "external/layouts/city-slickers/index.html",
     "external/layouts/cgg/index.html",
     "external/layouts/blackpanthers/default.html"
@@ -117,6 +118,8 @@
     b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
     b.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
     b.addCustomEditor( "external/layouts/blackpanthers/editor.html", "googlestreets" );
+    b.addCustomEditor( "external/layouts/knell/editors/editor-lumakey.html", "lumakey" );
+    b.addCustomEditor( "external/layouts/knell/editors/editor-words.html", "words" );
 
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
