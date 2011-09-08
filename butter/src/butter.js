@@ -811,12 +811,6 @@ THE SOFTWARE.
           var mediaData = projectData.media[ i ],
               m = that.getMedia( { target: mediaData.target } );
           
-          for( var k = 0, j = medias.length; k < j; k++ ) { 
-            if( medias[ k ].target === mediaData.target && medias[ k ].url === mediaData.url ) {
-              m = medias[ k ];  
-            }
-          }
-
           if ( !m ) {
             m = new Media();
             m.json = projectData.media[ i ];

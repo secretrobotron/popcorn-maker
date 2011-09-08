@@ -139,6 +139,7 @@
           butter.listen( "trackeventadded", function( e ) {
             logger.debug( "Sending trackeventadded" );
             var trackEventExport = e.data.json;
+            console.log( trackEventExport );
             server.send( "link", trackEventExport, "trackeventadded" );
           });
           butter.listen( "trackeventremoved", function( e ) {
@@ -155,7 +156,6 @@
           server.listen( "link", "importData", function( message ) {
             logger.debug( "Received import data" );
             importData = message;
-            console.log( message );
           });
         } //setup
 

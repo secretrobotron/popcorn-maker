@@ -1,11 +1,11 @@
 <html>
 <head>
-<script src="../external/layouts/popcorn-js/popcorn.js"></script>
+<script src="http://popcornjs.org/code/dist/popcorn.js"></script>
 <script src="../external/layouts/popcorn-js/popcorn.image.js"></script>
 <script src="../external/layouts/popcorn-js/popcorn.footnote.js"></script>
 <script src="../lib/butter.js"></script>
 <script type="text/json" data-butter="project-data">
-{"project":{"title":"shimmy"},"targets":[{"id":1,"name":"div2"}],"media":[{"id":1,"name":"Media01315501910662","url":"http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm","target":"main","duration":178.378,"tracks":[{"name":"Track1315501913141","id":1,"trackEvents":[{"id":1,"start":0,"end":0,"type":"image","popcornOptions":{"start":137.52368387096774,"end":141.52368387096774},"track":"Track1315501913141","name":"Track1315501913146"}]}]}],"layout":"layouts/default-basic.html"}
+{"project":{"title":"Untitled Project"},"targets":[{"id":0,"name":"div2"}],"media":[{"id":0,"name":"Media01315512188943","url":"http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm","target":"outerVideo","duration":178.378,"tracks":[{"name":"Track1315512243152","id":0,"trackEvents":[{"id":0,"start":0,"end":0,"type":"image","popcornOptions":{"start":"50.060922580645155","end":"116.80881935483869","href":"","src":"","text":"foop","target":"div2"},"track":"Track1315512243152","name":"Track1315512243156"}]}]}],"layout":"layouts/default.html"}
 </script>
 <script>
 (function() {
@@ -24,7 +24,6 @@
                 for ( var e=0; e<track.trackEvents.length; ++e ) {
                   var trackEvent = track.trackEvents[ e ];
                   popcorn[ trackEvent.type ]( trackEvent.popcornOptions );
-                  console.log( popcorn.getTrackEvent( popcorn.getLastTrackEventId() ) );
                 } //for trackEvents
               } //if trackEvents
             } //for tracks

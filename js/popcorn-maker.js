@@ -33,11 +33,11 @@
     }, 500);
     
     
-    if ( !localStorage.getItem( "PopcornMaker.SavedProjects" ) ) {
+    //if ( !localStorage.getItem( "PopcornMaker.SavedProjects" ) ) {
       $('#welcome-popup').fadeIn(2000);
       $('.popupDiv').fadeIn('slow');
       var escapeKeyEnabled = true;
-    }
+    //}
       
     $('#loading-overlay').hide();
     //Carousel for Help inner page
@@ -613,11 +613,11 @@
     }, false);
 
     b.listen( "mediapaused", function( event ) {
-      document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "0pt -25px";
+      document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "-321px -19px";
     } );
 
     b.listen( "mediaplaying", function( event ) {
-      document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "0pt 0px";
+      document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "-322px 7px";
     } );
     
     $('.add-project-btn').click(function() {
@@ -652,7 +652,7 @@
 
     $(".collapse-btn").toggle(function() {
 
-      $('.collapse-btn a').css('backgroundPosition','6px 7px');
+      $('.collapse-btn a').css('backgroundPosition','-330px -152px');
       $(".toolbox").animate({ width: "46px" }, 500);
       $('.collapse-btn a').text("");
       $(".timeline").stop().animate({ paddingRight:'86px'}, 500);
@@ -660,7 +660,7 @@
 
       },function() {
 
-        $('.collapse-btn a').css('backgroundPosition','6px -9px');
+        $('.collapse-btn a').css('backgroundPosition','-330px -167px');
         $(".toolbox").animate({ width: "120px" }, 500);
         $('.collapse-btn a').text("collapse"); 
         $(".timeline").stop().animate({ paddingRight:'160px'}, 500);
@@ -669,29 +669,29 @@
 
     $(".hide-timeline a").toggle(function() {
 
-      $(this).css('backgroundPosition','20px -10px');
+      $(this).css('backgroundPosition','-239px -7px');
       $(".hide-timeline").animate({ bottom: '36px' }, 500);
       $("#properties-panel").animate({ height: '38px' }, 500);
       $(this).text("Show Timeline"); 
 
     },function() {
 
-      $(this).css('backgroundPosition','20px 7px');
+      $(this).css('backgroundPosition','-239px 10px');
       $(this).text("Hide Timeline"); 
       $(".hide-timeline").animate({ bottom: "268px" }, 500);
       $("#properties-panel").animate({ height: "270px" }, 500);
     });
 
     $(".play-btn a").toggle(function() {
-      $(".play-btn a span").css('backgroundPosition','0 -25px');
+      //$(".play-btn a span").css('backgroundPosition','0 -25px');
     },function() {
-      $(".play-btn a span").css('backgroundPosition','0 0');
+      //$(".play-btn a span").css('backgroundPosition','0 0');
     });
 
     $(".sound-btn a").toggle(function() {
-      $(".sound-btn a span").css('backgroundPosition','0 -16px');
+      $(".sound-btn a span").css('backgroundPosition','-109px -157px');
     },function() {
-      $(".sound-btn a span").css('backgroundPosition','0 0');
+      $(".sound-btn a span").css('backgroundPosition','-109px -141px');
     });
 
     $('li.edit a.edit-timeline-media').click(function(){
