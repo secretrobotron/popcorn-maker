@@ -1,0 +1,688 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script type="text/javascript">
+		//see if we need to emulate input[type=range]
+		(function(){
+			var test = document.createElement('input');
+			test.type = 'range';
+			if (test.type !== 'range') {
+				document.write('<script type="text/javascript" src="js/html5slider.js"><' + '/script>');
+			}
+		}());
+		</script>
+		<!--
+		
+		I suppose you'll want to load butter.js here, but maybe it's more efficient to first try to grab window.parent.Butter
+		
+		-->
+		<script type="text/javascript" src="../../../../lib/butter.js"></script>
+		<script type="text/javascript">
+		
+		var videoWidth, videoHeight;
+		
+		//Bobby, if you can get me the video dimensions some way, that'd be awesome.
+		//I'm gonna see if I can go ahead and grab this myself
+
+		if (!videoWidth || !videoHeight) {
+			(function() {
+				var video;
+				if (window.parent && window.parent.document) {
+					try {
+						video = window.parent.document.getElementsByTagName('video');
+					} catch (e) {
+					}
+	
+					if (video && video.length) {
+						videoWidth = video[0].videoWidth;
+						videoHeight = video[0].videoHeight;
+					}
+				}
+				
+				if (!videoWidth || !videoHeight) {
+					videoWidth = 640;
+					videoHeight = 360;
+				}
+			}());
+		}
+
+		</script>
+		<style type="text/css">
+		
+		body, fieldset {
+			background-color: rgba(0, 0, 0, 0.5);
+			font-family: arial;
+			color: white;
+		}
+		
+		#instructions {
+			background-color: rgba(255, 255, 255, 0.5);
+			padding: 2px;
+			font-size: 0.9em;
+			color: black;
+		}
+		
+		#video {
+			width: 400px;
+			height: 400px;
+			float: right;
+			border: gray solid 1px;
+			background-color: black;
+			position: relative;
+			overflow: hidden;
+		}
+		
+		#preview-text {
+			position: absolute;
+			cursor: move;
+			color: white;
+		}
+		
+		input[type=text], textarea {
+			width: 220px;
+		}
+		
+		input[type=range] {
+			width: 100px;
+		}
+		
+		input[type=text].small {
+			width: 40px;
+		}
+		
+		</style>
+	</head>
+	<body>
+		<div id="video">
+			<div id="preview-text"></div>
+		</div>
+		<div id="form">
+			<fieldset>
+				<label for="start">From:</label>
+				<input type="text" id="start" class="small"/>
+
+				<label for="end">To:</label>
+				<input type="text" id="end" class="small"/>
+			</fieldset>
+			<fieldset>
+				<label for="text">Text:</label>
+				<textarea id="text"></textarea>
+			</fieldset>
+			<fieldset>
+				<label for="link">Link:</label>
+				<input type="text" id="link"/>
+			</fieldset>
+			<fieldset>
+				<label for="classes">Class(es):</label>
+				<input type="text" id="classes"/>
+			</fieldset>
+			<fieldset>
+				<label for="align">Text Alignment:</label>
+				<select id="align">
+					<option value="">Auto</option>
+					<option value="left">Left</option>
+					<option value="center">Center</option>
+					<option value="right">Right</option>
+					<option value="justify">Justify</option>
+					<option value="start">Start</option>
+					<option value="end">End</option>
+				</select>
+			</fieldset>
+			<fieldset>
+				<label for="style">Style:</label>
+				<input type="text" id="style"/>
+			</fieldset>
+<!--
+			<fieldset>
+				<div style="float: right">
+					<label for="fade-out">Fade Out:</label><br/>
+					<input type="range" id="fade-out-range"/>
+					<input type="text" id="fade-out" class="small" min="0" max="1"/> s
+				</div>
+				<label for="fade-in">Fade In:</label><br/>
+				<input type="range" id="fade-in-range"/>
+				<input type="text" id="fade-in" class="small" min="0" max="1"/> s
+			</fieldset>
+-->
+			<fieldset>
+				<label style="font-weight: bold">Position</label><br/>
+				<label for="left">Left:</label>
+				<input type="text" id="left" class="small"/>%
+
+				<label for="top">Top:</label>
+				<input type="text" id="top" class="small"/>%
+			</fieldset>
+
+			<fieldset id="target-fieldset">
+				<label for="target">Target:</label>
+				<select id="target"></select>
+			</fieldset>
+
+			<fieldset>
+				<input type="button" value="Cancel" id="cancel"/>
+				<input type="button" value="OK" id="ok"/>
+				<input type="button" value="Apply" id="apply"/>
+				<input type="button" value="Delete" id="delete"/>
+			</fieldset>
+		</div>
+		<!--
+		<fieldset id="instructions">
+			<p>Enter an address or latitude and longitude to find your location.</p>
+			<p>A red icon shows your approximate location. A purple icon shows your entered latitude and longitude. Click or drag any icon to set precise location.</p>
+		</fieldset>
+		-->
+		<script type="text/javascript">
+		
+		(function() {
+			var trackEvent = {}, targets = [],
+				endEnabled,
+				mouseX, mouseY,
+				elements = {},
+				ids = [
+					'start', 'end', 'text', 'preview-text',
+					'link', 'classes', 'style', 'left', 'top', 'align',
+					'target', 'target-fieldset', 'video',
+					'cancel', 'ok', 'apply', 'delete'
+				],
+				left, top,
+				virtualFontScale = 1,
+				baseFontSize = 16;
+
+			function applyMouseTouchHandlers(element, down, move, up) {
+				var onmouseup,
+					onmousemove,
+					ontouchend,
+					ontouchend;
+				element.onmousedown = function(e) {
+					if (down) {
+						if (down.call(element, e || window.event)) {
+							if (e.preventDefault) {
+								e.preventDefault();
+							}
+							if (e.stopPropagation) {
+								e.stopPropagation();
+							}
+							e.returnValue = false;
+							e.cancelBubble = true;
+						} else {
+							return;
+						}
+					}
+					if (move) {
+						onmousemove = function(e) {
+							move.call(element, e || window.event);
+						};
+						document.addEventListener('mousemove', onmousemove, true);
+					}
+					onmouseup = function(e) {
+						if (up) {
+							up.call(element, e || window.event);
+						}
+						document.removeEventListener('mousemove', onmousemove, true);
+						window.removeEventListener('mouseup', onmouseup, true);
+					};
+					window.addEventListener('mouseup', onmouseup, true);
+				};
+				
+				element.ontouchstart = function(e) {
+					if (e.preventDefault) { e.preventDefault(); }
+					element.onmousedown = null;
+				
+					if (down) {
+						down.call(element, e.touches[0] || window.event);
+					}
+				
+					if (move) {
+						ontouchmove = function(e) {
+							move.call(element, e.touches[0] || window.event);
+							return false;
+						};
+						document.addEventListener('touchmove', ontouchmove, true);
+					}
+
+					ontouchend = function(e) {
+						//up(e.touches[0]);
+						if (up) {
+							up.call(element);
+						}
+						document.removeEventListener('touchmove', ontouchmove, true);
+						window.removeEventListener('touchend', ontouchend, true);
+					};
+					window.addEventListener('touchend', ontouchend, true);
+				
+				};
+			}
+			
+			function updateTextPosition() {
+				elements['preview-text'].style.top = top + '%';
+				elements['preview-text'].style.left = left + '%';
+			}
+			
+			function updateText() {
+				trackEvent.text = elements.text.value;
+				var text = trackEvent.text.split(/[\n\r]/),
+					textContainer = elements['preview-text'];
+
+				textContainer.innerHTML = '';
+				for (i = 0; i < text.length; i++) {
+					if (i) {
+						textContainer.appendChild(document.createElement('br'));
+					}
+					textContainer.appendChild(document.createTextNode(text[i]));
+				}
+
+				textContainer.style.cssText = trackEvent.style;
+				textContainer.style.textAlign = trackEvent.align;
+				updateTextPosition();
+			}
+
+			function checkTime(event) {
+				//todo: SMTPE format
+
+				var id = this.id,
+					other, compare, otherId, otherElement,
+					element, value;
+
+				if (id === 'start') {
+					other = trackEvent.end;
+					otherId = 'end';
+					compare = 1;
+				} else if (id === 'end') {
+					other = trackEvent.start;
+					compare = -1;
+					otherId = 'start';
+				} else {
+					return;
+				}
+				
+				element = elements[id];
+				otherElement = elements[otherId];
+				value = parseFloat(element.value);
+				
+				if (isNaN(value) ||
+					value < 0
+					//todo: || value > duration
+					) {
+
+					element.style.backgroundColor = '#f11';
+				} else if (value * compare > other * compare) {
+					element.style.backgroundColor = '#f11';
+					otherElement.style.backgroundColor = '#f11';
+
+					//trackEvent[id] = value;
+
+				} else {
+					element.style.backgroundColor = '';
+					otherElement.style.backgroundColor = '';
+
+					trackEvent[id] = value;
+					
+					//todo: if element does not have focus, update element.value
+				}
+			}
+			
+			function numbersOnly(event) {
+				var e = event || window.event,
+					key = e.keyCode || e.which,
+					ch = String.fromCharCode(key),
+					s;
+				
+				function blockKey() {
+					if (e.preventDefault) {
+						e.preventDefault();
+					}
+					if (e.stopPropagation) {
+						e.stopPropagation();
+					}
+					e.returnValue = false;
+					e.cancelBubble = true;
+					return false;
+				}
+				
+				if (key === 190) {
+					key = 0x2E;
+					ch = '.';
+				}
+
+				if (e.metaKey || e.altKey || key < 0x21 ||
+					e.keyLocation ||
+					!e.shiftKey && key <0x27 && ch !=='.') {
+					return;
+				}
+				
+				s = this.value;
+				if (this.selectionStart !== this.selectionEnd) {
+					s = s.substring(0, this.selectionStart) + s.substring(this.selectionEnd, s.length);
+				}
+
+				if (ch === '.') {
+					s = this.value;
+					if (s.indexOf('.') >= 0) {
+						return blockKey();
+					}
+					
+					return true;
+				}
+
+				ch = parseInt(ch, 10);
+				if (isNaN(ch)) {
+					return blockKey();
+				}
+				
+			}
+
+			function numbersOnlyNeg(event) {
+				var e = event || window.event,
+					key = e.keyCode || e.which,
+					ch = String.fromCharCode(key),
+					s;
+				
+				function blockKey() {
+					if (e.preventDefault) {
+						e.preventDefault();
+					}
+					if (e.stopPropagation) {
+						e.stopPropagation();
+					}
+					e.returnValue = false;
+					e.cancelBubble = true;
+					return false;
+				}
+				
+				if (key === 190) {
+					key = 0x2E;
+					ch = '.';
+				}
+
+				if (e.metaKey || e.altKey || key < 0x21 ||
+					e.keyLocation ||
+					!e.shiftKey && key <0x27 && ch !=='.' &&
+						ch !== '-' && key !== 189 && key !== 109) {
+					return;
+				}
+				
+				s = this.value;
+				if (this.selectionStart !== this.selectionEnd) {
+					s = s.substring(0, this.selectionStart) + s.substring(this.selectionEnd, s.length);
+				}
+
+				if (key === 189 || ch === '-' || key === 109) {
+					if (this.selectionStart) {
+						return blockKey();
+					}
+
+					if (s.indexOf('-') >= 0) {
+						return blockKey();
+					}
+					
+					return true;
+				}
+
+				if (ch === '.') {
+					s = this.value;
+					if (s.indexOf('.') >= 0) {
+						return blockKey();
+					}
+					
+					return true;
+				}
+
+				ch = parseInt(ch, 10);
+				if (isNaN(ch)) {
+					return blockKey();
+				}
+				
+				if (s.indexOf('-') >= this.selectionStart) {
+					return blockKey();
+				}
+			}
+			
+			function updateBox(box, x, y, w, h) {
+				box.style.left = x + '%';
+				box.style.top = y + '%';
+				box.style.width = w + '%';
+				box.style.height = h + '%';
+			}
+			
+			function validateTimes(event, updateElements) {
+				
+			}
+
+			function saveEverything() {
+				//if (targets.indexOf(elements.target.value) > -1) {
+					trackEvent.target = elements.target.value;
+				//}
+				
+				trackEvent.align = elements.align.value;
+				trackEvent.link = elements.link.value;
+			}
+			
+			function mouseDown(event) {
+				this.style.zIndex = 1000;
+				mouseX = event.screenX;
+				mouseY = event.screenY;
+				return true;
+			}
+
+			function mouseDrag(event) {
+				var x, y;
+
+				x = event.screenX - mouseX;
+				y = event.screenY - mouseY;
+				x = (x / elements.video.offsetWidth) * 100;
+				y = (y / elements.video.offsetHeight) * 100;
+
+				//moving
+				left += x;
+				top += y;
+
+				elements.left.value = left;
+				elements.top.value = top;
+				
+				trackEvent.left = left + '%';
+				trackEvent.top = top + '%';
+				
+				mouseX = event.screenX;
+				mouseY = event.screenY;
+				
+				updateTextPosition();
+			}
+
+			function mouseUp(event) {
+				this.style.zIndex = '';
+			}
+
+			function targetsUpdated( newTargets ) {
+				var i, select, option;
+
+				targets = newTargets || [];
+				
+				if (targets.length <= 1) {
+					elements['target-fieldset'].style.display = 'none';
+
+					if (targets.length) {
+						trackEvent.target = targets[0][0];
+					}
+				} else {
+					elements['target-fieldset'].style.display = '';
+					select = elements.target;
+					//select.innerHTML = '<option value="">Default</option>';
+					
+					for (i = 0; i < targets.length; i++) {
+						option = document.createElement('option');
+						option.value = targets[i][0];
+						option.appendChild( document.createTextNode(targets[i][0]) );
+						select.appendChild(option);
+
+						if (targets[i][0] === trackEvent.target) {
+							option.selectedIndex = i;
+						}
+					}
+				}
+			}
+			
+			function editTrackEvent( popcornOptions ) {
+				trackEvent = popcornOptions;
+				//todo: https://webmademovies.lighthouseapp.com/projects/65733/tickets/194-editor-dialogs-should-show-frame-accurate-times
+				
+				//todo: I'd also like to have the video duration so I can error-check against that as well.
+				if (isNaN(trackEvent.start) || trackEvent.start < 0) {
+					trackEvent.start = 0;
+				}
+				elements.start.value = trackEvent.start;
+
+				if (isNaN(trackEvent.end) || trackEvent.end < trackEvent.start) {
+					trackEvent.start = trackEvent.start + 5;
+				}
+				elements.end.value = trackEvent.end;
+
+				elements.target.value = trackEvent.target;
+				
+				left = parseFloat(trackEvent.left) || 0;
+				top = parseFloat(trackEvent.top) || 0;
+
+				elements['left'].value = left;
+				elements['top'].value = top;
+				
+				elements.text.value = trackEvent.text || '';
+				
+				elements.style.value = trackEvent.style || '';
+				elements.align.value = trackEvent.align || '';
+				
+				var classes = trackEvent.classes || '';
+				if (classes.join) {
+					classes = classes.join(' ');
+				} else {
+					classes = classes.split(/,\s\n\r/).join(' ');
+				}
+				elements.classes.value = classes;
+
+				updateText();
+				updateTextPosition();
+			}
+			
+			function initialize() {
+				var i, j, element, f,
+					dim = ['Left', 'Top'];
+
+				//set up a default trackEvent, even though this will probably be replaced
+				trackEvent = {
+					start: 0,
+					end: 5,
+					top: 10,
+					left: 10
+				};
+
+				//set up butter
+				if (window.Butter) {
+					butter = new Butter();
+					butter.comm();
+					client = new butter.CommClient('defaultEditor');
+	
+					client.listen('edittrackevent', function (message) {
+						client.send( {
+							width: 800,
+							height: 400
+						}, 'clientdimsupdated' );
+
+						//console.log(JSON.stringify(message));
+						targetsUpdated(message.targets);
+						editTrackEvent(message.trackEvent.popcornOptions);
+					});
+	
+					client.listen( "domtargetsupdated", function( message ) {
+						console.log('domtargetsupdated');
+						console.log(JSON.stringify(message));
+						targetsUpdated(message);
+					});
+				}
+
+				for (i = 0; i < ids.length; i++) {
+					elements[ ids[i] ] = document.getElementById(ids[i]);
+				}
+				
+				elements.video.style.height = elements.video.offsetWidth * videoHeight / videoWidth + 'px';
+				virtualFontScale = elements.video.offsetWidth / videoWidth;
+
+				elements.start.addEventListener('change', checkTime, false);
+				elements.start.addEventListener('keyup', checkTime, true);
+
+				elements.end.addEventListener('change', checkTime, false);
+				elements.end.addEventListener('keyup', checkTime, true);
+				
+				elements.top.addEventListener('keydown', numbersOnlyNeg, true);
+				elements.left.addEventListener('keydown', numbersOnlyNeg, true);
+				
+				elements.text.addEventListener('keyup', updateText, false);
+
+				elements.style.addEventListener('keyup', function () {
+					trackEvent.style = this.value;
+					elements['preview-text'].style.cssText = trackEvent.style;
+				}, false);
+				
+				elements.classes.addEventListener('keyup', function () {
+					trackEvent.classes = this.value;
+					//elements['preview-text'].setAttribute('class', trackEvent.classes);
+				}, false);
+				
+				applyMouseTouchHandlers(elements['preview-text'], mouseDown, mouseDrag, mouseUp);
+
+				elements.align.addEventListener('change', function () {
+					trackEvent.align = this.value;
+					elements['preview-text'].style.textAlign = trackEvent.align;
+				}, false);
+				
+
+
+				//buttons
+				elements.cancel.addEventListener('click', function() {
+					//tell butter we've cancelled
+					if (client) {
+						client.send( '', 'cancelclicked');
+					}
+				}, false);
+
+				elements['delete'].addEventListener('click', function() {
+					//tell butter to delete
+					if (client) {
+						client.send( '', 'deleteclicked');
+					}
+				}, false);
+
+				elements.apply.addEventListener('click', function() {
+					saveEverything();
+					//send back to Butter
+					if (client) {
+						client.send( trackEvent, "applyclicked" );
+					}
+				}, false);
+
+				elements.ok.addEventListener('click', function() {
+					saveEverything();
+					//send back to Butter and close
+					if (client) {
+						client.send( trackEvent, "okayclicked" );
+					}
+				}, false);				
+			}
+			
+			initialize();
+			
+			//temp
+			if (!window.parent || window.parent === window) {
+				editTrackEvent({
+					start: 10,
+					end: 20,
+					top: '4%',
+					left: '10%'	,
+					text: 'hi there\nhow is life?',
+					target: 'in-front'
+				});
+			}
+
+		}());
+		</script>
+	</body>
+</html>
