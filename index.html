@@ -259,23 +259,8 @@
           <button id="clear-track-edit" class="edit-track-button">clear</button>
         </div><!-- end popup 5 -->
         
-        <div id="popup-add-project" class="popup-5 pop-up close-div draggable" style="display:none"> <!-- popup-add-project -->
-          <a class="popup-close-btn" href="#"><span></span></a>
-        	<div class="popup-header">
-          	<h3>Load / Create New Project</h3>
-          </div>
-          <div id="load-create-popup" class="popup-content">
-          	<textarea class="project-json"></textarea>
-            <div id="load-create-popup-content" class="download-html">
-              <input id="media-url" type="text" value="http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm" />
-              <select id="layout-select"></select>
-
-              <input type="submit" class="load-code-btn" name="load-code-btn" value="Load Project from JSON">
-              <input type="submit" class="create-new-btn" name="create-new-btn" value="New Project">
-                  
-            </div>
-          </div>
-        </div><!-- end popup-add-project -->
+        
+        
         <div id="popup-delete-track" class="popup-project-title pop-up close-div draggable" style="display:none">
           <a class="popup-close-btn" href="#"><span></span></a>
           	<div class="popup-header">
@@ -314,6 +299,49 @@
             </div>
         </div>
         
+        <div id="popup-add-project" style="display:none;"><!-- welcome popup -->
+          <a class="help-close-btn" href="#"><span></span></a>
+          <div class="popup-header">
+            	<h3 class="welcome-header">Create / Import Project</h3>
+          </div>
+          <div class="scroll-popup-container spc-add-project">
+            <div class="padding-div add-project-padding-div">
+                <div class="proj-title-div">
+                  <span class="input-title-text">Project Title</span><br />
+              	  <input type="text" class="proj-title-input" id="title-input-box"></input>
+              	</div>
+              	<br />
+              	<div class="timeline-media-div">
+              	  <span class="input-title-text">Timeline Media</span><br />
+              	  <input type="text" class=proj-title-input" id="timeline-media-input-box" value="http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"></input><br />
+              	  <span class="tip-text-new-project"> Show us where your media file lives. Youtube, Vimeo,<br /> 
+              	    and Soundcloud URLs work too.<br /><br />
+              	    <a href="#">Learn more about what kinds of media work in Popcorn Maker.</a>
+              	  </span>
+              	</div>
+              	<br />
+                <div  class="template-select-div">
+                  <span class="input-title-text">Choose a Template</span><br />
+                  <select id="layout-select"></select>
+                </div>
+                <br /><br />
+                <div class="new-proj-button-div">
+                  <span class="import-screen-toggle"><a href="#" class="import-scroll-toggler" >Import Project..</a></span>
+                  <input type="submit" class="create-new-btn" name="create-new-btn" value="Create">
+                </div>
+              </div>
+              <div class="padding-div add-project-padding-div">
+                <div class="import-json-div" >
+                  <textarea rows="21" cols="51" id="import-json-area"></textarea><br />
+                  <div class="new-proj-button-div" >
+                    <span class="new-proj-screen-toggle"><a href="#" class="import-scroll-back-toggler" >..Create Project</a></span>
+                    <input type="button" class="load-code-btn" id="import-json-btn" value="Import from JSON"></input>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        
         <!-- ###### FIRST RUN POPUPS ######## -->
         <div id="welcome-popup"><!-- welcome popup -->
           <a class="help-close-btn" href="#"><span></span></a>
@@ -322,16 +350,19 @@
           </div>
 	        <div class="scroll-popup-container">
             	<div class="padding-div">
-                    <h1>Welcome to Popcorn Maker</h1>
-                    <h3 class="welcome-h3">Let's make some popcorn.</h3>
-                    <h4>I want to Jump Right in!</h4>
-                    <a href="#" class="wizard-create-new-btn">New Project</a>
-                    <p>OR</p>
-                    <h4>Help me get started</h4>
-                    <a href="#" class="tutorial-btn">Tutorial</a>
-                    <a href="#" class="mozilla-logo"><img src="images/logo_mozilla.png" width="109" height="28" alt="Mozilla Logo"></a>
-                    <p class="copyright">&copy;2011<a href="#">Terms of services</a><a href="#">Fork me</a><a href="#">Popcorn.js.home</a><a href="#">Contact</a></p>
-                </div>
+                  <h1>Welcome to Popcorn Maker</h1>
+                  <h3 class="welcome-h3">Let's make some popcorn.</h3>
+                  <p class="alpha-warning"><span>Please note: you are using Alpha Software which is intended as a proof of concept.</span></p>
+                  <p class="alpha-warning">We are looking forward to your feedback, but please know this app is under active development. If you find any bugs, or have suggestions for new features, please report them <a href="https://webmademovies.lighthouseapp.com/projects/80723-popcorn-maker">here!</a></p>
+                  <p class="alpha-warning">To view our roadmap, <a href="https://wiki.mozilla.org/PopcornMaker">please visit here.</a></p>
+                  <h4>I want to Jump Right in!</h4>
+                  <a href="#" class="wizard-create-new-btn">New Project</a>
+                  <p>OR</p>
+                  <h4>Help me get started</h4>
+                  <a href="#" class="tutorial-btn">Tutorial</a>
+                  <a href="#" class="mozilla-logo"><img src="images/logo_mozilla.png" width="109" height="28" alt="Mozilla Logo"></a>
+                  <p class="copyright">&copy;2011<a href="#">Terms of services</a><a href="#">Fork me</a><a href="#">Popcorn.js.home</a><a href="#">Contact</a></p>
+              </div>
                 <div class="padding-div">
                     <h1>Welcome to Popcorn Maker</h1>
                     <h3>Let's make some popcorn.</h3>
@@ -342,7 +373,7 @@
                             <li><span>2</span><p>Use Popcorn Maker to add actions to the timeline of your video.</p></li>
                             <li><span>3</span><p>When you're done, export using</p><img class="image-icon" src="images/save-btn.png" alt=""></li>
                         </ul>
-                        <div class="checkout"> <p>for more, checkout the</p><div class="help-btn"><a class="open-help" href="#">user manual</a></div> </div>
+                        <!--<div class="checkout"> <p>for more, checkout the</p><div class="help-btn"><a class="open-help" href="#">user manual</a></div> </div>-->
                     </div>
                     <div class="right-div">
                     </div>
@@ -352,9 +383,9 @@
 
         <div id="help-popup"><!-- HELP popup -->
           <a class="help-close-btn" href="#"><span></span></a>
-                	<div class="popup-header">
-                    	<h3>Help</h3>
-                    </div>
+            <div class="popup-header">
+                <h3>Help</h3>
+            </div>
             <div class="help-header">
                 <h1>Popcorn Maker Help</h1>
                 <div class="social">
