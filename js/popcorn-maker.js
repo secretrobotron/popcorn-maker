@@ -3,10 +3,7 @@
   var layouts = [
     "layouts/default.html",
     "layouts/default-basic.html",
-    "external/layouts/city-slickers/index.html",
-    "external/layouts/cgg/index.html",
-    "external/layouts/blackpanthers/default.html",
-    "external/layouts/bookreport/index.html",
+    "Other...",
   ],
   currentLayout, currentPreview;
 
@@ -127,6 +124,22 @@
       option.class = "ddprojects-option";
       layoutSelect.appendChild( option );
     }
+
+    $( "#template-other" ).hide();
+    var otherOption = layoutSelect.options[ layoutSelect.options.length - 1 ],
+        otherText = $( "#template-other" )[ 0 ];
+    layoutSelect.addEventListener( 'change', function( e ) {
+      if ( layoutSelect.selectedIndex === otherOption.index ) {
+        $( "#template-other" ).show();
+      }
+      else {
+        $( "#template-other" ).hide();
+      } //if
+    }, false );
+    otherText.addEventListener( 'change', function( e ) {
+      otherOption.value = otherText.value;
+      console.log( otherOption.value );
+    }, false );
 
     currentLayout = layouts[ 0 ];
 
