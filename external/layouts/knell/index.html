@@ -80,16 +80,6 @@
 			right: 140px;
 		}
 
-/*
-		#text-container {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-		}
-*/
-
 		#video-container .popcorn-words {
 			z-index: 1;
 		}
@@ -325,88 +315,90 @@
 			});
 		*/
 		}
-
-		//luma key events are hard coded in for now
-		popcorn.lumakey({
-			start: 2,
-			end: 10.125,
-			target: 'video-container',
-			clipBlack: 0.7963,
-			clipWhite: 0.8545
-		});
 		
-		popcorn.lumakey({
-			start: 15.375,
-			end: 32.125,
-			target: 'video-container',
-			clipBlack: 0.7963,
-			clipWhite: 0.8545
-		});
-
-		popcorn.lumakey({
-			start: 35.375,
-			end: 1006/24,
-			target: 'video-container',
-			clipBlack: 0.7963,
-			clipWhite: 0.8545
-		});
-
-		popcorn.lumakey({
-			start: 35.375,
-			end: 1006/24,
-			target: 'video-container',
-			clipBlack: 0.7963,
-			clipWhite: 0.8545
-		});
-
-		popcorn.lumakey({
-			start: 1043/23,
-			end: 1278/24,
-			target: 'video-container',
-			clipBlack: 0.7963,
-			clipWhite: 0.8545
-		});
-
-		popcorn.lumakey({
-			start: 1323/23,
-			end: 1416/24,
-			target: 'video-container',
-			clipBlack: 0.7963,
-			clipWhite: 0.8545
-		});
-
-		popcorn.lumakey({
-			start: 1453/23,
-			end: 1671/24,
-			target: 'video-container',
-			clipBlack: 0.7963,
-			clipWhite: 0.8545
-		});
-
-		popcorn.lumakey({
-			start: 1725/23,
-			end: 1887/24,
-			target: 'video-container',
-			clipBlack: 0.7963,
-			clipWhite: 0.8545
-		});
-
-		popcorn.lumakey({
-			start: 1922/23,
-			end: 2410/24,
-			target: 'video-container',
-			clipBlack: 0.7963,
-			clipWhite: 0.8545
-		});
-
-		//empty white section near the end
-		popcorn.lumakey({
-			start: 2485/23,
-			end: 2600/24,
-			target: 'video-container',
-			clipBlack: 0.7963,
-			clipWhite: 0.8545
-		});
+		//luma key events are hard coded in for now
+		if (!window.parent || window.parent === window) {
+			popcorn.lumakey({
+				start: 2,
+				end: 10.125,
+				target: 'video-container',
+				clipBlack: 0.7963,
+				clipWhite: 0.8545
+			});
+			
+			popcorn.lumakey({
+				start: 15.375,
+				end: 32.125,
+				target: 'video-container',
+				clipBlack: 0.7963,
+				clipWhite: 0.8545
+			});
+	
+			popcorn.lumakey({
+				start: 35.375,
+				end: 1006/24,
+				target: 'video-container',
+				clipBlack: 0.7963,
+				clipWhite: 0.8545
+			});
+	
+			popcorn.lumakey({
+				start: 35.375,
+				end: 1006/24,
+				target: 'video-container',
+				clipBlack: 0.7963,
+				clipWhite: 0.8545
+			});
+	
+			popcorn.lumakey({
+				start: 1043/23,
+				end: 1278/24,
+				target: 'video-container',
+				clipBlack: 0.7963,
+				clipWhite: 0.8545
+			});
+	
+			popcorn.lumakey({
+				start: 1323/23,
+				end: 1416/24,
+				target: 'video-container',
+				clipBlack: 0.7963,
+				clipWhite: 0.8545
+			});
+	
+			popcorn.lumakey({
+				start: 1453/23,
+				end: 1671/24,
+				target: 'video-container',
+				clipBlack: 0.7963,
+				clipWhite: 0.8545
+			});
+	
+			popcorn.lumakey({
+				start: 1725/23,
+				end: 1887/24,
+				target: 'video-container',
+				clipBlack: 0.7963,
+				clipWhite: 0.8545
+			});
+	
+			popcorn.lumakey({
+				start: 1922/23,
+				end: 2410/24,
+				target: 'video-container',
+				clipBlack: 0.7963,
+				clipWhite: 0.8545
+			});
+	
+			//empty white section near the end
+			popcorn.lumakey({
+				start: 2485/23,
+				end: 2600/24,
+				target: 'video-container',
+				clipBlack: 0.7963,
+				clipWhite: 0.8545
+			});
+		}
 
 	}, false);
 	
