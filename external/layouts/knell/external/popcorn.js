@@ -793,6 +793,28 @@
     if ( track._id ) {
       Popcorn.addTrackEvent.ref( obj, track );
     }
+
+//temporary fix [bchirls]
+        if ( track._natives &&
+            (!!Popcorn.registryByName[ track._natives.type ] ||
+            !!obj[ track._natives.type ] ) ) {
+
+          if ( track.end > obj.media.currentTime &&
+                track.start <= obj.media.currentTime &&
+                  obj.data.disabled.indexOf( track._natives.type ) === -1 ) {
+
+            track._running = true;
+            track._natives.start.call( obj, event, track );
+            
+            if ( track &&
+              track._natives.frame ) {
+
+              obj.data.trackEvents.animating.push( track );
+              track._natives.frame.call( obj, event, track, obj.media.currentTime );
+            }
+          }
+        }
+
   };
 
   // Internal Only - Adds track event references to the instance object's trackRefs hash table
