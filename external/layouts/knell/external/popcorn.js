@@ -232,7 +232,7 @@
             // 60 frames per second as opposed to 4
 
             var animate = function () {
-              Popcorn.timeUpdate( that, event );
+              Popcorn.timeUpdate( that );
               that.trigger( "timeupdate" );
 
               requestAnimFrame( animate );
