@@ -2,7 +2,7 @@
 
 (function (Popcorn) {
 
-  var videoOptionsRegex = /(\w+)="(\w*)"/;
+  var videoOptionsRegex = /(\w+)="([\w\%]*)"/;
 
   Popcorn.plugin( "spawnvideo", {
       manifest: {
@@ -48,14 +48,18 @@
             }
             options.video = video;
             targetElement.appendChild( video );
-            options.video.display = "none";
+            options.video.style.display = "none";
             if ( options.videoOptions ) {
               var splitOptions = options.videoOptions.split(" ");
               for ( var opt in splitOptions ) {
-                var matches = splitOptions[opt].match( videoOptionsRegex ),
-                    attr = matches[1],
-                    val = matches[2];
-                video.setAttribute( attr, val );
+                try {
+                  var matches = splitOptions[opt].match( videoOptionsRegex ),
+                      attr = matches[1],
+                      val = matches[2];
+                  video.setAttribute( attr, val );
+                }
+                catch (e) {
+                }
               } //for
             } //if
           } //if
@@ -64,6 +68,7 @@
 
       start: function( event, options ) {
         if ( options.video ) {
+          document.getElementById( options.target ).style.backgroundColor = "black";
           options.video.style.display = "block";
           options.video.play();
         }
@@ -71,6 +76,7 @@
 
       end: function( event, options ) {
         if ( options.video ) {
+          document.getElementById( options.target ).style.backgroundColor = "";
           options.video.style.display = "none";
           options.video.pause();
         }

@@ -250,7 +250,9 @@
 
           bpIframe.getElementById( videoTarget ).appendChild( video );
 
-          originalBody = bpIframe.getElementsByTagName("body")[ 0 ].innerHTML;
+          if( !commServer ) {
+            originalBody = bpIframe.getElementsByTagName("body")[ 0 ].innerHTML;
+          }
 
 
           var vidId = "#" + video.id;      
@@ -377,6 +379,26 @@
       }, false );
     };
 
+    this.getScriptPaths = function(){
+      var doc = ( iframe.contentWindow || iframe.contentDocument ).document,
+          tempHead = doc.createElement( "head" ),
+          srcs = [];
+          
+      tempHead.innerHTML = originalHead;
+      for( var i = 0, l = tempHead.children.length; i < l; i++ ) {
+        if( tempHead.children[ i ].src ) {
+          if( tempHead.children[ i ].src.split("popcorn-maker", 2)[ 1 ] ) { 
+            srcs[ tempHead.children[ i ].getAttribute('src') ] = "popcorn-maker" + tempHead.children[ i ].src.split("popcorn-maker", 2)[ 1 ];
+          }
+        } else if( tempHead.children[ i ].href ) {
+           if( tempHead.children[ i ].href.split("popcorn-maker", 2)[ 1 ] ) { 
+            srcs[ tempHead.children[ i ].getAttribute('href') ] = "popcorn-maker" + tempHead.children[ i ].href.split("popcorn-maker", 2)[ 1 ];
+          }
+        }
+      }
+      return srcs;
+    };
+
     this.getPopcorn = function( callback ) {
       var popcornz = "";
       
@@ -386,8 +408,11 @@
       
       // if for some reason the iframe is refreshed, we want the most up to date popcorn code
       // to be represented in the head of the iframe, incase someone views source
-
-        var trackEvents = framePopcorn.getTrackEvents();
+        if( framePopcorn ) {
+          var trackEvents = framePopcorn.getTrackEvents();
+        } else {
+          return "";
+        }
 
         if ( trackEvents ) {
 
@@ -420,14 +445,19 @@
 
     this.getHTML = function() {
       var doc = ( iframe.contentWindow || iframe.contentDocument ).document,
-          pcornString = this.getPopcorn();
-      var completePopcorn =  "<html>\n<head>\n" + originalHead + "\n" + 
-              "<script> document.addEventListener( 'DOMContentLoaded', function(){\n" + pcornString + "\n}, false); </script>\n";
-              if ( !commServer ) {
-                completePopcorn += "<script src='" + popcornURL + "'></script>\n</head>\n<body>\n";
-              }
-              completePopcorn += "\n</head>\n<body>\n" + originalBody + "\n</body>\n</html>";
+          pcornString = this.getPopcorn(), completePopcorn;
+      var trckEvents = this.getTrackEvents( true );
 
+      if ( !commServer ) {
+        completePopcorn =  "<html>\n<head>\n" + originalHead + "\n" + 
+        "<script> document.addEventListener( 'DOMContentLoaded', function(){\n" + pcornString + "\n}, false); </script>\n";
+        completePopcorn += "<script src='" + popcornURL + "'></script>\n</head>\n<body>" + originalBody + "</body></html>\n";
+      } else {
+        completePopcorn = "<html>\n<head>\n" + originalHead + "\n<script> window.butterProjectJSON = " + JSON.stringify(trckEvents) + "</script>\n" + 
+        "</head>\n<body>" + originalBody + "</body></html>\n";
+      }
+
+      console.log(this.getScriptPaths());
       return completePopcorn;
     };
 
