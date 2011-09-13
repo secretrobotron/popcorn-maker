@@ -55,11 +55,11 @@ todo: animate top, left and other styles (color, font size, etc.)
 		if (!styleSheet) {
 			styleSheet = document.createElement('style');
 			styleSheet.setAttribute('type', 'text/css');
-			styleSheet.appendChild(document.createTextNode('a.popcorn-tweet-chapter { width: 55px; height: 62px }\n'));
+			styleSheet.appendChild(document.createTextNode('iframe.popcorn-tweet-chapter { width: 55px; height: 62px }\n'));
 			document.head.appendChild(styleSheet);
 		}
 		
-		if (!script) {
+		if (false && !script) {
 			script = document.createElement('script');
 			script.setAttribute('type', 'text/javascript');
 			script.setAttribute('src', 'http://platform.twitter.com/widgets.js');
@@ -151,19 +151,29 @@ todo: animate top, left and other styles (color, font size, etc.)
 		}
 		
 		// how this works: https://dev.twitter.com/docs/tweet-button
-		button = document.createElement('a');
-		button.setAttribute('href', 'http://twitter.com/share');
+		button = document.createElement('iframe');
+		//button.setAttribute('src', 'http://twitter.com/share');
+		//button.setAttribute('target', tweetWindowId);
+
+		//formatting
 		button.setAttribute('class', 'popcorn-tweet-chapter twitter-share-button');
-		button.setAttribute('data-text', options.text);
-		button.setAttribute('data-count', 'vertical');
-		button.setAttribute('data-url', url + '#' + options.start);
-		button.setAttribute('data-counturl', url);
-		button.setAttribute('target', tweetWindowId);
+		button.setAttribute('allowtransparency', 'true');
+		button.setAttribute('frameborder', '0');
+		button.setAttribute('scrolling', 'no');
+
+		//data
+		button.setAttribute('src', 'http://platform.twitter.com/widgets/tweet_button.html?url=' +
+			encodeURIComponent(url + '#' + options.start) +
+			'&text=' + encodeURIComponent(options.text) + 
+			'&counturl=' + encodeURIComponent(url) + 
+			'&count=vertical');
 		button.addEventListener('click', function() {
 			video.pause();
 		}, false);
+
 		options.button = button;
 		container.appendChild(button);
+
 
 		textContainer = document.createElement('p');
 		textContainer.setAttribute('class', 'popcorn-tweet-chapter');
