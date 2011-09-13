@@ -634,7 +634,15 @@
 					elements['preview-text'].style.textAlign = trackEvent.align;
 				}, false);
 				
-
+				elements.target.addEventListener('change', function() {
+					var t = targets.filter(function(item) {
+						return item[0] === elements.target.value;
+					});
+					if (t.length) {
+						trackEvent.target = elements.target.value;
+					}
+					saveEverything();
+				}, false);
 
 				//buttons
 				elements.cancel.addEventListener('click', function() {
