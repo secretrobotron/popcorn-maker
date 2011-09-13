@@ -148,7 +148,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 
 		return {
 			start: function( event, options ) {
-				container.style.display = '';
+				options.container.style.display = '';
 
 				if (typeof options.onStart === 'function') {
 					try {
@@ -166,7 +166,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 				}
 			},
 			end: function( event, options ) {
-				container.style.display = 'none';
+				options.container.style.display = 'none';
 				
 				if (typeof options.onEnd === 'function') {
 					try {
@@ -176,8 +176,8 @@ todo: animate top, left and other styles (color, font size, etc.)
 				}
 			},
 			_teardown: function( options ) {
-				if (container.parentNode) {
-					container.parentNode.removeChild(container);
+				if (options.container.parentNode) {
+					options.container.parentNode.removeChild(options.container);
 					container = null;
 					delete options.container;
 				}
