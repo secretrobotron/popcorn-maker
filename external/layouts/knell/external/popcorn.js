@@ -804,13 +804,13 @@
                   obj.data.disabled.indexOf( track._natives.type ) === -1 ) {
 
             track._running = true;
-            track._natives.start.call( obj, event, track );
+            track._natives.start.call( obj, null, track );
             
             if ( track &&
               track._natives.frame ) {
 
               obj.data.trackEvents.animating.push( track );
-              track._natives.frame.call( obj, event, track, obj.media.currentTime );
+              track._natives.frame.call( obj, null, track, obj.media.currentTime );
             }
           }
         }
