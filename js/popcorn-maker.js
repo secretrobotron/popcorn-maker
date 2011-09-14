@@ -135,6 +135,8 @@
     b.addCustomEditor( "external/layouts/blackpanthers/editor.html", "googlestreets" );
     b.addCustomEditor( "external/layouts/knell/editors/editor-lumakey.html", "lumakey" );
     b.addCustomEditor( "external/layouts/knell/editors/editor-words.html", "words" );
+    b.addCustomEditor( "external/layouts/knell/editors/editor-tweet-chapter.html", "tweetChapter" );
+    b.addCustomEditor( "external/layouts/knell/editors/editor-lightbox.html", "lightbox" );
 
     b.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
