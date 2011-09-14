@@ -106,6 +106,8 @@ todo: animate top, left and other styles (color, font size, etc.)
 			textContainer.setAttribute('href', options.link);
 			if (options.linkTarget) {
 				textContainer.setAttribute('target', options.linkTarget);
+			} else {
+				textContainer.setAttribute('target', '_new');
 			}
 
 			//pause video when link is clicked
