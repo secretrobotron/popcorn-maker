@@ -14,7 +14,6 @@ todo: animate top, left and other styles (color, font size, etc.)
 		start: function() {},
 		end: function() {}
 	},
-//		tweetButtons = [],
 		styleSheet, script,
 		tweetWindow,
 		tweetWindowId;
@@ -59,39 +58,6 @@ todo: animate top, left and other styles (color, font size, etc.)
 			document.head.appendChild(styleSheet);
 		}
 		
-		if (false && !script) {
-			script = document.createElement('script');
-			script.setAttribute('type', 'text/javascript');
-			script.setAttribute('src', 'http://platform.twitter.com/widgets.js');
-			document.head.appendChild(script);
-			
-			tweetWindowId = 'popcorntweetchapter' + Date.now() + Math.random();
-		}
-
-/*		
-		//make sure we have a tweet button in this target
-		button = tweetButtons.filter(function(tb) {
-			return tb.target === target;
-		});
-		if (button.length) {
-			button = button[0].button;
-		} else {
-			// how this works: https://dev.twitter.com/docs/tweet-button
-			button = document.createElement('a');
-			button.setAttribute('class', 'popcorn-tweet-chapter');
-			button.setAttribute('allowtransparency', 'true');
-			button.setAttribute('frameborder', '0');
-			button.setAttribute('scrolling', 'no');
-			button.setAttribute('src', 'http://platform.twitter.com/widgets/tweet_button.html');
-			
-			target.insertBefore(button, target.firstChild);
-			
-			tweetButtons.push({
-				target: target,
-				button: button
-			});
-		}
-*/
 		container = document.createElement('div');
 		if (options.style) {
 			container.style.cssText = options.style;
