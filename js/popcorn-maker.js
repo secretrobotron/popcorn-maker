@@ -1,43 +1,214 @@
 (function(){
 
-  var layouts = [
-    "layouts/default.html",
-    "layouts/default-basic.html",
-    "Other...",
-  ],
-  currentLayout, currentPreview;
+  var TEMPLATES_CONFIG = "layouts/conf.json";
+
+  var currentLayout, currentPreview;
+  
+  var getJSON = function( src, successCallback, errorCallback ) {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open('GET', src, false);
+    xmlHttp.send(null);
+    if ( xmlHttp.status === 200 || xmlHttp.status === 0 ) {
+      return JSON.parse( xmlHttp.responseText );
+    }
+    else {
+      return
+    }
+  }; //getJSON
+
+  function Template ( root ) {
+    var manifest = getJSON( root + "/manifest.json" );
+    var name = manifest.title || root;
+    var thumbnail = new Image();
+    if ( manifest.thumbnail ) {
+      thumbnail.src = root + "/" + manifest.thumbnail;
+    }
+    var template = manifest.template || "index.html";
+    Object.defineProperty( this, "title", { get: function() { return name; } });
+    Object.defineProperty( this, "thumbnail", { get: function() { return thumbnail; } });
+    Object.defineProperty( this, "template", { get: function() { return root + "/" + template; } });
+  } //Template
+
+  function TemplateManager ( options ) {
+    var templates = [],
+        templateList = getJSON( options.config );
+    for ( var i=0; i<templateList.length; ++i ) {
+      templates.push( new Template( templateList[ i ] ) );
+    } //for
+
+    var select = document.getElementById( options.container ),
+        thumbnailContainer = $( "#template-thumbnail" );
+
+    function showThumbnail( img ) {
+      thumbnailContainer.html("");
+      thumbnailContainer.append( $( img ) );
+    } //showThumbnail
+
+    showThumbnail( templates[ 0 ].thumbnail );
+
+    this.buildList = function() {
+      function createOption( value, innerHTML ) {
+        var option = document.createElement( 'option' );
+        option.value = value;
+        option.innerHTML = innerHTML;
+        option.class = "ddprojects-option";
+        return option;
+      }
+
+      for ( var i=0; i<templates.length; ++i ) {
+        select.appendChild( createOption( templates[ i ].template, templates[ i ].title ) );
+      }
+      select.appendChild( createOption( "-1", "Ohter..." ) );
+      
+      $( "#template-other" ).hide();
+      var otherOption = select.options[ select.options.length - 1 ],
+          otherText = $( "#template-other" )[ 0 ];
+      select.addEventListener( 'change', function( e ) {
+        if ( select.selectedIndex === otherOption.index ) {
+          $( "#template-other" ).show();
+        }
+        else {
+          for ( var i=0; i<templates.length; ++i ) {
+            if ( templates[ i ].template === select.options[ select.selectedIndex ].value ) {
+              showThumbnail( templates[ i ].thumbnail );
+              break;
+            }
+          }
+          $( "#template-other" ).hide();
+        } //if
+      }, false );
+      otherText.addEventListener( 'change', function( e ) {
+        otherOption.value = otherText.value;
+      }, false );
+    }; //buildList
+
+  } //TemplateManager
+
+  var ui = {
+    panels: {
+    },
+    timeline: {
+    },
+    popups: {
+    },
+    overlays: {
+    }
+  }; //panels
+
+  function PopupManager() {
+
+    var popups = [],
+        escapeKeyEnabled;
+
+    this.addPopup = function( name, id ) {
+      ui.popups[ name ] = $( id );
+      popups.push( ui.popups[ name ] );
+    }; //addPopup
+
+    this.hidePopups = function() {
+      for ( var i=0; i<popups.length; ++i ) {
+        popups[ i ].hide();
+      } //for
+      $(".popupDiv").fadeOut("fast");
+      $('.close-div').fadeOut('fast');
+      $('.balck-overlay').hide();
+      escapeKeyEnabled = false;
+    }; //hidePopups
+
+    this.showPopup = function( name ) {
+      var popup = ui.popups[ name ];
+      popup.fadeIn( 2000 );
+      $('.popupDiv').fadeIn('slow');
+      $('.balck-overlay').show();
+      popup.css( "margin-left", ( window.innerWidth / 2 ) - ( popup[0].clientWidth / 2 ) );
+      escapeKeyEnabled = true;
+    }; //showPopup
+
+    this.hidePopup = function( name ) {
+      var popup = ui.popups[ name ];
+      popup.fadeOut('fast');
+      $(".popupDiv").fadeOut("fast");
+      $('.balck-overlay').hide();
+      escapeKeyEnabled = false;
+    }; //hidePopup
+
+    $(window).keypress( function ( event ) {
+      if ( event.keyCode === 27 && escapeKeyEnabled ) {
+        that.hidePopups();
+      }
+    });
+
+  } //PopupManager
+
+  function TimelineManager() {
+    this.showTools = function() {
+      ui.panels.properties.animate({
+        height: '270px'
+      }, 500);
+
+      ui.timeline.hide.animate({
+        bottom: '268px'
+      }, 500);
+    }; //show
+  } //TimelineManager
 
   window.addEventListener("DOMContentLoaded", function() {
-  
-    $("#properties-panel").css('height','38px');
 
-    $("#properties-panel").css('display','block');
+    Butter.Logger.logFunction = function( logMessage ) {
+      console.log( "From Butter", logMessage );
+    };
+    var butter = new Butter();
+	
+    function buildRegistry( registry ) {
+      for( var i = 0, l = registry.length; i < l; i++ ) {
+        if( registry[ i ].type !== "text" ) {
+          butter.addPlugin( { type: registry[ i ].type } );
+        }
+      } 
+    } //buildRegistry
 
-    $(".hide-timeline").css('bottom','36px');	
+    function toggleLoadingScreen ( state ) {
+      if ( state ) {
+        ui.overlays.loading.show();
+      }
+      else {
+        ui.overlays.loading.hide();
+      }
+    } //toggleLoadingScreen
 
-    $(".hide-timeline").css('display','block');
+    var templateManager = new TemplateManager({
+      config: TEMPLATES_CONFIG,
+      container: "layout-select"
+    });
+    templateManager.buildList();
 
-    $("#properties-panel").animate({
+    var popupManager = new PopupManager();
+    popupManager.addPopup( "captcha", "#captcha-popup" );
+    popupManager.addPopup( "welcome", "#welcome-popup" );
+    popupManager.addPopup( "help", "#help-popup" );
+    popupManager.addPopup( "save", "#save-popup" );
+    popupManager.addPopup( "add-project", "#add-project-popup" );
+    popupManager.addPopup( "project-title", "#project-title-popup" );
+    popupManager.addPopup( "change-media", "#change-media-popup" );
+    popupManager.addPopup( "edit-track", "#edit-track-popup" );
+    popupManager.hidePopups();
 
-      height: '270px'
-
-    }, 500);
-
-    $(".hide-timeline").animate({
-
-      bottom: '268px'
-
-    }, 500);
+    ui.panels.properties = $( "#properties-panel" );
+    ui.overlays.loading = $( "#loading-overlay" );
+    ui.timeline.hide = $( ".hide-timeline" );
     
-    
-    //if ( !localStorage.getItem( "PopcornMaker.SavedProjects" ) ) {
-      $('#welcome-popup').fadeIn(2000);
-      $('.popupDiv').fadeIn('slow');
-      centerPopup($('#welcome-popup'));
-      var escapeKeyEnabled = true;
-    //}
+    ui.panels.properties.css( 'height','38px' );
+    ui.panels.properties.css( 'display','block' );
+    ui.timeline.hide.css( 'bottom', '36px' );	
+    ui.timeline.hide.css( 'display', 'block' );
+   
+    popupManager.showPopup( "welcome" );
       
-    $('#loading-overlay').hide();
+    ui.overlays.loading.hide();
+
+    var timelineManager = new TimelineManager();
+    timelineManager.showTools(); 
+	
     //Carousel for Help inner page
 		$(function(){
 			$('.slides').slides({
@@ -45,133 +216,67 @@
 				generateNextPrev: true
 			});
 		});
-		
 		//Popup sliding
     $('.import-scroll-toggler').click(function() {
-										 
-        $(".scroll-popup-container.spc-add-project").animate({
-            "margin-left": '-400px'
-        }, 750);
+      $(".scroll-popup-container.spc-add-project").animate({
+        "margin-left": '-400px'
+      }, 750);
     });
-    
     $('.import-scroll-back-toggler').click(function() {
-										 
-        $(".scroll-popup-container.spc-add-project").animate({
-            "margin-left": '0px'
-        }, 750);
+      $(".scroll-popup-container.spc-add-project").animate({
+        "margin-left": '0px'
+      }, 750);
     });
-    
-    //Popup sliding
     $('.tutorial-btn').click(function() {
-										 
-        $(this).parent().parent().animate({
-            left: '-700px'
-        }, 500);
-
+      $(this).parent().parent().animate({
+        left: '-700px'
+      }, 500);
     });
     
     $('.open-help, .help').click(function() {
-										 
-        $('#popup-add-project').hide();
-        $("#help-popup").fadeIn('slow');
-        $('.popupDiv').fadeIn('slow');
-        $('.balck-overlay').show();
-        escapeKeyEnabled = true;
-
+      popupManager.hidePopups();
+      popupManager.showPopup( "help" );
     });
     
     $('.help-close-btn').click(function() {
-										 
-        $("#help-popup").fadeOut('fast');
-        $("#welcome-popup").hide();
-        $(".popupDiv").fadeOut("fast");
-        $('.balck-overlay').hide();
-        escapeKeyEnabled = false;
-
+			popupManager.hidePopup( "help" );							 
     });
     
     $('#_user_manual').click(function() {
-										 
-        $('#popup-add-project').hide();
-        $("#help-popup .scroll-popup-container").animate({
-            left: '-700px'
-        }, 500);
-
+      $('#popup-add-project').hide();
+      $("#help-popup .scroll-popup-container").animate({
+        left: '-700px'
+      }, 500);
     });
 
-    function buildRegistry( registry ) {
-      for( var i = 0, l = registry.length; i < l; i++ ) {
-        if( registry[ i ].type !== "text" ) {
-          b.addPlugin( { type: registry[ i ].type } );
-        }
-      } 
-    }
-
-    function toggleLoadingScreen ( state ) {
-      if ( state ) {
-        $('#loading-overlay').show();
-      }
-      else {
-        $('#loading-overlay').hide();
-      }
-    }
-
-    var layoutSelect = document.getElementById('layout-select');
-    for ( var i=0; i<layouts.length; ++i ) {
-      var option = document.createElement( 'option' );
-      option.value = layouts[ i ];
-      option.innerHTML = layouts[ i ];
-      option.class = "ddprojects-option";
-      layoutSelect.appendChild( option );
-    }
-
-    $( "#template-other" ).hide();
-    var otherOption = layoutSelect.options[ layoutSelect.options.length - 1 ],
-        otherText = $( "#template-other" )[ 0 ];
-    layoutSelect.addEventListener( 'change', function( e ) {
-      if ( layoutSelect.selectedIndex === otherOption.index ) {
-        $( "#template-other" ).show();
-      }
-      else {
-        $( "#template-other" ).hide();
-      } //if
-    }, false );
-    otherText.addEventListener( 'change', function( e ) {
-      otherOption.value = otherText.value;
-      console.log( otherOption.value );
-    }, false );
-
-    currentLayout = layouts[ 0 ];
-
-    var b  = new Butter();
     document.getElementById( "main" ).style.height = window.innerHeight - document.getElementsByTagName( "HEADER" )[ 0 ].clientHeight - 15 + "px";
-    b.comm();
+    butter.comm();
 
-    b.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html" } );
+    butter.eventeditor( { target: "popup-4", defaultEditor: "lib/popcornMakerEditor.html" } );
     
-    b.previewer({
+    butter.previewer({
       target: "main",
       popcornUrl: "../lib/popcorn-complete.js",
-      butterUrl: "../lib/butter.js"
+      butterUrl: Butter.getScriptLocation() + "butter.js"
     });
 
-    b.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
+    butter.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
     
-    b.timeline({ target: "timeline-div"});
-    b.trackeditor({ target: "popup-5"});
+    butter.timeline({ target: "timeline-div"});
+    butter.trackeditor({ target: "popup-5"});
 
-    b.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
-    b.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
-    b.addCustomEditor( "external/layouts/blackpanthers/editor.html", "googlestreets" );
+    butter.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
+    butter.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
+    butter.addCustomEditor( "external/layouts/blackpanthers/editor.html", "googlestreets" );
 
-    b.setProjectDetails("title", "Untitled Project" );
+    butter.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
     
-    b.listen( "mediaready", function() {
-      $(".media-title-div").html( b.currentMedia.url );
+    butter.listen( "mediaready", function() {
+      $(".media-title-div").html( butter.currentMedia.url );
     });
 
-    b.listen( "clientdimsupdated", function( e ) {
+    butter.listen( "clientdimsupdated", function( e ) {
       var popup4 = $('#popup-4');
       popup4.css( "height", e.data.height + "px" )
       .css("width", e.data.width + "px" );
@@ -182,7 +287,7 @@
       popup4.css("visibility", "visible");
     });
     
-    b.listen ( "trackeditstarted", function() {
+    butter.listen ( "trackeditstarted", function() {
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow').css("height", "0%").css("width","0%");
       $('.popup-4').show();
@@ -190,7 +295,7 @@
       
     });
     
-    b.listen ( "trackeditclosed", function() {
+    butter.listen ( "trackeditclosed", function() {
       $('.close-div').fadeOut('fast');
       $('.popupDiv').hide().css("height", "").css("width","");
       $('popup-4').css("visibility", "hidden")
@@ -210,8 +315,8 @@
     function checkScrubber( event ) {
 
       layersDiv.style.top = -tracksDiv.scrollTop + "px";
-      scrubber.style.left = -tracksDiv.scrollLeft + b.currentTimeInPixels() + "px";
-      progressBar.style.width = -tracksDiv.scrollLeft + b.currentTimeInPixels() + "px";
+      scrubber.style.left = -tracksDiv.scrollLeft + butter.currentTimeInPixels() + "px";
+      progressBar.style.width = -tracksDiv.scrollLeft + butter.currentTimeInPixels() + "px";
 
       var scrubberLeft = parseInt( scrubber.style.left, 10);
 
@@ -230,19 +335,19 @@
       return scrubberLeft;
     }
 
-    b.listen( "mediatimeupdate", function( event ) {
+    butter.listen( "mediatimeupdate", function( event ) {
 
       var scrubberLeft = checkScrubber( event );
 
-      timelineDuration.innerHTML = b.secondsToSMPTE( b.currentTime );
+      timelineDuration.innerHTML = butter.secondsToSMPTE( butter.currentTime );
 
       scrubber.style.display = "block";
       if ( scrubberLeft >= scrubberContainer.offsetWidth ) {
 
-        tracksDiv.scrollLeft = b.currentTimeInPixels() - scrubberContainer.offsetWidth;
+        tracksDiv.scrollLeft = butter.currentTimeInPixels() - scrubberContainer.offsetWidth;
       } else if ( scrubberLeft < 0 ) {
 
-        tracksDiv.scrollLeft = b.currentTimeInPixels();
+        tracksDiv.scrollLeft = butter.currentTimeInPixels();
       }
     });
 
@@ -251,7 +356,7 @@
       if ( event.shiftKey ) {
 
         event.preventDefault();
-        b.zoom( event.detail || event.wheelDelta );
+        butter.zoom( event.detail || event.wheelDelta );
       }
 
       var scrubberLeft = checkScrubber( event );
@@ -290,8 +395,8 @@
     scrubberContainer.addEventListener( "mousedown", function( event ) {
 
       scrubberClicked = true;
-      b.targettedEvent = undefined;
-      b.currentTimeInPixels( event.clientX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft );
+      butter.targettedEvent = undefined;
+      butter.currentTimeInPixels( event.clientX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft );
     }, false);
 
     document.addEventListener( "mouseup", function( event ) {
@@ -307,20 +412,20 @@
 
         if ( scrubberPos <= 0 ) {
 
-          b.currentTimeInPixels( 0 );
+          butter.currentTimeInPixels( 0 );
         } else if ( scrubberPos >= timelineTarget.offsetWidth ) {
 
-          b.currentTimeInPixels( timelineTarget.offsetWidth );
+          butter.currentTimeInPixels( timelineTarget.offsetWidth );
         } else {
 
-          b.currentTimeInPixels( scrubberPos );
+          butter.currentTimeInPixels( scrubberPos );
         }
       }
     }, false);
 
-    b.listen( "mediatimeupdate", function() {
+    butter.listen( "mediatimeupdate", function() {
 
-      scrubber.style.left = b.currentTimeInPixels() - tracksDiv.scrollLeft + "px";
+      scrubber.style.left = butter.currentTimeInPixels() - tracksDiv.scrollLeft + "px";
     });
 
     var drawCanvas = function() {
@@ -332,9 +437,9 @@
       canvasDiv.height = canvasDiv.offsetHeight;
       canvasDiv.width = canvasDiv.offsetWidth;
 
-      var inc = canvasDiv.offsetWidth / b.duration,
+      var inc = canvasDiv.offsetWidth / butter.duration,
           //heights = [ 10, 4, 7, 4 ],
-          textWidth = context.measureText( b.secondsToSMPTE( 5 ) ).width,
+          textWidth = context.measureText( butter.secondsToSMPTE( 5 ) ).width,
           padding = 20,
           lastPosition = 0,
           lastTimeDisplayed = -( ( textWidth + padding ) / 2 );
@@ -343,7 +448,7 @@
 
       context.beginPath();
 
-      for ( var i = 1, l = b.duration; i < l; i++ ) {
+      for ( var i = 1, l = butter.duration; i < l; i++ ) {
 
         var position = i * inc;
         var spaceBetween = -~( position ) - -~( lastPosition );
@@ -374,7 +479,7 @@
           if ( ( position - lastTimeDisplayed ) > textWidth + padding ) {
 
             lastTimeDisplayed = position;
-            context.fillText( b.secondsToSMPTE( i ), -~position - ( textWidth / 2 ), 21 );
+            context.fillText( butter.secondsToSMPTE( i ), -~position - ( textWidth / 2 ), 21 );
           }
 
           lastPosition = position;
@@ -384,7 +489,7 @@
       context.closePath();
     };
 
-    b.listen( "timelineready", function( event ) {
+    butter.listen( "timelineready", function( event ) {
 
       drawCanvas();
     });
@@ -395,7 +500,7 @@
 			max: 6,
 			step: 1,
 			slide: function( event, ui ) {
-        b.zoom( slideValue - ui.value );
+        butter.zoom( slideValue - ui.value );
         drawCanvas();
         slideValue = ui.value;
 			}
@@ -406,20 +511,20 @@
       var inc = event.shiftKey ? 1 : 0.1;
 
       if( event.keyCode === 39 ) {
-        if ( b.targettedEvent ) {
+        if ( butter.targettedEvent ) {
 
-          b.moveFrameRight( event );
+          butter.moveFrameRight( event );
         } else {
 
-          b.currentTime = b.currentTime + inc;
+          butter.currentTime = butter.currentTime + inc;
         }
       } else if( event.keyCode === 37 ) {
-        if ( b.targettedEvent ) {
+        if ( butter.targettedEvent ) {
 
-          b.moveFrameLeft( event );
+          butter.moveFrameLeft( event );
         } else {
 
-          b.currentTime = b.currentTime - inc;
+          butter.currentTime = butter.currentTime - inc;
         }
       }
     }, false);
@@ -454,7 +559,7 @@
         $('.popupDiv').fadeIn('slow');
         $('#popup-delete-track').show();
         $('#deleteTrackBtn').click(function(){
-          b.removeTrack( track );
+          butter.removeTrack( track );
           $('#popup-delete-track').hide();
         });
         centerPopup( $('#popup-delete-track') );
@@ -465,14 +570,14 @@
 
         editTrackTargets.innerHTML = "<option value=\"\">Media Element (if applicable)</option>";
 
-        var targets = b.serializeTargets();
+        var targets = butter.serializeTargets();
 
         for ( var i = 0; i < targets.length; i++ ) {
 
           editTrackTargets.innerHTML += "<option value=\"" + targets[ i ].name + "\">" + targets[ i ].name + "</option>";
         }
 
-        var editor = new b.TrackEditor( track );
+        var editor = new butter.TrackEditor( track );
         trackJSONtextArea.value = editor.json;
         editTrackTargets.value = editor.target;
 
@@ -520,7 +625,7 @@
           closeTrackEditor(); 
         }
         function changeTarget( e) { 
-          b.setTrackJSON( this.value );
+          butter.setTrackJSON( this.value );
         }
 
         document.getElementById( "cancel-track-edit" ).addEventListener( "click", clickCancel, false );
@@ -541,18 +646,18 @@
       return layerDiv;
     };
 
-    b.listen( "trackadded", function( event ) {
+    butter.listen( "trackadded", function( event ) {
 
       trackLayers[ "layer-" + event.data.id ] = createLayer( event.data );
       layersDiv.appendChild( trackLayers[ "layer-" + event.data.id ] );
     });
 
-    b.listen( "trackremoved", function( event ) {
+    butter.listen( "trackremoved", function( event ) {
 
       layersDiv.removeChild( trackLayers[ "layer-" + event.data.id ] );
     });
 
-    b.listen( "trackmoved", function( event ) {
+    butter.listen( "trackmoved", function( event ) {
 
       layersDiv.removeChild( trackLayers[ "layer-" + event.data.id ] );
       layersDiv.insertBefore( trackLayers[ "layer-" + event.data.id ], layersDiv.children[ event.data.newPos ] );
@@ -600,10 +705,23 @@
     
     create_msDropDown()
 
+    $(".publish-project-btn").click(function(){
+      currentPreview.fetchHTML( function( html ) {
+        popupManager.hidePopups();
+        popupManager.showPopup( "captcha" );
+        var container = $( "#captcha-popup" )[ 0 ];
+        container.innerHTML = "";
+        var iframe = document.createElement( "iframe" );
+        iframe.setAttribute( "scrolling", "no" );
+        iframe.src = "http://localhost:9001/captcha"
+        container.appendChild( iframe );
+      });
+    });
+
     $(".save-project-data-btn").click(function(){
       
       try {
-        var projectToSave = b.exportProject(),
+        var projectToSave = butter.exportProject(),
         overwrite = false,  
         title;
 
@@ -637,67 +755,49 @@
     });
 
     document.getElementsByClassName( "sound-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
-      b.mute && b.mute();
+      butter.mute && butter.mute();
     }, false);
 
     document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
       currentPreview.playing ? currentPreview.pause() : currentPreview.play();
     }, false);
 
-    b.listen( "mediapaused", function( event ) {
+    butter.listen( "mediapaused", function( event ) {
       document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "-321px -19px";
     } );
 
-    b.listen( "mediaplaying", function( event ) {
+    butter.listen( "mediaplaying", function( event ) {
       document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "-322px 7px";
     } );
     
     $('.add-project-btn').click(function() {
-      $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
-      $('#popup-add-project').show();
-      centerPopup( $('#popup-add-project') );
-      $(' .balck-overlay ').show();
-      escapeKeyEnabled = true;
+      popupManager.hidePopups();
+      popupManager.showPopup( "add-project" );
     });  
     $('.wizard-add-project-btn').click(function() {
-      $("#help-popup").fadeOut('fast');
-      $("#welcome-popup").hide();
-      $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
-      $('#popup-add-project').show();
-      centerPopup( $('#popup-add-project') );
-      $(' .balck-overlay ').show();
-      escapeKeyEnabled = true;
+      popupManager.hidePopups();
+      popupManager.showPopup( "add-project" );
     });
-    
     $('.wizard-create-new-btn').click(function() {
-      $("#help-popup").fadeOut('fast');
-      $("#welcome-popup").hide();
-      $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
-      $('#popup-add-project').show();
-      centerPopup( $('#popup-add-project') );
-      $(' .balck-overlay ').show();
-      escapeKeyEnabled = true;
+      popupManager.hidePopups();
+      popupManager.showPopup( "add-project" );
     });
 
-    $(".collapse-btn").toggle(function() {
-
-      $('.collapse-btn a').css('backgroundPosition','-330px -152px');
-      $(".toolbox").animate({ width: "46px" }, 500);
-      $('.collapse-btn a').text("");
-      $(".timeline").stop().animate({ paddingRight:'86px'}, 500);
-      $(".qtip").hide();
-
-      },function() {
-
+    $(".collapse-btn").toggle(
+      function() {
+        $('.collapse-btn a').css('backgroundPosition','-330px -152px');
+        $(".toolbox").animate({ width: "46px" }, 500);
+        $('.collapse-btn a').text("");
+        $(".timeline").stop().animate({ paddingRight:'86px'}, 500);
+        $(".qtip").hide();
+      },
+      function() {
         $('.collapse-btn a').css('backgroundPosition','-330px -167px');
         $(".toolbox").animate({ width: "120px" }, 500);
         $('.collapse-btn a').text("collapse"); 
         $(".timeline").stop().animate({ paddingRight:'160px'}, 500);
-
-    });
+      }
+    );
 
     $(".hide-timeline a").toggle(function() {
 
@@ -727,7 +827,7 @@
     });
 
     $('li.edit a.edit-timeline-media').click(function(){
-      $('#url').val( b.currentMedia.url );
+      $('#url').val( butter.currentMedia.url );
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow');
       $('#popup-1').show();
@@ -738,7 +838,7 @@
     
     $('.change-url-btn').click(function(){
       $(".media-title-div").html( $('#url').val() );
-      b.currentMedia.url = ( $('#url').val() );
+      butter.currentMedia.url = ( $('#url').val() );
       $('.close-div').fadeOut('fast');
       $('.popups').hide();
       escapeKeyEnabled = false;
@@ -755,27 +855,15 @@
     $('.p-3').click(function(){
       currentPreview.fetchHTML( function( html ) {
         $('#export-data').val( html );
-        $('.project-title-textbox').val( b.getProjectDetails( "title" ) );
-        $('.close-div').fadeOut('fast');
-        $('.popupDiv').fadeIn('slow');
-        $('#popup-3').show();
-        $('#popup-add-project').hide();
-        centerPopup( $('#popup-3') );
-        $(' .balck-overlay ').show();
-        escapeKeyEnabled = true;
+        $('.project-title-textbox').val( butter.getProjectDetails( "title" ) );
+        popupManager.showPopup( "save" );
       });
     });
     
     $('.edit-selected-project').click(function(){
       if ( projectsDrpDwn[0].selectedIndex > 0 ) {
         $('#project-title').val( $( ".projects-dd" ).val() );
-
-        $('.close-div').fadeOut('fast');
-        $('.popupDiv').fadeIn('slow');
-        $('#popup-project-title').show();
-        centerPopup( $('#popup-project-title') );
-        $('.balck-overlay').hide();
-        escapeKeyEnabled = true;
+        popupManager.showPopup( "project-title" );
       }
     });
     
@@ -791,7 +879,7 @@
     
         localProjects = localProjects ? JSON.parse( localProjects ) : localProjects;
         
-        ( b.getProjectDetails ( "title" ) === newTitle ) && b.setProjectDetails ( "title", newTitle );
+        ( butter.getProjectDetails ( "title" ) === newTitle ) && butter.setProjectDetails ( "title", newTitle );
         
         selectedOpt = projectsDrpDwn[0].options[ idx ];
         
@@ -814,9 +902,7 @@
     });
 
     $('.popup-close-btn').click(function(){
-      $('.close-div').fadeOut('fast');
-      $('.popups').hide();
-      escapeKeyEnabled = false;
+      popupManager.hidePopups();
     });
     
     var ddLoadFunc = function() {
@@ -839,23 +925,20 @@
       var title = projectsDrpDwn.val();
 
       if ( localProjects && localProjects[ title ] ) {
-        b.clearProject();         
-        b.clearPlugins();
+        butter.clearProject();         
+        butter.clearPlugins();
         currentLayout = localProjects[ title ].layout;
         console.log( localProjects[ title ] );
 
         toggleLoadingScreen( true );
-        $('.close-div').fadeOut('fast');
-        $('.popups').hide();
-        $('balck-overlay').show()
-        escapeKeyEnabled = false;
+        popupManager.hidePopups();
 
-        currentPreview = new b.Preview({
+        currentPreview = new butter.Preview({
           template: currentLayout,
           defaultMedia: document.getElementById( 'media-url' ).value,
           importData: localProjects[ title ],
           onload: function( preview ) {
-            buildRegistry( b.currentMedia.registry );
+            buildRegistry( butter.currentMedia.registry );
             $('.tiny-scroll').tinyscrollbar();
             toggleLoadingScreen( false );
           } //onload
@@ -865,23 +948,21 @@
     
     $(".create-new-btn").click(function() {
       $("#welcome-popup, #help-popup, #popup-add-project").hide();
-      b.clearProject();
-      b.clearPlugins();
-      b.setProjectDetails( "title", ( $( "title-input-box" ).val() || "Untitled Project" ) );
+      butter.clearProject();
+      butter.clearPlugins();
+      butter.setProjectDetails( "title", ( $( "title-input-box" ).val() || "Untitled Project" ) );
       currentLayout = document.getElementById( 'layout-select' ).value;
       toggleLoadingScreen( true );
-      currentPreview = new b.Preview({
+      currentPreview = new butter.Preview({
         template: currentLayout,
         defaultMedia: document.getElementById('timeline-media-input-box').value,
         onload: function( preview ) {
-          buildRegistry( b.currentMedia.registry );
+          buildRegistry( butter.currentMedia.registry );
           $('.tiny-scroll').tinyscrollbar();
           toggleLoadingScreen( false );
         } //onload
       }); //Preview
-      $('.close-div').fadeOut('fast');
-      $('.popups').hide();
-      escapeKeyEnabled = false;
+      popupManager.hidePopups();
     });
     
     $("#import-json-btn").click(function() {
@@ -890,22 +971,18 @@
       
         try {
           var data = JSON.parse( dataString );
-          $("#welcome-popup").hide();
-          $("#help-popup").hide();
-          b.clearProject(); 
-          b.clearPlugins();
+          popupManager.hidePopups();
+          butter.clearProject(); 
+          butter.clearPlugins();
           currentLayout = data.layout ? data.layout : layouts[ 0 ];
           toggleLoadingScreen( true );
-          $('.close-div').fadeOut('fast');
-          $('.popups').hide();
-          escapeKeyEnabled = false;
 
-          currentPreview = new b.Preview({
+          currentPreview = new butter.Preview({
             template: currentLayout,
             defaultMedia: document.getElementById( 'timeline-media-input-box' ).value,
             importData: data,
             onload: function( preview ) {
-              buildRegistry( b.currentMedia.registry );
+              buildRegistry( butter.currentMedia.registry );
               $('.tiny-scroll').tinyscrollbar();
               toggleLoadingScreen( false );
             } //onload
@@ -919,7 +996,7 @@
     });
     
     $(".show-json-btn").click(function() {
-      var exp = b.exportProject();
+      var exp = butter.exportProject();
       exp.layout = currentLayout;
       $('#export-data').val( JSON.stringify( exp ) );
     });
@@ -959,16 +1036,6 @@
       }
     });
 
-    $(window).keypress( function ( event ) {
-      if ( event.keyCode === 27 && escapeKeyEnabled ) {
-        $('.close-div').fadeOut('fast');
-        $('.popups').hide();
-        $("#help-popup").fadeOut('fast');
-        $("#welcome-popup").hide();
-        $('.balck-overlay').hide();
-        escapeKeyEnabled = false;
-      }
-    });
   }, false);
 
 

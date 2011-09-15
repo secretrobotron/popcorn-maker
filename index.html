@@ -61,7 +61,6 @@
 </header>
 <!-- ########## END HEADER ########## -->
 
-
 <!-- ########## START IFRAME SECTION ########## -->    
 <iframe id="main">
 </iframe>
@@ -182,8 +181,10 @@
  <div class="popupDiv close-div">
  	<div class="balck-overlay balck-overlay-dims"></div>
  	<div class="popup-container">
-        
-        <div id="popup-1" class="popup-1 pop-up close-div draggable" style="display:none"> <!-- popup 1 -->
+        <div id="captcha-popup">
+        </div>
+
+        <div id="change-media-popup" class="change-media-popup pop-up close-div draggable" style="display:none"> <!-- popup 1 -->
             <a class="popup-close-btn" href="#"><span></span></a>
         	<div class="popup-header">
             	<h3>Change timeline media</h3>
@@ -198,7 +199,7 @@
             </div>
         </div><!-- end popup 1 -->
         
-        <div id="popup-2" class="popup-2 pop-up close-div draggable" style="display:none"> <!-- popup 2 -->
+        <div id="edit-track-popup" class="edit-track-popup pop-up close-div draggable" style="display:none"> <!-- popup 2 -->
             <a class="popup-close-btn" href="#"><span></span></a>
         	<div class="popup-header">
             	<h3>Track</h3>
@@ -223,7 +224,7 @@
             </div>
         </div><!-- end popup 2 -->
         
-        <div id="popup-3" class="popup-3 pop-up close-div" style="display:none"> <!-- popup 3 -->
+        <div id="save-popup" class="save-popup pop-up close-div" style="display:none"> <!-- popup 3 -->
             <a class="popup-close-btn" href="#"><span></span></a>
         	<div class="popup-header">
             	<h3>Save / Export</h3>
@@ -241,6 +242,7 @@
                   <!--<input type="submit" class="download-btn" name="download-btn" value="Download as HTML">-->
                   <label class="save-prj-lbl" for="project-title-textbox">Title:</label><input type="text" class="project-title-textbox" name="project-title-textbox" >
                   <input type="submit" class="save-project-data-btn" name="save-project-data-btn" value="Save Project">
+                  <input type="button" class="publish-project-btn" name="publish-project-btn" value="Publish Project">
                   
                 </div>
             </div>
@@ -261,7 +263,7 @@
         
         
         
-        <div id="popup-delete-track" class="popup-project-title pop-up close-div draggable" style="display:none">
+        <div id="popup-delete-track" class="project-title-popup pop-up close-div draggable" style="display:none">
           <a class="popup-close-btn" href="#"><span></span></a>
           	<div class="popup-header">
               	<h3>Delete Track</h3>
@@ -272,7 +274,7 @@
                 <p class="desc">Are you sure you want to delete this track?</p>
               </div>
         </div>
-        <div id="popup-project-title" class="popup-project-title pop-up close-div draggable" style="display:none"> <!-- popup-project-title -->
+        <div id="project-title-popup" class="project-title-popup pop-up close-div draggable" style="display:none"> <!-- project-title-popup -->
             <a class="popup-close-btn" href="#"><span></span></a>
         	<div class="popup-header">
             	<h3>Edit Title</h3>
@@ -286,9 +288,9 @@
               <input type="submit" class="change-title-btn" value="change">
               <p class="desc">Use this dialog to Change the title of the selected Popcorn Maker Project.</p>
             </div>
-        </div><!-- end popup popup-project-title -->
+        </div><!-- end popup project-title-popup -->
         
-        <div id="load-confirmation-dialog" class="popup-project-title pop-up close-div draggable" style="display:none" >
+        <div id="load-confirmation-dialog" class="project-title-popup pop-up close-div draggable" style="display:none" >
           <a class="popup-close-btn load" href="#"><span></span></a>
         	<div class="popup-header">
             	<h3>Load Project?</h3>
@@ -299,13 +301,14 @@
             </div>
         </div>
         
-        <div id="popup-add-project" style="display:none;"><!-- welcome popup -->
+        <div id="add-project-popup" style="display:none;"><!-- welcome popup -->
           <a class="help-close-btn" href="#"><span></span></a>
           <div class="popup-header">
             	<h3 class="welcome-header">Create / Import Project</h3>
           </div>
           <div class="scroll-popup-container spc-add-project">
             <div class="padding-div add-project-padding-div">
+                <div id="template-thumbnail"></div>
                 <div class="proj-title-div">
                   <span class="input-title-text">Project Title</span><br />
               	  <input type="text" class="proj-title-input" id="title-input-box"></input>

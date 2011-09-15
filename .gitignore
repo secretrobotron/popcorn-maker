@@ -1,4 +1,8 @@
 *~
+*.swp
+*.log
+*.log.*
+*.pyc
 dist/
 server/bin
 server/include

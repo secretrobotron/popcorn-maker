@@ -200,7 +200,7 @@
       function loadIframe( iframe, template ) {
         previewIframe = iframe;
         iframe.src = template;
-        logger.debug( "Starting IFRAME" );
+        logger.debug( "Starting IFRAME: " + iframe.src );
         function onLoad( e ) {
           link = new PreviewerLink({
             independent: that.independent

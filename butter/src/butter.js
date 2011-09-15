@@ -486,10 +486,10 @@ THE SOFTWARE.
     var name = options.name || "NoName";
     var quiet = options.quiet !== undefined ? options.quiet : false;
     var debugFn = function( message ) {
-      console.log( "[" + name + "]: " + message );
+      Logger.logFunction( "[" + name + "]: " + message );
     };
     var errorFn = function( message ) {
-      throw new Error( "[" + name + "]: " + message );
+      Logger.errorFunction( "[" + name + "]: " + message );
     };
     var that = this;
     this.debug = !quiet && ( Logger.level & Logger.DEBUG ) ? debugFn : function() {};
@@ -504,6 +504,8 @@ THE SOFTWARE.
   Logger.DEBUG = 0x1;
   Logger.ERROR = 0x2;
   Logger.level = Logger.DEBUG | Logger.ERROR;
+  Logger.logFunction = console.log;
+  Logger.errorFunction = function( error ) { throw new Error( error ) };
 
   /****************************************************************************
    * Butter
