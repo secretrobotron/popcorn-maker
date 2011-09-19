@@ -38,22 +38,31 @@ THE SOFTWARE.
     function constructEditor( trackEvent ) {
 
       var editorWindow,
-        butter = this,
-        editorSrc =  customEditors[ trackEvent.type ] || trackEvent.manifest.customEditor || defaultEditor,
-        updateEditor = function( e ){
-          commServer.send( "editorCommLink", { "id": e.data.getId(), "options": e.data.popcornOptions }, "trackeventupdated" );
-        },
-        checkRemoved = function( e ) {
-          commServer.send( "editorCommLink", e.data.getId(), "trackeventremoved" );
-        },
-        targetAdded = function( e ) {
-          commServer.send( "editorCommLink", butter.getTargets(), "domtargetsupdated" );
-        },
-        undoListeners = function() {
+          butter = this,
+          editorSrc,
+          manifest = butter.getManifest( trackEvent.type );
+        
+      if ( manifest && manifest.customEditor ) {
+        editorSrc = manifest.customEditor;
+      } 
+      else {
+        editorSrc =  customEditors[ trackEvent.type ] || defaultEditor;
+      }
+
+      var updateEditor = function( e ){
+          commServer.send( "link", { "id": e.data.id, "options": e.data.popcornOptions }, "trackeventupdated" );
+      };
+      var checkRemoved = function( e ) {
+          commServer.send( "link", e.data.id, "trackeventremoved" );
+      };
+      var targetAdded = function( e ) {
+          commServer.send( "link", butter.targets, "domtargetsupdated" );
+      };
+      var undoListeners = function() {
           butter.unlisten ( "trackeventupdated", updateEditor );
           butter.unlisten ( "targetadded", targetAdded );
           butter.unlisten ( "trackeventremoved", checkRemoved );
-        };
+      };
 
       editorTarget && clearTarget();
 
@@ -78,13 +87,13 @@ THE SOFTWARE.
 
       function setupServer() {
 
-        commServer[ binding ]( "editorCommLink", editorWindow, function() {
+        commServer[ binding ]( "link", editorWindow, function() {
 
           butter.listen( "trackeventupdated", updateEditor );
           butter.listen( "targetadded", targetAdded );
           butter.listen( "trackeventremoved", checkRemoved );
           
-          commServer.listen( "editorCommLink", "okayclicked", function( newOptions ){
+          commServer.listen( "link", "okayclicked", function( newOptions ){
 
             trackEvent.popcornOptions = newOptions;
             editorWindow.close && editorWindow.close();
@@ -93,12 +102,12 @@ THE SOFTWARE.
             butter.trigger( "trackeditclosed" );
             butter.trigger( "trackeventupdated", trackEvent );
           });
-          commServer.listen( "editorCommLink", "applyclicked", function( newOptions ) {
+          commServer.listen( "link", "applyclicked", function( newOptions ) {
 
             trackEvent.popcornOptions = newOptions;
             butter.trigger( "trackeventupdated", trackEvent );
           });
-          commServer.listen( "editorCommLink", "deleteclicked", function() {
+          commServer.listen( "link", "deleteclicked", function() {
 
             butter.removeTrackEvent( trackEvent );
             editorWindow.close && editorWindow.close();
@@ -106,23 +115,24 @@ THE SOFTWARE.
             undoListeners();
             butter.trigger( "trackeditclosed" );
           });
-          commServer.listen( "editorCommLink", "cancelclicked", function() {
+          commServer.listen( "link", "cancelclicked", function() {
 
             editorWindow.close && editorWindow.close();
             editorWindow && editorWindow.parentNode && editorWindow.parentNode.removeChild( editorWindow );
             undoListeners();
             butter.trigger( "trackeditclosed" );
           });
-          commServer.listen( "editorCommLink", "clientdimsupdated", function( dims ) {
+          commServer.listen( "link", "clientdimsupdated", function( dims ) {
             butter.trigger( "clientdimsupdated", dims, "eventeditor" );
           });
 
-          var targetCollection = butter.getTargets(), targetArray = [];
+          var targetCollection = butter.targets, targetArray = [];
           for ( var i=0, l=targetCollection.length; i<l; ++i ) {
-            targetArray.push( [ targetCollection[ i ].getName(), targetCollection[ i ].getId() ] );
+            targetArray.push( [ targetCollection[ i ].name, targetCollection[ i ].id ] );
           }
-          
-          commServer.send( "editorCommLink", { "trackEvent": trackEvent, "targets": targetArray, "id": trackEvent.getId() }, "edittrackevent");
+
+          trackEvent.manifest = manifest;
+          commServer.send( "link", { "trackEvent": trackEvent, "targets": targetArray, "id": trackEvent.id }, "edittrackevent");
         });
       }
 

@@ -39,25 +39,78 @@ THE SOFTWARE.
     options = options || {};
     var name = options.name || 'Track' + Date.now();
 
-    this.getName = function () {
-      return name;
-    }; //getName
+    Object.defineProperty( this, "name", {
+      get: function() {
+        return name;
+      }
+    });
 
-    this.getId = function () {
-      return id;
-    }; //getId
+    Object.defineProperty( this, "id", {
+      get: function() {
+        return id;
+      }
+    });
 
-    this.getTrackEvent = function ( trackId ) {
+
+    Object.defineProperty( this, "butter", {
+      get: function() {
+        return butter;
+      },
+      set: function( b ) {
+        butter = b;
+        if ( butter ) {
+          butter.logger.debug( "Track added" );
+          butter.trigger( "trackadded", that );
+          var events = that.trackEvents;
+          for ( var i=0, l=events.length; i<l; ++i ) {
+            events[i].butter =  butter;
+          } //for
+        }
+      }
+    });
+
+    Object.defineProperty( this, "json", {
+      get: function() {
+        var exportJSONTrackEvents = [];
+        for ( var i=0, l=trackEvents.length; i<l; ++i ) {
+          exportJSONTrackEvents.push( trackEvents[ i ].json );
+        }
+        return {
+          name: name,
+          id: id,
+          trackEvents: exportJSONTrackEvents
+        };
+      },
+      set: function( importData ) {
+        if ( importData.name ) {
+          name = importData.name;
+        }
+        if ( importData.trackEvents ) {
+          var importTrackEvents = importData.trackEvents;
+          for ( var i=0, l=importTrackEvents.length; i<l; ++i ) {
+            var newTrackEvent = new TrackEvent();
+            newTrackEvent.json = importTrackEvents[ i ];
+            that.addTrackEvent( newTrackEvent );
+          }
+        }
+      }
+    });
+
+    this.getTrackEvent = function ( trackEvent ) {
       for ( var i=0, l=trackEvents.length; i<l; ++i) {
-        if ( trackEvents[i].getId() === trackId || trackEvents[i].getName() === trackId ) {
+        if (  ( trackEvent.id !== undefined && trackEvents[ i ].id === trackEvent.id ) || 
+              ( trackEvent.name && trackEvents[ i ].name === trackEvent.name ) ||
+              trackEvents[ i ].name === trackEvent ) {
           return trackEvents[i];
         } //if
       } //for
     }; //getTrackEvent
 
-    this.getTrackEvents = function () {
-      return trackEvents;
-    }; //getTrackEvents
+    Object.defineProperty( this, "trackEvents", {
+      get: function() {
+        return trackEvents;
+      }
+    });
 
     this.removeTrackEvent = function ( trackEvent ) {
       if ( typeof(trackEvent) === "string" ) {
@@ -69,7 +122,7 @@ THE SOFTWARE.
       if ( idx > -1 ) {
         trackEvents.splice( idx, 1 );
         trackEvent.track = undefined;
-        trackEvent.setButter( undefined );
+        trackEvent.butter = undefined;
         butter.trigger( "trackeventremoved", trackEvent );
       } //if
     }; //removeTrackEvent
@@ -81,49 +134,11 @@ THE SOFTWARE.
       trackEvents.push( trackEvent );
 
       trackEvent.track = that;
-      butter && trackEvent.setButter( butter );
+      if ( butter ) {
+        trackEvent.butter = butter;
+      }
       return trackEvent;
     }; //addTrackEvent
-
-    this.setButter = function ( b ) {
-      butter = b;
-      if ( butter ) {
-        butter.trigger( "trackadded", that );
-        var events = that.getTrackEvents();
-        for ( var i=0, l=events.length; i<l; ++i ) {
-          events[i].setButter( butter );
-        } //for
-      }
-    };
-
-    this.getButter = function ()  {
-      return butter;
-    };
-
-    this.importJSON = function ( importData ) {
-      if ( importData.name ) {
-        name = importData.name;
-      }
-      if ( importData.trackEvents ) {
-        var importTrackEvents = importData.trackEvents;
-        for ( var i=0, l=importTrackEvents.length; i<l; ++i ) {
-          var newTrackEvent = new TrackEvent();
-          newTrackEvent.importJSON( importTrackEvents[ i ] );
-          that.addTrackEvent( newTrackEvent );
-        }
-      }
-    };
-
-    this.exportJSON = function () {
-      var exportJSONTrackEvents = [];
-      for ( var i=0, l=trackEvents.length; i<l; ++i ) {
-        exportJSONTrackEvents.push( trackEvents[ i ].exportJSON() );
-      }
-      return {
-        name: name,
-        trackEvents: exportJSONTrackEvents
-      };
-    };
 
   }; //Track
 
@@ -144,44 +159,54 @@ THE SOFTWARE.
     this.popcornOptions = options.popcornOptions;
     this.popcornEvent = options.popcornEvent;
     this.track = options.track;
-    
-    this.getName = function () {
-      return name;
-    };
 
-    this.getId = function () {
-      return id;
-    }; //getId
-
-    this.setButter = function ( b ) {
-      butter = b;
-      butter && butter.trigger( "trackeventadded", that );
-    };
-
-    this.getButter = function ()  {
-      return butter;
-    };
-
-    this.importJSON = function ( importData ) {
-      this.start = importData.start || 0;
-      this.end = importData.end || 0;
-      this.type = importData.type;
-      if ( importData.name ) {
-        name = importData.name;
+    Object.defineProperty( this, "name", {
+      get: function() {
+        return name;
       }
-      this.popcornOptions = importData.popcornOptions;
-    };
+    });
 
-    this.exportJSON = function () {
-      return {
-        start: this.start,
-        end: this.end,
-        type: this.type,
-        popcornOptions: this.popcornOptions,
-        track: this.track ? this.track.getName() : undefined,
-        name: name
-      };
-    };
+    Object.defineProperty( this, "id", {
+      get: function() {
+        return id;
+      }
+    });
+
+    Object.defineProperty( this, "butter", {
+      get: function() {
+        return butter;
+      },
+      set: function( b ) {
+        butter = b;
+        if ( butter ) {
+          butter.logger.debug( "TrackEvent added" );
+          butter.trigger( "trackeventadded", that );
+        }
+      }
+    });
+
+    Object.defineProperty( this, "json", {
+      get: function() {
+        return {
+          id: id,
+          start: this.start,
+          end: this.end,
+          type: this.type,
+          popcornOptions: this.popcornOptions,
+          track: this.track ? this.track.name : undefined,
+          name: name
+        };
+      },
+      set: function( importData ) {
+        this.start = importData.start || 0;
+        this.end = importData.end || 0;
+        this.type = importData.type;
+        if ( importData.name ) {
+          name = importData.name;
+        }
+        this.popcornOptions = importData.popcornOptions;
+      }
+    });
 
   }; //TrackEvent
 
@@ -196,34 +221,40 @@ THE SOFTWARE.
     var name = options.name || "Target" + id + Date.now();
     this.object = options.object;
 
-    this.getName = function () {
-      return name;
-    }; //getName
+    Object.defineProperty( this, "name", {
+      get: function() {
+        return name;
+      },
+    });
 
-    this.getId = function () {
-      return id;
-    }; //getId
+    Object.defineProperty( this, "id", {
+      get: function() {
+        return id;
+      },
+    });
 
-    this.importJSON = function ( importData ) {
-      if ( importData.name ) {
-        name = importData.name
+    Object.defineProperty( this, "json", {
+      get: function() {
+        var obj;
+        try {
+          obj = JSON.stringify( this.object );
+        }
+        catch ( e ) {
+          obj = this.object.toString();
+        }
+        return {
+          id: id,
+          name: name,
+          object: obj
+        };
+      },
+      set: function( importData ) {
+        if ( importData.name ) {
+          name = importData.name
+        }
+        this.object = importData.object
       }
-      this.object = importData.object
-    };
-
-    this.exportJSON = function () {
-      var obj;
-      try {
-        obj = JSON.stringify( this.object );
-      }
-      catch ( e ) {
-        obj = this.object.toString();
-      }
-      return {
-        name: name,
-        object: obj
-      };
-    };
+    });
   }; //Target
 
   /****************************************************************************
@@ -238,79 +269,131 @@ THE SOFTWARE.
         name = options.name || "Media" + id + Date.now(),
         url,
         target,
+        registry,
         butter = undefined,
         currentTime = 0,
         duration = 0,
         that = this;
 
-    this.getUrl = function () {
-      return url;
-    };
-
-    this.getTarget = function () {
-      return target;
-    };
-
-    this.setUrl = function ( newUrl ) {
-      if ( url !== newUrl ) {
-        url = newUrl;
-        butter && butter.trigger( "mediacontentchanged", that );
-      }
-    };
-
-    this.setTarget = function ( newTarget ) {
-      if ( target !== newTarget ) {
-        target = newTarget;
-        butter && butter.trigger( "mediatargetchanged", that );
-      }
-    };
-
-    this.getName = function () {
-      return name;
-    };
-
-    this.getId = function () {
-      return id;
-    };
-
-    this.getTracks = function () {
-      return tracks;
-    };
-
-    this.setButter = function ( b ) {
-      if ( b !== butter ) {      
-        butter = b;
-        if ( butter ) {
-          butter.trigger( "mediaadded", that );
-          var tracks = that.getTracks();
-          for ( var i=0, l=tracks.length; i<l; ++i ) {
-            tracks[i].setButter( butter );
-          } //for
+    Object.defineProperty( this, "url", {
+      get: function() {
+        return url;
+      },
+      set: function( val ) {
+        if ( url !== val ) {
+          url = val;
+          if ( butter ) {
+            butter.trigger( "mediacontentchanged", that );
+          }
         }
-      } //if
-    };
+      }
+    });
 
-    this.getButter = function ()  {
-      return butter;
-    };
+    Object.defineProperty( this, "target", {
+      get: function() {
+        return target;
+      },
+      set: function( val ) {
+        if ( target !== val ) {
+          target = val;
+          if ( butter ) {
+            butter.trigger( "mediatargetchanged", that );
+          }
+        }
+      }
+    });
+
+    Object.defineProperty( this, "name", {
+      get: function() {
+        return name;
+      }
+    });
+
+    Object.defineProperty( this, "id", {
+      get: function() {
+        return id;
+      }
+    });
+
+    Object.defineProperty( this, "tracks", {
+      get: function() {
+        return tracks;
+      }
+    });
+
+    Object.defineProperty( this, "butter", {
+      get: function() {
+        return butter;
+      },
+      set: function( b ) {
+        if ( b !== butter ) {      
+          butter = b;
+          if ( butter ) {
+            butter.logger.debug( "Media added" );
+            butter.trigger( "mediaadded", that );
+            var tracks = that.tracks;
+            for ( var i=0, l=tracks.length; i<l; ++i ) {
+              tracks[i].butter = butter;
+            } //for
+          }
+        } //if
+      }
+    });
+
+    Object.defineProperty( this, "currentTime", {
+      get: function() {
+        return currentTime;
+      },
+      set: function( time ) {
+        if ( time !== undefined ) {
+          currentTime = time;
+          if ( currentTime < 0 ) {
+            currentTime = 0;
+          }
+          if ( currentTime > duration ) {
+
+            currentTime = duration;
+          }
+          if ( butter ) {
+            butter.trigger("mediatimeupdate", that);
+          }
+        } //if
+      }
+    });
+
+    Object.defineProperty( this, "duration", {
+      get: function() {
+        return duration;
+      },
+      set: function( time ) {
+        if ( time ) {
+          duration = time;
+          if ( butter ) {
+            butter.trigger("mediadurationchanged", that);
+          }
+        }
+      }
+    });
 
     this.addTrack = function ( track ) {
       if ( !(track instanceof Track) ) {
         track = new Track( track );
       } //if
       tracks.push( track );
-      butter && track.setButter( butter );
+      if ( butter ) {
+        track.butter = butter;
+      }
       return track;
     }; //addTrack
 
-    this.getTrack = function ( name ) {
-      var track;
+    this.getTrack = function ( track ) {
       for ( var i=0, l=tracks.length; i<l; ++i ) {
-        if ( tracks[i].getName() === name ) {
+        if (  ( track.id !== undefined && tracks[ i ].id === track.id ) ||
+              ( track.name && tracks[ i ].name === track.name ) ||
+              tracks[ i ] === track ) {
           return tracks[i];
         } //if
       } //for
-
       return undefined;
     }; //getTrack
 
@@ -321,77 +404,108 @@ THE SOFTWARE.
       var idx = tracks.indexOf( track );
       if ( idx > -1 ) {
         tracks.splice( idx, 1 );
-        track.setButter( undefined );
-        var events = track.getTrackEvents();
+        track.butter = undefined;
+        var events = track.trackEvents;
         for ( var i=0, l=events.length; i<l; ++i ) {
           butter.trigger( "trackeventremoved", events[i] );
         } //for
-        butter && butter.trigger( "trackremoved", track );
+        if ( butter ) {
+          butter.trigger( "trackremoved", track );
+        }
         return track;
       } //if
       return undefined;    
     }; //removeTrack
 
-    this.currentTime = function ( time ) {
-      if ( time !== undefined ) {
-        currentTime = time;
-        if ( currentTime < 0 ) {
-          currentTime = 0;
+
+    Object.defineProperty( this, "json", {
+      get: function() {
+        var exportJSONTracks = [];
+        for ( var i=0, l=tracks.length; i<l; ++i ) {
+          exportJSONTracks.push( tracks[ i ].json );
         }
-        if ( currentTime > duration ) {
-
-          currentTime = duration;
+        return {
+          id: id,
+          name: name,
+          url: url,
+          target: target,
+          duration: duration,
+          tracks: exportJSONTracks
+        };
+      },
+      set: function( importData ) {
+        if ( importData.name ) {
+          name = importData.name;
         }
-        butter && butter.trigger("mediatimeupdate", that);
-      } //if
-      return currentTime;
-    }; //currentTime
-
-    this.duration = function ( time ) {
-      if ( time ) {
-        duration = time;
-        butter && butter.trigger("mediadurationchanged", that);
-      }
-      return duration;
-    }; //duration
-
-    this.importJSON = function ( importData, noRecursion ) {
-      if ( importData.name ) {
-        name = importData.name;
-      }
-      importData.target && that.setTarget( importData.target );
-      importData.url && that.setUrl( importData.url );
-      
-      //butter.listen( "timelineready", function(){
-        if ( !noRecursion && importData.tracks ) {
+        if ( importData.target ) {
+          that.target = importData.target;
+        }
+        if ( importData.url ) {
+          that.url = importData.url;
+        }
+        if ( importData.tracks ) {
           var importTracks = importData.tracks;
           for ( var i=0, l=importTracks.length; i<l; ++i ) {
             var newTrack = new Track();
-            newTrack.importJSON( importTracks[ i ] );
+            newTrack.json = importTracks[ i ];
             that.addTrack( newTrack );
           }
         }
-      //});
-    };
-
-    this.exportJSON = function () {
-      var exportJSONTracks = [];
-      for ( var i=0, l=tracks.length; i<l; ++i ) {
-        exportJSONTracks.push( tracks[ i ].exportJSON() );
       }
-      return {
-        name: name,
-        url: url,
-        target: target,
-        duration: duration,
-        tracks: exportJSONTracks
-      };
+    }); //json
+
+    Object.defineProperty( this, "registry", {
+      get: function() {
+        return registry;
+      },
+      set: function( val ) {
+        registry = val;
+      }
+    });
+
+    this.getManifest = function( name ) {
+      for ( var i=0, l=registry.length; i<l; ++i ) {
+        if ( registry[ i ].type === name ) {
+          return registry[ i ].base.manifest;
+        } //if
+      } //for
+      return undefined;
     };
 
-    options.url && this.setUrl( options.url );
-    options.target && this.setTarget( options.target );
+    if ( options.url ) {
+      this.url = options.url;
+    }
+    if ( options.target ) {
+      this.target = options.target;
+    }
 
   }; //Media
+
+  var Logger = function ( options ) {
+    options = options || {};
+    var name = options.name || "NoName";
+    var quiet = options.quiet !== undefined ? options.quiet : false;
+    var debugFn = function( message ) {
+      Logger.logFunction( "[" + name + "]: " + message );
+    };
+    var errorFn = function( message ) {
+      Logger.errorFunction( "[" + name + "]: " + message );
+    };
+    var that = this;
+    this.debug = !quiet && ( Logger.level & Logger.DEBUG ) ? debugFn : function() {};
+    this.error = !quiet && ( Logger.level & Logger.ERROR ) ? errorFn : function() {};
+    if ( options.object && !options.object.log ) {
+      options.object.log = function( message ) {
+        that.debug( message );
+      };
+    }
+  };
+  Logger.NONE = 0x0;
+  Logger.DEBUG = 0x1;
+  Logger.ERROR = 0x2;
+  Logger.level = Logger.DEBUG | Logger.ERROR;
+  Logger.logFunction = console.log;
+  Logger.errorFunction = function( error ) { throw new Error( error ) };
 
   /****************************************************************************
    * Butter
@@ -405,8 +519,17 @@ THE SOFTWARE.
         targets = [],
         projectDetails = {},
         that = this;
+
+    options = options || {};
         
     this.id = "Butter" + numButters++;
+
+    var logger = this.logger = new Logger( { 
+      name: "Butter", 
+      object: this, 
+      quiet: options.logger
+    } );
+    logger.debug( "Starting" );
 
     function checkMedia() {
       if ( !currentMedia ) {
@@ -468,6 +591,11 @@ THE SOFTWARE.
       } //if
     }; //unlisten
 
+    this.getManifest = function ( name ) {
+      checkMedia();
+      return currentMedia.getManifest( name );
+    }; //getManifest
+
     /****************************************************************
      * TrackEvent methods
      ****************************************************************/
@@ -489,25 +617,28 @@ THE SOFTWARE.
       } //if
     }; //addTrackEvents
 
-    //getTrackEvents - Get a list of Track Events
-    this.getTrackEvents = function ( flatten ) {
-      checkMedia();
-      var tracks = currentMedia.getTracks(), trackEvents;
-      if( !flatten ) {
-        trackEvents = {};
+    Object.defineProperty( this, "trackEvents", {
+      get: function() {
+        checkMedia();
+        var tracks = currentMedia.tracks, trackEvents = {};
         for ( var i=0, l=tracks.length; i<l; ++i ) {
           var track = tracks[i];
-          trackEvents[ track.getName() ] = track.getTrackEvents();
+          trackEvents[ track.name ] = track.trackEvents;
         } //for
-      } else {
-        trackEvents = [];
-        for ( var i=0, l=tracks.length; i<l; ++i ) {
-          var track = tracks[i];
-          trackEvents = trackEvents.concat( track.getTrackEvents() );
-        } //for
+        return trackEvents;
       }
+    });
+
+    //flattenTrackEvents - Get a list of Track Events
+    this.flattenTrackEvents = function ( flatten ) {
+      checkMedia();
+      var tracks = currentMedia.tracks, trackEvents = [];
+      for ( var i=0, l=tracks.length; i<l; ++i ) {
+        var track = tracks[i];
+        trackEvents = trackEvents.concat( track.trackEvents );
+      } //for
       return trackEvents;
-    }; //getTrackEvents
+    }; //flattenTrackEvents
 
     this.getTrackEvent = function ( track, trackEvent ) {
       checkMedia();
@@ -518,11 +649,11 @@ THE SOFTWARE.
         return track.getTrackEvent( trackEvent );
       }
       else {
-        var events = that.getTrackEvents();
+        var events = that.trackEvents;
         for ( var trackName in events ) {
           var t = events[ trackName ];
           for ( var i=0, l=t.length; i<l; ++i ) {
-            if ( t[ i ].getName() === track ) {
+            if ( t[ i ].name === track ) {
               return t[ i ];
             }
           }
@@ -571,11 +702,12 @@ THE SOFTWARE.
       return currentMedia.addTrack( track );
     }; //addTrack
 
-    //getTracks - Get a list of Tracks
-    this.getTracks = function () {
-      checkMedia();
-      return currentMedia.getTracks();
-    }; //getTracks
+    //tracks - Get a list of Tracks
+    Object.defineProperty( this, "tracks", {
+      get: function() {
+        return currentMedia.tracks;
+      }
+    });
 
     //getTrack - Get a Track by its id
     this.getTrack = function ( name ) {
@@ -600,10 +732,11 @@ THE SOFTWARE.
 
       targets.push( target );
 
+      logger.debug( "Target added" );
       that.trigger( "targetadded", target );
 
       return target;
-    };
+    }; //addTarget
 
     //removeTarget - remove a target object
     this.removeTarget = function ( target ) {
@@ -613,36 +746,39 @@ THE SOFTWARE.
       var idx = targets.indexOf( target );
       if ( idx > -1 ) {
         targets.splice( idx, 1 );
-        delete targets[ target.getName() ]; 
+        delete targets[ target.name ]; 
         that.trigger( "targetremoved", target );
         return target;
       } //if
       return undefined;
-    };
+    }; //removeTarget
 
-    //getTargets - get a list of targets objects
-    this.getTargets = function ( serialize ) {
-      if ( serialize ) {
-        var sTargets = [];
-        for ( var i=0, l=targets.length; i<l; ++i ) {
-          sTargets.push( targets[i].exportJSON() );
-        } 
-        return sTargets;
-      }
-      else {
+    Object.defineProperty( this, "targets", {
+      get: function() {
         return targets;
       }
-    };
+    });
+
+    //serializeTargets - get a list of targets objects
+    this.serializeTargets = function () {
+      var sTargets = [];
+      for ( var i=0, l=targets.length; i<l; ++i ) {
+        sTargets.push( targets[i].json );
+      } 
+      return sTargets;
+    }; //serializeTargets
 
     //getTarget - get a target object by its id
-    this.getTarget = function ( name ) {
+    this.getTarget = function ( target ) {
       for ( var i=0; i<targets.length; ++i ) {
-        if ( targets[i].getName() === name ) {
-          return targetsByName[ name ];
+        if (  ( target.id !== undefined && target[ i ].id === target.id ) ||
+              ( target.name && targets[ i ].name === target.name ) ||
+              targets[i].name === target ) {
+          return targets[ target ];
         }
       } 
       return undefined;
-    };
+    }; //getTaget
 
     /****************************************************************
      * Project methods
@@ -653,9 +789,9 @@ THE SOFTWARE.
       if ( projectData.targets ) {
         for ( var i=0, l=projectData.targets.length; i<l; ++i ) {
 
-          var t, targets = that.getTargets(), targetData = projectData.targets[ i ];
+          var t, targets = that.targets, targetData = projectData.targets[ i ];
           for ( var k=0, j=targets.length; k<j; ++k ) {
-            if ( targets[ k ].getName() === targetData.name ) {
+            if ( targets[ k ].name === targetData.name ) {
               t = targets[ k ];
               break;
             }
@@ -663,46 +799,42 @@ THE SOFTWARE.
 
           if ( !t ) {
             t = new Target();
-            t.importJSON( projectData.targets[ i ] );
+            t.json = projectData.targets[ i ];
             that.addTarget( t );
           }
           else {
-            t.importJSON( projectData.targets[ i ] );
+            t.json = projectData.targets[ i ];
           }
         }
       }
       if ( projectData.media ) {
         for ( var i=0, l=projectData.media.length; i<l; ++i ) {
 
-          var m, medias = that.getAllMedia(), mediaData = projectData.media[ i ];
-          for( var k = 0, j = medias.length; k < j; k++ ) { 
-            if( medias[ k ].getTarget() === mediaData.target && medias[ k ].getUrl() === mediaData.url ) {
-              m = medias[ k ];  
-            }
-          }
-
+          var mediaData = projectData.media[ i ],
+              m = that.getMedia( { target: mediaData.target } );
+          
           if ( !m ) {
             m = new Media();
-            m.importJSON( projectData.media[ i ] );
+            m.json = projectData.media[ i ];
             that.addMedia( m );
           }
           else {
-            m.importJSON( projectData.media[ i ] );
+            m.json = projectData.media[ i ];
           }
           
-        }
-      }
-    };
+        } //for
+      } //if projectData.media
+    }; //importProject
 
     //exportProject - Export project data
     this.exportProject = function () {
       var exportJSONMedia = [];
       for ( var m=0, lm=medias.length; m<lm; ++m ) {
-        exportJSONMedia.push( medias[ m ].exportJSON() );
+        exportJSONMedia.push( medias[ m ].json );
       }
       var projectData = {
         project: projectDetails,
-        targets: that.getTargets( true ),
+        targets: that.serializeTargets(),
         media: exportJSONMedia
       };
       return projectData;
@@ -735,50 +867,67 @@ THE SOFTWARE.
     /****************************************************************
      * Media methods
      ****************************************************************/
+
     //currentTime - Gets and Sets the media's current time.
-    this.currentTime = function ( time ) {
-      checkMedia();
-      return currentMedia.currentTime( time );
-    };
+    Object.defineProperty( this, "currentTime", {
+      get: function() {
+        checkMedia();
+        return currentMedia.currentTime;
+      },
+      set: function( time ) {
+        checkMedia();
+        currentMedia.currentTime = time;
+      }
+    });
 
     //duration - Gets and Sets the media's duration.
-    this.duration = function ( time ) {
-      checkMedia();
-      return currentMedia.duration( time );
-    };
+    Object.defineProperty( this, "duration", {
+      get: function() {
+        checkMedia();
+        return currentMedia.duration;
+      },
+      set: function( time ) {
+        checkMedia();
+        currentMedia.duration = time;
+      }
+    });
 
-    //getAllMedia - returns all stored media objects
-    this.getAllMedia = function () {
-      return medias;
-    };
+    Object.defineProperty( this, "media", {
+      get: function() {
+        return medias;
+      }
+    });
+
+    Object.defineProperty( this, "currentMedia", {
+      get: function() {
+        return currentMedia;
+      },
+      set: function( media ) {
+        if ( typeof( media ) === "string" ) {
+          media = that.getMedia( media );
+        } //if
+
+        if ( media && medias.indexOf( media ) > -1 ) {
+          currentMedia = media;
+          logger.debug( "Media Changed" );
+          that.trigger( "mediachanged", media );
+          return currentMedia;
+        } //if
+      }
+    });
 
     //getMedia - get the media's information
     this.getMedia = function ( media ) {
       for ( var i=0,l=medias.length; i<l; ++i ) {
-        if ( medias[i].getName() === media ) {
-          return medias[i];
+        if (  ( media.id !== undefined && medias[ i ].id === media.id ) || 
+              ( media.name && medias[ i ].name === media.name ) ||
+              ( media.target && medias[ i ].target === media.target ) ||
+              medias[ i ].name === media ) {
+          return medias[ i ];
         }
       }
 
       return undefined;
-    };
-
-    //getCurrentMedia - returns the current media object
-    this.getCurrentMedia = function () {
-      return currentMedia;
-    };
-
-    //setMedia - set the media's information
-    this.setMedia = function ( media ) {
-      if ( typeof( media ) === "string" ) {
-        media = that.getMedia( media );
-      } //if
-
-      if ( media && medias.indexOf( media ) > -1 ) {
-        currentMedia = media;
-        that.trigger( "mediachanged", media );
-        return currentMedia;
-      } //if
     };
 
     //addMedia - add a media object
@@ -787,12 +936,12 @@ THE SOFTWARE.
         media = new Media( media );
       } //if
 
-      var mediaName = media.getName();
+      var mediaName = media.name;
       medias.push( media );
 
-      media.setButter( that );
+      media.butter = that;
       if ( !currentMedia ) {
-        that.setMedia( media );
+        that.currentMedia = media;
       } //if
       return media;
     };
@@ -806,11 +955,11 @@ THE SOFTWARE.
       var idx = medias.indexOf( media );
       if ( idx > -1 ) {
         medias.splice( idx, 1 );
-        var tracks = media.getTracks();
+        var tracks = media.tracks;
         for ( var i=0, l=tracks.length; i<l; ++i ) {
           that.trigger( "trackremoved", tracks[i] );
         } //for
-        media.setButter( undefined );
+        media.butter = undefined;
         if ( media === currentMedia ) {
           
           currentMedia = undefined;
@@ -824,15 +973,6 @@ THE SOFTWARE.
     this.extend = function () {
       Butter.extend( that, [].slice.call( arguments, 1 ) );
     };
-
-    /****************************************************************
-     * Init Modules for this instance
-     ****************************************************************/
-    /*
-    for ( var moduleName in modules ) {
-      modules[moduleName].setup && modules[moduleName].setup.call(this);
-    } //for
-    */
 
   }; //Butter
 
@@ -880,6 +1020,7 @@ THE SOFTWARE.
   Butter.Track = Track;
   Butter.TrackEvent = TrackEvent;
   Butter.Target = Target;
+  Butter.Logger = Logger;
 
   window.Butter = Butter;
 

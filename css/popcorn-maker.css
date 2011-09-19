@@ -109,28 +109,21 @@ html, body {
   margin: 5px;
 }
 
-#layout-select {
-  position: absolute;
-  right: 0px;
-  top: 100px;
-}
-
 #media-url {
   position: absolute;
   right: 0px;
   top: 125px;
 }
 
-.create-new-btn {
-  position: absolute;
-  left: -60px;
-  top: 120px;
+.tip-text-new-project {
+  font-size: 65%;
 }
 
 .load-code-btn {
-  position: absolute;
-  left: 0px;
-  top: 10px;
+  position: relative;
+  left: -20px;
+  top: 5px;
+  float: right;
 }
 
 #load-create-popup {

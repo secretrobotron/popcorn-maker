@@ -15,6 +15,8 @@ HTML_SRCS := \
 
 JS_LIBS := \
   $(BUTTER_DIR)/dist/butter.js \
+  $(BUTTER_DIR)/dist/lib/butter.preview-link.js \
+  $(BUTTER_DIR)/dist/lib/butter.comm.js \
   $(BUTTER_DIR)/dist/lib/jquery.js \
   $(BUTTER_DIR)/dist/lib/jquery-ui.min.js \
   $(BUTTER_DIR)/dist/lib/popcorn-complete.js \
