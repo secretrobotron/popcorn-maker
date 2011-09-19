@@ -417,7 +417,7 @@
         }
         else {
           bodyReady();
-          comm.send("loaded", "loaded");
+          comm.send( "loaded", "loaded" );
         } // else
       } // ensureLoaded
 
@@ -461,6 +461,8 @@
     this.removeMedia = function( media ) {
       delete medias[ media.id ];
     };
+
+    comm.send( "setup", "setup" );
 
   }; //Link
 
