@@ -184,6 +184,38 @@
       } 
     } //buildRegistry
 
+    function onKeyPress( event ) {
+      var inc = event.shiftKey ? 1 : 0.1;
+
+      if( event.keyCode === 39 ) {
+        if ( butter.targettedEvent ) {
+          butter.moveFrameRight( event );
+        } else {
+          butter.currentTime = butter.currentTime + inc;
+        }
+      }
+      else if( event.keyCode === 37 ) {
+        if ( butter.targettedEvent ) {
+          butter.moveFrameLeft( event );
+        } else {
+          butter.currentTime = butter.currentTime - inc;
+        }
+      }
+      else if ( event.charCode === 32 ) {
+        event.preventDefault();
+        currentPreview.playing ? currentPreview.pause() : currentPreview.play();
+      }
+    } //onKeyPress
+
+    function toggleKeyboardFunctions( state ) {
+      if ( state ) {
+        document.addEventListener( "keypress", onKeyPress, false);
+      }
+      else {
+        document.removeEventListener( "keypress", onKeyPress, false);
+      }
+    } //toggleKeyboardFunctions
+
     function toggleLoadingScreen ( state ) {
       if ( state ) {
         ui.overlays.loading.show();
@@ -522,29 +554,6 @@
 			}
 		});
 
-    document.addEventListener( "keypress", function( event ) {
-
-      var inc = event.shiftKey ? 1 : 0.1;
-
-      if( event.keyCode === 39 ) {
-        if ( butter.targettedEvent ) {
-
-          butter.moveFrameRight( event );
-        } else {
-
-          butter.currentTime = butter.currentTime + inc;
-        }
-      } else if( event.keyCode === 37 ) {
-        if ( butter.targettedEvent ) {
-
-          butter.moveFrameLeft( event );
-        } else {
-
-          butter.currentTime = butter.currentTime - inc;
-        }
-      }
-    }, false);
-
     var trackLayers = {};
     var editTrackTargets =  document.getElementById( "track-edit-target" );
     var trackJSONtextArea = document.getElementById( "track-edit-JSON" );
@@ -678,15 +687,6 @@
       layersDiv.removeChild( trackLayers[ "layer-" + event.data.id ] );
       layersDiv.insertBefore( trackLayers[ "layer-" + event.data.id ], layersDiv.children[ event.data.newPos ] );
     });
-
-    document.addEventListener( "keypress", function( event ) {
-
-      if ( event.charCode === 32 ) {
-
-        event.preventDefault();
-        currentPreview.playing ? currentPreview.pause() : currentPreview.play();
-      }
-    }, false );
 
     function centerPopup( popup ) {
       popup.css( "margin-left", ( window.innerWidth / 2 ) - ( popup[0].clientWidth / 2 ) );
@@ -943,6 +943,7 @@
         console.log( localProjects[ title ] );
 
         toggleLoadingScreen( true );
+        toggleKeyboardFunctions( false );
         popupManager.hidePopups();
 
         currentPreview = new butter.Preview({
@@ -952,6 +953,7 @@
             buildRegistry( butter.currentMedia.registry );
             $('.tiny-scroll').tinyscrollbar();
             toggleLoadingScreen( false );
+            toggleKeyboardFunctions( true );
           } //onload
         }); //Preview
       } //if
@@ -964,6 +966,7 @@
       butter.setProjectDetails( "title", ( $( "title-input-box" ).val() || "Untitled Project" ) );
       currentTemplate = templateManager.find( { template: document.getElementById( 'layout-select' ).value } );
       toggleLoadingScreen( true );
+      toggleKeyboardFunctions( false );
       currentPreview = new butter.Preview({
         template: currentTemplate.template,
         defaultMedia: document.getElementById('timeline-media-input-box').value,
@@ -971,6 +974,7 @@
           buildRegistry( butter.currentMedia.registry );
           $('.tiny-scroll').tinyscrollbar();
           toggleLoadingScreen( false );
+          toggleKeyboardFunctions( true );
         } //onload
       }); //Preview
       popupManager.hidePopups();
@@ -985,8 +989,10 @@
           popupManager.hidePopups();
           butter.clearProject(); 
           butter.clearPlugins();
+          alert( data.template );
           currentTemplate = templateManager.find( { root: data.template } ) || templateManager.templates[ 0 ];
           toggleLoadingScreen( true );
+          toggleKeyboardFunctions( false );
 
           currentPreview = new butter.Preview({
             template: currentTemplate.template,
@@ -996,6 +1002,7 @@
               buildRegistry( butter.currentMedia.registry );
               $('.tiny-scroll').tinyscrollbar();
               toggleLoadingScreen( false );
+              toggleKeyboardFunctions( true );
             } //onload
           }); //Preview
           return;
