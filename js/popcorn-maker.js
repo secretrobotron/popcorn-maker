@@ -201,6 +201,7 @@
 
     var popupManager = new PopupManager();
     popupManager.addPopup( "captcha", "#captcha-popup" );
+    popupManager.addPopup( "confirm-load", "#load-confirmation-dialog" );
     popupManager.addPopup( "welcome", "#welcome-popup" );
     popupManager.addPopup( "help", "#help-popup" );
     popupManager.addPopup( "save", "#save-popup" );
@@ -925,16 +926,12 @@
       localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
       localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
       if ( projectsDrpDwn[0].selectedIndex > 0 && localProjects[ title ] ) {
-        $('.close-div').fadeOut('fast');
-        $('.popupDiv').fadeIn('slow');
-        $('#load-confirmation-dialog').show();
-        centerPopup( $('#load-confirmation-dialog') );
-        $('.balck-overlay').show();
-        escapeKeyEnabled = true;
+        popupManager.hidePopups();
+        popupManager.showPopup( "confirm-load" );
       }
     };
     
-    $(".projects-dd").change(ddLoadFunc);
+    $(".projects-dd").change( ddLoadFunc );
 
     $(".confirm-load-btn").click(function() {
       var title = projectsDrpDwn.val();
@@ -950,7 +947,6 @@
 
         currentPreview = new butter.Preview({
           template: currentTemplate.template,
-          defaultMedia: document.getElementById( 'media-url' ).value,
           importData: localProjects[ title ],
           onload: function( preview ) {
             buildRegistry( butter.currentMedia.registry );
