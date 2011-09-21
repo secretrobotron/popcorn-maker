@@ -1,0 +1,6 @@
+---
+  name: template
+  author: Diogo Gomes <maushu@graphnode.com>
+  description: A node.js module for lightweight templating.
+  tags: template engine web
+  version: 0.0.1

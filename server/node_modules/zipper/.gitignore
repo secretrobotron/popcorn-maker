@@ -1,0 +1,8 @@
+.*.swp
+build
+.lock-wscript
+.DS_Store
+*.o
+*.a
+lib/_zipper.node
+deps/libzip-*/

@@ -129,17 +129,15 @@
           });
 
           butter.listen( "mediatimeupdate", function( e ) {
-            logger.debug( "Sending mediatimeupdate" );
             if ( e.data.currentTime !== currentTime ) {
-              var mediaExport = e.data.json;
-              server.send( "link", mediaExport, "mediatimeupdate" );
+              logger.debug( "Sending mediatimeupdate" );
+              server.send( "link", e.data.currentTime, "mediatimeupdate" );
             } //if
           }, "timeline" );
 
           butter.listen( "trackeventadded", function( e ) {
             logger.debug( "Sending trackeventadded" );
             var trackEventExport = e.data.json;
-            console.log( trackEventExport );
             server.send( "link", trackEventExport, "trackeventadded" );
           });
           butter.listen( "trackeventremoved", function( e ) {
@@ -170,10 +168,21 @@
           iframeWindow.document.head.appendChild( linkScript );
         } //if
         setup( iframeWindow );
+        
+        // Ugly hack to continue bootstrapping until Butter script is *actually* loaded.
+        // Impossible to really tell when <script> has loaded (security).
         logger.debug( "Bootstrapping" );
-        server.send( "link", {
-          defaultMedia: defaultMedia
-        }, "setup" );
+        var setupInterval;
+        function sendSetup() {
+           server.send( "link", {
+            defaultMedia: defaultMedia
+          }, "setup" );
+        } //sendSetup
+        setupInterval = setInterval( sendSetup, 500 );
+        server.listen( "link", "setup", function( message ) {
+          clearInterval( setupInterval );
+        });
+        
 
         this.fetchHTML = function( callback ) {
           logger.debug( "Fetching HTML" );
@@ -199,9 +208,9 @@
 
       function loadIframe( iframe, template ) {
         previewIframe = iframe;
-        iframe.src = template;
         logger.debug( "Starting IFRAME: " + iframe.src );
         function onLoad( e ) {
+          logger.debug( "IFRAME Loaded: " + iframe.src );
           link = new PreviewerLink({
             independent: that.independent
           });
@@ -218,10 +227,12 @@
         iframe.height = rect.height;
         loadIframe( iframe, options.template );
         target.appendChild( iframe );
+        iframe.src = options.template;
       }
       else if ( target.tagName === "IFRAME" ) {
         logger.debug( "Found IFRAME" );
         loadIframe( target, options.template );
+        target.src = options.template;
       } // else
 
       Object.defineProperty( this, "properties", {

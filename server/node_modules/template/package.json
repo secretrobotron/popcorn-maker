@@ -1,0 +1,11 @@
+{
+  "name" : "template",
+  "author" : "Diogo Gomes <maushu@graphnode.com>",
+  "version" : "0.0.1",
+  "description" : "A node.js module for lightweight templating.",
+  "keywords": ["template", "engine", "web"],
+  "directories": {
+    "lib": "lib"
+  },
+  "main" : "lib/template"
+}

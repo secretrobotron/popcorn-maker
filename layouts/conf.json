@@ -1,9 +1,9 @@
 [
-  "layouts/basic",
-  "layouts/custom",
-  "external/layouts/knell",
-  "external/layouts/city-slickers",
-  "external/layouts/cgg",
-  "external/layouts/blackpanthers",
-  "external/layouts/bookreport"
+  "basic",
+  "custom",
+  "../external/layouts/knell",
+  "../external/layouts/city-slickers",
+  "../external/layouts/cgg",
+  "../external/layouts/blackpanthers",
+  "../external/layouts/bookreport"
 ]

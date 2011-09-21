@@ -1,0 +1,15 @@
+<html>
+    <head>
+        <title><%= title %></title>
+        <script type="text/javascript">
+        //<![CDATA[
+            var message = '<%= ((!msg)? 'hello world!' : msg) %>';
+        //]]>
+        </script>
+    </head>
+    <body>
+        <%= body %>
+        <br/>
+        <% for (i=0;i<count;i++) { %><span><%=i%>,</span><% } %>
+    </body>
+</html>
