@@ -308,8 +308,6 @@
       $('.close-div').fadeOut('fast');
       $('.popupDiv').fadeIn('slow').css("height", "0%").css("width","0%");
       $('.popup-4').show();
-      
-      
     });
     
     butter.listen ( "trackeditclosed", function() {
@@ -641,8 +639,8 @@
         function clickEdit( e ) { 
           closeTrackEditor(); 
         }
-        function changeTarget( e) { 
-          butter.setTrackJSON( this.value );
+        function changeTarget( e ) { 
+          editor.json = this.value;
         }
 
         document.getElementById( "cancel-track-edit" ).addEventListener( "click", clickCancel, false );

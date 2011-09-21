@@ -129,10 +129,9 @@
           });
 
           butter.listen( "mediatimeupdate", function( e ) {
-            logger.debug( "Sending mediatimeupdate" );
             if ( e.data.currentTime !== currentTime ) {
-              var mediaExport = e.data.json;
-              server.send( "link", mediaExport, "mediatimeupdate" );
+              logger.debug( "Sending mediatimeupdate" );
+              server.send( "link", e.data.currentTime, "mediatimeupdate" );
             } //if
           }, "timeline" );
 

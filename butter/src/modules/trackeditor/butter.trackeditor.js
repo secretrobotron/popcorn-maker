@@ -46,7 +46,7 @@
         },
         set: function( val ) {
           that.clear();
-          var newArray = JSON.parse( "[" + data + "]" );
+          var newArray = JSON.parse( "[" + val + "]" );
           for ( var i = 0, l = newArray.length; i < l; i++ ) {
             track.addTrackEvent( new Butter.TrackEvent({ popcornOptions: newArray[ i ].options, type: newArray[ i ].type }) )
           }
@@ -59,8 +59,8 @@
         },
         set: function( val ) {
           track.target = val;
-          var trackEvents = track.getTrackEvents();
-          for( var i = 0, l = track.getTrackEvents().length; i < l; i ++ ) {
+          var trackEvents = track.trackEvents;
+          for( var i = 0, l = trackEvents.length; i < l; i ++ ) {
             trackEvents[ i ].popcornOptions.target = val;
             b.trigger( "trackeventupdated", trackEvents[ i ], "trackeditor" );
           }

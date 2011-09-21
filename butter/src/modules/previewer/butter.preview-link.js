@@ -525,7 +525,7 @@
     }; //mediaRemovedHandler
 
     var mediaTimeUpdateHandler = function( message ) {
-      link.currentMedia.popcorn.currentTime( message.currentTime );
+      link.currentMedia.popcorn.currentTime( message );
     }; //mediaTimeUpdateHandler
 
     var fetchHTMLHandler = function( message ) {
