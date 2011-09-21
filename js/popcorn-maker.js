@@ -1,8 +1,10 @@
 (function(){
 
-  var TEMPLATES_CONFIG = "layouts/conf.json";
+  var LAYOUTS_DIR = "./layouts",
+      TEMPLATES_CONFIG = LAYOUTS_DIR + "/conf.json",
+      PACKAGE_SERVER_ADDR = "http://localhost:8888";
 
-  var currentLayout, currentPreview;
+  var currentTemplate, currentPreview;
   
   var getJSON = function( src, successCallback, errorCallback ) {
     var xmlHttp = new XMLHttpRequest();
@@ -17,16 +19,17 @@
   }; //getJSON
 
   function Template ( root ) {
-    var manifest = getJSON( root + "/manifest.json" );
+    var manifest = getJSON( LAYOUTS_DIR + "/" + root + "/manifest.json" );
     var name = manifest.title || root;
     var thumbnail = new Image();
     if ( manifest.thumbnail ) {
-      thumbnail.src = root + "/" + manifest.thumbnail;
+      thumbnail.src = LAYOUTS_DIR + "/" + root + "/" + manifest.thumbnail;
     }
     var template = manifest.template || "index.html";
     Object.defineProperty( this, "title", { get: function() { return name; } });
     Object.defineProperty( this, "thumbnail", { get: function() { return thumbnail; } });
-    Object.defineProperty( this, "template", { get: function() { return root + "/" + template; } });
+    Object.defineProperty( this, "template", { get: function() { return LAYOUTS_DIR + "/" + root + "/" + template; } });
+    Object.defineProperty( this, "root", { get: function() { return root } } );
   } //Template
 
   function TemplateManager ( options ) {
@@ -35,6 +38,20 @@
     for ( var i=0; i<templateList.length; ++i ) {
       templates.push( new Template( templateList[ i ] ) );
     } //for
+
+    Object.defineProperty( this, "templates", { get: function() { return templates; } } );
+
+    this.find = function( options ) {
+      for ( var i=0; i<templates.length; ++i ) {
+        if (  templates[ i ].title === options ||
+              templates[ i ].title === options.title ||
+              templates[ i ].template === options.template ||
+              templates[ i ].root === options.root ) {
+          return templates[ i ];
+        } //if
+      } //for
+      return;
+    }; //find
 
     var select = document.getElementById( options.container ),
         thumbnailContainer = $( "#template-thumbnail" );
@@ -713,7 +730,7 @@
         container.innerHTML = "";
         var iframe = document.createElement( "iframe" );
         iframe.setAttribute( "scrolling", "no" );
-        iframe.src = "http://localhost:9001/captcha"
+        iframe.src = PACKAGE_SERVER_ADDR + "/captcha?butter_template=" + currentTemplate.root;
         container.appendChild( iframe );
       });
     });
@@ -725,7 +742,7 @@
         overwrite = false,  
         title;
 
-        projectToSave.layout = currentLayout;
+        projectToSave.template = currentTemplate.root;
         
         localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
         
@@ -927,14 +944,14 @@
       if ( localProjects && localProjects[ title ] ) {
         butter.clearProject();         
         butter.clearPlugins();
-        currentLayout = localProjects[ title ].layout;
+        currentTemplate = templateManager.find( { root: localProjects[ title ].template } );
         console.log( localProjects[ title ] );
 
         toggleLoadingScreen( true );
         popupManager.hidePopups();
 
         currentPreview = new butter.Preview({
-          template: currentLayout,
+          template: currentTemplate.template,
           defaultMedia: document.getElementById( 'media-url' ).value,
           importData: localProjects[ title ],
           onload: function( preview ) {
@@ -951,10 +968,10 @@
       butter.clearProject();
       butter.clearPlugins();
       butter.setProjectDetails( "title", ( $( "title-input-box" ).val() || "Untitled Project" ) );
-      currentLayout = document.getElementById( 'layout-select' ).value;
+      currentTemplate = templateManager.find( { template: document.getElementById( 'layout-select' ).value } );
       toggleLoadingScreen( true );
       currentPreview = new butter.Preview({
-        template: currentLayout,
+        template: currentTemplate.template,
         defaultMedia: document.getElementById('timeline-media-input-box').value,
         onload: function( preview ) {
           buildRegistry( butter.currentMedia.registry );
@@ -974,11 +991,11 @@
           popupManager.hidePopups();
           butter.clearProject(); 
           butter.clearPlugins();
-          currentLayout = data.layout ? data.layout : layouts[ 0 ];
+          currentTemplate = templateManager.find( { root: data.template } ) || templateManager.templates[ 0 ];
           toggleLoadingScreen( true );
 
           currentPreview = new butter.Preview({
-            template: currentLayout,
+            template: currentTemplate.template,
             defaultMedia: document.getElementById( 'timeline-media-input-box' ).value,
             importData: data,
             onload: function( preview ) {
@@ -997,7 +1014,7 @@
     
     $(".show-json-btn").click(function() {
       var exp = butter.exportProject();
-      exp.layout = currentLayout;
+      exp.template = currentTemplate.root;
       $('#export-data').val( JSON.stringify( exp ) );
     });
 
