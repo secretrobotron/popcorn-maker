@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+		
+		/*
+			styles borrowed from takepart.com
+		*/
+		
+		body {
+			background: none repeat scroll 0 0 #FFFFFF;
+			color: #333333;
+			font-family: Helvetica,Arial,sans-serif;
+			font-size: 12px;
+			margin: 0;
+			padding: 0;
+		}
+		
+		#page-wrapper {
+			margin: 0 auto;
+			width: 980px;
+		}
+		
+		.page {
+			padding: 35px 20px;
+		}
+
+		.clearfix {
+			display: block;
+		}
+		
+		/*
+			begin custom styles for Popcorn/Seriously
+		*/
+		
+		#scale-buttons {
+			position: fixed;
+			right: 35px;
+			background-color: #eee;
+			padding: 20px;
+			z-index: 1000;
+		}
+
+		#video-container {
+			position: relative;
+		}
+		
+		#video-container .vjs-big-play-button,
+		#video-container .vjs-controls,
+		#video-container .vjs-styles-check {
+			z-index: 202;
+		}
+		
+		#video-container .vjs-spinner {
+			z-index: 201;
+		}
+		
+		/* disable full screen button */
+		#video-container .vjs-fullscreen-control {
+			display: none;
+		}
+		#video-container .vjs-volume-control {
+			right: 10px;
+		}
+		#video-container .vjs-time-control {
+			right: 65px;
+		}
+		#video-container .vjs-progress-control {
+			right: 140px;
+		}
+
+		#video-container .popcorn-words {
+			z-index: 250;
+		}
+
+		#video-container video {
+		}
+		
+		#video-container {
+			font-size: 20px;
+			line-height: normal;
+			color: red;
+		}
+
+		#video-container > div {
+			line-height: normal;
+		}
+
+		</style>
+		<link rel="stylesheet" href="css/video-js.css" type="text/css" media="screen" title="Video JS">
+		<script type="text/javascript">
+			if (window.parent) {
+				document.write('<script src="../../lib/butter.js"><' + '/script>');
+			}
+	
+		</script>
+	</head>
+	<body>
+		<div id="scale-buttons">
+			<button id="smaller">-</button>
+			<button id="actual-size">1x</button>
+			<button id="bigger">+</button>
+		</div>
+		<div id="page-wrapper">
+			<div id="page" class="page clearfix">
+				<div id="video-container" class="video-js-box" data-butter="media">
+					<div id="text-container" data-butter="target"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="lib/video.js"></script>
+	<script type="text/javascript" src="external/popcorn.js"></script>
+	<script type="text/javascript" src="external/popcorn.words.js"></script>
+	<script type="text/javascript" src="external/popcorn.lightbox.js"></script>
+	<script type="text/javascript">
+	
+	window.addEventListener('DOMContentLoaded', function() {
+	}, false);
+	
+	</script>
+</html>
