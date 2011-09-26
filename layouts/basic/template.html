@@ -1,13 +1,30 @@
 <html>
-<head>
-<script src="../../external/layouts/popcorn-js/popcorn.js"></script>
-<script src="../../external/layouts/popcorn-js/popcorn.image.js"></script>
-<script src="../../external/layouts/popcorn-js/popcorn.video.js"></script>
-</head>
-<body>
-  <div id="div1">
-    <div style="display: inline;" id="main" data-butter="media"></div>
-    <div style="display: inline;" data-butter="target" id="div2" style="position:relative;float:left;width:400px;"></div>
-  </div>
-</body>
+  <head>
+    <script src="../../external/layouts/popcorn-js/popcorn.js"></script>
+    <script src="../../external/layouts/popcorn-js/popcorn.image.js"></script>
+    <script src="../../external/layouts/popcorn-js/popcorn.footnote.js"></script>
+    <script src="../../external/layouts/popcorn-js/popcorn.twitter.js"></script>
+    <script src="../../external/layouts/popcorn-js/popcorn.subtitle.js"></script>
+    <script src="../../external/layouts/popcorn-js/popcorn.attribution.js"></script>
+    <script src="../../external/layouts/popcorn-js/popcorn.flickr.js"></script>
+    <script src="../../external/layouts/popcorn-js/popcorn.webpage.js"></script>
+    <script src="../../external/layouts/popcorn-js/popcorn.wikipedia.js"></script>
+  </head>
+  <style>
+    video, div {
+      float: left;
+      display: inline;
+    }
+
+    .content-div {
+      width: 200px;
+      height: 200px;
+      border: 1px solid #000;
+    }
+  </style>
+  <body>
+    <div id="main" data-butter="media"></div>
+    <div class="content-div" data-butter="target" id="sample-div-1"></div>
+    <div class="content-div" data-butter="target" id="sample-div-2"></div>
+  </body>
 </html>
