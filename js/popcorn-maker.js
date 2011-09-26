@@ -315,13 +315,13 @@
     butter.timeline({ target: "timeline-div"});
     butter.trackeditor({ target: "popup-5"});
 
-    butter.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
-    butter.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
-    butter.addCustomEditor( "external/layouts/blackpanthers/editor.html", "googlestreets" );
-    butter.addCustomEditor( "external/layouts/knell/editors/editor-lumakey.html", "lumakey" );
-    butter.addCustomEditor( "external/layouts/knell/editors/editor-words.html", "words" );
-    butter.addCustomEditor( "external/layouts/knell/editors/editor-tweet-chapter.html", "tweetChapter" );
-    butter.addCustomEditor( "external/layouts/knell/editors/editor-lightbox.html", "lightbox" );
+    butter.addCustomEditor( "layouts/city-slickers/editor.html", "slickers" );
+    butter.addCustomEditor( "layouts/cgg/editor.html", "fkb" );
+    butter.addCustomEditor( "layouts/blackpanthers/editor.html", "googlestreets" );
+    butter.addCustomEditor( "layouts/knell/editors/editor-lumakey.html", "lumakey" );
+    butter.addCustomEditor( "layouts/knell/editors/editor-words.html", "words" );
+    butter.addCustomEditor( "layouts/knell/editors/editor-tweet-chapter.html", "tweetChapter" );
+    butter.addCustomEditor( "layouts/knell/editors/editor-lightbox.html", "lightbox" );
 
     butter.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
