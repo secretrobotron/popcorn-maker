@@ -5,10 +5,6 @@
 		<title></title>
 		<style type="text/css">
 		
-		/*
-			styles borrowed from takepart.com
-		*/
-		
 		body {
 			background: none repeat scroll 0 0 #FFFFFF;
 			color: #333333;
@@ -45,6 +41,8 @@
 
 		#video-container {
 			position: relative;
+			min-width: 640px;
+			min-height: 360px;
 		}
 		
 		#video-container .vjs-big-play-button,
@@ -76,12 +74,14 @@
 		}
 
 		#video-container video {
+			display: block;
+			min-width: 640px;
+			min-height: 360px;
 		}
 		
 		#video-container {
 			font-size: 20px;
 			line-height: normal;
-			color: red;
 		}
 
 		#video-container > div {
@@ -89,10 +89,34 @@
 		}
 
 		</style>
-		<link rel="stylesheet" href="css/video-js.css" type="text/css" media="screen" title="Video JS">
+		<script data-butter="project-data" type="application/json">
+		{"media":[
+			{
+				"url":"http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm",
+				"target":"video",
+				"tracks":[
+					{
+						"trackEvents":[
+							{
+								"type":"popup",
+								"popcornOptions":{
+									"start": 2,
+									"end": 8,
+									"text": "Popping up, dammit!",
+									"target":"text-container",
+									"bottom": "20%",
+									"left": "10%"
+								}
+							}
+						]
+					}
+				]
+			}
+		]}
+		</script>
 		<script type="text/javascript">
 			if (window.parent) {
-				document.write('<script src="../../lib/butter.js"><' + '/script>');
+				//document.write('<script src="../../lib/butter.js"><' + '/script>');
 			}
 	
 		</script>
@@ -105,16 +129,105 @@
 		</div>
 		<div id="page-wrapper">
 			<div id="page" class="page clearfix">
-				<div id="video-container" class="video-js-box" data-butter="media">
+				<div id="video-container" class="video-js-box">
+					<video id="video" preload class="video-js" data-butter="media" controls>
+						<source src="http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm" type='video/webm; codecs="vp8, vorbis"'/>
+					</video>
 					<div id="text-container" data-butter="target"></div>
 				</div>
 			</div>
 		</div>
 	</body>
-	<script type="text/javascript" src="lib/video.js"></script>
 	<script type="text/javascript" src="external/popcorn.js"></script>
+	<script type="text/javascript" src="js/popcorn.popup.js"></script>
 	<script type="text/javascript" src="external/popcorn.words.js"></script>
-	<script type="text/javascript" src="external/popcorn.lightbox.js"></script>
+	<script src="../../lib/butter.js"></script>
+	<script>
+	(function() {
+		var butterMapping = [];
+		var template = new Butter.Template({
+			loadFromData: function( importData ) {
+				var medias = importData.media;
+				if ( medias ) {
+					for ( var m=0; m<medias.length; ++m ) {
+						var media = medias[ m ],
+							//todo: load media here
+							popcorn = Popcorn( '#' + media.target, { frameAnimation: true } );
+						if ( media.tracks ) {
+							for ( var t=0; t<media.tracks.length; ++t ) {
+								var track = media.tracks[ t ];
+								if ( track.trackEvents ) {
+									for ( var e=0; e<track.trackEvents.length; ++e ) {
+										var trackEvent = track.trackEvents[ e ];
+										popcorn[ trackEvent.type ]( trackEvent.popcornOptions );
+									} //for trackEvents
+								} //if trackEvents
+							} //for tracks
+						} //if tracks
+					} //for medias
+				} //if medias
+			},
+			onfetchhtml: function( message ) {
+				return template.link.getHTML();
+			},
+			onmediaremoved: function( message ) {
+				template.link.removeMedia( template.link.getMedia( message.id ) );
+			},
+			onmediatimeupdate: function( message ) {
+				template.link.currentMedia.popcorn.currentTime( message.currentTime );
+			},
+			onmediachanged: function( message ) {
+				if ( template.link.currentMedia ) {
+					template.link.currentMedia.removeHandlers( template.link.comm );
+				}
+				var currentMedia = template.link.currentMedia = template.link.getMedia( message.id );
+				if ( currentMedia ) {
+					currentMedia.addHandlers( template.link.comm, {
+						'trackeventadded': function( message ) {
+							var media = template.link.currentMedia;
+							media.popcorn[ message.type ]( message.popcornOptions );
+							butterMapping[ message.id ] = media.popcorn.getLastTrackEventId();
+						},
+						'trackeventupdated': function( message ) {
+							var media = template.link.currentMedia;
+							if ( butterMapping[ message.id ] ) {
+								media.popcorn.removeTrackEvent( butterMapping[ message.id ] );
+							}
+							media.popcorn[ message.type ]( message.popcornOptions );
+							butterMapping[ message.id ] = media.popcorn.getLastTrackEventId();
+						},
+						'trackeventremoved': function( message ) {
+							var media = template.link.currentMedia;
+							if ( butterMapping[ message.id ] ) {
+								media.popcorn.removeTrackEvent( butterMapping[ message.id ] );
+							}
+						},
+						'play': currentMedia.play,
+						'pause': currentMedia.pause,
+						'mute': currentMedia.mute
+					});
+				}
+			},
+			onmediaadded: function( message ) {
+				var link = template.link;
+				if ( !link.getMedia( message.id ) ) {
+					var media = new Butter.TemplateMedia( message );
+					link.addMedia( media );
+					media.popcornString = media.generatePopcornString();
+					media.createPopcorn();
+					media.waitForPopcorn( function( popcorn ) {
+						media.setupPopcornHandlers( link.comm );
+						link.sendMedia( media );
+					});
+				}
+			},
+			onsetup: function( options ) {
+				template.link.sendImportData( options.importData );
+				template.link.scrape();
+			}
+		});
+	})();
+	</script>
 	<script type="text/javascript">
 	
 	window.addEventListener('DOMContentLoaded', function() {
