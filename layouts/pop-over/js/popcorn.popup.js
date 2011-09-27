@@ -286,7 +286,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 		//load up sound.
 		if (options.sound !== false) {
 			if (!options.sound) {
-				options.sound = 'sounds/mouthpop.wav'; //temporary default
+				options.sound = 'sounds/mouthpop.ogg'; //temporary default
 			} else if (options.sound instanceof HTMLMediaElement) {
 				audio = options.sound;
 				options.sound = audio.currentSrc;
