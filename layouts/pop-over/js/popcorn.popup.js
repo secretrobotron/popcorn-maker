@@ -330,6 +330,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 					video.currentTime - 1 < options.start) {
 
 					audio.volume = video.volume;
+					audio.muted = video.muted;
 					audio.play();
 					if (!audio.duration || isNaN(audio.duration) || audio.duration > MAX_AUDIO_TIME) {
 						setTimeout(function() {
