@@ -14,6 +14,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 		svg, clipPath, ellipse,
 		sounds = {},
 		events = [],
+		soundIndex = 0,
 		nop = {
 			start: function() {},
 			end: function() {}
@@ -42,15 +43,21 @@ todo: animate top, left and other styles (color, font size, etc.)
 				eligibleAudio,
 				audio;
 			
+			function resetAudio() {
+				var that = this;
+				this.currentTime = 0;
+				this.pause();
+			}
+			
 			if (!sounds[src]) {
 				audio = document.createElement('audio');
 				audio.src = src;
+				audio.id = 'popcorn-popup-sound-' + soundIndex;
+				soundIndex++;
 				audio.preload = true;
 				audio.style.display = 'none';
-				audio.addEventListener('ended', function() {
-					this.pause();
-					this.currentTime = 0;
-				}, false);
+				audio.addEventListener('ended', resetAudio, false);
+
 				document.body.appendChild(audio);
 				sounds[src] = [audio];
 				return audio;
@@ -82,10 +89,14 @@ todo: animate top, left and other styles (color, font size, etc.)
 				audio = eligibleAudio[0];
 			} else {
 				audio = sounds[src][0].cloneNode(true);
-				audio.addEventListener('ended', function() {
-					this.pause();
-					this.currentTime = 0;
-				}, false);
+				audio.id = 'popcorn-popup-sound-' + soundIndex;
+				soundIndex++;
+
+				// not sure whether cloning copies the events in all browsers,
+				// so remove it and add again just in case
+				audio.removeEventListener('ended', resetAudio, false);
+				audio.addEventListener('ended', resetAudio, false);
+
 				document.body.appendChild(audio);
 				sounds[src].push(audio);
 			}
@@ -315,12 +326,15 @@ todo: animate top, left and other styles (color, font size, etc.)
 			start: function( event, options ) {
 				options.container.style.display = '';
 				
-				if (audio && audio.duration) {
+				if (audio && audio.duration && !video.paused &&
+					video.currentTime - 1 < options.start) {
+
+					audio.volume = video.volume;
 					audio.play();
 					if (!audio.duration || isNaN(audio.duration) || audio.duration > MAX_AUDIO_TIME) {
 						setTimeout(function() {
-							audio.pause();
 							audio.currentTime = 0;
+							audio.pause();
 						}, MAX_AUDIO_TIME);
 					}
 				}
