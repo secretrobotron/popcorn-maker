@@ -2,6 +2,13 @@
 // http://www.youtube.com/watch?v=CwnnSSs0kFA
 /*
 
+Default sound by Herbert Boland
+Creative Commons Attribution
+http://www.freesound.org/people/HerbertBoland/sounds/33369/
+
+*/
+/*
+
 todo: animate top, left and other styles (color, font size, etc.)
 
 */
@@ -279,7 +286,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 		//load up sound.
 		if (options.sound !== false) {
 			if (!options.sound) {
-				options.sound = 'sounds/bottle_pop_3.wav'; //temporary default
+				options.sound = 'sounds/mouthpop.wav'; //temporary default
 			} else if (options.sound instanceof HTMLMediaElement) {
 				audio = options.sound;
 				options.sound = audio.currentSrc;
