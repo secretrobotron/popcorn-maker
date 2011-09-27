@@ -12,10 +12,13 @@ todo: animate top, left and other styles (color, font size, etc.)
 
 	var styleSheet,
 		svg, clipPath, ellipse,
+		sounds = {},
+		events = [],
 		nop = {
 			start: function() {},
 			end: function() {}
-		};
+		},
+		MAX_AUDIO_TIME = 2;
 
 	function createSVGElement(name) {
 		return document.createElementNS("http://www.w3.org/2000/svg",name);
@@ -31,7 +34,64 @@ todo: animate top, left and other styles (color, font size, etc.)
 			lastScale = 1,
 			lastOpacity = 1,
 			text, node, i,
-			duration, fadeTime = 0.5;
+			duration, fadeTime = 0.3,
+			img, audio;
+		
+		function selectAudio(src) {
+			var i, j, n, event, diff,
+				eligibleAudio,
+				audio;
+			
+			if (!sounds[src]) {
+				audio = document.createElement('audio');
+				audio.src = src;
+				audio.preload = true;
+				audio.style.display = 'none';
+				audio.addEventListener('ended', function() {
+					this.pause();
+					this.currentTime = 0;
+				}, false);
+				document.body.appendChild(audio);
+				sounds[src] = [audio];
+				return audio;
+			}
+			
+			audio = sounds[src][0];
+			if (audio.duration) {
+				diff = Math.min(audio.duration, MAX_AUDIO_TIME);
+			} else {
+				diff = MAX_AUDIO_TIME;
+			}
+			
+			//make sure there are no other events using this sound at the same time
+			eligibleAudio = sounds[src].slice(0);
+			for (i = 0; i < events.length; i++) {
+				event = events[i];
+				if (event.sound === options.sound &&
+					event.start <= options.start + diff &&
+					event.start + diff >= options.start) {
+
+					j = eligibleAudio.indexOf(event.audio);
+					if (j >= 0) {
+						eligibleAudio.splice(j, 1);
+					}
+				}
+			}
+			
+			if (eligibleAudio.length) {
+				audio = eligibleAudio[0];
+			} else {
+				audio = sounds[src][0].cloneNode(true);
+				audio.addEventListener('ended', function() {
+					this.pause();
+					this.currentTime = 0;
+				}, false);
+				document.body.appendChild(audio);
+				sounds[src].push(audio);
+			}
+			
+			return audio;
+		}
 		
 		if (!options) {
 			return nop;
@@ -61,9 +121,11 @@ todo: animate top, left and other styles (color, font size, etc.)
 			styleSheet = document.createElement('style');
 			styleSheet.setAttribute('type', 'text/css');
 			styleSheet.appendChild(document.createTextNode("@font-face { font-family: 'Varela Round'; font-style: normal; font-weight: normal; src: local('Varela Round'), local('VarelaRound-Regular'), url('http://themes.googleusercontent.com/static/fonts/varelaround/v1/APH4jr0uSos5wiut5cpjrqRDOzjiPcYnFooOUGCOsRk.woff') format('woff');}\n" +
-			'.popcorn-popup { background-color: black; border: 4px solid black; border-radius: 12px; color: black; padding: 0 5px; font-family: \'Varela Round\', sans-serif; }\n' +
+			'.popcorn-popup { background-color: black; border: 4px solid black; border-radius: 12px; color: black; padding: 0 5px; font-family: \'Varela Round\', sans-serif; font-size: 16px; }\n' +
 			'.popcorn-popup > div { background-color: white; border-radius: 8px; padding: 4px; position: relative; }\n' +
 			'.popcorn-popup .image { clip-path: url("#popcorn-popup-clip-path"); }\n' +
+			'.popcorn-popup .icon { position: absolute; z-index: 2; top: -50%;}\n' +
+			'.popcorn-popup .icon + div { padding-left: 12px; }\n' +
 			'#popcorn-popup-svg { display:none; }'
 			));
 			document.head.appendChild(styleSheet);
@@ -182,10 +244,43 @@ todo: animate top, left and other styles (color, font size, etc.)
 				document.body.appendChild(svg);
 			}
 		} else if (options.icon) {
+			img = document.createElement('img');
+			img.setAttribute('class', 'icon');
+			img.src = options.icon;
+			img.addEventListener('load', function() {
+				var width = img.width || img.naturalWidth,
+					height = img.height || img.naturalHeight;
+				
+				if (height > 60) {
+					width = 60 * width / height;
+					height = 60;
+					img.style.width = width + 'px';
+				}
+				
+				img.style.left = -(width - 16) + 'px';
+			}, false);
+			container.insertBefore(img, container.firstChild);
 		}
 		
 		target.appendChild(container);
 		options.container = container;
+		
+		//load up sound.
+		if (options.sound !== false) {
+			if (!options.sound) {
+				options.sound = 'sounds/bottle_pop_3.wav'; //temporary default
+			} else if (options.sound instanceof HTMLMediaElement) {
+				audio = options.sound;
+				options.sound = audio.currentSrc;
+			}
+			
+			if (!audio) {
+				audio = selectAudio(options.sound);
+				options.audio = audio;
+			}
+		}
+		
+		events.push(options);
 
 		//if event callbacks are strings, swap them out for functions
 		(function() {
@@ -219,6 +314,16 @@ todo: animate top, left and other styles (color, font size, etc.)
 		return {
 			start: function( event, options ) {
 				options.container.style.display = '';
+				
+				if (audio && audio.duration) {
+					audio.play();
+					if (!audio.duration || isNaN(audio.duration) || audio.duration > MAX_AUDIO_TIME) {
+						setTimeout(function() {
+							audio.pause();
+							audio.currentTime = 0;
+						}, MAX_AUDIO_TIME);
+					}
+				}
 
 				if (typeof options.onStart === 'function') {
 					try {
@@ -234,7 +339,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 					transform;
 
 				if (t < duration) {
-					scale = ( 1 - Math.pow( (t / duration) / 0.6 - 1, 2) ) / 0.5556;
+					scale = ( 1 - Math.pow( (t / duration) / 0.7 - 1, 2) ) / 0.8163;
 				} else if (options.exit === 'fade') {
 					t = time - (options.end - fadeTime);
 					
