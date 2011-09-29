@@ -307,7 +307,7 @@
 
     this.sendMedia = function( media, registry ) {
       comm.send( {
-        registry: registry || media.Popcorn.registry,
+        registry: registry || media.Popcorn.manifest,
         id: media.id,
         duration: media.duration,
       }, "build" );
