@@ -477,7 +477,6 @@
 
     var trackEventUpdatedHandler = function( message ) {
       var media = link.currentMedia;
-      console.log( message.id, butterMapping[ message.id ], message );
       if ( butterMapping[ message.id ] ) {
         media.popcorn.removeTrackEvent( butterMapping[ message.id ] );
       }
