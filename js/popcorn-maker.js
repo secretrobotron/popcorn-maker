@@ -177,11 +177,11 @@
     var butter = new Butter();
 	
     function buildRegistry( registry ) {
-      for( var i = 0, l = registry.length; i < l; i++ ) {
-        if( registry[ i ].type !== "text" ) {
-          butter.addPlugin( { type: registry[ i ].type } );
+      for( var manifest in registry ) {
+        if ( registry.hasOwnProperty( manifest ) ) {
+          butter.addPlugin( { type: manifest } );
         }
-      } 
+      } //for
     } //buildRegistry
 
     function onKeyPress( event ) {
@@ -844,7 +844,7 @@
       popupManager.hidePopups();
     });
 
-    $('.p-3').click(function(){
+    $('.save-project-btn').click(function(){
       currentPreview.fetchHTML( function( html ) {
         $('#export-data').val( html );
         $('.project-title-textbox').val( butter.getProjectDetails( "title" ) );
