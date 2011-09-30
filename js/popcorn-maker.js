@@ -868,7 +868,7 @@
       $(' .balck-overlay ').hide();
     });
 
-    $('.p-3').click(function(){
+    $('.save-project-btn').click(function(){
       currentPreview.fetchHTML( function( html ) {
         $('#export-data').val( html );
         $('.project-title-textbox').val( butter.getProjectDetails( "title" ) );
