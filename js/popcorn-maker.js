@@ -151,7 +151,7 @@
 
     $(window).keypress( function ( event ) {
       if ( event.keyCode === 27 && escapeKeyEnabled ) {
-        that.hidePopups();
+        popupManager.hidePopups();
       }
     });
 
@@ -241,6 +241,7 @@
     popupManager.addPopup( "project-title", "#project-title-popup" );
     popupManager.addPopup( "change-media", "#change-media-popup" );
     popupManager.addPopup( "edit-track", "#edit-track-popup" );
+    popupManager.addPopup( "delete-track", "#delete-track-popup" );
     popupManager.hidePopups();
 
     ui.panels.properties = $( "#properties-panel" );
@@ -313,7 +314,7 @@
     butter.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
     
     butter.timeline({ target: "timeline-div"});
-    butter.trackeditor({ target: "popup-5"});
+    butter.trackeditor({ target: "edit-target-popup"});
 
     butter.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
     butter.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
@@ -332,8 +333,8 @@
       .css("width", e.data.width + "px" );
       $('#butter-editor-iframe')
       .css("height", e.data.height + "px")
-      .css("width", e.data.width + "px" );
-      centerPopup( popup4 );
+      .css("width", e.data.width + "px" )
+      .css( "margin-left", ( window.innerWidth / 2 ) - ( $("#butter-editor-iframe").width() / 2 ) );
       popup4.css("visibility", "visible");
     });
     
@@ -580,15 +581,12 @@
       deleteButton.className = "delete";
       deleteButton.innerHTML = "<a href=\"#\">delete</a>";
       deleteButton.addEventListener( "click", function( click ) {
-        $('.close-div').fadeOut('fast');
-        $('.popupDiv').fadeIn('slow');
-        $('#popup-delete-track').show();
+        popupManager.hidePopups();
+        popupManager.showPopup( "delete-track" );
         $('#deleteTrackBtn').click(function(){
           butter.removeTrack( track );
-          $('#popup-delete-track').hide();
+          popupManager.hidePopups();
         });
-        centerPopup( $('#popup-delete-track') );
-        $('.balck-overlay').hide();
       }, false );
 
       editButton.addEventListener( "click", function( click ) {
@@ -607,14 +605,10 @@
         editTrackTargets.value = editor.target;
 
         //$('.close-div').fadeOut('fast');
-        $('.popupDiv').fadeIn( 200 ).css("height", "100%").css("width","100%");
-        $('#popup-5').show();
-        $(' .balck-overlay ').show();
-        centerPopup( $('#popup-5') );
+        popupManager.showPopup( "edit-target-popup" );
 
         var closeTrackEditor = function() {
-          $('.popupDiv').fadeOut( 200 ).css("height", "").css("width","");
-          $('#popup-5').fadeOut( 200 );
+          popupManager.hidePopups();
           //$(' .balck-overlay ').delay( 200 ).hide();
           document.getElementById( "cancel-track-edit" ).removeEventListener( "click", clickCancel, false );
           document.getElementById( "apply-track-edit" ).removeEventListener( "click", clickApply, false );
@@ -687,10 +681,6 @@
       layersDiv.removeChild( trackLayers[ "layer-" + event.data.id ] );
       layersDiv.insertBefore( trackLayers[ "layer-" + event.data.id ], layersDiv.children[ event.data.newPos ] );
     });
-
-    function centerPopup( popup ) {
-      popup.css( "margin-left", ( window.innerWidth / 2 ) - ( popup[0].clientWidth / 2 ) );
-    }
 
     function create_msDropDown() {
       try {
@@ -843,29 +833,15 @@
     });
 
     $('li.edit a.edit-timeline-media').click(function(){
+      popupManager.hidePopups();
       $('#url').val( butter.currentMedia.url );
-      $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
-      $('#popup-1').show();
-      centerPopup( $('#popup-1') );
-      $(' .balck-overlay ').hide();
-      escapeKeyEnabled = true;
+      popupManager.showPopup( "change-media" );
     });
     
     $('.change-url-btn').click(function(){
       $(".media-title-div").html( $('#url').val() );
       butter.currentMedia.url = ( $('#url').val() );
-      $('.close-div').fadeOut('fast');
-      $('.popups').hide();
-      escapeKeyEnabled = false;
-    });
-
-    $('.layer-btn .edit span').click(function(){
-      $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
-      $('#popup-2').show();
-      centerPopup( $('#popup-2') );
-      $(' .balck-overlay ').hide();
+      popupManager.hidePopups();
     });
 
     $('.p-3').click(function(){
