@@ -464,13 +464,8 @@ THE SOFTWARE.
     });
 
     this.getManifest = function( name ) {
-      for ( var i=0, l=registry.length; i<l; ++i ) {
-        if ( registry[ i ].type === name ) {
-          return registry[ i ].base.manifest;
-        } //if
-      } //for
-      return undefined;
-    };
+      return registry[ name ];
+    }; //getManifest
 
     if ( options.url ) {
       this.url = options.url;
