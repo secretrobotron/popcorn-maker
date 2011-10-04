@@ -75,8 +75,7 @@
 
 		#video-container video {
 			display: block;
-			min-width: 640px;
-			min-height: 360px;
+			width: 100%;
 		}
 		
 		#video-container {
@@ -90,6 +89,7 @@
 
 		</style>
 		<script data-butter="project-data" type="application/json">
+/*
 		{"media":[
 			{
 				"url":"http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm",
@@ -101,11 +101,69 @@
 								"type":"popup",
 								"popcornOptions":{
 									"start": 2,
-									"end": 8,
+									"end": 6,
 									"text": "Popping up, dammit!",
 									"target":"text-container",
 									"bottom": "20%",
-									"left": "10%"
+									"left": "10%",
+									"icon": "https://secure.gravatar.com/avatar/a3f3d31dfa06409b114a73542921b614?s=140&d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png"
+								}
+							},
+							{
+								"type":"popup",
+								"popcornOptions":{
+									"start": 2.5,
+									"end": 6,
+									"text": "Pop",
+									"target":"text-container",
+									"top": "20%",
+									"left": "5%"
+								}
+							},
+							{
+								"type":"popup",
+								"popcornOptions":{
+									"start": 4.5,
+									"end": 8,
+									"text": "Pop!",
+									"target":"text-container",
+									"top": "18%",
+									"left": "15%"
+								}
+							},
+							{
+								"type":"popup",
+								"popcornOptions":{
+									"start": 5.5,
+									"end": 8.5,
+									"text": "Pop!",
+									"target":"text-container",
+									"top": "50%",
+									"left": "10%",
+									"icon": "images/skull.png"
+								}
+							},
+							{
+								"type":"popup",
+								"popcornOptions":{
+									"start": 6.5,
+									"end": 9,
+									"text": "Pop!",
+									"target":"text-container",
+									"top": "22%",
+									"left": "60%"
+								}
+							},
+							{
+								"type":"popup",
+								"popcornOptions":{
+									"start": 7,
+									"end": 9.5,
+									"text": "Pop!",
+									"target":"text-container",
+									"top": "70%",
+									"left": "75%",
+									"icon": "images/skull.png"
 								}
 							}
 						]
@@ -113,6 +171,7 @@
 				]
 			}
 		]}
+*/
 		</script>
 		<script type="text/javascript">
 			if (window.parent) {
@@ -131,7 +190,7 @@
 			<div id="page" class="page clearfix">
 				<div id="video-container" class="video-js-box">
 					<video id="video" preload class="video-js" data-butter="media" controls>
-						<source src="http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm" type='video/webm; codecs="vp8, vorbis"'/>
+						<source src="http://www.rebelliouspixels.com/popupremix/buffyvsedward.webm" type='video/webm; codecs="vp8, vorbis"'/>
 					</video>
 					<div id="text-container" data-butter="target"></div>
 				</div>
@@ -234,4 +293,28 @@
 	}, false);
 	
 	</script>
+	<!--
+
+	Sound credits:
+	Popup #1 "MouthPop.wav"
+	Credit: Herbert Boland
+	URL: http://www.freesound.org/people/HerbertBoland/sounds/33369/
+	CC: By
+	
+	Record Scratch #1 - "scratch23.wav"
+	Credit: JaZzy JunGgle
+	URL: http://www.freesound.org/people/junggle/sounds/29942/
+	CC:  Sample + By
+	
+	Video Game Blip #1 - "bump.wav"
+	Credit: StaneStane
+	http://www.freesound.org/people/StaneStane/sounds/73562/
+	CC: By
+	
+	Video Game Death #1 - "tape_slow9.wav"
+	Credit: zerolagtime
+	URL: http://www.freesound.org/people/zerolagtime/sounds/49246/
+	CC: By
+
+	-->
 </html>
