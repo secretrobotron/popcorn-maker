@@ -322,6 +322,7 @@
     butter.addCustomEditor( "layouts/knell/editors/editor-words.html", "words" );
     butter.addCustomEditor( "layouts/knell/editors/editor-tweet-chapter.html", "tweetChapter" );
     butter.addCustomEditor( "layouts/knell/editors/editor-lightbox.html", "lightbox" );
+    butter.addCustomEditor( "layouts/pop-over/editors/editor-popup.html", "popup" );
 
     butter.setProjectDetails("title", "Untitled Project" );
     $(".p-timeline-title").html( "Untitled Project" );
