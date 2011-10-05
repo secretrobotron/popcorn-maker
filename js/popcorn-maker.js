@@ -115,7 +115,9 @@
   function PopupManager() {
 
     var popups = [],
-        escapeKeyEnabled;
+        escapeKeyEnabled,
+        numPopupsOpen = 0,
+        that = this;
 
     this.addPopup = function( name, id ) {
       ui.popups[ name ] = $( id );
@@ -130,6 +132,7 @@
       $('.close-div').fadeOut('fast');
       $('.balck-overlay').hide();
       escapeKeyEnabled = false;
+      numPopupsOpen = 0;
     }; //hidePopups
 
     this.showPopup = function( name ) {
@@ -139,6 +142,7 @@
       $('.balck-overlay').show();
       popup.css( "margin-left", ( window.innerWidth / 2 ) - ( popup[0].clientWidth / 2 ) );
       escapeKeyEnabled = true;
+      ++numPopupsOpen;
     }; //showPopup
 
     this.hidePopup = function( name ) {
@@ -147,10 +151,15 @@
       $(".popupDiv").fadeOut("fast");
       $('.balck-overlay').hide();
       escapeKeyEnabled = false;
+      --numPopupsOpen;
     }; //hidePopup
 
+    Object.defineProperty( this, "open", {
+      get: function() { return numPopupsOpen > 0; }
+    });
+
     $(window).keypress( function ( event ) {
-      if ( event.keyCode === 27 && escapeKeyEnabled ) {
+      if ( event.keyCode === 27 && numPopupsOpen > 0 ) {
         that.hidePopups();
       }
     });
@@ -202,8 +211,10 @@
         }
       }
       else if ( event.charCode === 32 ) {
-        event.preventDefault();
-        currentPreview.playing ? currentPreview.pause() : currentPreview.play();
+        if ( !popupManager.open ) {
+          event.preventDefault();
+          currentPreview.playing ? currentPreview.pause() : currentPreview.play();
+        }
       }
     } //onKeyPress
 
