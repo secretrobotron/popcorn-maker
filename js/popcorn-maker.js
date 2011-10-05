@@ -115,7 +115,9 @@
   function PopupManager() {
 
     var popups = [],
-        escapeKeyEnabled;
+        escapeKeyEnabled,
+        numPopupsOpen = 0,
+        that = this;
 
     this.addPopup = function( name, id ) {
       ui.popups[ name ] = $( id );
@@ -130,6 +132,7 @@
       $('.close-div').fadeOut('fast');
       $('.balck-overlay').hide();
       escapeKeyEnabled = false;
+      numPopupsOpen = 0;
     }; //hidePopups
 
     this.showPopup = function( name ) {
@@ -139,6 +142,7 @@
       $('.balck-overlay').show();
       popup.css( "margin-left", ( window.innerWidth / 2 ) - ( popup[0].clientWidth / 2 ) );
       escapeKeyEnabled = true;
+      ++numPopupsOpen;
     }; //showPopup
 
     this.hidePopup = function( name ) {
@@ -147,10 +151,15 @@
       $(".popupDiv").fadeOut("fast");
       $('.balck-overlay').hide();
       escapeKeyEnabled = false;
+      --numPopupsOpen;
     }; //hidePopup
 
+    Object.defineProperty( this, "open", {
+      get: function() { return numPopupsOpen > 0; }
+    });
+
     $(window).keypress( function ( event ) {
-      if ( event.keyCode === 27 && escapeKeyEnabled ) {
+      if ( event.keyCode === 27 && numPopupsOpen > 0 ) {
         that.hidePopups();
       }
     });
@@ -202,8 +211,10 @@
         }
       }
       else if ( event.charCode === 32 ) {
-        event.preventDefault();
-        currentPreview.playing ? currentPreview.pause() : currentPreview.play();
+        if ( !popupManager.open ) {
+          event.preventDefault();
+          currentPreview.playing ? currentPreview.pause() : currentPreview.play();
+        }
       }
     } //onKeyPress
 
@@ -241,6 +252,7 @@
     popupManager.addPopup( "project-title", "#project-title-popup" );
     popupManager.addPopup( "change-media", "#change-media-popup" );
     popupManager.addPopup( "edit-track", "#edit-track-popup" );
+    popupManager.addPopup( "delete-track", "#delete-track-popup" );
     popupManager.hidePopups();
 
     ui.panels.properties = $( "#properties-panel" );
@@ -313,7 +325,7 @@
     butter.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
     
     butter.timeline({ target: "timeline-div"});
-    butter.trackeditor({ target: "popup-5"});
+    butter.trackeditor({ target: "edit-target-popup"});
 
     butter.addCustomEditor( "layouts/city-slickers/editor.html", "slickers" );
     butter.addCustomEditor( "layouts/cgg/editor.html", "fkb" );
@@ -337,8 +349,8 @@
       .css("width", e.data.width + "px" );
       $('#butter-editor-iframe')
       .css("height", e.data.height + "px")
-      .css("width", e.data.width + "px" );
-      centerPopup( popup4 );
+      .css("width", e.data.width + "px" )
+      .css( "margin-left", ( window.innerWidth / 2 ) - ( $("#butter-editor-iframe").width() / 2 ) );
       popup4.css("visibility", "visible");
     });
     
@@ -585,15 +597,12 @@
       deleteButton.className = "delete";
       deleteButton.innerHTML = "<a href=\"#\">delete</a>";
       deleteButton.addEventListener( "click", function( click ) {
-        $('.close-div').fadeOut('fast');
-        $('.popupDiv').fadeIn('slow');
-        $('#popup-delete-track').show();
+        popupManager.hidePopups();
+        popupManager.showPopup( "delete-track" );
         $('#deleteTrackBtn').click(function(){
           butter.removeTrack( track );
-          $('#popup-delete-track').hide();
+          popupManager.hidePopups();
         });
-        centerPopup( $('#popup-delete-track') );
-        $('.balck-overlay').hide();
       }, false );
 
       editButton.addEventListener( "click", function( click ) {
@@ -612,14 +621,10 @@
         editTrackTargets.value = editor.target;
 
         //$('.close-div').fadeOut('fast');
-        $('.popupDiv').fadeIn( 200 ).css("height", "100%").css("width","100%");
-        $('#popup-5').show();
-        $(' .balck-overlay ').show();
-        centerPopup( $('#popup-5') );
+        popupManager.showPopup( "edit-target-popup" );
 
         var closeTrackEditor = function() {
-          $('.popupDiv').fadeOut( 200 ).css("height", "").css("width","");
-          $('#popup-5').fadeOut( 200 );
+          popupManager.hidePopups();
           //$(' .balck-overlay ').delay( 200 ).hide();
           document.getElementById( "cancel-track-edit" ).removeEventListener( "click", clickCancel, false );
           document.getElementById( "apply-track-edit" ).removeEventListener( "click", clickApply, false );
@@ -692,10 +697,6 @@
       layersDiv.removeChild( trackLayers[ "layer-" + event.data.id ] );
       layersDiv.insertBefore( trackLayers[ "layer-" + event.data.id ], layersDiv.children[ event.data.newPos ] );
     });
-
-    function centerPopup( popup ) {
-      popup.css( "margin-left", ( window.innerWidth / 2 ) - ( popup[0].clientWidth / 2 ) );
-    }
 
     function create_msDropDown() {
       try {
@@ -848,32 +849,18 @@
     });
 
     $('li.edit a.edit-timeline-media').click(function(){
+      popupManager.hidePopups();
       $('#url').val( butter.currentMedia.url );
-      $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
-      $('#popup-1').show();
-      centerPopup( $('#popup-1') );
-      $(' .balck-overlay ').hide();
-      escapeKeyEnabled = true;
+      popupManager.showPopup( "change-media" );
     });
     
     $('.change-url-btn').click(function(){
       $(".media-title-div").html( $('#url').val() );
       butter.currentMedia.url = ( $('#url').val() );
-      $('.close-div').fadeOut('fast');
-      $('.popups').hide();
-      escapeKeyEnabled = false;
+      popupManager.hidePopups();
     });
 
-    $('.layer-btn .edit span').click(function(){
-      $('.close-div').fadeOut('fast');
-      $('.popupDiv').fadeIn('slow');
-      $('#popup-2').show();
-      centerPopup( $('#popup-2') );
-      $(' .balck-overlay ').hide();
-    });
-
-    $('.p-3').click(function(){
+    $('.save-project-btn').click(function(){
       currentPreview.fetchHTML( function( html ) {
         $('#export-data').val( html );
         $('.project-title-textbox').val( butter.getProjectDetails( "title" ) );
