@@ -135,6 +135,11 @@
             } //if
           }, "timeline" );
 
+          butter.listen( "mediacontentchanged", function( e ) {
+            logger.debug( "Sending mediacontentchanged" );
+            server.send( "link", e.data.url, "mediacontentchanged" );
+          });
+
           butter.listen( "trackeventadded", function( e ) {
             logger.debug( "Sending trackeventadded" );
             var trackEventExport = e.data.json;

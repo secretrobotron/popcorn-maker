@@ -283,6 +283,7 @@ THE SOFTWARE.
         if ( url !== val ) {
           url = val;
           if ( butter ) {
+            butter.logger.debug( "Media url changed to " + url );
             butter.trigger( "mediacontentchanged", that );
           }
         }
@@ -297,6 +298,7 @@ THE SOFTWARE.
         if ( target !== val ) {
           target = val;
           if ( butter ) {
+            butter.logger.debug( "Media target changed to " + target );
             butter.trigger( "mediatargetchanged", that );
           }
         }
