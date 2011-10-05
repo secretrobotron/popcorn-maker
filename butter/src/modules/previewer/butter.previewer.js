@@ -6,7 +6,7 @@
     var logger = new Butter.Logger( { name: "Previewer Module", quiet: quietLogger } );
     logger.debug( "Starting" );
 
-    var popcornUrl = options.popcornUrl || "http://popcornjs.org/code/dist/popcorn-complete.js";
+    var popcornUrl = options.popcornUrl || "http://popcornjs.org/code/dist/popcorn-complete.js",
         butterUrl = options.butterUrl;
 
     var target = document.getElementById( options.target );

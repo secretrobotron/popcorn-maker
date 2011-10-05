@@ -28,7 +28,14 @@
   <script src="lib/trackLiner.js" type="text/javascript"></script>
   <script src="lib/butter.js" type="text/javascript"></script>
   <script src="js/popcorn-maker.js" type="text/javascript"></script>
-
+  <script src="js/button-manager.js" type="text/javascript"></script>
+  <script src="js/template-manager.js" type="text/javascript"></script>
+  <script src="js/popup-manager.js" type="text/javascript"></script>
+  <script src="js/menu.js" type="text/javascript"></script>
+  <script src="js/timeline.js" type="text/javascript"></script>
+  <script src="js/preview.js" type="text/javascript"></script>
+  <script src="js/editor.js" type="text/javascript"></script>
+  <script src="js/welcome.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -40,21 +47,22 @@
  
   <div class="header-right">
  
-   <div class="my-projects-drpdwn">
-   <select name="projects-dd" class="projects-dd" style="width:258px;" tabindex="1">
-   </select>
-	<ul class="actions"><li class="bubble_pointer"></li>
-     <li class="edit"><a class="edit-selected-project" title="Edit Project" href="#">edit</a></li>
-	</ul>
-   </div>
+    <div class="my-projects-drpdwn">
+      <select name="projects-dd" class="projects-dd" style="width:258px;" tabindex="1">
+      </select>
+      <ul class="actions">
+        <li class="bubble_pointer"></li>
+        <li class="edit"><a id="edit-selected-project" class="edit-selected-project" title="Edit Project" href="#">edit</a></li>
+      </ul>
+    </div>
                
-   <form action="">
-   <ul class="header-buttons">
-   <li class="add-btn"><input type="button" class="add-project-btn" name="add-project" value="" ></li>
-   <li class="save-btn"><input type="button" class="save-project-btn" name="save-project" value="" ></li>
-   <li class="help-btn"><a class="open-help" href="#">help</a></li>
-   </ul>
-   </form>
+    <form action="">
+      <ul class="header-buttons">
+        <li class="add-btn"><input id="add-project-btn" type="button" class="add-project-btn" name="add-project" value="" ></li>
+        <li class="save-btn"><input id="save-project-btn" type="button" class="save-project-btn" name="save-project" value="" ></li>
+        <li class="help-btn"><a class="open-help" href="#">help</a></li>
+      </ul>
+    </form>
    
  </div>
 
@@ -62,7 +70,7 @@
 <!-- ########## END HEADER ########## -->
 
 <!-- ########## START IFRAME SECTION ########## -->    
-<iframe id="main">
+<iframe id="main" src="">
 </iframe>
 <!-- ########## END IFRAME SECTION ########## -->
 
@@ -181,9 +189,10 @@
  <div class="popupDiv close-div">
  	<div class="balck-overlay balck-overlay-dims"></div>
  	<div class="popup-container">
+<!--
         <div id="captcha-popup">
         </div>
-
+-->
         <div id="change-media-popup" class="change-media-popup pop-up close-div draggable" style="display:none"> <!-- popup 1 -->
             <a class="popup-close-btn" href="#"><span></span></a>
         	<div class="popup-header">
@@ -248,7 +257,7 @@
             </div>
         </div><!-- end popup 3 -->
         
-        <div id="popup-4" class="popup-4 pop-up close-div draggable" style="visibility: hidden;"> <!-- popup 4 -->
+        <div id="editor-popup" class="editor-popup pop-up close-div draggable" style="visibility: hidden;"> <!-- popup 4 -->
         </div><!-- end popup 4 -->
         
         <div id="edit-target-popup" class="edit-target-popup pop-up close-div draggable" style="display:none"> <!-- popup 5 -->
@@ -285,7 +294,7 @@
                   <input type="text" name="project-title" id="project-title" value="">
               </p>
               <br />
-              <input type="submit" class="change-title-btn" value="change">
+              <input type="submit" id="change-title-btn" class="change-title-btn" value="change">
               <p class="desc">Use this dialog to Change the title of the selected Popcorn Maker Project.</p>
             </div>
         </div><!-- end popup project-title-popup -->
@@ -297,12 +306,12 @@
             </div>
             <div class="popup-content">
               <p class="desc">Loading the selected project will erase any unsaved changes to the current project. Ar you sure you wish to continue?</p>
-              <input type="submit" class="confirm-load-btn" value="Load Project">
+              <input type="submit" id="confirm-load-btn" class="confirm-load-btn" value="Load Project">
             </div>
         </div>
         
         <div id="add-project-popup" style="display:none;"><!-- welcome popup -->
-          <a class="help-close-btn" href="#"><span></span></a>
+          <a class="popup-close-btn" href="#"><span></span></a>
           <div class="popup-header">
             	<h3 class="welcome-header">Create / Import Project</h3>
           </div>
@@ -348,7 +357,7 @@
         
         <!-- ###### FIRST RUN POPUPS ######## -->
         <div id="welcome-popup"><!-- welcome popup -->
-          <a class="help-close-btn" href="#"><span></span></a>
+          <a class="popup-close-btn" href="#"><span></span></a>
 	        <div class="popup-header">
             	<h3 class="welcome-header">Welcome</h3>
           </div>
@@ -386,7 +395,7 @@
         </div><!-- End welcome popup -->
 
         <div id="help-popup"><!-- HELP popup -->
-          <a class="help-close-btn" href="#"><span></span></a>
+          <a class="popup-close-btn" href="#"><span></span></a>
             <div class="popup-header">
                 <h3>Help</h3>
             </div>
