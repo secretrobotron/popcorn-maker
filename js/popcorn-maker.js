@@ -23,10 +23,10 @@
         buttonManager = new ButtonManager();
 
     butter.comm();
-    butter.eventeditor( { target: "editor-popup", defaultEditor: "lib/popcornMakerEditor.html" } );
+    butter.eventeditor({ target: "editor-popup", defaultEditor: "lib/popcornMakerEditor.html" });
     butter.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
-    butter.timeline({ target: "timeline-div"});
-    butter.trackeditor({ target: "edit-target-popup"});
+    butter.timeline({ target: "timeline-div" });
+    butter.trackeditor({ target: "edit-target-popup" });
     butter.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
     butter.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
     butter.addCustomEditor( "external/layouts/blackpanthers/editor.html", "googlestreets" );
@@ -135,6 +135,8 @@
 
   window.addEventListener("DOMContentLoaded", function() {
    
+    var pm = new PopcornMaker();
+
     $(function() {
       $( ".draggable" ).draggable();
     });
@@ -164,10 +166,7 @@
       }
     });
 
-    var pm = new PopcornMaker();
-
   }, false);
-
 
 })();
 

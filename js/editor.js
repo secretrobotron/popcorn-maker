@@ -5,6 +5,7 @@
         popupManager = pm.popupManager;
 
     popupManager.addPopup( "editor", "#editor-popup" );
+    popupManager.addPopup( "edit-target", "#edit-target-popup" );
 
     butter.listen( "clientdimsupdated", function( e ) {
       popupManager.showPopup( "editor", {
@@ -13,12 +14,12 @@
       });
       $('#butter-editor-iframe')
         .css("height", e.data.height + "px")
-        .css("width", e.data.width + "px" )
-        .css( "margin-left", ( window.innerWidth / 2 ) - ( $("#butter-editor-iframe").width() / 2 ) );
+        .css("width", e.data.width + "px" );
+        //.css( "margin-left", ( window.innerWidth / 2 ) - ( $("#butter-editor-iframe").width() / 2 ) );
     });
     
     butter.listen ( "trackeditstarted", function() {
-      popupManager.hidePopup( "editor" );
+      popupManager.showPopup( "editor" );
     });
     
     butter.listen ( "trackeditclosed", function() {

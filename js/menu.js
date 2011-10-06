@@ -96,7 +96,7 @@
         });
       }
     }); //save-project-btn
-    buttonManager.add( "change-url", "change-url-btn", {
+    buttonManager.add( "change-url", $( ".change-url-btn" ), {
       click: function() {
         $(".media-title-div").html( $('#url').val() );
         butter.currentMedia.url = ( $('#url').val() );

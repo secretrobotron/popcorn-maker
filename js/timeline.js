@@ -1,7 +1,8 @@
 (function() {
   PopcornMaker.Timeline = function( pm ) {
 
-    var butter = pm.butter;
+    var butter = pm.butter,
+        popupManager = pm.popupManager;
 
     var propertiesPanel = $( "#properties-panel" ),
         hideTimelineDiv = $( ".hide-timeline" );
@@ -312,7 +313,7 @@
         editTrackTargets.value = editor.target;
 
         //$('.close-div').fadeOut('fast');
-        popupManager.showPopup( "edit-target-popup" );
+        popupManager.showPopup( "edit-target" );
 
         var closeTrackEditor = function() {
           popupManager.hidePopups();
