@@ -251,7 +251,7 @@
 		this.client.listen('edittrackevent', function (message) {
 			that.id = message.id;
 			that.client.send( {
-				width: width || Math.max(document.body.offsetWidth, 300),
+				width: width || Math.max(document.body.offsetWidth, 400),
 				height: height || Math.max(Math.min(document.body.offsetHeight, 600), 300)
 			}, 'clientdimsupdated' );
 
