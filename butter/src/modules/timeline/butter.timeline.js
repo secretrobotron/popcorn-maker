@@ -120,7 +120,7 @@
       container.style.webkitUserSelect = "none";
       container.style.oUserSelect = "none";
       container.style.userSelect = "none";
-      container.id = "funbagofcontainers";
+      container.id = "timeline-container";
       return container;
     };
 
@@ -136,7 +136,7 @@
       this.tracks = document.createElement( "div" );
       this.tracks.style.width = "100%";
       this.tracks.style.height = "100%";
-      this.tracks.id = "funbags";
+      this.tracks.id = "tracks-container";
 
       this.init = function() {
       
@@ -419,11 +419,14 @@
     var originalWidth = target.offsetWidth;
     var currentZoom = 1;
     this.zoom = function( detail ) {
-      if ( detail < 0 && currentZoom < 6 ) {
+      if ( originalWidth === 0 ) {
+        //in case target is invisible or something first
+        originalWidth = target.offsetWidth;
+      }
 
+      if ( detail < 0 && currentZoom < 6 ) {
         currentZoom++;
       } else if ( detail > 0 && currentZoom > 1 ) {
-
         currentZoom--;
       }
 

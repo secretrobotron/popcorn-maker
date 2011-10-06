@@ -19,7 +19,6 @@ MISC_LIBS := \
 JS_LIBS := \
   $(EXTERNAL_DIR)/jquery/jquery.js \
   $(EXTERNAL_DIR)/jquery-ui/jquery-ui.min.js \
-  $(EXTERNAL_DIR)/popcorn/popcorn-complete.js \
   $(EXTERNAL_DIR)/trackLiner/trackLiner.js \
   $(MODULES_DIR)/previewer/butter.preview-link.js \
   $(MODULES_DIR)/butter.comm.js
