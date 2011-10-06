@@ -145,7 +145,7 @@
 
       var popcornOptions = ""
       if ( options.options ) {
-        popcornOptions = ", " + JSON.stringify( popcornOptions );
+        popcornOptions = ", " + JSON.stringify( options.options );
       } //if
 
       var players = {
@@ -553,7 +553,6 @@
     }; //mediaTimeUpdateHandler
 
     var mediaContentChangedHandler = function( message ) {
-      console.log( link.currentMedia.popcorn.media );
       var media = link.currentMedia.popcorn.media,
           currentSrc = media.currentSrc,
           sources = media.getElementsByTagName( "source" );
