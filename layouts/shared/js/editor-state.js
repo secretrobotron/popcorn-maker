@@ -196,6 +196,12 @@
 				if (!isNaN(input) && input >= 0) {
 					return input;
 				}
+			},
+			percent: function (input) {
+				input = parseFloat(input);
+				if (!isNaN(input)) {
+					return input;
+				}
 			}
 		};
 		
@@ -203,6 +209,12 @@
 		this.saveValue = {
 			time: function (input) {
 				return toSeconds( input, frameRate );
+			},
+			percent: function (input) {
+				input = parseFloat(input);
+				if (!isNaN(input)) {
+					return input + '%';
+				}
 			}
 		};
 		
@@ -416,5 +428,24 @@
 		this.updateForm();
 	};
 	
+	EditorState.prototype.cancel = function () {
+		this.reset();
+		if (this.client) {
+			this.client.send( '', 'cancelclicked');
+		}
+	};
+
+	EditorState.prototype.del = function () {
+		if (this.client) {
+			this.client.send( '', 'deleteclicked');
+		}
+	};
+
+	EditorState.prototype.ok = function () {
+		if (this.client) {
+			this.client.send( this.trackEvent, 'okayclicked');
+		}
+	};
+
 	window.EditorState = EditorState;
 }());
