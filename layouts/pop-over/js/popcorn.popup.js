@@ -26,7 +26,52 @@ todo: animate top, left and other styles (color, font size, etc.)
 			start: function() {},
 			end: function() {}
 		},
-		MAX_AUDIO_TIME = 2;
+		MAX_AUDIO_TIME = 2,
+		fontLoaded = false,
+		fontLoadedQueue = [],
+		startedLoadingExternal = false,
+		externalLoadedQueue = [];
+	
+	function loadExternal(callback) {
+		function checkExternal() {
+			var fn;
+			if (window.WebFont) {
+				while (externalLoadedQueue.length) {
+					fn = externalLoadedQueue.shift();
+					fn();
+				}
+
+				return;
+			}
+			
+			setTimeout(checkExternal, 0);
+		}
+
+		var script;
+		
+		if (window.WebFont) {
+			if (callback && typeof callback === 'function') {
+				callback();
+				return;
+			}
+		}
+
+		if (!startedLoadingExternal) {
+			if (!window.WebFont) {
+				script = document.createElement('script');
+				script.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+				script.async = true;
+				document.head.appendChild(script);
+			}
+
+			startedLoadingExternal = true;
+			setTimeout(checkExternal, 0);
+		}
+		
+		if (callback && typeof callback === 'function') {
+			externalLoadedQueue.push(callback);
+		}
+	}
 
 	function createSVGElement(name) {
 		return document.createElementNS("http://www.w3.org/2000/svg",name);
@@ -43,7 +88,9 @@ todo: animate top, left and other styles (color, font size, etc.)
 			lastOpacity = 1,
 			text, node, i,
 			duration, fadeTime = 0.3,
-			img, audio;
+			img, audio,
+			callback,
+			loaded = false;
 		
 		function selectAudio(src) {
 			var i, j, n, event, diff,
@@ -139,7 +186,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 			styleSheet = document.createElement('style');
 			styleSheet.setAttribute('type', 'text/css');
 			styleSheet.appendChild(document.createTextNode("@font-face { font-family: 'Varela Round'; font-style: normal; font-weight: normal; src: local('Varela Round'), local('VarelaRound-Regular'), url('http://themes.googleusercontent.com/static/fonts/varelaround/v1/APH4jr0uSos5wiut5cpjrqRDOzjiPcYnFooOUGCOsRk.woff') format('woff');}\n" +
-			'.popcorn-popup { background-color: black; border: 4px solid black; border-radius: 12px; color: black; padding: 0 5px; font-family: \'Varela Round\', sans-serif; font-size: 16px; }\n' +
+			'.popcorn-popup { background-color: black; border-radius: 12px; color: black; padding: 4px 9px; font-family: \'Varela Round\', sans-serif; font-size: 16px; }\n' +
 			'.popcorn-popup > div { background-color: white; border-radius: 8px; padding: 4px; position: relative; }\n' +
 			'.popcorn-popup .image { clip-path: url("#popcorn-popup-clip-path"); }\n' +
 			'.popcorn-popup .icon { position: absolute; z-index: 2; top: -50%;}\n' +
@@ -200,7 +247,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 		}
 		
 
-		container.style.display = 'none';
+		container.style.visibility = 'hidden';
 		if (options.classes) {
 			if (options.classes.length && options.classes.join) {
 				//an array works
@@ -239,7 +286,9 @@ todo: animate top, left and other styles (color, font size, etc.)
 			if (i) {
 				textContainer.appendChild(document.createElement('br'));
 			}
-			textContainer.appendChild(document.createTextNode(text[i]));
+			node = document.createElement('span');
+			node.appendChild(document.createTextNode(text[i]));
+			textContainer.appendChild(node);
 		}
 		
 		if (options.image) {
@@ -276,6 +325,9 @@ todo: animate top, left and other styles (color, font size, etc.)
 				}
 				
 				img.style.left = -(width - 16) + 'px';
+				if (container.offsetHeight) {
+					img.style.top = (container.offsetHeight - height) / 2 - 4 + 'px';
+				}				
 			}, false);
 			container.insertBefore(img, container.firstChild);
 		}
@@ -299,6 +351,42 @@ todo: animate top, left and other styles (color, font size, etc.)
 		}
 		
 		events.push(options);
+		
+		callback = function() {
+			var fontLoader;
+			
+			var fontLoadedCallback = function() {
+				fontLoaded = true;
+				loaded = true;
+				if (container) {
+					container.style.visibility = '';
+					container.style.display = 'none';
+					if (typeof options.onLoad === 'function') {
+						options.onLoad(options);
+					}
+				}
+			};
+
+			if (fontLoaded) {
+				fontLoadedCallback();
+				return;
+			} else if (!fontLoadedQueue.length) {
+				WebFont.load({
+					google: {
+						families: ['Varela+Round::latin']
+					},
+					fontactive: function() {
+						var fn;
+						while (fontLoadedQueue.length) {
+							fn = fontLoadedQueue.shift();
+							fn();
+						}
+					}
+				});
+			}
+			fontLoadedQueue.push(fontLoadedCallback);
+		};
+		loadExternal(callback);
 
 		//if event callbacks are strings, swap them out for functions
 		(function() {
@@ -324,10 +412,6 @@ todo: animate top, left and other styles (color, font size, etc.)
 
 		duration = Math.min(0.25, options.end - options.start - 0.25);		
 		fadeTime = Math.min(fadeTime, options.end - options.start - 0.25 - fadeTime);
-
-		if (typeof options.onLoad === 'function') {
-			options.onLoad(options);
-		}
 
 		return {
 			start: function( event, options ) {
@@ -361,7 +445,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 					transform;
 
 				if (t < duration) {
-					scale = ( 1 - Math.pow( (t / duration) / 0.7 - 1, 2) ) / 0.8163;
+					scale = ( 1 - Math.pow( (t / duration) / 0.7 - 1, 2) ) / 0.8163;					
 				} else if (options.exit === 'fade') {
 					t = time - (options.end - fadeTime);
 					
@@ -403,6 +487,23 @@ todo: animate top, left and other styles (color, font size, etc.)
 				}
 			},
 			_teardown: function( options ) {
+				var i;
+				
+				//remove from font-loading callback queue
+				if (callback) {
+					i = externalLoadedQueue.indexOf(callback);
+					if (i >= 0) {
+						externalLoadedQueue.splice(i, 1);
+					}
+					callback = null;
+				}
+				
+				//remove our claim on the sound file
+				i = events.indexOf(options);
+				if (i >= 0) {
+					events.splice(i, 1);
+				}
+				
 				if (options.container.parentNode) {
 					options.container.parentNode.removeChild(options.container);
 					container = null;
