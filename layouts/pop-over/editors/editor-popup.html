@@ -30,6 +30,7 @@
 			-moz-background-size: 12px 12px;
 			background-size: 12px 12px;
 			background-position: 4px;
+			cursor: pointer;
 		}
 
 		table.form > tbody.form-header.collapse {
@@ -203,8 +204,6 @@
 				}
 			}, 30);
 			
-			//todo: save expanded fieldset state in localStorage
-			
 			document.getElementById('undo').addEventListener('click', function(event) {
 				editor.undo();
 			}, false);
@@ -220,6 +219,47 @@
 			document.getElementById('delete').addEventListener('click', function(event) {
 				editor.del();
 			}, false);
+
+			//todo: save expanded fieldset state in localStorage
+			function trim(str) {
+				var	str = str.replace(/^\s\s*/, ''),
+					ws = /\s/,
+					i = str.length;
+				while (ws.test(str.charAt(--i)));
+				return str.slice(0, i + 1);
+			}
+
+			var i, headers = document.getElementsByClassName('form-header'),
+				headerStates,
+				header, id;
+				
+			try {
+				headerStates = (localStorage && JSON.parse(localStorage.pmHeaderStates));
+			} catch(e) {
+			}
+			if (!headerStates) {
+				headerStates = {};
+			}
+
+			for (i = 0; i < headers.length; i++) {
+				header = headers[i];
+				id = header.id || trim(header.textContent);
+				header.addEventListener('click', (function(element, id) {
+					return function() {
+						element.classList.toggle('collapse');
+						if (id) {
+							headerStates[id] = element.classList.contains('collapse')
+							try {
+								localStorage.pmHeaderStates = JSON.stringify(headerStates);
+							} catch (e) {
+							}
+						}
+					};
+				}(header, id)), false);
+				if (id && headerStates[id]) {
+					header.classList.add('collapse');
+				}
+			}
 		}());
 		</script>
 		<!--
