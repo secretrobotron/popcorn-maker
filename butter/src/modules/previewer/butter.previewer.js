@@ -62,6 +62,11 @@
             server.send( "link", "mute", "mute" );
           }; //mute
 
+          server.listen( "link", "error", function( error ) {
+            //logger.error( error.message );
+            butter.trigger( "error", error );
+          });
+
           server.listen( "link", "loaded", function( message ) {
             var numMedia = butter.media.length, numReady = 0;
             logger.debug( 'Loaded; waiting for ' + numMedia + ' media' );

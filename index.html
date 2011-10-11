@@ -207,30 +207,43 @@
                     <p class="desc">Show us where your video file lives. Youtube and Vimeo embeds work too.<a href="#">Learn more about what kind videos work...</a></p>
             </div>
         </div><!-- end popup 1 -->
+
+        <div id="error-popup" class="error-popup pop-up close-div draggable">
+          <a class="popup-close-btn" href="#"><span></span></a>
+        	<div class="popup-header">
+            <h3>An Error Occurred</h3>
+          </div>
+          <div class="popup-content">
+            <p class="desc"></p>
+            <div class="popup-btns">
+              <input name="ok" type="submit" class="ok-btn" value="Ok">
+            </div>
+          </div>
+        </div>
         
         <div id="edit-track-popup" class="edit-track-popup pop-up close-div draggable"> <!-- popup 2 -->
-            <a class="popup-close-btn" href="#"><span></span></a>
+          <a class="popup-close-btn" href="#"><span></span></a>
         	<div class="popup-header">
-            	<h3>Track</h3>
-                <div class="tracks-drpdwn">
-                    <select name="projects-dd" class="projects-dd" style="width:258px;" tabindex="1">
-                      <option name="one" value="msDropDown" >msDropDown</option>
-                      <option name="two" value="PrototypeCombobox" >Prototype Combobox</option>
-                      <option selected="selected" value="jQuery Tabs" >jQuery Tabs</option>
-                      <option value="Common Accordion" >Common Accordion</option>
-                    </select>
-                </div>
+            <h3>Track</h3>
+            <div class="tracks-drpdwn">
+              <select name="projects-dd" class="projects-dd" style="width:258px;" tabindex="1">
+                <option name="one" value="msDropDown" >msDropDown</option>
+                <option name="two" value="PrototypeCombobox" >Prototype Combobox</option>
+                <option selected="selected" value="jQuery Tabs" >jQuery Tabs</option>
+                <option value="Common Accordion" >Common Accordion</option>
+              </select>
             </div>
-            <div class="popup-content">
-            	<div class="track-content">
-            	<p></p>
-				</div>
-                <div class="popup-btns">
-                  <input type="submit" class="ok-btn" value="Ok">
-                  <input type="submit" class="apply-btn" value="Apply">
-                  <input type="submit" class="preview-btn" value="Preview">
-                </div>
+          </div>
+          <div class="popup-content">
+            <div class="track-content">
+              <p></p>
             </div>
+            <div class="popup-btns">
+              <input type="submit" class="ok-btn" value="Ok">
+              <input type="submit" class="apply-btn" value="Apply">
+              <input type="submit" class="preview-btn" value="Preview">
+            </div>
+          </div>
         </div><!-- end popup 2 -->
         
         <div id="save-popup" class="save-popup pop-up close-div"> <!-- popup 3 -->

@@ -17,6 +17,7 @@
     popupManager.addPopup( "save", "#save-popup" );
     popupManager.addPopup( "add-project", "#add-project-popup" );
     popupManager.addPopup( "project-title", "#project-title-popup" );
+    popupManager.addPopup( "error", "#error-popup" );
 
     buttonManager.add( "open-help", $( '.open-help, .help' ), {
       click: function() {
@@ -252,6 +253,20 @@
         });
       }
     }); //show-html
+    
+    butter.listen( "error", function( error ) {
+      if( error.data.type === "popcorn-initialization" ) {
+        pm.toggleLoadingScreen( false );
+        popupManager.showPopup( "error", {
+          message: "<p style=\"font-weight: bold\">While loading the selected template, an error occured. Please make sure the template has access to the libraries it requires.</p><p style=\"font-size: 70%\">" + error.data.message + "</p>",
+          buttons: {
+            ok: function() {
+              popupManager.hidePopups();
+            }
+          }
+        });
+      }
+    });
     
     var projectsDrpDwn = $(".projects-dd"),
         localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
