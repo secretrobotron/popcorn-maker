@@ -31,7 +31,7 @@
     butter.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
     butter.addCustomEditor( "external/layouts/blackpanthers/editor.html", "googlestreets" );
     butter.addCustomEditor( "layouts/knell/editors/editor-lumakey.html", "lumakey" );
-    butter.addCustomEditor( "layouts/knell/editors/editor-words.html", "words" );
+    butter.addCustomEditor( "layouts/shared/editors/editor-words.html", "words" );
     butter.addCustomEditor( "layouts/knell/editors/editor-tweet-chapter.html", "tweetChapter" );
     butter.addCustomEditor( "layouts/knell/editors/editor-lightbox.html", "lightbox" );
     butter.addCustomEditor( "layouts/pop-over/editors/editor-popup.html", "popup" );
