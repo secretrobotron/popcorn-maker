@@ -90,6 +90,32 @@
 			background-color: #f33;
 		}
 		
+		#icon-bin {
+			max-height: 126px;
+			overflow-y: auto;
+		}
+
+		#icon-bin > img {
+			max-width: 40px;
+			max-height: 40px;
+			cursor: pointer;
+			padding: 1px;
+			vertical-align: middle;
+		}
+
+		#icon-bin > img.selected {
+			border: red solid 1px;
+			padding: 0;
+		}
+
+		#no-icon {
+			vertical-align: middle;
+			width: 40px;
+			display: inline-block;
+			text-align: center;
+			cursor: pointer;
+		}
+		
 		</style>
 	</head>
 	<body>
@@ -163,6 +189,21 @@
 					<td><input type="text" id="top"/></td>
 				</tr>
 			</tbody>
+			<tbody class="form-header">
+				<tr><th colspan="2">Graphics</th></tr>
+			</tbody>
+			<tbody>
+				<tr>
+					<th><label for="left">Icon:</label></th>
+					<td>
+						<div id="icon-bin"><span id="no-icon">None</span></div>
+						<div>
+							<input type="text" id="icon-url"/>
+							<button id="add-icon">Add by URL</button>
+						</div>
+					</td>
+				</tr>
+			</tbody>
 
 			<tbody id="target-section">
 				<tr>
@@ -180,7 +221,22 @@
 		<script type="text/javascript">
 		
 		(function() {
-			var editor = new EditorState({
+			var bin, icons = [], userIcons, i, editor;
+			
+			function indexOf(array, callback) {
+				var elements = array.filter(callback);
+				if (!elements.length) {
+					return -1;
+				}
+				
+				return array.indexOf(elements[0]);
+			}
+			
+			function selectIcon(icon) {				
+				editor.setField('icon', icon && icon.path);
+			}
+			
+			editor = new EditorState({
 				start: {
 					type: 'time'
 				},
@@ -201,9 +257,135 @@
 				target: {
 					type: 'target',
 					fieldset: 'target-section'
+				},
+				icon: {
+					callback: function(field, value) {
+						var i, previousSelected;
+
+						//remove highlight on any other icons
+						previousSelected = bin.getElementsByClassName('selected');
+						for (i = 0; i < previousSelected.length; i++) {
+							previousSelected[i].classList.remove('selected');
+						}
+						
+						i = indexOf(icons, function(icon) {
+							return icon.path === value;
+						});
+						
+						if (i >= 0) {
+							icons[i].img.classList.add('selected');
+						}
+					}
 				}
 			}, 30);
 			
+			//set up icon bin
+			var icon, j;
+			
+			bin = document.getElementById('icon-bin');
+			var iconPaths = [
+				'../images/audio.png', '../images/brokenheart.png', '../images/cone.png', '../images/earth.png', '../images/error.png', '../images/eye.png', '../images/heart.png', '../images/info.png', '../images/man.png', '../images/money.png', '../images/music.png', '../images/net.png', '../images/skull.png', '../images/star.png', '../images/thumbsdown.png', '../images/thumbsup.png', '../images/time.png', '../images/trophy.png', '../images/tv.png', '../images/user.png', '../images/virus.png', '../images/women.png'
+			];
+
+			try {
+				userIcons = JSON.parse(localStorage.popUpIcons);
+			} catch (e) {
+			}
+			
+			if (!userIcons) {
+				userIcons = [];
+			}
+
+			for (i = 0; i < userIcons.length; i++) {
+				j = iconPaths.indexOf(userIcons[i]);
+				if (j >= 0) {
+					iconPaths.splice(j, 1);
+				}
+				iconPaths.shift(userIcons[i]);
+			}
+			
+			for (i = 0; i < iconPaths.length; i++) {
+				iconPaths[i] = EditorState.util.resolveUrl(iconPaths[i]);
+				icon = {
+					img: document.createElement('img'),
+					path: iconPaths[i]
+				};
+				icon.img.src = iconPaths[i];
+				icon.img.addEventListener('click', (function(icon) {
+					return function() {
+						selectIcon(icon);
+					};
+				}(icon)), false);
+				icons.push(icon);
+				bin.appendChild(icon.img);
+			}
+
+			document.getElementById('no-icon').addEventListener('click', function() {
+				selectIcon(null);
+			}, false);
+
+			document.getElementById('add-icon').addEventListener('click', function(event) {
+				
+				var src, img, button = this, i, icon,
+					url = document.getElementById('icon-url');
+				src = EditorState.util.trim(url.value);
+				src = EditorState.util.resolveUrl(src);
+
+				url.classList.remove('invalid');
+
+				if (!src) {
+					return;
+				}
+
+				i = indexOf(icons, function(icon) {
+					return src === icon.path;
+				});
+
+				if (i >= 0) {
+					selectIcon(icons[i]);
+					return;
+				}
+				
+				button.disabled = true;
+				
+				img = document.createElement('img');
+				img.src = src;
+				img.onload = function(evt) {
+					var i;
+					url.classList.remove('invalid');
+					button.disabled = false;
+					
+					//double-check it's not in icons again, in case it got added while loading
+					i = indexOf(icons, function(icon) {
+						return src === icon.path;
+					});
+
+					if (i < 0) {
+						icon = {
+							img: img,
+							path: src
+						};
+						icons.shift(icon);
+						bin.insertBefore(this, bin.firstChild);
+						img.addEventListener('click', (function(icon) {
+							return function() {
+								selectIcon(icon);
+							};
+						}(icon)), false);
+
+					} else {
+						icon = icons[i];
+					}
+					selectIcon(icon);
+				};
+
+				img.onerror = function(evt) {
+					url.classList.add('invalid');
+					button.disabled = false;
+				};
+			}, false);
+
+			//main controls
 			document.getElementById('undo').addEventListener('click', function(event) {
 				editor.undo();
 			}, false);
@@ -220,16 +402,8 @@
 				editor.del();
 			}, false);
 
-			//todo: save expanded fieldset state in localStorage
-			function trim(str) {
-				var	str = str.replace(/^\s\s*/, ''),
-					ws = /\s/,
-					i = str.length;
-				while (ws.test(str.charAt(--i)));
-				return str.slice(0, i + 1);
-			}
-
-			var i, headers = document.getElementsByClassName('form-header'),
+			//save expanded fieldset state in localStorage
+			var headers = document.getElementsByClassName('form-header'),
 				headerStates,
 				header, id;
 				
@@ -243,7 +417,7 @@
 
 			for (i = 0; i < headers.length; i++) {
 				header = headers[i];
-				id = header.id || trim(header.textContent);
+				id = header.id || EditorState.util.trim(header.textContent);
 				header.addEventListener('click', (function(element, id) {
 					return function() {
 						element.classList.toggle('collapse');
