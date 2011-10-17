@@ -328,8 +328,8 @@ todo: animate top, left and other styles (color, font size, etc.)
 				if (container.offsetHeight) {
 					img.style.top = (container.offsetHeight - height) / 2 - 4 + 'px';
 				}				
+				container.insertBefore(img, container.firstChild);
 			}, false);
-			container.insertBefore(img, container.firstChild);
 		}
 		
 		target.appendChild(container);
