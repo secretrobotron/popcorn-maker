@@ -5,6 +5,7 @@
 		<title></title>
 		<script type="text/javascript" src="../../../lib/butter.js"></script>
 		<script type="text/javascript" src="../../shared/js/editor-state.js"></script>
+		<script type="text/javascript" src="../../shared/js/html5slider.js"></script>
 		<style type="text/css">
 		
 		body {
@@ -79,7 +80,7 @@
 		}
 		
 		input[type=range] {
-			width: 100px;
+			width: 80%;
 		}
 		
 		input[type=text].small {
@@ -131,6 +132,11 @@
 				<tr>
 					<th><label for="end">To:</label></th>
 					<td><input type="text" id="end"/></td>
+				</tr>
+				<tr>
+					<th><label for="end">Fade Out:</label></th>
+					<td><input type="range" min="0" max="5" step="0.1" id="exit"/>
+					<span id="fade-out">0 s</span></td>
 				</tr>
 			</tbody>
 
@@ -254,6 +260,13 @@
 				classes: 'text',
 				align: 'text',
 				style: 'text',
+				exit: {
+					type: 'nonNegativeNumber',
+					callback: function(field, value) {
+						document.getElementById('fade-out').innerHTML = Math.round(value * 100) / 100 + ' s';
+					},
+					defaultValue: 0.3
+				},
 				target: {
 					type: 'target',
 					fieldset: 'target-section'
