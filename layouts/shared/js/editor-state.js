@@ -1,7 +1,9 @@
 (function() {
 	"use strict";
 	
-	var Butter = window.Butter;
+	var Butter = window.Butter,
+		urlRegex = /^(([A-Za-z]+):\/\/)+(([a-zA-Z0-9\._\-]+\.[a-zA-Z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|localhost)(\:([0-9]+))*(\/[^#]*)?(\#.*)?$/;
+
 
 	function clone(obj) {
 		if (null == obj || "object" != typeof obj) return obj;
@@ -121,13 +123,16 @@
 						that.trackEvent[name] = saveVal;
 						that.save();
 						if (that.fields[name] && that.fields[name].callback) {
-							that.fields[name].callback(this.value);
+							that.fields[name].callback(that.fields[name], saveVal);
 						}
 					};
 				} else {
 					return function() {
 						var saveVal = that.saveValue[type] ? that.saveValue[type](this.value) : this.value;
 						that.trackEvent[name] = saveVal;
+						if (that.fields[name] && that.fields[name].callback) {
+							that.fields[name].callback(that.fields[name], saveVal);
+						}
 					};
 				}
 			}
@@ -153,9 +158,9 @@
 						if (saveVal !== that.lastStateSaved[name]) {
 							that.save();
 						}
-						if (that.fields[name] && that.fields[name].callback) {
-							that.fields[name].callback(this.value);
-						}
+					}
+					if (that.fields[name] && that.fields[name].callback) {
+						that.fields[name].callback(that.fields[name], saveVal);
 					}
 					this.classList.remove('invalid');
 				}
@@ -238,10 +243,12 @@
 				field.element = document.getElementById(field.id);
 			}
 			
-			field.element.addEventListener('change', makeElementValidator(name, field.type, true), true);
-
-			if (field.element.tagName === 'TEXTAREA' || field.element.tagName === 'INPUT') {
-				field.element.addEventListener('keyup', makeElementValidator(name, field.type), false);
+			if (field.element) {
+				field.element.addEventListener('change', makeElementValidator(name, field.type, true), true);
+	
+				if (field.element.tagName === 'TEXTAREA' || field.element.tagName === 'INPUT') {
+					field.element.addEventListener('keyup', makeElementValidator(name, field.type), false);
+				}
 			}
 			
 			if (field.type === 'target') {
@@ -261,6 +268,8 @@
 		this.client = new Butter.CommClient('defaultEditor');
 
 		this.client.listen('edittrackevent', function (message) {
+			var n, field, options;
+
 			that.id = message.id;
 			that.client.send( {
 				width: width || Math.max(document.body.offsetWidth, 400),
@@ -268,7 +277,19 @@
 			}, 'clientdimsupdated' );
 
 			that.targetsUpdated(message.targets);
-			that.trackEvent = message.trackEvent.popcornOptions;
+
+			options = message.trackEvent.popcornOptions;
+			for (n in that.fields) {
+				field = that.fields[n];
+				if (that.trackEvent[n] !== options[n]) {
+					that.trackEvent[n] = options[n];
+					if (typeof field.callback === 'function') {
+						field.callback(field, that.trackEvent[n]);
+					}
+					
+				}
+			}
+
 			if (that.targets.length === 1) {
 				that.trackEvent.target = that.targets[0][0];
 			}
@@ -278,9 +299,24 @@
 		});
 
 		this.client.listen('trackeventupdated', function (message) {
+			var n, field, options;
+
 			if (that.id === message.id) {
 				that.pushState();
 				that.trackEvent = message.options;
+
+				options = message.options;
+				for (n in that.fields) {
+					field = that.fields[n];
+					if (that.trackEvent[n] !== options[n]) {
+						that.trackEvent[n] = options[n];
+						if (typeof field.callback === 'function') {
+							field.callback(field, that.trackEvent[n]);
+						}
+						
+					}
+				}
+
 				that.updateForm();
 			}
 		});
@@ -377,27 +413,36 @@
 		this.pushState();
 
 		if (this.saveValue[field.type]) {
-			trackEvent[name] = this.saveValue[field.type](value);
+			this.trackEvent[fieldName] = this.saveValue[field.type](value);
+		} else {
+			this.trackEvent[fieldName] = value;
 		}
 
-		if (this.validators[field.type]) {
+		if (this.validators[field.type] && field.element) {
 			field.element.value = this.validators[field.type](value);
+		}
+		
+		if (typeof field.callback === 'function') {
+			field.callback(field, value);
 		}
 		
 		this.save();
 
-		return trackEvent[name];
+		return this.trackEvent[fieldName];
 	};
 
 	EditorState.prototype.updateForm = function () {
-		var n, field, value;
+		var n, field, value, oldValue;
 		for (n in this.fields) {
 			field = this.fields[n];
-			value = this.trackEvent[n];
-			if (this.validators[field.type]) {
-				value = this.validators[field.type](value);
+			if (field.element) {
+				value = this.trackEvent[n];
+				if (this.validators[field.type]) {
+					value = this.validators[field.type](value);
+				}
+				
+				field.element.value = (!value && value !== 0) ? '' : value;	
 			}
-			field.element.value = (!value && value !== 0) ? '' : value;
 		}
 	};
 	EditorState.prototype.pushState = function () {
@@ -444,6 +489,51 @@
 	EditorState.prototype.ok = function () {
 		if (this.client) {
 			this.client.send( this.trackEvent, 'okayclicked');
+		}
+	};
+
+	EditorState.util = {
+		trim: function (str) {
+			var	str = str.replace(/^\s\s*/, ''),
+				ws = /\s/,
+				i = str.length;
+			while (ws.test(str.charAt(--i)));
+			return str.slice(0, i + 1);
+		},
+		resolveUrl: function(url, base) {
+			if (urlRegex.test(url)) {
+				return url;
+			}
+			
+			if (base && (matches = urlRegex.exec(base))) {
+				base = {};
+				base.protocol = matches[2] + ':';
+				base.hostname = matches[3];
+				base.port = matches[7] || '';
+				base.host = base.hostname + (base.port ? ':' + base.port : '');
+				base.pathname = matches[8];
+			} else {
+				base = window.location;
+			}
+
+			var urlSplit = url.split('/');
+			
+			if (urlSplit.length && urlSplit[0] === '' ) {
+				return base.protocol + '//' + base.host + url;
+			}
+			
+			var dir = base.pathname.split('?');
+			dir = dir[0].split('/');
+			dir.pop();
+			var i;
+			for (i = 0; i < urlSplit.length; i++) {
+				if (urlSplit[i] === '..') {
+					dir.pop();
+				} else if (urlSplit[i] !== '.') { //do nothing if directory specified is '.'
+					dir.push(urlSplit[i]);
+				}
+			}
+			return base.protocol + '//' + base.host + dir.join('/');
 		}
 	};
 
