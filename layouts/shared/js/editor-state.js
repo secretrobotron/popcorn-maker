@@ -283,6 +283,9 @@
 				field = that.fields[n];
 				if (options[n] === undefined && field.defaultValue !== undefined) {
 					that.trackEvent[n] = field.defaultValue;
+					if (typeof field.callback === 'function') {
+						field.callback(field, that.trackEvent[n]);
+					}
 				} else if (that.trackEvent[n] !== options[n]) {
 					that.trackEvent[n] = options[n];
 					if (typeof field.callback === 'function') {
