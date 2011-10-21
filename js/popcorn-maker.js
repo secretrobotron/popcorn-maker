@@ -34,7 +34,7 @@
     butter.addCustomEditor( "layouts/shared/editors/editor-words.html", "words" );
     butter.addCustomEditor( "layouts/knell/editors/editor-tweet-chapter.html", "tweetChapter" );
     butter.addCustomEditor( "layouts/knell/editors/editor-lightbox.html", "lightbox" );
-    butter.addCustomEditor( "layouts/pop-over/editors/editor-popup.html", "popup" );
+    butter.addCustomEditor( "layouts/shared/editors/editor-pop.html", "pop" );
     butter.setProjectDetails("title", "Untitled Project" );
     butter.previewer({
       target: "main",

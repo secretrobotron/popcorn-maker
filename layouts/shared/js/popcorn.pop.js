@@ -1,4 +1,4 @@
-// PLUGIN: popup
+// PLUGIN: pop
 // http://www.youtube.com/watch?v=CwnnSSs0kFA
 /*
 
@@ -77,7 +77,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 		return document.createElementNS("http://www.w3.org/2000/svg",name);
 	}
 
-	Popcorn.plugin( 'popup' , function(options) {
+	Popcorn.plugin( 'pop' , function(options) {
 		var popcorn,
 			video,
 			target,
@@ -106,7 +106,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 			if (!sounds[src]) {
 				audio = document.createElement('audio');
 				audio.src = src;
-				audio.id = 'popcorn-popup-sound-' + soundIndex;
+				audio.id = 'popcorn-pop-sound-' + soundIndex;
 				soundIndex++;
 				audio.preload = true;
 				audio.style.display = 'none';
@@ -143,7 +143,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 				audio = eligibleAudio[0];
 			} else {
 				audio = sounds[src][0].cloneNode(true);
-				audio.id = 'popcorn-popup-sound-' + soundIndex;
+				audio.id = 'popcorn-pop-sound-' + soundIndex;
 				soundIndex++;
 
 				// not sure whether cloning copies the events in all browsers,
@@ -186,12 +186,12 @@ todo: animate top, left and other styles (color, font size, etc.)
 			styleSheet = document.createElement('style');
 			styleSheet.setAttribute('type', 'text/css');
 			styleSheet.appendChild(document.createTextNode("@font-face { font-family: 'Varela Round'; font-style: normal; font-weight: normal; src: local('Varela Round'), local('VarelaRound-Regular'), url('http://themes.googleusercontent.com/static/fonts/varelaround/v1/APH4jr0uSos5wiut5cpjrqRDOzjiPcYnFooOUGCOsRk.woff') format('woff');}\n" +
-			'.popcorn-popup { background-color: black; border-radius: 12px; color: black; padding: 4px 9px; font-family: \'Varela Round\', sans-serif; font-size: 16px; }\n' +
-			'.popcorn-popup > div { background-color: white; border-radius: 8px; padding: 4px; position: relative; }\n' +
-			'.popcorn-popup .image { clip-path: url("#popcorn-popup-clip-path"); }\n' +
-			'.popcorn-popup .icon { position: absolute; z-index: 2; top: -50%;}\n' +
-			'.popcorn-popup .icon + div { padding-left: 12px; }\n' +
-			'#popcorn-popup-svg { display:none; }'
+			'.popcorn-pop { background-color: black; border-radius: 12px; color: black; padding: 4px 9px; font-family: \'Varela Round\', sans-serif; font-size: 16px; }\n' +
+			'.popcorn-pop > div { background-color: white; border-radius: 8px; padding: 4px; position: relative; }\n' +
+			'.popcorn-pop .image { clip-path: url("#popcorn-pop-clip-path"); }\n' +
+			'.popcorn-pop .icon { position: absolute; z-index: 2; top: -50%;}\n' +
+			'.popcorn-pop .icon + div { padding-left: 12px; }\n' +
+			'#popcorn-pop-svg { display:none; }'
 			));
 			document.head.appendChild(styleSheet);
 			
@@ -251,12 +251,12 @@ todo: animate top, left and other styles (color, font size, etc.)
 		if (options.classes) {
 			if (options.classes.length && options.classes.join) {
 				//an array works
-				container.setAttribute('class', 'popcorn-popup ' + options.classes.join(' '));
+				container.setAttribute('class', 'popcorn-pop ' + options.classes.join(' '));
 			} else {
-				container.setAttribute('class', 'popcorn-popup ' + options.classes.split(/,\s\n\r/).join(' '));
+				container.setAttribute('class', 'popcorn-pop ' + options.classes.split(/,\s\n\r/).join(' '));
 			}
 		} else {
-			container.setAttribute('class', 'popcorn-popup');
+			container.setAttribute('class', 'popcorn-pop');
 		}
 		
 		innerDiv = document.createElement('div');
@@ -294,10 +294,10 @@ todo: animate top, left and other styles (color, font size, etc.)
 		if (options.image) {
 			if (!svg) {
 				svg = createSVGElement('svg');
-				svg.id = 'popcorn-popup-svg';
+				svg.id = 'popcorn-pop-svg';
 
 				clipPath = createSVGElement('clipPath');
-				clipPath.id = 'popcorn-popup-clip-path';
+				clipPath.id = 'popcorn-pop-clip-path';
 				clipPath.setAttribute('clipPathUnits', 'objectBoundingBox');
 				svg.appendChild(clipPath);
 
