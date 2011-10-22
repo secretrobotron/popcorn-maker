@@ -119,7 +119,7 @@
 			if (!validator) {
 				if (mod) {
 					return function() {
-						var saveVal = that.saveValue[type] ? that.saveValue[type](this.value) : this.value;
+						var saveVal = that.saveValue[type] ? that.saveValue[type](this.value, that.fields[name]) : this.value;
 						that.trackEvent[name] = saveVal;
 						that.save();
 						if (that.fields[name] && that.fields[name].callback) {
@@ -128,7 +128,7 @@
 					};
 				} else {
 					return function() {
-						var saveVal = that.saveValue[type] ? that.saveValue[type](this.value) : this.value;
+						var saveVal = that.saveValue[type] ? that.saveValue[type](this.value, that.fields[name]) : this.value;
 						that.trackEvent[name] = saveVal;
 						if (that.fields[name] && that.fields[name].callback) {
 							that.fields[name].callback(that.fields[name], saveVal);
@@ -151,7 +151,7 @@
 						this.classList.add('invalid');
 					}
 				} else {
-					saveVal = that.saveValue[type] ? that.saveValue[type](this.value) : this.value;
+					saveVal = that.saveValue[type] ? that.saveValue[type](this.value, that.fields[name]) : this.value;
 					that.trackEvent[name] = saveVal;
 					if (mod) {
 						this.value = val;
@@ -219,6 +219,18 @@
 				input = parseFloat(input);
 				if (!isNaN(input)) {
 					return input + '%';
+				}
+			},
+			number: function (input, field) {
+				input = parseFloat(input);
+				if (!isNaN(input)) {
+					if (field.min !== undefined && !isNaN(field.min)) {
+						input = Math.max(field.min, input);
+					}
+					if (field.max !== undefined && !isNaN(field.max)) {
+						input = Math.min(field.max, input);
+					}
+					return input;
 				}
 			}
 		};
@@ -347,33 +359,14 @@
 
 		targets = newTargets || [];
 
-		try {
-			parent = window.parent && window.parent.document;
-			parent = parent.getElementById('main').contentDocument;
-		} catch (e) {
-			parent = false;
-		}
-		
-		/*
-		if (parent) {
-			//only use valid targets that either contain or are canvases
-			for (i = 0; i < targets.length; i++) {					
-				target = parent.getElementById(targets[i][0]);
-
-				if (!target ||
-					!(target.tagName === 'CANVAS' || target.getElementsByTagName('canvas').length)) {
-					
-					targets.splice(i, 1);
-					i--;
-				}
-			}
-		}
-		*/
-		
 		if (!this.target) {
 			return;
 		}
 		field = this.target;
+
+		if (typeof field.filter === 'function') {
+			field.filter(field, targets);
+		}
 		
 		select = field.element;
 		fieldset = field.fieldset || select;
@@ -386,15 +379,8 @@
 			}
 		} else {
 			fieldset.style.display = '';
-			select = elements.target;
+			select = field.element;
 			//select.innerHTML = '<option>Default</option>';
-			
-			try {
-				parent = window.parent && window.parent.document;
-				parent = parent.getElementById('main').contentDocument;
-			} catch (e) {
-				parent = false;
-			}
 			
 			for (i = 0; i < targets.length; i++) {
 				
@@ -403,9 +389,13 @@
 				option.appendChild( document.createTextNode(targets[i][0]) );
 				select.appendChild(option);
 
-				if (targets[i][0] === trackEvent.target) {
-					option.selectedIndex = i;
+				if (!i || targets[i][0] === this.trackEvent.target) {
+					select.selectedIndex = i;
 				}
+			}
+
+			if (!this.trackEvent.target) {
+				this.trackEvent.target = targets[0][0];
 			}
 		}
 		
