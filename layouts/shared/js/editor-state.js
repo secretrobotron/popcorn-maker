@@ -146,7 +146,9 @@
 						if (val !== 0 && !val) {
 							val = '';
 						}
-						this.value = val;
+						if (this.value != val) {
+							this.value = val;
+						}
 					} else {
 						this.classList.add('invalid');
 					}
@@ -154,7 +156,9 @@
 					saveVal = that.saveValue[type] ? that.saveValue[type](this.value, that.fields[name]) : this.value;
 					that.trackEvent[name] = saveVal;
 					if (mod) {
-						this.value = val;
+						if (this.value != val) {
+							this.value = val;
+						}
 						if (saveVal !== that.lastStateSaved[name]) {
 							that.save();
 						}
