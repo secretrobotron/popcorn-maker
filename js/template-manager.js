@@ -49,7 +49,7 @@
       function createOption( value, innerHTML ) {
         var option = document.createElement( 'option' );
         option.value = value;
-        option.innerHTML = innerHTML;
+        option.appendChild( document.createTextNode( PopcornMaker.getSafeString( innerHTML ) ) );
         option.class = "ddprojects-option";
         return option;
       }
@@ -57,7 +57,7 @@
       for ( var i=0; i<templates.length; ++i ) {
         select.appendChild( createOption( templates[ i ].template, templates[ i ].title ) );
       }
-      select.appendChild( createOption( "-1", "Ohter..." ) );
+      select.appendChild( createOption( "-1", "Other..." ) );
       
       $( "#template-other" ).hide();
       var otherOption = select.options[ select.options.length - 1 ],

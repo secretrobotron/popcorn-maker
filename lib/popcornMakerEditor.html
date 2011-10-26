@@ -8,7 +8,58 @@
           butter,
           targets = {},
           elements = {},
+          checks = [],
+          postProcesses = [],
           eventId;
+
+        function doChecks() {
+          var passes = 0;
+          for ( var i=0; i<checks.length; ++i ) {
+            passes += !!checks[ i ]();
+          }
+          return passes === checks.length;
+        }
+
+        function doPostProcesses() {
+          for ( var i=0; i<postProcesses.length; ++i ) {
+            postProcesses[ i ]();
+          }
+        }
+
+        function makeUrlEscaper( elem ) {
+          return function() {
+            elem.value = escape( elem.value );
+          }
+        }
+
+        function makeUrlCheck( elem ) {
+          return function() {
+            return !elem.value.match( /^\s+javascript:.*/g );
+          };
+        }
+
+        function entityEncode( str ) {
+          return str .replace( /&/g, "&amp;" )
+                     .replace( /"/g, "&quot;" )
+                     .replace( /'/g, "&#39;" )
+                     .replace( /</g, "&lt;" )
+                     .replace( />/g, "&gt;" );
+        }
+
+        function entityDecode( str ) {
+          return str .replace( /&amp;/g, "&" )
+                     .replace( /&quot;/g, "\"" )
+                     .replace( /&#39;/g, "'" )
+                     .replace( /&lt;/g, "<" )
+                     .replace( /&gt;/g, ">" );
+        }
+
+        function makeEntityEncoder( elem ) {
+          return function() {
+            elem.value = entityEncode( elem.value );
+          };
+        }
+
         document.addEventListener('DOMContentLoaded', function (e) {
 
           butter = new Butter();
@@ -92,6 +143,16 @@
                 elem.value = opt['default'];
               }
 
+              var inputType = opt.type;
+
+              if ( inputType === "url" ) {
+                checks.push( makeUrlCheck( elem ) );
+                postProcesses.push( makeUrlEscaper( elem ) );
+              }
+              else if ( inputType === "text" ) {
+                postProcesses.push( makeEntityEncoder( elem ) );
+              } //if
+
             } else if ( elemType === "select" ) {
               attr = trackEvent.popcornOptions[ prop ];
               var populate = function( type ) {
@@ -166,7 +227,10 @@
         btn = createDefaultButton({
           value: "Okay",
           callback: function() {
-            client.send( compileOptions( elements ), "okayclicked" );
+            if ( doChecks() ) {
+              doPostProcesses();
+              client.send( compileOptions( elements ), "okayclicked" );
+            }
           }
         });
         popupButtons.appendChild( btn );
@@ -174,7 +238,10 @@
         btn = createDefaultButton({
           value: "Apply",
           callback: function() {
-            client.send( compileOptions( elements ), "applyclicked" ); 
+            if ( doChecks() ) {
+              doPostProcesses();
+              client.send( compileOptions( elements ), "applyclicked" );
+            }
           }
         });
         popupButtons.appendChild( btn );
@@ -217,8 +284,7 @@
         
         for ( elem in options ) {
           if ( options.hasOwnProperty( elem ) ) {
-            var field = elements[ elem ]
-            
+            var field = elements[ elem ];
             updateHTML[ field.nodeName.toLowerCase() ]( field );
           }
         }

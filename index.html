@@ -48,7 +48,7 @@
   <div class="header-right">
  
     <div class="my-projects-drpdwn">
-      <select name="projects-dd" class="projects-dd" style="width:258px;" tabindex="1">
+      <select id="projects-dropdown" name="projects-dd" class="projects-dd" style="width:258px;" tabindex="1">
       </select>
       <ul class="actions">
         <li class="bubble_pointer"></li>
@@ -262,9 +262,9 @@
                 <div class="download-html">
 
                   <!--<input type="submit" class="download-btn" name="download-btn" value="Download as HTML">-->
-                  <label class="save-prj-lbl" for="project-title-textbox">Title:</label><input type="text" class="project-title-textbox" name="project-title-textbox" >
+                  <label class="save-prj-lbl" for="project-title-textbox">Title:</label><input type="text" id="project-title-textbox" class="project-title-textbox" name="project-title-textbox" >
                   <input type="submit" class="save-project-data-btn" name="save-project-data-btn" value="Save Project">
-                  <input type="button" class="publish-project-btn" name="publish-project-btn" value="Publish Project">
+                  <!--<input type="button" class="publish-project-btn" name="publish-project-btn" value="Publish Project">-->
                   
                 </div>
             </div>
@@ -333,7 +333,7 @@
                 <div id="template-thumbnail"></div>
                 <div class="proj-title-div">
                   <span class="input-title-text">Project Title</span><br />
-              	  <input type="text" class="proj-title-input" id="title-input-box"></input>
+              	  <input type="text" class="proj-title-input" id="title-input-box" value="New Project"></input>
               	</div>
               	<br />
               	<div class="timeline-media-div">
