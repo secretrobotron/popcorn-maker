@@ -1,0 +1,225 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script type="text/javascript" src="../../../lib/butter.js"></script>
+		<script type="text/javascript" src="../../shared/js/editor-state.js"></script>
+		<script type="text/javascript" src="../../shared/js/html5slider.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../shared/editors/editor.css"/>
+	</head>
+	<body>
+		<table class="form">
+			<tbody class="form-header">
+				<tr><th colspan="2">Time</th></tr>
+			</tbody>
+			<tbody>
+				<tr>
+					<th><label for="start">From:</label></th>
+					<td><input type="text" id="start"/></td>
+				</tr>
+				<tr>
+					<th><label for="end">To:</label></th>
+					<td><input type="text" id="end"/></td>
+				</tr>
+			</tbody>
+
+			<tbody class="form-header">
+				<tr><th colspan="2">Key</th></tr>
+			</tbody>
+			<tbody>
+				<tr>
+					<th><label for="mode">Mode:</label></th>
+					<td>
+						<select id="mode">
+							<option value="chroma">Chroma</option>
+							<option value="luma">Luma</option>
+						</select>
+					</td>
+				</tr>
+				<tr id="screen-row">
+					<th><label for="screen">Screen Color:</label></th>
+					<td><input type="text" id="screen"/>
+				</tr>
+				<tr id="weight-row">
+					<th><label for="weight">Weight:</label></th>
+					<td><input type="range" min="0" max="1" step="0.01" id="weight"/>
+					<span id="weight-preview">0</span></td>
+				</tr>
+				<tr id="balance-row">
+					<th><label for="balance">Balance:</label></th>
+					<td><input type="range" min="0" max="1" step="0.01" id="balance"/>
+					<span id="balance-preview">0</span></td>
+				</tr>
+				<tr>
+					<th><label for="clipBlack">Clip Black:</label></th>
+					<td><input type="range" min="0" max="1" step="0.01" id="clipBlack"/>
+					<span id="clipBlack-preview">0</span></td>
+				</tr>
+				<tr>
+					<th><label for="clipWhite">Clip White:</label></th>
+					<td><input type="range" min="0" max="1" step="0.01" id="clipWhite"/>
+					<span id="clipWhite-preview">0</span></td>
+				</tr>
+			</tbody>
+			<tbody id="target-section">
+				<tr>
+					<th><label for="target">Target:</label></th>
+					<td><select id="target"></select></td>
+				</tr>
+			</tbody>
+		</table>
+		<div id="control-buttons">
+			<input type="button" value="Undo" id="undo"/>
+			<input type="button" value="Cancel" id="cancel"/>
+			<input type="button" value="Delete" id="delete"/>
+			<input type="button" value="OK" id="ok"/>
+		</div>
+		<script type="text/javascript">
+		
+		(function() {
+			var bin, icons = [], userIcons, i, editor;
+
+			function updateValuePreview(field, value) {
+				document.getElementById(field.id + '-preview').innerHTML = Math.round(value * 100) / 100;
+			}
+
+			editor = new EditorState({
+				start: {
+					type: 'time'
+				},
+				end: {
+					type: 'time'
+				},
+				mode: {
+					type: 'text',
+					defaultValue: 'luma',
+					callback: function(field, value) {
+						var display, i, row,
+							ids = ['screen','weight','balance'];
+						if (value === 'chroma') {
+							display = '';
+						} else {
+							display = 'none';
+						}
+
+						for (i = 0; i < ids.length; i++) {
+							document.getElementById(ids[i] + '-row').style.display = display;
+						}
+					}
+				},
+				clipBlack: {
+					type: 'number',
+					min: 0,
+					max: 1,
+					defaultValue: 0,
+					callback: updateValuePreview
+				},
+				clipWhite: {
+					type: 'number',
+					min: 0,
+					max: 1,
+					defaultValue: 1,
+					callback: updateValuePreview
+				},
+				balance: {
+					type: 'number',
+					min: 0,
+					max: 1,
+					defaultValue: 1,
+					callback: updateValuePreview
+				},
+				weight: {
+					type: 'number',
+					min: 0,
+					max: 1,
+					defaultValue: 1,
+					callback: updateValuePreview
+				},
+				screen: {
+					type: 'text',
+					defaultValue: 'rgb(66, 195, 31)'
+				},
+				target: {
+					type: 'target',
+					fieldset: 'target-section',
+					filter: function(field, targets) {
+						var parent, target;
+						try {
+							parent = window.parent && window.parent.document;
+							parent = parent.getElementById('main').contentDocument;
+						} catch (e) {
+							parent = false;
+						}
+						
+						if (parent) {
+							//only use valid targets that either contain or are canvases
+							for (i = 0; i < targets.length; i++) {					
+								target = parent.getElementById(targets[i][0]);
+
+								if (!target ||
+									!(target.tagName === 'CANVAS' || target.getElementsByTagName('canvas').length)) {
+									
+									targets.splice(i, 1);
+									i--;
+								}
+							}
+						}
+						
+					}
+				}
+			}, 30);
+			
+			//main controls
+			document.getElementById('undo').addEventListener('click', function(event) {
+				editor.undo();
+			}, false);
+
+			document.getElementById('cancel').addEventListener('click', function(event) {
+				editor.cancel();
+			}, false);
+
+			document.getElementById('ok').addEventListener('click', function(event) {
+				editor.ok();
+			}, false);
+
+			document.getElementById('delete').addEventListener('click', function(event) {
+				editor.del();
+			}, false);
+
+			//save expanded fieldset state in localStorage
+			var headers = document.getElementsByClassName('form-header'),
+				headerStates,
+				header, id;
+				
+			try {
+				headerStates = (localStorage && JSON.parse(localStorage.pmHeaderStates));
+			} catch(e) {
+			}
+			if (!headerStates) {
+				headerStates = {};
+			}
+
+			for (i = 0; i < headers.length; i++) {
+				header = headers[i];
+				id = header.id || EditorState.util.trim(header.textContent);
+				header.addEventListener('click', (function(element, id) {
+					return function() {
+						element.classList.toggle('collapse');
+						if (id) {
+							headerStates[id] = element.classList.contains('collapse')
+							try {
+								localStorage.pmHeaderStates = JSON.stringify(headerStates);
+							} catch (e) {
+							}
+						}
+					};
+				}(header, id)), false);
+				if (id && headerStates[id]) {
+					header.classList.add('collapse');
+				}
+			}
+		}());
+		</script>
+	</body>
+</html>

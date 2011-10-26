@@ -30,10 +30,10 @@
     butter.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
     butter.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
     butter.addCustomEditor( "external/layouts/blackpanthers/editor.html", "googlestreets" );
-    butter.addCustomEditor( "layouts/knell/editors/editor-lumakey.html", "lumakey" );
+    butter.addCustomEditor( "layouts/key/editors/editor-key.html", "key" );
     butter.addCustomEditor( "layouts/shared/editors/editor-words.html", "words" );
     butter.addCustomEditor( "layouts/knell/editors/editor-tweet-chapter.html", "tweetChapter" );
-    butter.addCustomEditor( "layouts/knell/editors/editor-lightbox.html", "lightbox" );
+    butter.addCustomEditor( "layouts/shared/editors/editor-lightbox.html", "lightbox" );
     butter.addCustomEditor( "layouts/shared/editors/editor-pop.html", "pop" );
     butter.setProjectDetails("title", "Untitled Project" );
     butter.previewer({

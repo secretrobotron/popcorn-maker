@@ -179,10 +179,10 @@
 	<script type="text/javascript" src="external/seriously.js"></script>
 	<script type="text/javascript" src="external/seriously.lumakey.js"></script>
 	<script type="text/javascript" src="external/popcorn.js"></script>
-	<script type="text/javascript" src="../../shared/js/popcorn.words.js"></script>
+	<script type="text/javascript" src="../shared/js/popcorn.words.js"></script>
 	<script type="text/javascript" src="js/popcorn.lumakey.js"></script>
-	<script type="text/javascript" src="../../shared/js/popcorn.tweet-chapter.js"></script>
-	<script type="text/javascript" src="../../shared/js/popcorn.lightbox.js"></script>
+	<script type="text/javascript" src="../shared/js/popcorn.tweet-chapter.js"></script>
+	<script type="text/javascript" src="../shared/js/popcorn.lightbox.js"></script>
 	<script type="text/javascript">
 	
 	window.addEventListener('DOMContentLoaded', function() {
@@ -235,6 +235,7 @@
 		
 		var video = document.getElementById('video');
 		function setUpVideoSize() {
+			console.log('setUpVideoSize', video.duration, video.videoWidth);
 			var time = parseFloat(window.location.hash.substr(1));
 			if (!isNaN(time) && time > 0 && time < video.duration) {
 				video.currentTime = time;

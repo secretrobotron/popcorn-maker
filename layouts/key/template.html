@@ -1,0 +1,386 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+		
+		/*
+			styles borrowed from takepart.com
+		*/
+		
+		body {
+			background: none repeat scroll 0 0 #FFFFFF;
+			color: #333333;
+			font-family: Helvetica,Arial,sans-serif;
+			font-size: 12px;
+			margin: 0;
+			padding: 0;
+		}
+		
+		#page-wrapper {
+			margin: 0 auto;
+			width: 980px;
+		}
+		
+		.page {
+			padding: 35px 20px;
+		}
+
+		.clearfix {
+			display: block;
+		}
+		
+		/*
+			begin custom styles for Popcorn/Seriously
+		*/
+		
+		#scale-buttons {
+			position: fixed;
+			right: 35px;
+			background-color: #eee;
+			padding: 20px;
+			z-index: 1000;
+		}
+
+		#video-container {
+			position: relative;
+		}
+		
+		#video-container #canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			pointer-events: none;
+			z-index: 100;
+			width: 100%;
+		}
+		
+		#video-container .vjs-big-play-button,
+		#video-container .vjs-controls,
+		#video-container .vjs-styles-check {
+			z-index: 202;
+		}
+		
+		#video-container .vjs-spinner {
+			z-index: 201;
+		}
+		
+		/* disable full screen button */
+		#video-container .vjs-fullscreen-control {
+			display: none;
+		}
+		#video-container .vjs-volume-control {
+			right: 10px;
+		}
+		#video-container .vjs-time-control {
+			right: 65px;
+		}
+		#video-container .vjs-progress-control {
+			right: 140px;
+		}
+
+		#video-container video {
+			display: none;
+		}
+		
+		#share-title {
+			color: #666666;
+			font-size: 16px;
+			font-weight: bold;
+			margin: 8px;
+		}
+		
+		.popcorn-tweet-chapter > p {
+			border: 4px solid #CACACA;
+			border-radius: 8px 8px 8px 8px;
+			font-size: 16px;
+			margin: 2px 68px 2px 0;
+			padding: 17px;
+		}
+
+		.popcorn-tweet-chapter > p > a {
+			text-decoration: none;
+			color: #222;
+		}
+		
+		.popcorn-tweet-chapter > .twitter-share-button {
+			float: right;
+		}
+
+		/*
+			Fonts
+		*/
+		@import url(http://fonts.googleapis.com/css?family=Rokkitt|Oswald);
+		
+		#video-container {
+			font-family: 'Rokkitt', serif;
+			font-size: 40px;
+			line-height: normal;
+			color: red;
+		}
+
+		#video-container > div {
+			line-height: normal;
+		}
+
+		#video-container .title {
+			font-family: 'Oswald', sans-serif;
+			font-size: 46px;
+			padding: 2px 6px;
+			background-color: white;
+			color: black;
+		}
+
+		#front > div {
+			z-index: 200;
+		}
+
+		</style>
+		<link rel="stylesheet" href="css/video-js.css" type="text/css" media="screen" title="Video JS">
+		<script data-butter="project-data" type="application/json">
+/*		{"media":[
+			{
+				"url":"",
+				"target":"video",
+				"tracks":[
+					{
+						"trackEvents":[
+							{
+								"type":"key",
+								"popcornOptions":{
+									"start": 0,
+									"end": 10,
+									"target":"video-container",
+									"clipBlack": 0.7963,
+									"clipWhite": 0.8545,
+									"mode": "luma"
+								}
+							},
+							{
+								"type":"words",
+								"popcornOptions":{
+									"start": 0,
+									"end": 6,
+									"text": "Here is some words",
+									"target":"back",
+									"top": "20%",
+									"left": "25%"
+								}
+							}
+						]
+					}
+				]
+			}
+		]}
+*/		</script>
+	</head>
+	<body>
+		<div id="scale-buttons">
+			<button id="smaller">-</button>
+			<button id="actual-size">1x</button>
+			<button id="bigger">+</button>
+		</div>
+		<div id="page-wrapper">
+			<div id="page" class="page clearfix">
+				<div id="video-container" class="video-js-box" data-butter="target">
+					<div id="back" data-butter="target"></div>
+					<div id="front" data-butter="target"></div>
+					<canvas id="canvas"></canvas>
+					<video id="video" preload class="video-js" data-butter="media">
+						<source src="video/knell.webm" type='video/webm; codecs="vp8, vorbis"'/>
+						<source src="video/knell.mp4" type='video/mp4'/>
+					</video>
+				</div>
+				<p id="share-title">Share this link with your followers</p>
+				<div id="tweet" data-butter="target"></div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="external/seriously.js"></script>
+	<script type="text/javascript" src="external/seriously.lumakey.js"></script>
+	<script type="text/javascript" src="external/seriously.chroma.js"></script>
+	<script type="text/javascript" src="external/video.js"></script>
+	<script type="text/javascript" src="external/popcorn.js"></script>
+	<script type="text/javascript" src="../shared/js/popcorn.words.js"></script>
+	<script type="text/javascript" src="../shared/js/popcorn.lightbox.js"></script>
+	<script type="text/javascript" src="js/popcorn.key.js"></script>
+	<script src="../../lib/butter.js"></script>
+	<script>
+	(function() {
+		//custom stuff for setting up Seriously
+		var video, seriouslyEvents = 0, defaultSeriously, canvas;
+		function setUpVideoSize(id) {
+			var time = parseFloat(window.location.hash.substr(1));
+			if (!isNaN(time) && time > 0 && time < video.duration) {
+				video.currentTime = time;
+			}
+		
+			var videoJS = VideoJS.setup(video.id);
+			videoJS.width(940);
+			videoJS.height(940 * video.videoHeight / video.videoWidth);
+
+			var c, webgl = false;
+
+			if (window.WebGLRenderingContext) {
+				c = document.createElement('canvas');
+				try {
+					webgl = !!c.getContext('experimental-webgl');
+				} catch (e) {
+				}
+			}
+
+			if (webgl) {
+				video.style.visibility = 'hidden';
+				canvas = document.getElementById('canvas');
+				canvas.height = video.videoHeight;
+				canvas.width = video.videoWidth;
+				canvas.style.display = 'block';
+				defaultSeriously = Seriously();
+				defaultSeriously.target('canvas').source = video;
+				if (!seriouslyEvents) {
+					defaultSeriously.go();
+				}
+			}
+		}
+
+		function updateSeriously() {
+			if (defaultSeriously) {
+				if (seriouslyEvents) {
+					defaultSeriously.stop();
+				} else {
+					defaultSeriously.start();
+				}
+			}
+		}
+
+		function setUpSeriouslyEvent(options) {
+			seriouslyEvents++;
+			updateSeriously();
+		}
+		
+		function teardownUpSeriouslyEvent(options) {
+			seriouslyEvents--;
+			updateSeriously();
+		}
+		
+		var butterMapping = [];
+		var template = new Butter.Template({
+			loadFromData: function( importData ) {
+				var medias = importData.media;
+				if ( medias ) {
+					for ( var m=0; m<medias.length; ++m ) {
+						var media = medias[ m ];
+						video = document.getElementById(media.target);
+						if (video.videoWidth) {
+							setUpVideoSize();
+						} else {
+							video.addEventListener('loadedmetadata', setUpVideoSize, false);
+						}							
+							
+						popcorn = Popcorn( '#' + media.target, { frameAnimation: true } );
+						if ( media.tracks ) {
+							for ( var t=0; t<media.tracks.length; ++t ) {
+								var track = media.tracks[ t ];
+								if ( track.trackEvents ) {
+									for ( var e=0; e<track.trackEvents.length; ++e ) {
+										var trackEvent = track.trackEvents[ e ];
+										if (trackEvent.type === 'key') {
+											trackEvent.popcornOptions.onSetup = setUpSeriouslyEvent;
+											trackEvent.popcornOptions.onTeardown = teardownUpSeriouslyEvent;
+										}
+										popcorn[ trackEvent.type ]( trackEvent.popcornOptions );
+									} //for trackEvents
+								} //if trackEvents
+							} //for tracks
+						} //if tracks
+					} //for medias
+				} //if medias
+			},
+			onfetchhtml: function( message ) {
+				return template.link.getHTML();
+			},
+			onmediaremoved: function( message ) {
+				template.link.removeMedia( template.link.getMedia( message.id ) );
+			},
+			onmediatimeupdate: function( message ) {
+				template.link.currentMedia.popcorn.currentTime( message );
+			},
+			onmediachanged: function( message ) {
+				video = document.getElementById('video');
+				if (video.videoWidth) {
+					setUpVideoSize();
+				} else {
+					video.addEventListener('loadedmetadata', setUpVideoSize, false);
+				}							
+
+				if ( template.link.currentMedia ) {
+					template.link.currentMedia.removeHandlers( template.link.comm );
+				}
+				var currentMedia = template.link.currentMedia = template.link.getMedia( message.id );
+				if ( currentMedia ) {
+					currentMedia.addHandlers( template.link.comm, {
+						'trackeventadded': function( message ) {
+							var media = template.link.currentMedia;
+							if (message.type === 'key') {
+								message.popcornOptions.onSetup = setUpSeriouslyEvent;
+								message.popcornOptions.onTeardown = teardownUpSeriouslyEvent;
+							}
+							media.popcorn[ message.type ]( message.popcornOptions );
+							butterMapping[ message.id ] = media.popcorn.getLastTrackEventId();
+						},
+						'trackeventupdated': function( message ) {
+							var media = template.link.currentMedia;
+							if ( butterMapping[ message.id ] ) {
+								media.popcorn.removeTrackEvent( butterMapping[ message.id ] );
+							}
+							if (message.type === 'key') {
+								message.popcornOptions.onSetup = setUpSeriouslyEvent;
+								message.popcornOptions.onTeardown = teardownUpSeriouslyEvent;
+							}
+							media.popcorn[ message.type ]( message.popcornOptions );
+							butterMapping[ message.id ] = media.popcorn.getLastTrackEventId();
+						},
+						'trackeventremoved': function( message ) {
+							var media = template.link.currentMedia;
+							if ( butterMapping[ message.id ] ) {
+								media.popcorn.removeTrackEvent( butterMapping[ message.id ] );
+							}
+						},
+						'play': currentMedia.play,
+						'pause': currentMedia.pause,
+						'mute': currentMedia.mute
+					});
+				}
+			},
+			onmediaadded: function( message ) {
+				var link = template.link;
+				if ( !link.getMedia( message.id ) ) {
+					var media = new Butter.TemplateMedia( message );
+					link.addMedia( media );
+					media.prepareMedia( media.findMediaType() );
+					media.createPopcorn( media.generatePopcornString({
+						options: {
+							frameAnimation: true
+						}
+					}) );
+					media.waitForPopcorn( function( popcorn ) {
+					media.setupPopcornHandlers( link.comm );
+						link.sendMedia( media );
+					});
+				}
+			},
+			onsetup: function( options ) {
+				template.link.sendImportData( options.importData );
+				template.link.scrape();
+			}
+		});
+	})();
+	</script>
+	<script type="text/javascript">
+	
+	window.addEventListener('DOMContentLoaded', function() {
+	}, false);
+	
+	</script>
+</html>

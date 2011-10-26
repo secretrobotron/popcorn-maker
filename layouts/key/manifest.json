@@ -1,0 +1,9 @@
+{
+  "title": "Chroma/Luma Key",
+  "thumbnail": "thumbnail.gif",
+  "template": "template.html",
+  "files": [
+    "template.html",
+    "thumbnail.gif"
+  ]
+}
