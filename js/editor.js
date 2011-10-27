@@ -8,8 +8,11 @@
     popupManager.addPopup( "edit-target", "#edit-target-popup" );
 
     butter.listen( "clientdimsupdated", function( e ) {
-      if ( e.data.type !== "window" ) {
-        var size = e.data.size;
+      var size = e.data.size;
+      if ( e.data.type === "window" ) {
+        e.data.window.resizeTo( size.width, size.height );
+      }
+      else {
         popupManager.showPopup( "editor", {
           width: size.width,
           height: size.height

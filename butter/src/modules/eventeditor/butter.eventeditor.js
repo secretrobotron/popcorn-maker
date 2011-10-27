@@ -74,10 +74,22 @@ THE SOFTWARE.
         var targetAdded = function( e ) {
           commServer.send( editorLinkName, butter.targets, "domtargetsupdated" );
         };
+        var clientDimsUpdated = function( dims ) {
+          editorHeight = dims.height;
+          editorWidth = dims.width;
+          butter.trigger( "clientdimsupdated", that, "eventeditor" );
+        };
         var undoListeners = function() {
           butter.unlisten ( "trackeventupdated", updateEditor );
           butter.unlisten ( "targetadded", targetAdded );
           butter.unlisten ( "trackeventremoved", checkRemoved );
+          butter.unlisten ( "clientdimsupdated", clientDimsUpdated );
+          commServer.forget( editorLinkName, "okayclicked" );
+          commServer.forget( editorLinkName, "applyclicked" );
+          commServer.forget( editorLinkName, "deleteclicked" );
+          commServer.forget( editorLinkName, "cancelclicked" );
+          commServer.forget( editorLinkName, "clientdimsupdated" );
+          commServer.destroy( editorLinkName );
         };
 
         function setupServer( bindingType ) {
@@ -97,8 +109,8 @@ THE SOFTWARE.
               }
               undoListeners();
               targetWindow = undefined;
-              butter.trigger( "trackeditclosed", that );
               butter.trigger( "trackeventupdated", trackEvent );
+              butter.trigger( "trackeditclosed", that );
             });
 
             commServer.listen( editorLinkName, "applyclicked", function( newOptions ) {
@@ -131,11 +143,7 @@ THE SOFTWARE.
               butter.trigger( "trackeditclosed", that );
             });
 
-            commServer.listen( editorLinkName, "clientdimsupdated", function( dims ) {
-              editorHeight = dims.height;
-              editorWidth = dims.width;
-              butter.trigger( "clientdimsupdated", that, "eventeditor" );
-            });
+            commServer.listen( editorLinkName, "clientdimsupdated", clientDimsUpdated );
 
             var targetCollection = butter.targets, targetArray = [];
             for ( var i=0, l=targetCollection.length; i<l; ++i ) {
@@ -194,6 +202,10 @@ THE SOFTWARE.
 
       Object.defineProperty( this, "size", {
         get: function() { return { width: editorWidth, height: editorHeight }; }
+      });
+
+      Object.defineProperty( this, "window", {
+        get: function() { return targetWindow; }
       });
       
     } //Editor

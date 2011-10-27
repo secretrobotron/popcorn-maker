@@ -539,6 +539,7 @@
       }
       media.popcorn[ message.type ]( message.popcornOptions );
       butterMapping[ message.id ] = media.popcorn.getLastTrackEventId();
+      comm.send( "Created popcorn event" + message.id, "log" );
     }; //trackEventUpdatedHandler
 
     var trackEventRemovedHandler = function( message ) {
