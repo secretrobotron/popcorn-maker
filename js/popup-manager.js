@@ -5,17 +5,32 @@
         openPopups = [],
         popupsByName = {},
         escapeKeyEnabled,
-        that = this;
+        that = this,
+        buttonListeners = {};
+
+    function removeButtonListeners( name ) {
+      var listeners = buttonListeners[ name ]
+      for ( var i=0, l=listeners.length; i<l; ++i ) {
+        listeners[ i ].element.removeEventListener( 'click', listeners[ i ].listener, false );
+      }
+      buttonListeners[ name ] = [];
+    } //removeButtonListners
 
     this.addPopup = function( name, id ) {
       var popup = $( id );
       popups.push( popup );
       popupsByName[ name ] = popup;
+      buttonListeners[ name ] = [];
     }; //addPopup
 
     this.hidePopups = function() {
       for ( var i=0; i<popups.length; ++i ) {
         popups[ i ].hide();
+      } //for
+      for ( var name in buttonListeners ) {
+        if ( buttonListeners.hasOwnProperty( name ) ) {
+          removeButtonListeners( name );
+        } //if
       } //for
       $(".popupDiv").fadeOut("fast");
       $('.close-div').fadeOut('fast');
@@ -45,6 +60,27 @@
       if ( idx > -1 ) {
         openPopups.push( name );
       } //if
+
+      if ( options.message ) {
+        var messageContainer = popup[ 0 ].getElementsByClassName( "desc" );
+        if ( messageContainer ) {
+          messageContainer[ 0 ].innerHTML = options.message;
+        }
+      }
+
+      if ( options.buttons ) {
+        for ( var button in options.buttons ) {
+          if ( options.buttons.hasOwnProperty( button ) ) {
+            var elemList = popup[ 0 ].getElementsByTagName( 'input' );
+            for ( var i=0, l=elemList.length; i<l; ++i ) {
+              if ( elemList[ i ].name === button ) {
+                elemList[ i ].addEventListener( 'click', options.buttons[ button ], false );
+                buttonListeners[ name ].push( { element: elemList[ i ], listener: options.buttons[ button ] } );
+              }
+            }
+          }
+        }
+      }
     }; //showPopup
 
     this.hidePopup = function( name ) {
@@ -57,6 +93,7 @@
       if ( idx > -1 ) {
         openPopups.splice( idx, 1 );
       } //if
+      removeButtonListeners( name );
     }; //hidePopup
 
     Object.defineProperty( this, "open", {

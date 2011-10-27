@@ -5,9 +5,14 @@
         templateManager = pm.templateManager,
         butter = pm.butter;
 
+    var $projectsDropDown = $( "#projects-dropdown" ),
+        $newProjectTitleInput = $( "#title-input-box" );
+        $saveProjectTitleInput = $( "#project-title-textbox" );
+
     buttonManager.add( "add-project", $( ".add-project-btn" ), {
       click: function() {
         popupManager.hidePopups();
+        $newProjectTitleInput.val( "New Project" );
         popupManager.showPopup( "add-project" );
       }
     });
@@ -17,6 +22,7 @@
     popupManager.addPopup( "save", "#save-popup" );
     popupManager.addPopup( "add-project", "#add-project-popup" );
     popupManager.addPopup( "project-title", "#project-title-popup" );
+    popupManager.addPopup( "error", "#error-popup" );
 
     buttonManager.add( "open-help", $( '.open-help, .help' ), {
       click: function() {
@@ -36,14 +42,14 @@
 
     buttonManager.add( "publish-project", $( ".publish-project-btn" ), {
       click: function() {
-        pm.currentPreview.fetchHTML( function( html ) {
+        pm.currentProject.preview.fetchHTML( function( html ) {
           popupManager.hidePopups();
           popupManager.showPopup( "captcha" );
           var container = $( "#captcha-popup" )[ 0 ];
           container.innerHTML = "";
           var iframe = document.createElement( "iframe" );
           iframe.setAttribute( "scrolling", "no" );
-          iframe.src = PACKAGE_SERVER_ADDR + "/captcha?butter_template=" + pm.currentTemplate.root;
+          iframe.src = PACKAGE_SERVER_ADDR + "/captcha?butter_template=" + pm.currentProject.template.root;
           container.appendChild( iframe );
         });
       }
@@ -51,47 +57,20 @@
 
     buttonManager.add( "save-project-data", $(".save-project-data-btn"), {
       click: function() {
-        
-        try {
-          var projectToSave = butter.exportProject(),
-          overwrite = false,  
-          title;
-
-          projectToSave.template = pm.currentTemplate.root;
-          
-          localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
-          
-          title = projectToSave.project.title = $('.project-title-textbox').val() || projectToSave.project.title;
-          
-          localProjects = localProjects ? JSON.parse( localProjects ) : {};
-          
-          overwrite = localProjects[ title ] ? true : false;
-          
-          localProjects[ title ] = projectToSave;
-
-          !overwrite &&
-          $( "<option/>", {
-            "value": projectToSave.project.title,
-            "html": projectToSave.project.title
-          }).appendTo( projectsDrpDwn );
-          localStorage.setItem( "PopcornMaker.SavedProjects", JSON.stringify( localProjects ) );
-          projectsDrpDwn[0].refresh()
-          $('.close-div').fadeOut('fast');
-          $('.popups').hide();
-          escapeKeyEnabled = false;
-        }
-        catch ( e ) {
-          throw new Error("Saving Failed...");
-        }
+        var title = $('.project-title-textbox').val() || projectToSave.title;
+        title = PopcornMaker.getSafeString( title );
+        pm.currentProject.title = title;
+        pm.saveProject();
       }
     }); //save-project-data
 
     buttonManager.add( "save-project", "save-project-btn", {
       click: function() {
-        pm.currentPreview.fetchHTML( function( html ) {
+        pm.currentProject.preview.fetchHTML( function( html ) {
           popupManager.hidePopups();
           $('#export-data').val( html );
-          $('.project-title-textbox').val( butter.getProjectDetails( "title" ) );
+          var safeTitle = PopcornMaker.getSafeString( pm.currentProject.title );
+          $saveProjectTitleInput.val( safeTitle );
           popupManager.showPopup( "save" );
         });
       }
@@ -105,17 +84,18 @@
     }); //change-url-btn
     buttonManager.add( "edit-selected-project", "edit-selected-project", {
       click: function () {
-        if ( projectsDrpDwn[0].selectedIndex > 0 ) {
-          $('#project-title').val( $( ".projects-dd" ).val() );
+        var safeTitle = PopcornMaker.getSafeString( pm.currentProject.title );
+        if ( $projectsDropDown[0].selectedIndex > 0 ) {
+          $('#project-title').val( safeTitle );
           popupManager.showPopup( "project-title" );
         }
       }
     }); //edit-selected-project
     buttonManager.add( "change-title", "change-title-btn", {
       click: function() {
-        var newTitle = $('#project-title').val(),
-          oldTitle = $( ".projects-dd" ).val(),
-          idx = projectsDrpDwn[0].selectedIndex,
+        var newTitle = PopcornMaker.getSafeString( $('#project-title').val() ),
+          oldTitle = PopcornMaker.getSafeString( $projectsDropDown.val() ),
+          idx = $projectsDropDown[0].selectedIndex,
           selectedOpt,
           targetProject;
 
@@ -126,16 +106,19 @@
           
           ( butter.getProjectDetails ( "title" ) === newTitle ) && butter.setProjectDetails ( "title", newTitle );
           
-          selectedOpt = projectsDrpDwn[0].options[ idx ];
+          selectedOpt = $projectsDropDown[0].options[ idx ];
           
           selectedOpt.value = newTitle;
-          selectedOpt.innerHTML = newTitle;
-          projectsDrpDwn[0].refresh();
+          while ( selectedOpt.childNodes.length > 0 ) {
+            selectedOpt.removeChild( selectedOpt.firstChild );
+          }
+          selectedOpt.appendChild( document.createTextNode( newTitle ) );
+          $projectsDropDown[0].refresh();
           
           if ( localProjects[ oldTitle ] ) {
             targetProject = localProjects[ oldTitle ];
             delete localProjects[ oldTitle ];
-            targetProject.project.title = newTitle;
+            targetProject.title = newTitle;
             localProjects[ newTitle ] = targetProject;
             localStorage.setItem( "PopcornMaker.SavedProjects", JSON.stringify( localProjects ) );
           }
@@ -155,50 +138,20 @@
 
     buttonManager.add( "confirm-load", $(".confirm-load-btn"), {
       click: function() {
-        var title = projectsDrpDwn.val();
-
-        if ( localProjects && localProjects[ title ] ) {
-          butter.clearProject();         
-          butter.clearPlugins();
-          pm.currentTemplate = templateManager.find( { root: localProjects[ title ].template } );
-          console.log( localProjects[ title ] );
-
-          pm.toggleLoadingScreen( true );
-          pm.toggleKeyboardFunctions( false );
-          popupManager.hidePopups();
-
-          pm.currentPreview = new butter.Preview({
-            template: pm.currentTemplate.template,
-            importData: localProjects[ title ],
-            onload: function( preview ) {
-              pm.buildRegistry( butter.currentMedia.registry );
-              $('.tiny-scroll').tinyscrollbar();
-              pm.toggleLoadingScreen( false );
-              pm.toggleKeyboardFunctions( true );
-            } //onload
-          }); //Preview
-        } //if
-      }
+        var guid = $projectsDropDown.val();
+        pm.loadProject( guid );
+      }   
     }); //confirm-load
     
     buttonManager.add( "create-new", $( ".create-new-btn" ), {
       click: function() {
-        butter.clearProject();
-        butter.clearPlugins();
-        butter.setProjectDetails( "title", ( $( "title-input-box" ).val() || "Untitled Project" ) );
-        pm.currentTemplate = templateManager.find( { template: document.getElementById( 'layout-select' ).value } );
-        pm.toggleLoadingScreen( true );
-        pm.toggleKeyboardFunctions( false );
-        pm.currentPreview = new butter.Preview({
-          template: pm.currentTemplate.template,
-          defaultMedia: document.getElementById('timeline-media-input-box').value,
-          onload: function( preview ) {
-            pm.buildRegistry( butter.currentMedia.registry );
-            $('.tiny-scroll').tinyscrollbar();
-            pm.toggleLoadingScreen( false );
-            pm.toggleKeyboardFunctions( true );
-          } //onload
-        }); //Preview
+        var safeTitle = $newProjectTitleInput.val() || "Untitled Project";
+        safeTitle = PopcornMaker.getSafeString( safeTitle );
+        pm.newProject({
+          title: safeTitle,
+          template: document.getElementById( 'layout-select' ).value,
+          defaultMedia: document.getElementById( 'timeline-media-input-box' ).value
+        });
         popupManager.hidePopups();
       }
     });
@@ -207,69 +160,72 @@
       click: function() {
         var dataString = $("#import-json-area").val();
         if ( dataString ) {
-        
-          try {
+//          try {
             var data = JSON.parse( dataString );
             popupManager.hidePopups();
-            butter.clearProject(); 
-            butter.clearPlugins();
-            pm.currentTemplate = templateManager.find( { root: data.template } ) || templateManager.templates[ 0 ];
-            pm.toggleLoadingScreen( true );
-            pm.toggleKeyboardFunctions( false );
-
-            pm.currentPreview = new butter.Preview({
-              template: pm.currentTemplate.template,
-              defaultMedia: document.getElementById( 'timeline-media-input-box' ).value,
-              importData: data,
-              onload: function( preview ) {
-                pm.buildRegistry( butter.currentMedia.registry );
-                $('.tiny-scroll').tinyscrollbar();
-                pm.toggleLoadingScreen( false );
-                pm.toggleKeyboardFunctions( true );
-              } //onload
-            }); //Preview
-            return;
-          }
-          catch ( e ) {
-            console.log ( "Error Loading in Data", e );
-          }
+            pm.importProject( data, document.getElementById( 'timeline-media-input-box' ).value );
+//          }
+//          catch ( e ) {
+//            console.log ( "Error loading in Data", e );
+//          }
         }
       }
     }); //import-json
     
     buttonManager.add( "show-json", $( ".show-json-btn" ), {
       click: function() {
-        var exp = butter.exportProject();
-        exp.template = pm.currentTemplate.root;
+        var exp = pm.getProjectExport();
         $('#export-data').val( JSON.stringify( exp ) );
       }
     }); //show-json
 
     buttonManager.add( "show-html", $( ".show-html-btn" ), {
       click: function() {
-        pm.currentPreview.fetchHTML( function( html ) {
+        pm.currentProject.preview.fetchHTML( function( html ) {
           $('#export-data').val( html );
         });
       }
     }); //show-html
     
-    var projectsDrpDwn = $(".projects-dd"),
-        localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
-    
-    localProjects = localProjects ? JSON.parse( localProjects ) : localProjects;
-    
-    $( "<option/>", {
-        "value": undefined,
-        "html": "[select a project]"
-      }).appendTo( projectsDrpDwn );
-    
-    localProjects && $.each( localProjects, function( index, oneProject ) {
-      $( "<option/>", {
-        "value": oneProject.project.title,
-        "html": oneProject.project.title
-      }).appendTo( projectsDrpDwn );
+    butter.listen( "error", function( error ) {
+      if( error.data.type === "popcorn-initialization" ) {
+        pm.toggleLoadingScreen( false );
+        popupManager.showPopup( "error", {
+          message: "<p style=\"font-weight: bold\">While loading the selected template, an error occured. Please make sure the template has access to the libraries it requires.</p><p style=\"font-size: 70%\">" + error.data.message + "</p>",
+          buttons: {
+            ok: function() {
+              popupManager.hidePopups();
+            }
+          }
+        });
+      }
     });
+
+    this.populateSavedProjectsList = function( skipRefresh ) {
     
+      var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
+      localProjects = localProjects ? JSON.parse( localProjects ) : localProjects;
+
+      $projectsDropDown.empty();
+      
+      $( "<option/>", {
+          "value": undefined,
+          "html": "[select a project]"
+        }).appendTo( $projectsDropDown );
+      
+      localProjects && $.each( localProjects, function( index, oneProject ) {
+        $( "<option/>", {
+          "value": oneProject.guid,
+        }).appendTo( $projectsDropDown ).text( PopcornMaker.getSafeString( oneProject.title ) );
+      });
+
+      if ( !skipRefresh ) {
+        $projectsDropDown[0].refresh()
+      }
+
+    }; //populateSavedProjectsList
+
+    this.populateSavedProjectsList( true );
     create_msDropDown();
 
     function create_msDropDown() {
@@ -281,16 +237,16 @@
     }
    
     var ddLoadFunc = function() {
-      var title = projectsDrpDwn.val();
-      localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
+      var title = $projectsDropDown.val(),
+          localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" );
       localProjects = localProjects ? JSON.parse( localProjects ) : undefined;
-      if ( projectsDrpDwn[0].selectedIndex > 0 && localProjects[ title ] ) {
+      if ( $projectsDropDown[0].selectedIndex > 0 ) {
         popupManager.hidePopups();
         popupManager.showPopup( "confirm-load" );
       }
     };
     
-    $(".projects-dd").change( ddLoadFunc );
+    $projectsDropDown.change( ddLoadFunc );
 
   }; //Menu
 })();

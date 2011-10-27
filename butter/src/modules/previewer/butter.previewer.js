@@ -36,6 +36,47 @@
             server = new Butter.CommServer(),
             that = this;
 
+        function onMediaAdded( e ) {
+          logger.debug( "Sending mediaadded" );
+          var mediaExport = e.data.json;
+          server.send( "link", mediaExport, "mediaadded" );
+        }
+        function onMediaChanged( e ) {
+          logger.debug( "Sending mediachanged" );
+          var mediaExport = e.data.json;
+          server.send( "link", mediaExport, "mediachanged" );
+        }
+        function onMediaRemoved( e ) {
+          logger.debug( "Sending mediaremoved" );
+          var mediaExport = e.data.json;
+          server.send( "link", mediaExport, "mediaremoved" );
+        }
+        function onMediaTimeUpdate( e ) {
+          if ( e.data.currentTime !== currentTime ) {
+            logger.debug( "Sending mediatimeupdate" );
+            server.send( "link", e.data.currentTime, "mediatimeupdate" );
+          } //if
+        }
+        function onMediaContentChanged( e ) {
+          logger.debug( "Sending mediacontentchanged" );
+          server.send( "link", e.data.url, "mediacontentchanged" );
+        }
+        function onTrackEventAdded( e ) {
+          logger.debug( "Sending trackeventadded" );
+          var trackEventExport = e.data.json;
+          server.send( "link", trackEventExport, "trackeventadded" );
+        }
+        function onTrackEventRemoved( e ) {
+          logger.debug( "Sending trackeventremoved" );
+          var trackEventExport = e.data.json;
+          server.send( "link", trackEventExport, "trackeventremoved" );
+        }
+        function onTrackEventUpdated( e ) {
+          logger.debug( "Sending trackeventupdated" );
+          var trackEventExport = e.data.json;
+          server.send( "link", trackEventExport, "trackeventupdated" );
+        }
+
         function setup( iframeWindow ) {
 
           server.bindClientWindow( "link", iframeWindow, function( message ) {
@@ -61,6 +102,11 @@
             logger.debug( 'Muting' );
             server.send( "link", "mute", "mute" );
           }; //mute
+
+          server.listen( "link", "error", function( error ) {
+            //logger.error( error.message );
+            butter.trigger( "error", error );
+          });
 
           server.listen( "link", "loaded", function( message ) {
             var numMedia = butter.media.length, numReady = 0;
@@ -110,55 +156,22 @@
             var target = butter.addTarget( message );
           });
 
-          butter.listen( "mediaadded", function( e ) {
-            logger.debug( "Sending mediaadded" );
-            var mediaExport = e.data.json;
-            server.send( "link", mediaExport, "mediaadded" );
-          });
-
-          butter.listen( "mediachanged", function( e ) {
-            logger.debug( "Sending mediachanged" );
-            var mediaExport = e.data.json;
-            server.send( "link", mediaExport, "mediachanged" );
-          });
-
-          butter.listen( "mediaremoved", function( e ) {
-            logger.debug( "Sending mediaremoved" );
-            var mediaExport = e.data.json;
-            server.send( "link", mediaExport, "mediaremoved" );
-          });
-
-          butter.listen( "mediatimeupdate", function( e ) {
-            if ( e.data.currentTime !== currentTime ) {
-              logger.debug( "Sending mediatimeupdate" );
-              server.send( "link", e.data.currentTime, "mediatimeupdate" );
-            } //if
-          }, "timeline" );
-
-          butter.listen( "mediacontentchanged", function( e ) {
-            logger.debug( "Sending mediacontentchanged" );
-            server.send( "link", e.data.url, "mediacontentchanged" );
-          });
-
-          butter.listen( "trackeventadded", function( e ) {
-            logger.debug( "Sending trackeventadded" );
-            var trackEventExport = e.data.json;
-            server.send( "link", trackEventExport, "trackeventadded" );
-          });
-          butter.listen( "trackeventremoved", function( e ) {
-            logger.debug( "Sending trackeventremoved" );
-            var trackEventExport = e.data.json;
-            server.send( "link", trackEventExport, "trackeventremoved" );
-          });
-          butter.listen( "trackeventupdated", function( e ) {
-            logger.debug( "Sending trackeventupdated" );
-            var trackEventExport = e.data.json;
-            server.send( "link", trackEventExport, "trackeventupdated" );
-          });
+          butter.listen( "mediaadded", onMediaAdded );
+          butter.listen( "mediachanged", onMediaChanged );
+          butter.listen( "mediaremoved", onMediaRemoved );
+          butter.listen( "mediatimeupdate", onMediaTimeUpdate, "timeline" );
+          butter.listen( "mediacontentchanged", onMediaContentChanged );
+          butter.listen( "trackeventadded", onTrackEventAdded );
+          butter.listen( "trackeventremoved", onTrackEventRemoved );
+          butter.listen( "trackeventupdated", onTrackEventUpdated );
 
           server.listen( "link", "importData", function( message ) {
             logger.debug( "Received import data" );
             importData = message;
+          });
+
+          server.listen( "link", "log", function( message ) {
+            logger.debug( message );
           });
         } //setup
 
@@ -180,14 +193,14 @@
         var setupInterval;
         function sendSetup() {
            server.send( "link", {
-            defaultMedia: defaultMedia
+            defaultMedia: defaultMedia,
+            importData: importData
           }, "setup" );
         } //sendSetup
         setupInterval = setInterval( sendSetup, 500 );
         server.listen( "link", "setup", function( message ) {
           clearInterval( setupInterval );
         });
-        
 
         this.fetchHTML = function( callback ) {
           logger.debug( "Fetching HTML" );
@@ -196,6 +209,18 @@
             callback( message );
           });
         }; //fetchHTML
+
+        this.destroy = function() {
+          server.destroy();
+          butter.unlisten( "mediaadded", onMediaAdded );
+          butter.unlisten( "mediachanged", onMediaChanged );
+          butter.unlisten( "mediaremoved", onMediaRemoved );
+          butter.unlisten( "mediatimeupdate", onMediaTimeUpdate, "timeline" );
+          butter.unlisten( "mediacontentchanged", onMediaContentChanged );
+          butter.unlisten( "trackeventadded", onTrackEventAdded );
+          butter.unlisten( "trackeventremoved", onTrackEventRemoved );
+          butter.unlisten( "trackeventupdated", onTrackEventUpdated );
+        }; //destroy
 
       } //PreviewLink
 
@@ -266,23 +291,26 @@
             link.pause();
           }
         }
-      });
+      }); //playing
 
       this.play = function() {
         link.play();
-      };
+      }; //play
 
       this.pause = function() {
         link.pause();
-      };
+      }; //pause
       
       this.mute = function() {
         link.mute();
-      };
+      }; //mute
 
       this.destroy = function() {
         link.destroy();
-      };
+        if ( previewIframe ) {
+          previewIframe.setAttribute( "src", "about:blank" );
+        }
+      }; //destroy
 
     }; //Preview
 

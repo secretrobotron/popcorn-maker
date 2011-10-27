@@ -395,7 +395,7 @@
     }, false);
 
     document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
-      pm.currentPreview.playing ? pm.currentPreview.pause() : pm.currentPreview.play();
+      pm.currentProject.preview.playing ? pm.currentProject.preview.pause() : pm.currentProject.preview.play();
     }, false);
 
     butter.listen( "mediapaused", function( event ) {
