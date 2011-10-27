@@ -1,6 +1,6 @@
 {
   "title": "Default",
   "editor": "editor.html",
-  "view": "window",
+  "view": "popup",
   "plugin": "default"
 }
