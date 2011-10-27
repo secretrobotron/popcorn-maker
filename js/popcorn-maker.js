@@ -1,7 +1,9 @@
 (function(){
 
   var LAYOUTS_DIR = "./layouts",
+      EDITORS_DIR = "./editors",
       TEMPLATES_CONFIG = LAYOUTS_DIR + "/conf.json",
+      EDITORS_CONFIG = EDITORS_DIR + "/conf.json",
       PACKAGE_SERVER_ADDR = "http://localhost:8888";
 
   if ( window.location.href.indexOf( "resetSavedProjects=true" ) > -1 ) {
@@ -26,19 +28,24 @@
     var _templateManager = new TemplateManager({
           config: TEMPLATES_CONFIG,
           container: "layout-select",
-          layoutsDir: LAYOUTS_DIR,
+          layoutsDir: LAYOUTS_DIR
+        }),
+        _editorManager = new EditorManager({
+          config: EDITORS_CONFIG,
+          editorsDir: EDITORS_DIR
         }),
         _popupManager = new PopupManager(),
         _buttonManager = new ButtonManager();
 
     _butter.comm();
-    _butter.eventeditor({ target: "editor-popup", defaultEditor: "lib/popcornMakerEditor.html" });
+    _butter.eventeditor({ target: "editor-popup" });
     _butter.plugintray({ target: "plugin-tray", pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>' });
     _butter.timeline({ target: "timeline-div" });
     _butter.trackeditor({ target: "edit-target-popup" });
-    _butter.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
-    _butter.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
-    _butter.addCustomEditor( "external/layouts/blackpanthers/editor.html", "googlestreets" );
+    //_butter.addCustomEditor( "external/layouts/city-slickers/editor.html", "slickers" );
+    //_butter.addCustomEditor( "external/layouts/cgg/editor.html", "fkb" );
+    //_butter.addCustomEditor( "external/layouts/blackpanthers/editor.html", "googlestreets" );
+    _editorManager.initEditors( _butter );
     _butter.setProjectDetails("title", "Untitled Project" );
     _butter.previewer({
       target: "main",

@@ -6,8 +6,8 @@
     
     <script type="text/javascript" >
       var b = new Butter();
-      b.eventeditor( { defaultEditor: "./../../../src/modules/eventeditor/defaultEditor.html" } );
-      b.addMedia( new Butter.Media() );
+      b.eventeditor();
+      var media = b.addMedia( new Butter.Media() );
       var te1 = new Butter.TrackEvent({ type: "testEvent", start: 67.237868, end: 567.675675, popcornOptions: { type:"ROADMAP", start: 67.237868, end: 567.675675, zoom: 8, location: "Toronto" } } ),
       m1 = {
         options: {
@@ -50,16 +50,19 @@
         }//,
         //customEditor: "customEditor.html"
       };
+      media.registry = {
+        "testEvent": m1
+      };
       te1.manifest = m1;
 
       b.addTrackEvent( b.addTrack( new Butter.Track() ), te1);
-      b.addCustomEditor("customEditor.html","testEvent");
+      b.addEditor("customEditor.html","testEvent","window");
 
       
       document.addEventListener( "DOMContentLoaded", function() {
         var open = document.getElementById( "openBtn1" );
         open.addEventListener( "click", function(){
-          b.editTrackEvent( b.getTracks()[0].getTrackEvents()[0] );
+          b.editTrackEvent( b.tracks[0].trackEvents[0] );
         }, false);
       }, false);
       window.b = b;
