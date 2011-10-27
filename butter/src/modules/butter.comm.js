@@ -195,12 +195,19 @@
       clients[ name ] && clients[ name ].async( message, type, handler );
     };
 
-    this.destroy = function() {
-      for ( var clientName in clients ) {
-        if ( clients.hasOwnProperty( clientName ) ) {
-          clients[ clientName ].destroy();
-        } //if
-      } //for
+    this.destroy = function( name ) {
+      if ( name ) {
+        clients[ name ] && clients[ name ].destroy();
+        delete clients[ name ];
+      }
+      else {
+        for ( var clientName in clients ) {
+          if ( clients.hasOwnProperty( clientName ) ) {
+            clients[ clientName ].destroy();
+            delete clients[ clientName ];
+          } //if
+        } //for
+      } //if
     }; //destroy
 
   } //CommServer

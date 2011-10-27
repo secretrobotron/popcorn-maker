@@ -73,7 +73,7 @@
             constructDefaultEditor ( message.trackEvent );
             var body = window.document.body;
             
-            client.send( { "height": body.scrollHeight, "width": body.getClientRects()[0].width + 50 }, "clientdimsupdated" );
+            client.send( { "height": body.scrollHeight, "width": body.getBoundingClientRect().width }, "clientdimsupdated" );
           });
           
           client.listen( "domtargetsupdated", function( message ) {
@@ -238,7 +238,9 @@
         btn = createDefaultButton({
           value: "Apply",
           callback: function() {
+            console.log('applying');
             if ( doChecks() ) {
+              console.log('actually applying');
               doPostProcesses();
               client.send( compileOptions( elements ), "applyclicked" );
             }

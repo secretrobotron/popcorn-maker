@@ -582,7 +582,9 @@ THE SOFTWARE.
       if ( handlerList ) {
         if ( handler ) {
           var idx = handlerList.indexOf( handler );
-          handlerList.splice( idx, 1 );
+          if ( idx > -1 ) {
+            handlerList.splice( idx, 1 );
+          }
         }
         else {
           events[ name ] = [];
