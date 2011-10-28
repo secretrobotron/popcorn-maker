@@ -1,0 +1,6 @@
+{
+  "title": "Tweet to Chapter",
+  "editor": "editor-tweet-chapter.html",
+  "view": "window",
+  "plugin": "tweetChapter"
+}

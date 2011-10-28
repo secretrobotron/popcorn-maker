@@ -124,16 +124,19 @@
 			line-height: normal;
 		}
 
-		#video-container .title {
+		#front > div {
+			z-index: 200;
+			border: solid 2px rgb(253,171,48);
+			font-size: 33px;
 			font-family: 'Oswald', sans-serif;
-			font-size: 46px;
+			font-weight: bold;
 			padding: 2px 6px;
 			background-color: white;
 			color: black;
 		}
 
-		#front > div {
-			z-index: 200;
+		#front > div.title {
+			border-left: none;
 		}
 
 		</style>
@@ -204,6 +207,7 @@
 	<script type="text/javascript" src="external/popcorn.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.words.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.lightbox.js"></script>
+	<script type="text/javascript" src="../shared/js/popcorn.tweet-chapter.js"></script>
 	<script type="text/javascript" src="js/popcorn.key.js"></script>
 	<script src="../../lib/butter.js"></script>
 	<script>

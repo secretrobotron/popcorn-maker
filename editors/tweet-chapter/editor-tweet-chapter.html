@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script type="text/javascript" src="../../lib/butter.js"></script>
+		<script type="text/javascript" src="../shared/js/editor-state.js"></script>
+		<link rel="stylesheet" type="text/css" href="../shared/css/editor.css"/>
+	</head>
+	<body>
+		<table class="form">
+			<tbody class="form-header">
+				<tr><th colspan="2">Time</th></tr>
+			</tbody>
+			<tbody>
+				<tr>
+					<th><label for="start">From:</label></th>
+					<td><input type="text" id="start"/></td>
+				</tr>
+				<tr>
+					<th><label for="end">To:</label></th>
+					<td><input type="text" id="end"/></td>
+				</tr>
+			</tbody>
+
+			<tbody class="form-header">
+				<tr><th colspan="2">Content</th></tr>
+			</tbody>
+			<tbody>
+				<tr>
+					<th><label for="text">Text:</label></th>
+					<td><textarea id="text"></textarea></td>
+				</tr>
+				<tr>
+					<th><label for="link">Link:</label></th>
+					<td><input type="text" id="link"/></td>
+				</tr>
+			</tbody>
+
+			<tbody class="form-header">
+				<tr><th colspan="2">Style</th></tr>
+			</tbody>
+			<tbody>
+				<tr>
+					<th><label for="classes">Class(es):</label></th>
+					<td><input type="text" id="classes"/></td>
+				</tr>
+				<!--
+				<tr>
+					<th><label for="align">Text Alignment:</label></th>
+					<td>
+						<select id="align">
+							<option value="">Auto</option>
+							<option value="left">Left</option>
+							<option value="center">Center</option>
+							<option value="right">Right</option>
+							<option value="justify">Justify</option>
+							<option value="start">Start</option>
+							<option value="end">End</option>
+						</select>
+					</td>
+				</tr>
+				-->
+				<tr>
+					<th><label for="style">CSS:</label></th>
+					<td><input type="text" id="style"/></td>
+				</tr>
+			</tbody>
+
+			<tbody class="form-header">
+				<tr><th colspan="2">Position</th></tr>
+			</tbody>
+			<tbody>
+				<tr>
+					<th><label for="left">Left (%):</label></th>
+					<td><input type="text" id="left"/></td>
+				</tr>
+				<tr>
+					<th><label for="top">Top (%):</label></th>
+					<td><input type="text" id="top"/></td>
+				</tr>
+			</tbody>
+			<tbody id="target-section">
+				<tr>
+					<th><label for="target">Target:</label></th>
+					<td><select id="target"></select></td>
+				</tr>
+			</tbody>
+		</table>
+		<div id="control-buttons">
+			<input type="button" value="Undo" id="undo"/>
+			<input type="button" value="Cancel" id="cancel"/>
+			<input type="button" value="Delete" id="delete"/>
+			<input type="button" value="OK" id="ok"/>
+		</div>
+		<script type="text/javascript">
+		
+		(function() {
+			var bin, icons = [], userIcons, i, editor;
+			
+			editor = new EditorState({
+				start: {
+					type: 'time'
+				},
+				end: {
+					type: 'time'
+				},
+				top: {
+					type: 'percent'
+				},
+				left: {
+					type: 'percent'
+				},
+				text: 'text',
+				link: 'url',
+				classes: 'text',
+				align: 'text',
+				style: 'text',
+				target: {
+					type: 'target',
+					fieldset: 'target-section'
+				}
+			}, 30);
+			
+			//main controls
+			document.getElementById('undo').addEventListener('click', function(event) {
+				editor.undo();
+			}, false);
+
+			document.getElementById('cancel').addEventListener('click', function(event) {
+				editor.cancel();
+			}, false);
+
+			document.getElementById('ok').addEventListener('click', function(event) {
+				editor.ok();
+			}, false);
+
+			document.getElementById('delete').addEventListener('click', function(event) {
+				editor.del();
+			}, false);
+
+			//save expanded fieldset state in localStorage
+			var headers = document.getElementsByClassName('form-header'),
+				headerStates,
+				header, id;
+				
+			try {
+				headerStates = (localStorage && JSON.parse(localStorage.pmHeaderStates));
+			} catch(e) {
+			}
+			if (!headerStates) {
+				headerStates = {};
+			}
+
+			for (i = 0; i < headers.length; i++) {
+				header = headers[i];
+				id = header.id || EditorState.util.trim(header.textContent);
+				header.addEventListener('click', (function(element, id) {
+					return function() {
+						element.classList.toggle('collapse');
+						if (id) {
+							headerStates[id] = element.classList.contains('collapse')
+							try {
+								localStorage.pmHeaderStates = JSON.stringify(headerStates);
+							} catch (e) {
+							}
+						}
+					};
+				}(header, id)), false);
+				if (id && headerStates[id]) {
+					header.classList.add('collapse');
+				}
+			}
+		}());
+		</script>
+	</body>
+</html>
