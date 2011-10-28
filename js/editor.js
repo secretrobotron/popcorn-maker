@@ -8,22 +8,32 @@
     popupManager.addPopup( "edit-target", "#edit-target-popup" );
 
     butter.listen( "clientdimsupdated", function( e ) {
-      popupManager.showPopup( "editor", {
-        width: e.data.width,
-        height: e.data.height
-      });
-      $('#butter-editor-iframe')
-        .css("height", e.data.height + "px")
-        .css("width", e.data.width + "px" );
-        //.css( "margin-left", ( window.innerWidth / 2 ) - ( $("#butter-editor-iframe").width() / 2 ) );
+      var size = e.data.size;
+      if ( e.data.type === "window" ) {
+        e.data.window.resizeTo( size.width, size.height );
+      }
+      else {
+        popupManager.showPopup( "editor", {
+          width: size.width,
+          height: size.height
+        });
+        $('#butter-editor-iframe')
+          .css("height", size.height + "px")
+          .css("width", size.width + "px" );
+          //.css( "margin-left", ( window.innerWidth / 2 ) - ( $("#butter-editor-iframe").width() / 2 ) );
+      }
     });
     
-    butter.listen ( "trackeditstarted", function() {
-      popupManager.showPopup( "editor" );
+    butter.listen ( "trackeditstarted", function( message ) {
+      if ( message.data.type !== "window" ) {
+        popupManager.showPopup( "editor" );
+      }
     });
     
-    butter.listen ( "trackeditclosed", function() {
-      popupManager.hidePopup( "editor" );
+    butter.listen ( "trackeditclosed", function( message ) {
+      if ( message.data.type !== "window" ) {
+        popupManager.hidePopup( "editor" );
+      }
     });
   };
 

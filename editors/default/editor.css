@@ -119,7 +119,7 @@ input[type="button"], input[type="submit"], button {
           box-shadow: 0 1px 0 #3d3d3d, inset 0 1px 0 #451212;
 }
 
-.popup-close-btn span { display:block; background:url(../images/popup-close.png) center center no-repeat; height:100%}
+.popup-close-btn span { display:block; background:url(../../images/popup-close.png) center center no-repeat; height:100%}
 .popup-header { width:100%; height:40px;
   -moz-border-radius: 10px 10px 0 0;
   -webkit-border-radius: 10px 10px 0 0;

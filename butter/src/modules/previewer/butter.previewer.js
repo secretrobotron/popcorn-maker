@@ -53,7 +53,7 @@
         }
         function onMediaTimeUpdate( e ) {
           if ( e.data.currentTime !== currentTime ) {
-            logger.debug( "Sending mediatimeupdate" );
+            //logger.debug( "Sending mediatimeupdate" );
             server.send( "link", e.data.currentTime, "mediatimeupdate" );
           } //if
         }
@@ -143,7 +143,7 @@
             butter.trigger( "mediapaused", butter.getMedia( { id: message } ), "previewer" );
           });
           server.listen( "link", "mediatimeupdate", function( message ) {
-            logger.debug( "Received mediatimeupdate" );
+            //logger.debug( "Received mediatimeupdate" );
             currentTime = butter.currentTime = message;
           });
 
