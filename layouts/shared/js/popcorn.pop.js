@@ -181,7 +181,6 @@ todo: animate top, left and other styles (color, font size, etc.)
 		}
 		
 		//default styles in a style sheet so they can be overridden
-		//todo: load font using api instead to avoid FOUT
 		if (!styleSheet) {
 			styleSheet = document.createElement('style');
 			styleSheet.setAttribute('type', 'text/css');

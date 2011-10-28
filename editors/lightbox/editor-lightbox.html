@@ -3,9 +3,9 @@
 	<head>
 		<meta charset="UTF-8">
 		<title></title>
-		<script type="text/javascript" src="../../../lib/butter.js"></script>
-		<script type="text/javascript" src="../../shared/js/editor-state.js"></script>
-		<link rel="stylesheet" type="text/css" href="../../shared/editors/editor.css"/>
+		<script type="text/javascript" src="../../lib/butter.js"></script>
+		<script type="text/javascript" src="../shared/js/editor-state.js"></script>
+		<link rel="stylesheet" type="text/css" href="../shared/css/editor.css"/>
 	</head>
 	<body>
 		<table class="form">
@@ -28,12 +28,12 @@
 			</tbody>
 			<tbody>
 				<tr>
-					<th><label for="text">Text:</label></th>
-					<td><textarea id="text"></textarea></td>
+					<th><label for="html">Video HTML:</label></th>
+					<td><textarea id="html"></textarea></td>
 				</tr>
 				<tr>
-					<th><label for="link">Link:</label></th>
-					<td><input type="text" id="link"/></td>
+					<th><label for="lightbox">Lightbox HTML:</label></th>
+					<td><textarea id="lightbox"></textarea></td>
 				</tr>
 			</tbody>
 
@@ -109,7 +109,8 @@
 				left: {
 					type: 'percent'
 				},
-				text: 'text',
+				html: 'text',
+				lightbox: 'lightbox',
 				link: 'url',
 				classes: 'text',
 				align: 'text',
