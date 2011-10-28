@@ -93,6 +93,30 @@ THE SOFTWARE.
         };
 
         function setupServer( bindingType ) {
+          var succeeded = false;
+
+          function editorReady() {
+            succeeded = true;
+            butter.trigger( "trackeditstarted", that );
+            commServer.forget( editorLinkName, "ready", editorReady );
+          }
+
+          setTimeout( function() {
+            commServer.forget( editorLinkName, "ready", editorReady );
+            if ( succeeded ) {
+              return;
+            }
+            if ( targetWindow.close ) {
+              targetWindow.close();
+            }
+            if ( targetWindow && targetWindow.parentNode ) {
+              targetWindow.parentNode.removeChild( targetWindow );
+            }
+            undoListeners();
+            targetWindow = undefined;
+            console.log("failed" );
+            butter.trigger( "trackeditfailed", that );
+          }, 5000 );
           var binding = bindingType === "window" ? "bindWindow" : "bindFrame";
           commServer[ binding ]( editorLinkName, targetWindow, function() {
             butter.listen( "trackeventupdated", updateEditor );
@@ -156,6 +180,8 @@ THE SOFTWARE.
               "targets": targetArray,
               "id": trackEvent.id
             }, "edittrackevent");
+
+            commServer.listen( editorLinkName, "ready", editorReady );
           });
         } //setupServer
 
@@ -183,7 +209,6 @@ THE SOFTWARE.
           targetContainer.appendChild( targetWindow );
         } //if
 
-        butter.trigger( "trackeditstarted", that );
 
       }; //construct
 

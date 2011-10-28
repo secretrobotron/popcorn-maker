@@ -93,6 +93,8 @@
           closeBtn.addEventListener( "click", function() {
             client.send( "", "cancelclicked" );
           }, false );
+
+          client.send( "ready", "ready" );
           
         }, false);
 
