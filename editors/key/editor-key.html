@@ -78,10 +78,25 @@
 		<script type="text/javascript">
 		
 		(function() {
-			var bin, icons = [], userIcons, i, editor;
+			var bin, icons = [], userIcons, i, editor,
+				defaultStorage;
 
 			function updateValuePreview(field, value) {
 				document.getElementById(field.id + '-preview').innerHTML = Math.round(value * 100) / 100;
+
+				defaultStorage[field.id] = value;
+				try {
+					localStorage.keyEditor = JSON.stringify(defaultStorage);
+				} catch (e) {
+				}
+			}
+
+			try {
+				defaultStorage = (localStorage && JSON.parse(localStorage.keyEditor));
+			} catch(e) {
+			}
+			if (!defaultStorage) {
+				defaultStorage = {};
 			}
 
 			editor = new EditorState({
@@ -93,7 +108,7 @@
 				},
 				mode: {
 					type: 'text',
-					defaultValue: 'luma',
+					defaultValue: defaultStorage.mode || 'luma',
 					callback: function(field, value) {
 						var display, i, row,
 							ids = ['screen','weight','balance'];
@@ -106,39 +121,52 @@
 						for (i = 0; i < ids.length; i++) {
 							document.getElementById(ids[i] + '-row').style.display = display;
 						}
+
+						defaultStorage[field.id] = value;
+						try {
+							localStorage.keyEditor = JSON.stringify(defaultStorage);
+						} catch (e) {
+						}
 					}
 				},
 				clipBlack: {
 					type: 'number',
 					min: 0,
 					max: 1,
-					defaultValue: 0,
+					defaultValue: defaultStorage.clipBlack || 0,
 					callback: updateValuePreview
 				},
 				clipWhite: {
 					type: 'number',
 					min: 0,
 					max: 1,
-					defaultValue: 1,
+					defaultValue: defaultStorage.clipWhite || 1,
 					callback: updateValuePreview
 				},
 				balance: {
 					type: 'number',
 					min: 0,
 					max: 1,
-					defaultValue: 1,
+					defaultValue: defaultStorage.balance || 1,
 					callback: updateValuePreview
 				},
 				weight: {
 					type: 'number',
 					min: 0,
 					max: 1,
-					defaultValue: 1,
+					defaultValue: defaultStorage.weight || 1,
 					callback: updateValuePreview
 				},
 				screen: {
 					type: 'text',
-					defaultValue: 'rgb(66, 195, 31)'
+					defaultValue: defaultStorage.screen || 'rgb(66, 195, 31)',
+					callback: function(field, value) {
+						defaultStorage[field.id] = value;
+						try {
+							localStorage.keyEditor = JSON.stringify(defaultStorage);
+						} catch (e) {
+						}
+					}
 				},
 				target: {
 					type: 'target',
