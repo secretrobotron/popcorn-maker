@@ -150,7 +150,11 @@ var Seriously,
 			}
 
 			if (!effect) {
-				effect = seriously.effect(options.mode + 'key');
+				if (options.mode === 'chroma') {
+					effect = seriously.effect('chroma');
+				} else {
+					effect = seriously.effect('lumakey');
+				}
 				effect.source = video;
 				seriousliesByTarget[id][options.mode] = effect;
 			}
