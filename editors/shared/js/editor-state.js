@@ -110,7 +110,6 @@
 	
 	function EditorState(fields, frameRate, width, height) {
 		var name, field, that = this;
-		
 		function makeElementValidator(name, type, modify) {
 			var fn,
 				mod = modify,
@@ -292,8 +291,6 @@
 				height: height || Math.max(Math.min(document.body.offsetHeight, 600), 300)
 			}, 'clientdimsupdated' );
 
-			that.targetsUpdated(message.targets);
-
 			options = message.trackEvent.popcornOptions;
 			for (n in that.fields) {
 				field = that.fields[n];
@@ -311,9 +308,12 @@
 				}
 			}
 
+			that.targetsUpdated(message.targets);
+
 			if (that.targets.length === 1) {
 				that.trackEvent.target = that.targets[0][0];
 			}
+
 			that.undoStack = [];
 			that.pushState();
 			that.updateForm();
@@ -401,6 +401,7 @@
 			if (!this.trackEvent.target) {
 				this.trackEvent.target = targets[0][0];
 			}
+
 		}
 		
 		this.targets = targets;
