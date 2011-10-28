@@ -208,7 +208,10 @@
           var start = trackEventObj.left / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration,
               end = start + 4;
 
-          b.addTrackEvent( currentMediaInstance.butterTracks[ currentMediaInstance.lastTrack.id() ], new Butter.TrackEvent({ popcornOptions: {start: start, end: end }, type: ui.draggable[ 0 ].id }) );
+          var elementId = ui.draggable[ 0 ].id,
+              extractedType = elementId.substring( b.pluginElementPrefix.length );
+
+          b.addTrackEvent( currentMediaInstance.butterTracks[ currentMediaInstance.lastTrack.id() ], new Butter.TrackEvent({ popcornOptions: {start: start, end: end }, type: extractedType }) );
         // setup for createTrackEvent()
         } else {
 
