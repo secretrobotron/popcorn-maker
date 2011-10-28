@@ -1,6 +1,6 @@
 {
   "title": "Words",
   "editor": "editor-words.html",
-  "view": "popup",
+  "view": "window",
   "plugin": "words"
 }

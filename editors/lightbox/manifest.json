@@ -1,6 +1,6 @@
 {
   "title": "Lightbox",
   "editor": "editor-lightbox.html",
-  "view": "popup",
+  "view": "window",
   "plugin": "lightbox"
 }
