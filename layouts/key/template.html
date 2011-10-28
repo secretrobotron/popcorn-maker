@@ -230,9 +230,9 @@
 				}
 			}
 
+			canvas = document.getElementById('canvas');
 			if (webgl) {
 				video.style.visibility = 'hidden';
-				canvas = document.getElementById('canvas');
 				canvas.height = video.videoHeight;
 				canvas.width = video.videoWidth;
 				canvas.style.display = 'block';
@@ -241,6 +241,11 @@
 				if (!seriouslyEvents) {
 					defaultSeriously.go();
 				}
+			} else {
+				canvas.style.display = 'none';
+				video.style.cssText = 'display: inline';
+				videoJS.width(940);
+				videoJS.height(940 * video.videoHeight / video.videoWidth);
 			}
 		}
 
