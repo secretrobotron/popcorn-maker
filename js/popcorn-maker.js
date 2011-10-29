@@ -105,7 +105,7 @@
       else if ( event.charCode === 32 ) {
         if ( !_popupManager.open ) {
           event.preventDefault();
-          this.currentProject.preview.playing ? this.currentProject.preview.pause() : this.currentProject.preview.play();
+          that.currentProject.preview.playing ? that.currentProject.preview.pause() : that.currentProject.preview.play();
         }
       }
     } //onKeyPress
