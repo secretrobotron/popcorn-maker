@@ -9,6 +9,10 @@
       var editorBasePath = rootDir + "/" + editorName;
       var editorOptions = PopcornMaker.getJSON( editorBasePath + "/manifest.json" );
 
+      if ( editorOptions.editor.match( /https?:\/\// ) ) {
+        editorBaseBath = "";
+      }
+
       this.init = function( butter ) {
         var path = editorBasePath + "/" + editorOptions.editor;
         var view = editorOptions.view !== "window" ? "editor-popup" : "window";
