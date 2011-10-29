@@ -1,10 +1,7 @@
 (function(){
 
-  var root = window.location.href;
-  root = root.substring( 0, root.indexOf('#') );
-
   var LAYOUTS_DIR = "./layouts",
-      EDITORS_DIR = root + "/editors",
+      EDITORS_DIR = "./editors",
       TEMPLATES_CONFIG = LAYOUTS_DIR + "/conf.json",
       EDITORS_CONFIG = EDITORS_DIR + "/conf.json",
       PACKAGE_SERVER_ADDR = "http://localhost:8888";

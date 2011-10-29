@@ -72,7 +72,6 @@
             eventId = message.id;
             constructDefaultEditor ( message.trackEvent );
             var body = window.document.body;
-            
             client.send( { "height": body.scrollHeight, "width": body.getBoundingClientRect().width }, "clientdimsupdated" );
           });
           
@@ -94,8 +93,10 @@
             client.send( "", "cancelclicked" );
           }, false );
 
-          client.send( "ready", "ready" );
-          
+          client.listen( "ready", function() {
+            client.send( "ready", "ready" );
+          });
+
         }, false);
 
       var constructDefaultEditor = function( trackEvent ) {

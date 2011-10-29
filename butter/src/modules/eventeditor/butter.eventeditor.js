@@ -95,28 +95,6 @@ THE SOFTWARE.
         function setupServer( bindingType ) {
           var succeeded = false;
 
-          function editorReady() {
-            succeeded = true;
-            butter.trigger( "trackeditstarted", that );
-            commServer.forget( editorLinkName, "ready", editorReady );
-          }
-
-          setTimeout( function() {
-            commServer.forget( editorLinkName, "ready", editorReady );
-            if ( succeeded ) {
-              return;
-            }
-            if ( targetWindow.close ) {
-              targetWindow.close();
-            }
-            if ( targetWindow && targetWindow.parentNode ) {
-              targetWindow.parentNode.removeChild( targetWindow );
-            }
-            undoListeners();
-            targetWindow = undefined;
-            console.log("failed" );
-            butter.trigger( "trackeditfailed", that );
-          }, 5000 );
           var binding = bindingType === "window" ? "bindWindow" : "bindFrame";
           commServer[ binding ]( editorLinkName, targetWindow, function() {
             butter.listen( "trackeventupdated", updateEditor );
@@ -167,22 +145,48 @@ THE SOFTWARE.
               butter.trigger( "trackeditclosed", that );
             });
 
-            commServer.listen( editorLinkName, "clientdimsupdated", clientDimsUpdated );
+          });
 
+         	commServer.listen( editorLinkName, "ready", editorReady );
+          commServer.listen( editorLinkName, "clientdimsupdated", clientDimsUpdated );
+
+          var checkEditorInterval;
+          function editorReady() {
+            succeeded = true;
+            butter.trigger( "trackeditstarted", that );
+            commServer.forget( editorLinkName, "ready", editorReady );
+            clearInterval( checkEditorInterval );
             var targetCollection = butter.targets, targetArray = [];
             for ( var i=0, l=targetCollection.length; i<l; ++i ) {
               targetArray.push( [ targetCollection[ i ].name, targetCollection[ i ].id ] );
             }
-
             trackEvent.manifest = butter.getManifest( trackEvent.type );
             commServer.send( editorLinkName, {
               "trackEvent": trackEvent, 
               "targets": targetArray,
               "id": trackEvent.id
             }, "edittrackevent");
+          }
+          checkEditorInterval = setInterval( function() {
+            commServer.send( editorLinkName, "ready", "ready" );
+          }, 500 );
+          setTimeout( function() {
+            clearInterval( checkEditorInterval );
+            commServer.forget( editorLinkName, "ready", editorReady );
+            if ( succeeded ) {
+              return;
+            }
+            if ( targetWindow.close ) {
+              targetWindow.close();
+            }
+            if ( targetWindow && targetWindow.parentNode ) {
+              targetWindow.parentNode.removeChild( targetWindow );
+            }
+            undoListeners();
+            targetWindow = undefined;
+            butter.trigger( "trackeditfailed", that );
+          }, 5000 );
 
-            commServer.listen( editorLinkName, "ready", editorReady );
-          });
         } //setupServer
 
         if ( target === "window" ) {
@@ -205,6 +209,7 @@ THE SOFTWARE.
           targetWindow.style.width = editorWidth;
           targetWindow.style.height = editorHeight;
           setupServer( "iframe" );
+          targetWindow.setAttribute( "src", source );
           targetWindow.src = source;
           targetContainer.appendChild( targetWindow );
         } //if
