@@ -1,0 +1,6 @@
+{
+  "title": "Image or Video",
+  "editor": "editor-image.html",
+  "view": "popup",
+  "plugin": "image"
+}
