@@ -1,10 +1,4 @@
 // PLUGIN: lightbox
-// http://www.youtube.com/watch?v=OclVb7Y8_30#t=1m56s
-/*
-
-todo: animate top, left and other styles (color, font size, etc.)
-
-*/
 
 (function (Popcorn) {
 
