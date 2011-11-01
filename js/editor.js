@@ -29,6 +29,13 @@
         popupManager.showPopup( "editor" );
       }
     });
+
+    butter.listen( "trackeditfailed", function( message ) {
+      if ( message.data.type !== "window" ) {
+        popupManager.hidePopup( "editor" );
+        alert( "Failed to open editor. Check editor configurations." );
+      }
+    });
     
     butter.listen ( "trackeditclosed", function( message ) {
       if ( message.data.type !== "window" ) {

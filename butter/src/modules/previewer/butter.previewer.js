@@ -59,6 +59,11 @@
         }
         function onMediaContentChanged( e ) {
           logger.debug( "Sending mediacontentchanged" );
+          function changeComplete( message ) {
+            server.forget( "link", "mediacontentchanged", changeComplete );
+            butter.trigger( "mediacontentchangecomplete", e.data.url );
+          }
+          server.listen( "link", "mediacontentchanged", changeComplete );
           server.send( "link", e.data.url, "mediacontentchanged" );
         }
         function onTrackEventAdded( e ) {

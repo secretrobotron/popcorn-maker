@@ -78,9 +78,18 @@
     buttonManager.add( "change-url", $( ".change-url-btn" ), {
       click: function() {
         $(".media-title-div").html( $('#url').val() );
-        butter.currentMedia.url = ( $('#url').val() );
         popupManager.hidePopups();
-      }
+        var newUrl = $('#url').val();
+        if ( newUrl !== butter.currentMedia.url ) {
+          butter.currentMedia.url = ( $('#url').val() );
+          pm.toggleLoadingScreen( true );
+          function changeComplete( media ) {
+            pm.toggleLoadingScreen( false );
+            butter.unlisten( "mediacontentchangecomplete", changeComplete );
+          }
+          butter.listen( "mediacontentchangecomplete", changeComplete );
+        } //if
+      } //click
     }); //change-url-btn
     buttonManager.add( "edit-selected-project", "edit-selected-project", {
       click: function () {

@@ -48,12 +48,15 @@
         delete listeners[ type ];
       }
       else {
-        var idx = listeners[ type ].indexOf( callback );
-        if ( idx > -1 ) {
-          var callback = listeners[ type ][ idx ];
-          listeners[ type ].splice( idx, 1 );
-          return callback;
-        } //if
+        var theseListeners = listeners[ type ];
+        if ( theseListeners ) {
+          var idx = listeners[ type ].indexOf( callback );
+          if ( idx > -1 ) {
+            var callback = listeners[ type ][ idx ];
+            listeners[ type ].splice( idx, 1 );
+            return callback;
+          } //if
+        }
       } //if
     };
 
@@ -115,11 +118,14 @@
           delete listeners[ type ];
         }
         else {
-          var idx = listeners[ type ].indexOf( callback );
-          if ( idx > -1 ) {
-            var callback = listeners[ type ][ idx ];
-            listeners[ type ].splice( idx, 1 );
-            return callback;
+          var theseListeners = listeners[ type ];
+          if ( theseListeners ) {
+            var idx = listeners[ type ].indexOf( callback );
+            if ( idx > -1 ) {
+              var callback = listeners[ type ][ idx ];
+              listeners[ type ].splice( idx, 1 );
+              return callback;
+            } //if
           } //if
         } //if
       }; //forget
@@ -142,18 +148,21 @@
         that.send( message, type );
       }; //async
 
-      client.addEventListener( "message", function ( e ) {
-        var data = parseEvent( e, window );
-        if ( data ) {
-          if ( data.type && listeners[ data.type ] ) {
-            var list = listeners[ data.type ];
-            for ( var i=0; i<list.length; ++i ) {
-              list[i]( data.message );
-            } //for
+      this.init = function( readyClient ) {
+        client = readyClient;
+        client.addEventListener( "message", function ( e ) {
+          var data = parseEvent( e, window );
+          if ( data ) {
+            if ( data.type && listeners[ data.type ] ) {
+              var list = listeners[ data.type ];
+              for ( var i=0; i<list.length; ++i ) {
+                list[i]( data.message );
+              } //for
+            } //if
+            callback && callback( data );
           } //if
-          callback && callback( data );
-        } //if
-      }, false );
+        }, false );
+      }; //init
 
       this.destroy = function() {
         delete listeners;
@@ -162,21 +171,24 @@
     } //Client
 
     this.bindFrame = function ( name, frame, readyCallback, messageCallback ) {
+      clients[ name ] = new Client( name, frame.contentWindow, messageCallback );
       frame.addEventListener( "load", function (e) {
-        that.bindClientWindow( name, frame.contentWindow, messageCallback );
+        clients[ name ].init( frame.contentWindow );
         readyCallback && readyCallback( e );
       }, false );
     };
 
     this.bindWindow = function ( name, win, readyCallback, messageCallback ) {
+      clients[ name ] = new Client( name, win, messageCallback );
       win.addEventListener( "load", function (e) {
-        that.bindClientWindow( name, win, messageCallback );
+        clients[ name ].init( win );
         readyCallback && readyCallback( e );
       }, false );
     };
 
     this.bindClientWindow = function ( name, client, callback ) {
       clients[ name ] = new Client( name, client, callback );
+      clients[ name ].init( client );
     };
 
     this.listen = function ( name, type, callback ) {
