@@ -45,7 +45,7 @@
 					ext = ext.pop().toLowerCase();
 				}
 
-				if (ext === 'mp4' || ext === 'm4v'|| ext === 'ogv:' || ext === 'webm') {
+				if (ext === 'mp4' || ext === 'm4v'|| ext === 'ogv' || ext === 'webm') {
 					options.mode = 'video';
 				} else if (ext === 'ogg' || ext === 'mp3' || ext === 'wav') {
 					options.mode = 'audio';
