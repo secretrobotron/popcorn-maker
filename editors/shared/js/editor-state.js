@@ -345,6 +345,10 @@
 		this.client.listen( "domtargetsupdated", function( message ) {
 			that.targetsUpdated(message);
 		});
+
+		this.client.listen( "ready", function() {
+			that.client.send( "ready", "ready" );
+		});
 	}
 
 	EditorState.prototype.save = function () {
