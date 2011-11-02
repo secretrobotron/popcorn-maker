@@ -171,8 +171,10 @@
           butter.listen( "trackeventupdated", onTrackEventUpdated );
 
           server.listen( "link", "importData", function( message ) {
-            logger.debug( "Received import data" );
-            importData = message;
+            if ( !importData && message ) {
+              logger.debug( "Received import data from preview", message );
+              importData = message;
+            } //if
           });
 
           server.listen( "link", "log", function( message ) {
