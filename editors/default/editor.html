@@ -136,14 +136,13 @@
 
             if ( elemType === "input" ) {
 
-              attr = trackEvent.popcornOptions[ prop ] || "";
+              attr = trackEvent.popcornOptions[ prop ];
 
-              if ( attr ) {
+              if ( attr !== undefined ) {
                 elem.setAttribute( "value", attr );
               }
-              else if ( opt['default'] ) {
-                console.log('replacing');
-                elem.value = opt['default'];
+              else if ( opt['default'] !== undefined ) {
+                elem.setAttribute( "value", opt['default'] )
               }
 
               var inputType = opt.type;
@@ -241,9 +240,7 @@
         btn = createDefaultButton({
           value: "Apply",
           callback: function() {
-            console.log('applying');
             if ( doChecks() ) {
-              console.log('actually applying');
               doPostProcesses();
               client.send( compileOptions( elements ), "applyclicked" );
             }

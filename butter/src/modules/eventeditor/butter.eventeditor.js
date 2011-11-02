@@ -92,6 +92,21 @@ THE SOFTWARE.
           commServer.destroy( editorLinkName );
         };
 
+        function filterKnownFields( fields ) {
+          var val;
+
+          function checkNumber( num ) {
+            var val = parseFloat( num );
+            if ( isNaN( val ) || val < 0 ) {
+              val = 0;
+            }
+            return val;
+          } //checkNumber
+
+          fields[ "start" ] = checkNumber( fields[ "start" ] );
+          fields[ "end" ] = checkNumber( fields[ "end" ] );
+        } //filterKnownFields
+
         function setupServer( bindingType ) {
           var succeeded = false;
 
@@ -102,6 +117,7 @@ THE SOFTWARE.
             butter.listen( "trackeventremoved", checkRemoved );
             
             commServer.listen( editorLinkName, "okayclicked", function( newOptions ){
+              filterKnownFields( newOptions );
               trackEvent.popcornOptions = newOptions;
               if ( targetWindow.close ) {
                 targetWindow.close();
@@ -116,6 +132,7 @@ THE SOFTWARE.
             });
 
             commServer.listen( editorLinkName, "applyclicked", function( newOptions ) {
+              filterKnownFields( newOptions );
               trackEvent.popcornOptions = newOptions;
               butter.trigger( "trackeventupdated", trackEvent );
             });
