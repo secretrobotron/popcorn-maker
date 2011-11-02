@@ -217,7 +217,7 @@
 
           var start = trackEventObj.popcornOptions.start,
               end = trackEventObj.popcornOptions.end,
-              width = ( end - start ) / currentMediaInstance.duration * track.getElement().offsetWidth,
+              width = Math.max( 3, ( end - start ) / currentMediaInstance.duration * track.getElement().offsetWidth ),
               left = start / currentMediaInstance.duration * track.getElement().offsetWidth;
 
           return { left: left, innerHTML: trackEventObj.type, classes: [ "track-event", "butter-track-event", trackEventObj.type ], width: width };
@@ -228,8 +228,8 @@
 
         var trackLinerTrack = track;
 
-        trackEventObj.options.popcornOptions.start = trackEventObj.element.offsetLeft / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration;
-        trackEventObj.options.popcornOptions.end = ( trackEventObj.element.offsetLeft + trackEventObj.element.offsetWidth ) / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration;
+        trackEventObj.options.popcornOptions.start = Math.max( 0, trackEventObj.element.offsetLeft / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
+        trackEventObj.options.popcornOptions.end = Math.max( 0, ( trackEventObj.element.offsetLeft + trackEventObj.element.offsetWidth ) / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
 
         // if the track is not registered in butter
         // remove it, and call b.addTrack
@@ -399,7 +399,7 @@
           start = trackEvent.popcornOptions.start,
           end = trackEvent.popcornOptions.end;
           
-      trackLinerTrackEvent.element.style.width = ( end - start ) / currentMediaInstance.duration * target.offsetWidth + "px";
+      trackLinerTrackEvent.element.style.width = Math.max( 3, ( end - start ) / currentMediaInstance.duration * target.offsetWidth ) + "px";
       trackLinerTrackEvent.element.style.left = start / currentMediaInstance.duration * target.offsetWidth + "px";
 
       //trackEvent.track.removeTrackEvent( trackEvent );
@@ -440,7 +440,7 @@
         trackLinerEvent = currentMediaInstance.trackLinerTrackEvents[ i ];
         start = trackLinerEvent.options.popcornOptions.start;
         end = trackLinerEvent.options.popcornOptions.end;
-        trackLinerEvent.element.style.width = ( end - start ) / currentMediaInstance.duration * target.offsetWidth + "px";
+        trackLinerEvent.element.style.width = Math.max( 3, ( end - start ) / currentMediaInstance.duration * target.offsetWidth ) + "px";
         trackLinerEvent.element.style.left = start / currentMediaInstance.duration * target.offsetWidth + "px";
       }
       //b.trigger( "mediatimeupdate", currentMediaInstance.media, "timeline" );
