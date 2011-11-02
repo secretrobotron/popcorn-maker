@@ -191,7 +191,7 @@
 			},
 			popcorn,
 			lastCurrentTime = -1,
-			slideRate = 30;
+			slideRate = 30, slideTime = 0.5;
 
 		function updateFrames(options, currentTime) {
 			var e,
@@ -199,7 +199,7 @@
 				diff = currentTime - lastCurrentTime,
 				opacity;
 
-			opacity = (options.end - currentTime) / 0.5;
+			opacity = (options.end - currentTime) / slideTime;
 			opacity = Math.min(1, opacity);
 			opacity = Math.max(0, opacity);
 			if (options.container && opacity !== options._opacity) {
@@ -284,7 +284,8 @@
 		}
 
 		function startPopcornImage(options) {
-			var i, queue, target = options.target;
+			var i, queue, target = options.target,
+				currentTime;
 
 			if (options.target && imageEvents[options.target]) {
 				queue = imageEvents[options.target];
@@ -293,19 +294,21 @@
 			}
 
 			i = queue.indexOf(options);
+			currentTime = popcorn.currentTime();
 
 			if (!count[target]) {
-				lastCurrentTime = popcorn.currentTime();
+				lastCurrentTime = currentTime;
 				margins[target] = 0;
 			}
 
 			count[target]++;
 
-			var target = options.target, e = targets[target];
-			margins[target] += options._thumbWidth;
-			//if (margins[target]) {
-				e.style.right = -margins[target] + '%';
-			//}
+			var target = options.target, e = targets[target], margin;
+			margin = Math.min( (currentTime - options.start) / slideTime, 1);
+			margin = Math.max( margin, 0 );
+			margin *= options._thumbWidth;
+			margins[target] += margin;
+			e.style.right = -margins[target] + '%';
 			
 		}
 		
@@ -316,7 +319,9 @@
 				return;
 			}
 
-			count[target]--;
+			if (count[target]) {
+				count[target]--;
+			}
 
 			margins[target] -= options._thumbWidth;
 			if (margins[target] <= 0) {
