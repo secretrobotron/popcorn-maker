@@ -120,13 +120,20 @@
           video.style.height = document.getElementById( that.target ).style.height;
           video.appendChild( src );
           video.controls = true;
-          video.id = that.target + "-butter";
+          if ( !video.id || video.id === "" ) {
+            video.id = "butter-media-element-" + that.id;
+          }
+          video.setAttribute( "autobuffer", "true" );
+          video.setAttribute( "preload", "auto" );
 
           document.getElementById( that.target ).appendChild( video );
           that.mediaElement = video;
           return video;
         }
         else {
+          if ( !mediaElement.id || mediaElement.id === "" ) {
+            mediaElement.id = "butter-media-element-" + that.id;
+          } //if
           that.mediaElement = mediaElement;
           if ( !mediaElement.firstChild || !mediaElement.currentSrc ) {
             var src = document.createElement( "source" );
@@ -137,6 +144,31 @@
         } //if
       }
     }; //prepareMedia
+
+    function findNode( id, rootNode ) {
+      var children = rootNode.childNodes;
+      for ( var i=0, l=children.length; i<l; ++i ) {
+        if ( children[ i ].id === id ) {
+          return children [ i ];
+        }
+        else {
+          var node = findNode( id, children[ i ] );
+          if ( node ) {
+            return node;
+          } //if
+        } //if 
+      } //for
+    } //findNode
+
+    this.alterMediaHTML = function( rootNode ) {
+      var targetElement = findNode( that.target, rootNode );
+      if ( that.type === "object" ) {
+        var parentNode = targetElement.parentNode,
+            newNode = document.getElementById( that.target ).cloneNode( true );
+        parentNode.removeChild( targetElement );
+        parentNode.appendChild( newNode );
+      } //if
+    }; //getMediaHTML
 
     this.findMediaType = function() {
       var regexResult = urlRegex.exec( that.url )
@@ -200,19 +232,22 @@
             popcornString += "popcorn." + trackEvents[ i ]._natives.type + "({";
             for ( var option in popcornOptions ) {
               if ( popcornOptions.hasOwnProperty( option ) ) {
-                popcornString += option + ":'" + trackEvents[ i ][ option ] + "',";
+                popcornString += "\n" + option + ":'" + trackEvents[ i ][ option ] + "',";
               } //if
             } //for
+            if ( popcornString[ popcornString.length - 1 ] === "," ) {
+              popcornString = popcornString.substring( 0, popcornString.length - 1 );
+            } //if
+            popcornString += "});\n";
           } //for trackEvents
-          popcornString += "})";
         } //if trackEvents
       } //if popcorn
 
       var method = options.method || "inline";
 
       if ( method === "event" ) {
-        popcornString = "document.addEventListener('DOMContentLoaded',function(e){" + popcornString;
-        popcornString += "},false);";
+        popcornString = "\ndocument.addEventListener('DOMContentLoaded',function(e){\n" + popcornString;
+        popcornString += "\n},false);";
       }
       else {
         popcornString = popcornString + "\n return popcorn;"; 
@@ -360,6 +395,7 @@
           var script = document.createElement( "script" );
           script.innerHTML = medias[ media ].generatePopcornString( { method: "event" } );
           head.appendChild( script );
+          medias[ media ].alterMediaHTML( body );
         } //if
       } //for
       html.appendChild( head );
