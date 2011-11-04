@@ -138,13 +138,20 @@
             mediaElement.id = "butter-media-element-" + that.id;
           } //if
           that.mediaElement = mediaElement;
+          mediaElement.pause();
+          mediaElement.src = "";
           while ( mediaElement.firstChild ) {
             mediaElement.removeChild( mediaElement.firstChild );
           } //while
           //if ( !mediaElement.firstChild || !mediaElement.currentSrc ) {
+          mediaElement.removeAttribute( "src" );
+          /*
           var src = document.createElement( "source" );
           src.src = that.url;
           mediaElement.appendChild( src );
+          */
+          mediaElement.src = that.url;
+          mediaElement.load();
           //}
           return mediaElement;
         } //if
@@ -473,10 +480,13 @@
               }
               else if( thisChild.getAttribute( "data-butter" ) === "media" ) {
                 if ( ["VIDEO", "AUDIO"].indexOf( thisChild.nodeName ) > -1 ) {
+
+                  var mediaSourceUrl = defaultMedia;
+                  //var mediaSourceUrl = thisChild.currentSrc;
                   
                   comm.send({
                     target: thisChild.id,
-                    url: thisChild.currentSrc,
+                    url: mediaSourceUrl,
                   }, "addmedia" );
                 }
                 else {
