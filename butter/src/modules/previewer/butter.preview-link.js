@@ -138,11 +138,14 @@
             mediaElement.id = "butter-media-element-" + that.id;
           } //if
           that.mediaElement = mediaElement;
-          if ( !mediaElement.firstChild || !mediaElement.currentSrc ) {
-            var src = document.createElement( "source" );
-            src.src = that.url;
-            mediaElement.appendChild( src );
-          }
+          while ( mediaElement.firstChild ) {
+            mediaElement.removeChild( mediaElement.firstChild );
+          } //while
+          //if ( !mediaElement.firstChild || !mediaElement.currentSrc ) {
+          var src = document.createElement( "source" );
+          src.src = that.url;
+          mediaElement.appendChild( src );
+          //}
           return mediaElement;
         } //if
       }

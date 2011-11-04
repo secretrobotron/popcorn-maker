@@ -39,6 +39,7 @@
         function onMediaAdded( e ) {
           logger.debug( "Sending mediaadded" );
           var mediaExport = e.data.json;
+          console.log( mediaExport );
           server.send( "link", mediaExport, "mediaadded" );
         }
         function onMediaChanged( e ) {
