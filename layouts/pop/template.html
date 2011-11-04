@@ -2,7 +2,17 @@
 <html lang="en-US">
 	<head>
 		<meta charset="UTF-8">
-		<title></title>
+		<!-- Set your own title here -->
+		<title>Popcorn.js Pop!</title>
+		<!--
+		The base tag makes all relative URLs point to Mozillas server where
+		all the extra scripts and images are hosted.
+
+		If you want to add any of your own files, either remove the base tag
+		and make sure all the scripts refer to the right absolute URLs, or
+		set your own references to be absolute URLs on your server. 
+		-->
+		<base href="http://mozillapopcorn.org/maker/layouts/pop/"/>
 		<style type="text/css">
 		
 		body {
@@ -96,7 +106,7 @@
 		</div>
 		<div id="video-container" class="video-js-box">
 			<video id="video" preload class="video-js" data-butter="media" controls>
-				<source src="http://www.rebelliouspixels.com/popupremix/buffyvsedward.webm" type='video/webm; codecs="vp8, vorbis"'/>
+				<source src="http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm" type='video/webm; codecs="vp8, vorbis"'/>
 			</video>
 			<div id="pop-container" data-butter="target"></div>
 		</div>
@@ -131,7 +141,7 @@
 				} //if medias
 			},
 			onfetchhtml: function( message ) {
-				return template.link.getHTML();
+				return template.link.getHTML( message );
 			},
 			onmediaremoved: function( message ) {
 				template.link.removeMedia( template.link.getMedia( message.id ) );
