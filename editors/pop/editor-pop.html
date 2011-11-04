@@ -140,7 +140,8 @@
 		<script type="text/javascript">
 		
 		(function() {
-			var bin, icons = [], userIcons, i, editor;
+			var bin, icons = [], userIcons, i, editor,
+				imagePath = 'http://mozillapopcorn.org/maker/layouts/pop/';
 			
 			function indexOf(array, callback) {
 				var elements = array.filter(callback);
@@ -210,7 +211,7 @@
 			
 			bin = document.getElementById('icon-bin');
 			var iconPaths = [
-				'../images/audio.png', '../images/brokenheart.png', '../images/cone.png', '../images/earth.png', '../images/error.png', '../images/eye.png', '../images/heart.png', '../images/info.png', '../images/man.png', '../images/money.png', '../images/music.png', '../images/net.png', '../images/skull.png', '../images/star.png', '../images/thumbsdown.png', '../images/thumbsup.png', '../images/time.png', '../images/trophy.png', '../images/tv.png', '../images/user.png', '../images/virus.png', '../images/women.png'
+				'images/audio.png', 'images/brokenheart.png', 'images/cone.png', 'images/earth.png', 'images/error.png', 'images/eye.png', 'images/heart.png', 'images/info.png', 'images/man.png', 'images/money.png', 'images/music.png', 'images/net.png', 'images/skull.png', 'images/star.png', 'images/thumbsdown.png', 'images/thumbsup.png', 'images/time.png', 'images/trophy.png', 'images/tv.png', 'images/user.png', 'images/virus.png', 'images/women.png'
 			];
 
 			try {
@@ -231,12 +232,12 @@
 			}
 			
 			for (i = 0; i < iconPaths.length; i++) {
-				iconPaths[i] = EditorState.util.resolveUrl(iconPaths[i]);
+				//iconPaths[i] = EditorState.util.resolveUrl(iconPaths[i]);
 				icon = {
 					img: document.createElement('img'),
 					path: iconPaths[i]
 				};
-				icon.img.src = iconPaths[i];
+				icon.img.src = imagePath + iconPaths[i];
 				icon.img.addEventListener('click', (function(icon) {
 					return function() {
 						selectIcon(icon);
