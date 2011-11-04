@@ -343,7 +343,7 @@
 				} //if medias
 			},
 			onfetchhtml: function( message ) {
-				return template.link.getHTML();
+				return template.link.getHTML( message );
 			},
 			onmediaremoved: function( message ) {
 				template.link.removeMedia( template.link.getMedia( message.id ) );

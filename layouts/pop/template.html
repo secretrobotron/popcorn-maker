@@ -106,7 +106,7 @@
 		</div>
 		<div id="video-container" class="video-js-box">
 			<video id="video" preload class="video-js" data-butter="media" controls>
-				<source src="http://www.rebelliouspixels.com/popupremix/buffyvsedward.webm" type='video/webm; codecs="vp8, vorbis"'/>
+				<source src="http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm" type='video/webm; codecs="vp8, vorbis"'/>
 			</video>
 			<div id="pop-container" data-butter="target"></div>
 		</div>
@@ -141,7 +141,7 @@
 				} //if medias
 			},
 			onfetchhtml: function( message ) {
-				return template.link.getHTML();
+				return template.link.getHTML( message );
 			},
 			onmediaremoved: function( message ) {
 				template.link.removeMedia( template.link.getMedia( message.id ) );
