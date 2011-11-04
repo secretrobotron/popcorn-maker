@@ -3,6 +3,7 @@
 <script src="http://popcornjs.org/code/dist/popcorn.js"></script>
 <script src="../../external/layouts/popcorn-js/popcorn.image.js"></script>
 <script src="../../external/layouts/popcorn-js/popcorn.footnote.js"></script>
+<script data-butter="project-data"></script>
 <script src="../../lib/butter.js"></script>
 <script>
 (function() {
@@ -29,7 +30,7 @@
       } //if medias
     },
     onfetchhtml: function( message ) {
-      return template.link.getHTML();
+      return template.link.getHTML( message );
     },
     onmediaremoved: function( message ) {
       template.link.removeMedia( template.link.getMedia( message.id ) );

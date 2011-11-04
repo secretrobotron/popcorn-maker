@@ -211,7 +211,8 @@
 
         this.fetchHTML = function( callback ) {
           logger.debug( "Fetching HTML" );
-          server.async( "link", null, "html", function( message ) {
+          var data = butter.exportProject();
+          server.async( "link", data, "html", function( message ) {
             logger.debug( "Receiving HTML" );
             callback( message );
           });

@@ -69,10 +69,13 @@
       for ( var i=0; i<scripts.length; ++i ) {
         if ( scripts[ i ].getAttribute( "data-butter" ) === "project-data" ) {
           try {
-            importData = JSON.parse( scripts[ i ].text );
-            if ( importData.media ) {
-              options.loadFromData( importData );
-            } //if
+            var text = scripts[ i ].text.replace(/^\s+|\s+$/g,"");
+            if ( text.length > 0 ) {
+              importData = JSON.parse( text );
+              if ( importData.media ) {
+                options.loadFromData( importData );
+              } //if
+            }
           }
           catch( e ) {
             console.log( "Error: Couldn't load baked butter project data." );
@@ -386,15 +389,32 @@
       }
     });
 
-    this.getHTML = function() {
+    this.getHTML = function( projectData ) {
       var html = document.createElement( "html" ),
           head = originalHead.cloneNode( true ),
           body = originalBody.cloneNode( true );
+
+      if ( typeof projectData === "object" ) {
+        projectData = JSON.stringify( projectData );
+      } //if
+
+      var scripts = head.getElementsByTagName( "script" ),
+          projectScript;
+      for ( var i=0, l=scripts.length; i<l; ++i ) {
+        if ( scripts[ i ].getAttribute( "data-butter" ) === "project-data" ) {
+          projectScript = scripts[ i ];
+          projectScript.innerHTML = projectData;
+          break;
+        } //if
+      } //for
+
       for ( var media in medias ) {
         if ( medias.hasOwnProperty( media ) ) {
-          var script = document.createElement( "script" );
-          script.innerHTML = medias[ media ].generatePopcornString( { method: "event" } );
-          head.appendChild( script );
+          if ( !projectScript ) {
+            var script = document.createElement( "script" );
+            script.innerHTML = medias[ media ].generatePopcornString( { method: "event" } );
+            head.appendChild( script );
+          }
           medias[ media ].alterMediaHTML( body );
         } //if
       } //for
@@ -680,7 +700,7 @@
     }; //mediaContentChangedHandler
 
     var fetchHTMLHandler = function( message ) {
-      return link.getHTML();
+      return link.getHTML( message );
     }; //fetchHTMLHandler
 
     link = new Butter.Link({
