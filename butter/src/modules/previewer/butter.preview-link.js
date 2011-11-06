@@ -50,7 +50,7 @@
         });
         if ( options.onsetup ) {
           options.onsetup({
-            importData: importData
+            importData: message.message.importData
           });
         }
       });
