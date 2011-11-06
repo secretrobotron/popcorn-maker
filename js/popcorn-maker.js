@@ -220,6 +220,14 @@
       that.toggleLoadingScreen( true );
       that.toggleKeyboardFunctions( false );
       that.destroyCurrentPreview();
+
+      if (  projectData && 
+            projectData.project && 
+            projectData.project.media && 
+            projectData.project.media.length > 0 ) {
+        defaultMedia = projectData.project.media[ 0 ].url;       
+      } //if
+
       that.createPreview({
         template: _templateManager.find( { root: projectData.template } ) || _templateManager.templates[ 0 ],
         defaultMedia: defaultMedia,
