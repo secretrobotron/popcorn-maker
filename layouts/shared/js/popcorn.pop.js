@@ -443,6 +443,10 @@ todo: animate top, left and other styles (color, font size, etc.)
 					div = options.container,
 					transform;
 
+				if (!options.container) {
+					return;
+				}
+
 				if (t < duration) {
 					scale = ( 1 - Math.pow( (t / duration) / 0.7 - 1, 2) ) / 0.8163;					
 				} else if (options.exit === 'fade') {
@@ -476,7 +480,9 @@ todo: animate top, left and other styles (color, font size, etc.)
 				}
 			},
 			end: function( event, options ) {
-				options.container.style.display = 'none';
+				if (options.container) {
+					options.container.style.display = 'none';
+				}
 				
 				if (typeof options.onEnd === 'function') {
 					try {
@@ -503,7 +509,7 @@ todo: animate top, left and other styles (color, font size, etc.)
 					events.splice(i, 1);
 				}
 				
-				if (options.container.parentNode) {
+				if (options.container && options.container.parentNode) {
 					options.container.parentNode.removeChild(options.container);
 					container = null;
 					delete options.container;
