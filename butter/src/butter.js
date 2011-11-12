@@ -29,9 +29,8 @@ THE SOFTWARE.
             "core/track", 
             "core/trackevent", 
             "core/target", 
-            "core/media",
-            "comm/comm" ],
-          function( Logger, EventManager, Track, TrackEvent, Target, Media, Comm ) {
+            "core/media" ],
+          function( Logger, EventManager, Track, TrackEvent, Target, Media ) {
 
     var Butter = function ( options ) {
 
@@ -477,24 +476,41 @@ THE SOFTWARE.
         Butter.extend( that, [].slice.call( arguments, 1 ) );
       };
 
-      this.registerModule = function( module, moduleOptions, callback ) {
-        require( module, function( loadedModule ) {
-          butter[ loadedModule.name ] = loadedModule.init( that, moduleOptions );
+      this.registerModule = function( modules, modulesOptions, callback ) {
+        if ( typeof modules !== "object" ) {
+          modules = [ modules ];
+        }
+        if ( typeof modules !== "object" ) {
+          modulesOptions = [ modulesOptions ];
+        }
+        require( modules, function() {
+          for ( var i=0, l=arguments.length; i<l; ++i ) {
+            var loadedModule = arguments[ i ];
+            that[ loadedModule.name ] = loadedModule.init( that, modulesOptions[ i ] );
+          } //for
           callback( loadedModule );
         });
       }; //registerModule
 
+      if ( options.ready ) {
+        em.listen( "ready", options.ready );
+      } //if
+
       if ( options.modules ) {
-        var numModulesLoaded = 0;
+        var numModulesLoaded = 0,
+            modulesToLoad = [];
+            optionsToGive = [];
         for ( var moduleName in options.modules ) {
-          var moduleOptions = options.modules[ moduleName ];
-          registerModule( moduleName, moduleOptions, function( loadedModule ) {
-            ++numModulesLoaded;
-            if ( numModulesLoaded ) {
-              em.dispatch( "ready", that );
-            } //if
-          });
+          modulesToLoad.push( moduleName + "/module" );
+          optionsToGive.push( options.modules[ moduleName ] );
         } //for
+
+        that.registerModule( modulesToLoad, optionsToGive, function( loadedModule ) {
+          ++numModulesLoaded;
+          if ( numModulesLoaded === modulesToLoad.length ) {
+            em.dispatch( "ready", that );
+          } //if
+        });
       }
       else {
         em.dispatch( "ready", that );
@@ -520,7 +536,7 @@ THE SOFTWARE.
           dest[ prop ] = copy[ prop ];
         }
       });
-    };
+    }; //extend
 
     Butter.Media = Media;
     Butter.Track = Track;
