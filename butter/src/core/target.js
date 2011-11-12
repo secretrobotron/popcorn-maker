@@ -23,7 +23,7 @@ THE SOFTWARE.
 **********************************************************************************/
 
 (function() {
-  define( [ "logger", "eventmanager" ], function( Logger, EventManager ) {
+  define( [ "core/logger", "core/eventmanager" ], function( Logger, EventManager ) {
 
     var Target = function ( options ) {
       var id = Target.guid++,
@@ -73,5 +73,7 @@ THE SOFTWARE.
     }; //Target
     Target.guid = 0;
 
-  }); //defin
+    return Target;
+
+  }); //define
 })();

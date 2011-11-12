@@ -29,12 +29,9 @@ THE SOFTWARE.
             "core/track", 
             "core/trackevent", 
             "core/target", 
-            "eventeditor/eventeditor", 
-            "previewer/previewer", 
-            "comm/comm", 
-            "pluginmanager/pluginmanager", 
-            "timeline/timeline" ], 
-          function( Logger, EventManager, Track, TrackEvent, Target, EventEditor, Previewer, Comm, Pluginmanager, Timeline ) {
+            "core/media",
+            "comm/comm" ],
+          function( Logger, EventManager, Track, TrackEvent, Target, Media, Comm ) {
 
     var Butter = function ( options ) {
 
@@ -47,6 +44,8 @@ THE SOFTWARE.
           logger = new Logger( id ),
           em = new EventManager( { logger: logger } ),
           that = this;
+
+      em.apply( "Butter", this );
 
       options = options || {};
           
@@ -193,13 +192,13 @@ THE SOFTWARE.
        ****************************************************************/
       //addTarget - add a target object
       this.addTarget = function ( target ) {
-        if ( !(target instanceof Target) ) {
+        if ( !(target instanceof Target ) ) {
           target = new Target( target );
         } //if
 
         targets.push( target );
 
-        logger.log( "Target added" );
+        logger.log( "Target added: " + target.name );
         em.dispatch( "targetadded", target );
 
         return target;
@@ -230,7 +229,7 @@ THE SOFTWARE.
       this.serializeTargets = function () {
         var sTargets = [];
         for ( var i=0, l=targets.length; i<l; ++i ) {
-          sTargets.push( targets[i].json );
+          sTargets.push( targets[ i ].json );
         } 
         return sTargets;
       }; //serializeTargets
@@ -376,7 +375,7 @@ THE SOFTWARE.
 
           if ( media && medias.indexOf( media ) > -1 ) {
             currentMedia = media;
-            logger.log( "Media Changed" );
+            logger.log( "Media Changed: " + media.name );
             em.dispatch( "mediachanged", media );
             return currentMedia;
           } //if
@@ -397,6 +396,15 @@ THE SOFTWARE.
         return undefined;
       };
 
+       var onMediaContentChanged = em.repeat,
+          onMediaDurationChanged = em.repeat,
+          onMediaTargetChanged = em.repeat,
+          onMediaTimeUpdate = em.repeat,
+          onTrackAdded = em.repeat,
+          onTrackRemoved = em.repeat,
+          onTrackEventAdded = em.repeat,
+          onTrackEventRemoved = em.repeat;
+
       //addMedia - add a media object
       this.addMedia = function ( media ) {
         if ( !( media instanceof Media ) ) {
@@ -406,12 +414,34 @@ THE SOFTWARE.
         var mediaName = media.name;
         medias.push( media );
 
+        media.listen( "mediacontentchanged", onMediaContentChanged );
+        media.listen( "mediadurationchanged", onMediaDurationChanged );
+        media.listen( "mediatargetchanged", onMediaTargetChanged );
+        media.listen( "mediatimeupdate", onMediaTimeUpdate );
+        media.listen( "trackadded", onTrackAdded );
+        media.listen( "trackremoved", onTrackRemoved );
+        media.listen( "trackeventadded", onTrackEventAdded );
+        media.listen( "trackeventremoved", onTrackEventRemoved );
+
+        if ( media.tracks.length > 0 ) {
+          for ( var ti=0, tl=media.tracks.length; ti<tl; ++ti ) {
+            var track = media.tracks[ ti ];
+                trackEvents = track.trackEvents;
+                media.dispatch( "trackadded", track );
+            if ( trackEvents.length > 0 ) {
+              for ( var i=0, l=trackEvents.length; i<l; ++i ) {
+                track.dispatch( "trackeventadded", trackEvents[ i ] );
+              } //for
+            } //if
+          } //for
+        } //if
+
         em.dispatch( "mediaadded", media );
         if ( !currentMedia ) {
           that.currentMedia = media;
         } //if
         return media;
-      };
+      }; //addMedia
 
       //removeMedia - forget a media object
       this.removeMedia = function ( media ) {
@@ -422,23 +452,53 @@ THE SOFTWARE.
         var idx = medias.indexOf( media );
         if ( idx > -1 ) {
           medias.splice( idx, 1 );
+          media.unlisten( "mediacontentchanged", onMediaContentChanged );
+          media.unlisten( "mediadurationchanged", onMediaDurationChanged );
+          media.unlisten( "mediatargetchanged", onMediaTargetChanged );
+          media.unlisten( "mediatimeupdate", onMediaTimeUpdate );
+          media.unlisten( "trackadded", onTrackAdded );
+          media.unlisten( "trackremoved", onTrackRemoved );
+          media.unlisten( "trackeventadded", onTrackEventAdded );
+          media.unlisten( "trackeventremoved", onTrackEventRemoved );
           var tracks = media.tracks;
           for ( var i=0, l=tracks.length; i<l; ++i ) {
             em.dispatch( "trackremoved", tracks[i] );
           } //for
           if ( media === currentMedia ) {
-            
             currentMedia = undefined;
           } //if
           em.dispatch( "mediaremoved", media );
           return media;
         } //if
         return undefined;
-      };
+      }; //removeMedia
 
       this.extend = function () {
         Butter.extend( that, [].slice.call( arguments, 1 ) );
       };
+
+      this.registerModule = function( module, moduleOptions, callback ) {
+        require( module, function( loadedModule ) {
+          butter[ loadedModule.name ] = loadedModule.init( that, moduleOptions );
+          callback( loadedModule );
+        });
+      }; //registerModule
+
+      if ( options.modules ) {
+        var numModulesLoaded = 0;
+        for ( var moduleName in options.modules ) {
+          var moduleOptions = options.modules[ moduleName ];
+          registerModule( moduleName, moduleOptions, function( loadedModule ) {
+            ++numModulesLoaded;
+            if ( numModulesLoaded ) {
+              em.dispatch( "ready", that );
+            } //if
+          });
+        } //for
+      }
+      else {
+        em.dispatch( "ready", that );
+      } //if
 
     }; //Butter
     Butter.guid = 0;
@@ -470,6 +530,7 @@ THE SOFTWARE.
     Butter.EventManager = EventManager;
 
     window.Butter = Butter;
+    return Butter;
   });
 
 })( window, window.document );

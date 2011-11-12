@@ -1,5 +1,5 @@
 (function() {
-  define( [ "logger", "eventmanager" ], function( Logger, EventManager ) {
+  define( [ "core/logger", "core/eventmanager" ], function( Logger, EventManager ) {
 
     var TrackEvent = function ( options ) {
       var id = TrackEvent.guid++,

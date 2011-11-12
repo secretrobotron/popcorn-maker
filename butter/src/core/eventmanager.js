@@ -23,22 +23,29 @@ THE SOFTWARE.
 **********************************************************************************/
 
 (function() {
-  define( [ "logger" ], function( Logger ) {
+  define( [ "core/logger" ], function( Logger ) {
 
     var EventManager = function( emOptions ) {
 
       var listeners = {},
+          related = {},
           id = "EventManager" + EventManager.guid++,
           logger = emOptions.logger || new Logger( id ),
           targetName = id,
           that = this;
       
-      this.listen = function( type, listener ) {
+      this.listen = function( type, listener, relatedObject ) {
         if ( type && listener ) {
           if ( !listeners[ type ] ) {
             listeners[ type ] = [];
           } //if
           listeners[ type ].push( listener );
+          if ( relatedObject ) {
+            if ( !related[ relatedObject ] ) {
+              related[ relatedObject ] = [];
+            } //if
+            related[ relatedObject ].push( listener );
+          } //if
         }
         else {
           logger.error( "type and listener required to listen for event." );
@@ -59,6 +66,14 @@ THE SOFTWARE.
           logger.error( "type and listener required to unlisten for event" );
         } //if
       }; //unlisten
+
+      this.unlistenByType = function( type, relatedObject ) {
+        var relatedListeners = related[ relatedObject ];
+        for ( var i=0, l=relatedListeners; i<l; ++i ) {
+          that.unlisten( type, relatedListeners[ i ] );
+        } //for
+        delete related[ relatedObject ];
+      }; //unlistenByType
 
       this.dispatch = function( type, data ) {
         if ( type ) {
@@ -82,8 +97,13 @@ THE SOFTWARE.
       this.apply = function( name, to ) {
         to.listen = that.listen;
         to.unlisten = that.unlisten;
+        to.dispatch = that.dispatch;
         targetName = name;
       }; //apply
+
+      this.repeat = function( e ) {
+        that.dispatch( e.type, e.data );
+      }; //repeat
 
     }; //EventManager
     EventManager.guid = 0;

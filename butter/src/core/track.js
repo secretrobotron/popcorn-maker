@@ -23,7 +23,7 @@ THE SOFTWARE.
 **********************************************************************************/
 
 (function() {
-  define( [ "logger", "eventmanager" ], function( Logger, EventManager ) {
+  define( [ "core/logger", "core/eventmanager", "core/trackevent" ], function( Logger, EventManager, TrackEvent ) {
 
     var Track = function ( options ) {
       var trackEvents = [],

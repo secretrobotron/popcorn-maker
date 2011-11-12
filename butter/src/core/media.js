@@ -23,21 +23,28 @@ THE SOFTWARE.
 **********************************************************************************/
 
 (function() {
-  define( [ "logger", "eventmanager" ], function( Logger, EventManager ) {
+  define( [
+      "core/logger", 
+      "core/eventmanager", 
+      "core/track" ], 
+    function( Logger, EventManager, Track ) {
+
     var Media = function ( options ) {
       options = options || {};
 
       var tracks = [],
-          id = Media.guid++,
+          id = "Media" + Media.guid++,
           logger = new Logger( id ),
           em = new EventManager( { logger: logger } ),
-          name = options.name || "Media" + id + Date.now(),
+          name = options.name || id + Date.now(),
           url,
           target,
           registry,
           currentTime = 0,
           duration = 0,
           that = this;
+
+      em.apply( "Media", this );
 
       Object.defineProperty( this, "url", {
         get: function() {
@@ -106,17 +113,29 @@ THE SOFTWARE.
         set: function( time ) {
           if ( time ) {
             duration = time;
+            logger.log( "duration changed to " + duration );
             em.dispatch( "mediadurationchanged", that );
           }
         }
       });
 
+      var onTrackEventAdded = em.repeat,
+          onTrackEventRemoved = em.repeat;
+
       this.addTrack = function ( track ) {
-        if ( !(track instanceof Track) ) {
+        if ( !( track instanceof Track ) ) {
           track = new Track( track );
         } //if
         tracks.push( track );
+        track.listen( "trackeventadded", onTrackEventAdded );
+        track.listen( "trackeventremoved", onTrackEventRemoved );
         em.dispatch( "trackadded", track );
+        var trackEvents = track.trackEvents;
+        if ( trackEvents.length > 0 ) {
+          for ( var i=0, l=trackEvents.length; i<l; ++i ) {
+            track.dispatch( "trackeventadded", trackEvents[ i ] );
+          } //for
+        } //if
         return track;
       }; //addTrack
 
@@ -125,7 +144,7 @@ THE SOFTWARE.
           if (  ( track.id !== undefined && tracks[ i ].id === track.id ) ||
                 ( track.name && tracks[ i ].name === track.name ) ||
                 tracks[ i ] === track ) {
-            return tracks[i];
+            return tracks[ i ];
           } //if
         } //for
         return undefined;
@@ -133,7 +152,7 @@ THE SOFTWARE.
 
       this.removeTrack = function ( track ) {
         if ( typeof(track) === "string" ) {
-          track = that.getTrack( track );
+          track = that.getTrack( { name: track } );
         } //if
         var idx = tracks.indexOf( track );
         if ( idx > -1 ) {
@@ -142,6 +161,8 @@ THE SOFTWARE.
           for ( var i=0, l=events.length; i<l; ++i ) {
             em.dispatch( "trackeventremoved", events[i] );
           } //for
+          track.unlisten( "trackeventadded", onTrackEventAdded );
+          track.unlisten( "trackeventremoved", onTrackEventRemoved );
           em.dispatch( "trackremoved", track );
           return track;
         } //if
@@ -207,6 +228,8 @@ THE SOFTWARE.
 
     }; //Media
     Media.guid = 0;
+
+    return Media;
 
   });
 })();
