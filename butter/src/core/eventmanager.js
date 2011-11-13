@@ -62,6 +62,11 @@ THE SOFTWARE.
             } //if
           } //if
         }
+        else if ( type ) {
+          if ( listeners[ type ] ) {
+            listeners[ type ] = [];
+          } //if
+        }
         else {
           logger.error( "type and listener required to unlisten for event" );
         } //if

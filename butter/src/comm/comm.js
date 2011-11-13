@@ -38,7 +38,7 @@
 
       this.async = function( message, type, handler ) {
         var wrapper = function( message ) {
-          that.forget( type, wrapper );
+          that.unlisten( type, wrapper );
           handler( message );
         }; //wrapper
         that.listen( type, wrapper ); 
@@ -88,7 +88,7 @@
 
         this.async = function( message, type, handler ) {
           var wrapper = function( message ) {
-            that.forget( type, wrapper );
+            that.unlisten( type, wrapper );
             handler( message );
           }; //wrapper
           that.listen( type, wrapper ); 
@@ -137,8 +137,8 @@
         clients[ name ] && clients[ name ].listen( type, callback );
       };
 
-      this.forget = function ( name, type, callback ) {
-        clients[ name ] && clients[ name ].forget( type, callback );
+      this.unlisten = function ( name, type, callback ) {
+        clients[ name ] && clients[ name ].unlisten( type, callback );
       };
 
       this.send = function ( name, message, type ) {

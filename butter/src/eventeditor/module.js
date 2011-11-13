@@ -24,17 +24,17 @@ THE SOFTWARE.
 
 (function( window, document, undefined ) {
 
-  define( [ "core/logger", "core/eventmanager", "core/trackevent", "comm/comm" ], function( Logger, EventManager, Comm, TrackEvent ) {
+  define( [ "core/logger", "core/eventmanager", "core/trackevent", "comm/comm" ], function( Logger, EventManager, TrackEvent, Comm ) {
 
     var EventEditor = function( butter, options ) {
 
       options = options || {};
 
-      var defaultEditor = options.defaultEditor || "defaultEditor.html",
-          editors = {},
-          commServer = new Comm.CommServer();
+      var editors = {},
+          commServer = new Comm.CommServer(),
+          that = this;
 
-      var Editor = function ( butter, options ) {
+      var Editor = function ( options ) {
         var target = options.target,
             type = options.type,
             source = options.source,
@@ -75,18 +75,18 @@ THE SOFTWARE.
           var clientDimsUpdated = function( dims ) {
             editorHeight = dims.height;
             editorWidth = dims.width;
-            butter.trigger( "clientdimsupdated", that, "eventeditor" );
+            butter.dispatch( "clientdimsupdated", that, "eventeditor" );
           };
           var undoListeners = function() {
-            butter.unlisten ( "trackeventupdated", updateEditor );
-            butter.unlisten ( "targetadded", targetAdded );
-            butter.unlisten ( "trackeventremoved", checkRemoved );
-            butter.unlisten ( "clientdimsupdated", clientDimsUpdated );
-            commServer.forget( editorLinkName, "okayclicked" );
-            commServer.forget( editorLinkName, "applyclicked" );
-            commServer.forget( editorLinkName, "deleteclicked" );
-            commServer.forget( editorLinkName, "cancelclicked" );
-            commServer.forget( editorLinkName, "clientdimsupdated" );
+            butter.unlisten( "trackeventupdated", updateEditor );
+            butter.unlisten( "targetadded", targetAdded );
+            butter.unlisten( "trackeventremoved", checkRemoved );
+            butter.unlisten( "clientdimsupdated", clientDimsUpdated );
+            commServer.unlisten( editorLinkName, "okayclicked" );
+            commServer.unlisten( editorLinkName, "applyclicked" );
+            commServer.unlisten( editorLinkName, "deleteclicked" );
+            commServer.unlisten( editorLinkName, "cancelclicked" );
+            commServer.unlisten( editorLinkName, "clientdimsupdated" );
             commServer.destroy( editorLinkName );
           };
 
@@ -125,14 +125,14 @@ THE SOFTWARE.
                 }
                 undoListeners();
                 targetWindow = undefined;
-                butter.trigger( "trackeventupdated", trackEvent );
-                butter.trigger( "trackeditclosed", that );
+                butter.dispatch( "trackeventupdated", trackEvent );
+                butter.dispatch( "trackeditclosed", that );
               });
 
               commServer.listen( editorLinkName, "applyclicked", function( newOptions ) {
                 filterKnownFields( newOptions );
                 trackEvent.popcornOptions = newOptions;
-                butter.trigger( "trackeventupdated", trackEvent );
+                butter.dispatch( "trackeventupdated", trackEvent );
               });
 
               commServer.listen( editorLinkName, "deleteclicked", function() {
@@ -145,7 +145,7 @@ THE SOFTWARE.
                 }
                 undoListeners();
                 targetWindow = undefined;
-                butter.trigger( "trackeditclosed", that );
+                butter.dispatch( "trackeditclosed", that );
               });
 
               commServer.listen( editorLinkName, "cancelclicked", function() {
@@ -157,7 +157,7 @@ THE SOFTWARE.
                 }
                 undoListeners();
                 targetWindow = undefined;
-                butter.trigger( "trackeditclosed", that );
+                butter.dispatch( "trackeditclosed", that );
               });
 
             });
@@ -168,8 +168,8 @@ THE SOFTWARE.
             var checkEditorInterval;
             function editorReady() {
               succeeded = true;
-              butter.trigger( "trackeditstarted", that );
-              commServer.forget( editorLinkName, "ready", editorReady );
+              butter.dispatch( "trackeditstarted", that );
+              commServer.unlisten( editorLinkName, "ready", editorReady );
               clearInterval( checkEditorInterval );
               var targetCollection = butter.targets, targetArray = [];
               for ( var i=0, l=targetCollection.length; i<l; ++i ) {
@@ -187,7 +187,7 @@ THE SOFTWARE.
             }, 500 );
             setTimeout( function() {
               clearInterval( checkEditorInterval );
-              commServer.forget( editorLinkName, "ready", editorReady );
+              commServer.unlisten( editorLinkName, "ready", editorReady );
               if ( succeeded ) {
                 return;
               }
@@ -199,7 +199,7 @@ THE SOFTWARE.
               }
               undoListeners();
               targetWindow = undefined;
-              butter.trigger( "trackeditfailed", that );
+              butter.dispatch( "trackeditfailed", that );
             }, 5000 );
 
           } //setupServer
@@ -210,7 +210,7 @@ THE SOFTWARE.
               setupServer( "window" );
               targetWindow.addEventListener( "beforeunload", function() {
                 undoListeners();
-                butter.trigger( "trackeditclosed", that );
+                butter.dispatch( "trackeditclosed", that );
                 targetWindow = undefined;
               }, false );
             }
@@ -237,8 +237,8 @@ THE SOFTWARE.
             height = width.height;
             width = width.width;
           }
-          editorWidth = width;
-          editorHeight = height;
+          editorWidth = width || editorWidth;
+          editorHeight = height || editorHeight;
         }; //setDimensions
 
         Object.defineProperty( this, "type", {
@@ -246,7 +246,12 @@ THE SOFTWARE.
         });
 
         Object.defineProperty( this, "size", {
-          get: function() { return { width: editorWidth, height: editorHeight }; }
+          get: function() { return { width: editorWidth, height: editorHeight }; },
+          set: function( val ) {
+            val = val || {};
+            editorWidth = val.width || editorWidth;
+            editorHeight = val.height || editorHeight;
+          }
         });
 
         Object.defineProperty( this, "window", {
@@ -262,36 +267,42 @@ THE SOFTWARE.
 
       this.editTrackEvent = function( trackEvent ) {
         if ( !trackEvent || !( trackEvent instanceof TrackEvent ) ) {
-          return false;
+          throw new Error( "Can't editor undefined trackEvent" );
         }
 
         var type = trackEvent.type;
         if ( !editors[ type ] ) {
           type = "default";
         }
-        editors[ type ].construct( trackEvent );
-        return true;
+        var editor = editors[ type ];
+        editor.construct( trackEvent );
+        return editor;
       }; //editTrackEvent
 
       this.addEditor = function( editorSource, pluginType, target ) {
         if ( !pluginType || !editorSource ) {
-          return false;
+          throw new Error( "Can't create an editor without a plugin type and editor source" );
         }
-        return editors[ pluginType ] = new Editor({
+        var editor = editors[ pluginType ] = new Editor({
           source: editorSource,
           type: pluginType,
           target: target
         });
+        return editor;
       }; //addCustomEditor
             
-      this.removeCustomEditor = function( pluginType ) {
+      this.removeEditor = function( pluginType ) {
         if ( !pluginType ) {
-          return false;
+          return;
         }
         var oldSource = editors[ pluginType ];
         editors[ pluginType ] = undefined;
         return oldSource;
-      }; //removeCustomEditor
+      }; //removeEditor
+
+      var defaultEditor = options.defaultEditor || "defaultEditor.html",
+          defaultTarget = options.defaultTarget || "window";
+      that.addEditor( defaultEditor, "default", defaultTarget );
 
     }; //EventEditor
 

@@ -16,7 +16,6 @@
       this.init = function( butter ) {
         var path = editorBasePath + "/" + editorOptions.editor;
         var view = editorOptions.view !== "window" ? "editor-popup" : "window";
-        console.log( editorOptions.plugin, view );
         butter.addEditor( path, editorOptions.plugin, view );
       }; //init
     } //Editor
