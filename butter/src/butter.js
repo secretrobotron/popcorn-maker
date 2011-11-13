@@ -395,15 +395,6 @@ THE SOFTWARE.
         return undefined;
       };
 
-       var onMediaContentChanged = em.repeat,
-          onMediaDurationChanged = em.repeat,
-          onMediaTargetChanged = em.repeat,
-          onMediaTimeUpdate = em.repeat,
-          onTrackAdded = em.repeat,
-          onTrackRemoved = em.repeat,
-          onTrackEventAdded = em.repeat,
-          onTrackEventRemoved = em.repeat;
-
       //addMedia - add a media object
       this.addMedia = function ( media ) {
         if ( !( media instanceof Media ) ) {
@@ -413,14 +404,16 @@ THE SOFTWARE.
         var mediaName = media.name;
         medias.push( media );
 
-        media.listen( "mediacontentchanged", onMediaContentChanged );
-        media.listen( "mediadurationchanged", onMediaDurationChanged );
-        media.listen( "mediatargetchanged", onMediaTargetChanged );
-        media.listen( "mediatimeupdate", onMediaTimeUpdate );
-        media.listen( "trackadded", onTrackAdded );
-        media.listen( "trackremoved", onTrackRemoved );
-        media.listen( "trackeventadded", onTrackEventAdded );
-        media.listen( "trackeventremoved", onTrackEventRemoved );
+        media.listen( "mediacontentchanged", em.repeat );
+        media.listen( "mediadurationchanged", em.repeat );
+        media.listen( "mediatargetchanged", em.repeat );
+        media.listen( "mediatimeupdate", em.repeat );
+        media.listen( "trackadded", em.repeat );
+        media.listen( "trackremoved", em.repeat );
+        media.listen( "tracktargetchanged", em.repeat );
+        media.listen( "trackeventadded", em.repeat );
+        media.listen( "trackeventremoved", em.repeat );
+        media.listen( "trackeventupdated", em.repeat );
 
         if ( media.tracks.length > 0 ) {
           for ( var ti=0, tl=media.tracks.length; ti<tl; ++ti ) {
@@ -451,14 +444,16 @@ THE SOFTWARE.
         var idx = medias.indexOf( media );
         if ( idx > -1 ) {
           medias.splice( idx, 1 );
-          media.unlisten( "mediacontentchanged", onMediaContentChanged );
-          media.unlisten( "mediadurationchanged", onMediaDurationChanged );
-          media.unlisten( "mediatargetchanged", onMediaTargetChanged );
-          media.unlisten( "mediatimeupdate", onMediaTimeUpdate );
-          media.unlisten( "trackadded", onTrackAdded );
-          media.unlisten( "trackremoved", onTrackRemoved );
-          media.unlisten( "trackeventadded", onTrackEventAdded );
-          media.unlisten( "trackeventremoved", onTrackEventRemoved );
+          media.unlisten( "mediacontentchanged", em.repeat );
+          media.unlisten( "mediadurationchanged", em.repeat );
+          media.unlisten( "mediatargetchanged", em.repeat );
+          media.unlisten( "mediatimeupdate", em.repeat );
+          media.unlisten( "trackadded", em.repeat );
+          media.unlisten( "trackremoved", em.repeat );
+          media.unlisten( "tracktargetchanged", em.repeat );
+          media.unlisten( "trackeventadded", em.repeat );
+          media.unlisten( "trackeventremoved", em.repeat );
+          media.unlisten( "trackeventupdated", em.repeat );
           var tracks = media.tracks;
           for ( var i=0, l=tracks.length; i<l; ++i ) {
             em.dispatch( "trackremoved", tracks[i] );

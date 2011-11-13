@@ -2,7 +2,7 @@
   define( [ "core/logger", "core/eventmanager" ], function( Logger, EventManager ) {
 
     var TrackEvent = function ( options ) {
-      var id = TrackEvent.guid++,
+      var id = "TrackEvent" + TrackEvent.guid++,
           logger = new Logger( id ),
           em = new EventManager( { logger: logger } ),
           that = this;
@@ -14,9 +14,22 @@
       this.start = options.start || 0;
       this.end = options.end || 0;
       this.type = options.type;
-      this.popcornOptions = options.popcornOptions;
+      this.popcornOptions = options.popcornOptions || {
+        start: that.start,
+        end: that.end
+      };
       this.popcornEvent = options.popcornEvent;
       this.track = options.track;
+
+      Object.defineProperty( this, "target", {
+        get: function() {
+          return that.popcornOptions.target;
+        },
+        set: function( val ) {
+          logger.log( "target changed: " + val );
+          that.popcornOptions.target = val;
+        }
+      }); //target
 
       Object.defineProperty( this, "name", {
         get: function() {

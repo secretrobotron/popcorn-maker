@@ -26,8 +26,11 @@ THE SOFTWARE.
   define( [ "core/logger", "core/eventmanager", "core/trackevent" ], function( Logger, EventManager, TrackEvent ) {
 
     var Track = function ( options ) {
+      options = options || {};
+
       var trackEvents = [],
           id = "Track" + Track.guid++,
+          target = options.target,
           logger = new Logger( id ),
           em = new EventManager( { logger: logger } ),
           that = this;
@@ -37,17 +40,32 @@ THE SOFTWARE.
 
       em.apply( "Track", this );
 
+      Object.defineProperty( this, "target", {
+        get: function() {
+          return target;
+        },
+        set: function( val ) {
+          target = val;
+          em.dispatch( "tracktargetchanged", that );
+          for( var i=0, l=trackEvents.length; i<l; i++ ) {
+            trackEvents[ i ].target = val;
+            trackEvents[ i ].dispatch( "trackeventupdated", trackEvents[ i ] );
+          } //for
+          logger.log( "target changed: " + val );
+        }
+      }); //target
+
       Object.defineProperty( this, "name", {
         get: function() {
           return name;
         }
-      });
+      }); //name
 
       Object.defineProperty( this, "id", {
         get: function() {
           return id;
         }
-      });
+      }); //id
 
       Object.defineProperty( this, "json", {
         get: function() {
@@ -74,7 +92,7 @@ THE SOFTWARE.
             }
           }
         }
-      });
+      }); //json
 
       this.getTrackEvent = function ( trackEvent ) {
         for ( var i=0, l=trackEvents.length; i<l; ++i) {
@@ -90,11 +108,14 @@ THE SOFTWARE.
         get: function() {
           return trackEvents;
         }
-      });
+      }); //trackEvents
 
       this.addTrackEvent = function ( trackEvent ) {
         if ( !( trackEvent instanceof TrackEvent ) ) {
           trackEvent = new TrackEvent( trackEvent );
+        } //if
+        if ( target ) {
+          trackEvents.target = target;
         } //if
         trackEvents.push( trackEvent );
         trackEvent.track = that;

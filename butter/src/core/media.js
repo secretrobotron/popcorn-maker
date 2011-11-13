@@ -119,16 +119,14 @@ THE SOFTWARE.
         }
       });
 
-      var onTrackEventAdded = em.repeat,
-          onTrackEventRemoved = em.repeat;
-
       this.addTrack = function ( track ) {
         if ( !( track instanceof Track ) ) {
           track = new Track( track );
         } //if
         tracks.push( track );
-        track.listen( "trackeventadded", onTrackEventAdded );
-        track.listen( "trackeventremoved", onTrackEventRemoved );
+        track.listen( "tracktargetchanged", em.repeat );
+        track.listen( "trackeventadded", em.repeat );
+        track.listen( "trackeventremoved", em.repeat );
         em.dispatch( "trackadded", track );
         var trackEvents = track.trackEvents;
         if ( trackEvents.length > 0 ) {
@@ -161,8 +159,9 @@ THE SOFTWARE.
           for ( var i=0, l=events.length; i<l; ++i ) {
             em.dispatch( "trackeventremoved", events[i] );
           } //for
-          track.unlisten( "trackeventadded", onTrackEventAdded );
-          track.unlisten( "trackeventremoved", onTrackEventRemoved );
+          track.unlisten( "tracktargetchanged", em.repeat );
+          track.unlisten( "trackeventadded", em.repeat );
+          track.unlisten( "trackeventremoved", em.repeat );
           em.dispatch( "trackremoved", track );
           return track;
         } //if

@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 **********************************************************************************/
 
-(function( window, document, undefined ) {
+(function() {
 
   define( [ "core/logger", "core/eventmanager", "core/trackevent", "comm/comm" ], function( Logger, EventManager, TrackEvent, Comm ) {
 
@@ -315,5 +315,5 @@ THE SOFTWARE.
 
   }); //define
 
-})( window, window.document );
+})();
 

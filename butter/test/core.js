@@ -173,7 +173,7 @@
     });
 
     test( "Add, retrieve, and remove Track", function () {
-      expect(9);
+      expect( 10 );
 
       var trackState = 0;
 
@@ -210,6 +210,14 @@
       ok( butter.getTrack( "Track 2" ) === undefined, "Track 2 doesn't exist" );
 
       ok( butter.tracks.length === 0, "There are no Tracks" );
+
+      var t3 = new Butter.Track({
+        name: "Track 3",
+        target: "Target 1"
+      });
+      butter.addTrack( t3 );
+      t3.addTrackEvent({ name: "TrackEvent 49" });
+      ok( t3.target === "Target 1", "TrackEvents inherit target when track target is set" );
     });
 
     module( "TrackEvent" );
