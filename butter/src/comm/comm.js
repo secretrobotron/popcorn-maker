@@ -169,7 +169,8 @@
 
     return {
       CommClient: CommClient,
-      CommServer: CommServer
+      CommServer: CommServer,
+      parseStartEvent: parseEvent
     };
 
   }); //define

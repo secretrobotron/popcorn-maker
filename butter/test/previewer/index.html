@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Butter Test Suite [Plugin Manager Module]</title>
+    <title>Butter Test Suite [Previewer Module]</title>
 	  <link rel="stylesheet" href="../qunit/qunit.css" type="text/css" media="screen">
 	  <script type="text/javascript" src="../qunit/qunit.js"></script>
-    <script type="text/javascript" data-main="pluginmanager.js" src="../../external/require.js/require.js"></script>
-    <style>
-    </style>
+    <script type="text/javascript" data-main="previewer.js" src="../../external/require.js/require.js"></script>
   </head>
   <body>
-    <h1 id="qunit-header">Butter API Test Suite [Plugin Tray Module]</h1>
+    <h1 id="qunit-header">Butter Previewer Test Suite</h1>
     <h2 id="qunit-banner"></h2>
     <div id="qunit-testrunner-toolbar"></div>
     <h2 id="qunit-userAgent"></h2>
     <ol id="qunit-tests"></ol>
+    <iframe id="target-iframe" style="width:100%;height:500px"></iframe>
   </body>
-  <div id="target-div"></div>
 </html>

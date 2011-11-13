@@ -1,4 +1,4 @@
-/*global text,expect,ok,module,notEqual,Butter,test,window*/
+/*global text,expect,ok,module,notEqual,test,window*/
 (function () {
 
   require.config({

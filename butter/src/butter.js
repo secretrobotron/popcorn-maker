@@ -236,10 +236,10 @@ THE SOFTWARE.
       //getTarget - get a target object by its id
       this.getTarget = function ( target ) {
         for ( var i=0; i<targets.length; ++i ) {
-          if (  ( target.id !== undefined && target[ i ].id === target.id ) ||
+          if (  ( target.id !== undefined && targets[ i ].id === target.id ) ||
                 ( target.name && targets[ i ].name === target.name ) ||
-                targets[i].name === target ) {
-            return targets[ target ];
+                targets[ i ].name === target ) {
+            return targets[ i ];
           }
         } 
         return undefined;

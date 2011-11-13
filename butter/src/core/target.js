@@ -27,7 +27,7 @@ THE SOFTWARE.
 
     var Target = function ( options ) {
       var id = Target.guid++,
-          logger = new Logger( id )
+          logger = new Logger( id ),
           em = new EventManager( { logger: logger } );
 
       em.apply( "Target", this );

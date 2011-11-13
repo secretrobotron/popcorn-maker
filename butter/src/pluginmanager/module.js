@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 **********************************************************************************/
 
-(function( window, document, undefined ) {
+(function() {
 
   define( [ "core/logger", "core/eventmanager" ], function( Logger, EventManager ) {
 
@@ -123,5 +123,5 @@ THE SOFTWARE.
 
   }); //define
 
-})( window, window.document );
+})();
 
