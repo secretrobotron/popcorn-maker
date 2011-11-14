@@ -408,6 +408,7 @@ THE SOFTWARE.
         media.listen( "mediadurationchanged", em.repeat );
         media.listen( "mediatargetchanged", em.repeat );
         media.listen( "mediatimeupdate", em.repeat );
+        media.listen( "mediaready", em.repeat );
         media.listen( "trackadded", em.repeat );
         media.listen( "trackremoved", em.repeat );
         media.listen( "tracktargetchanged", em.repeat );
@@ -448,6 +449,7 @@ THE SOFTWARE.
           media.unlisten( "mediadurationchanged", em.repeat );
           media.unlisten( "mediatargetchanged", em.repeat );
           media.unlisten( "mediatimeupdate", em.repeat );
+          media.unlisten( "mediaready", em.repeat );
           media.unlisten( "trackadded", em.repeat );
           media.unlisten( "trackremoved", em.repeat );
           media.unlisten( "tracktargetchanged", em.repeat );
