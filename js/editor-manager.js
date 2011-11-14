@@ -1,39 +1,44 @@
 (function() {
 
-  function EditorManager ( options ) {
+  define( [ "utils" ], function( utils ) {
 
-    var rootDir = options.editorsDir;
+    function EditorManager ( options ) {
 
-    function Editor( editorName ) {
+      var rootDir = options.editorsDir;
 
-      var editorBasePath = rootDir + "/" + editorName;
-      var editorOptions = PopcornMaker.getJSON( editorBasePath + "/manifest.json" );
+      function Editor( editorName ) {
 
-      if ( editorOptions.editor.match( /https?:\/\// ) ) {
-        editorBaseBath = "";
-      }
+        var editorBasePath = rootDir + "/" + editorName;
+        var editorOptions = utils.getJSON( editorBasePath + "/manifest.json" );
 
-      this.init = function( butter ) {
-        var path = editorBasePath + "/" + editorOptions.editor;
-        var view = editorOptions.view !== "window" ? "editor-popup" : "window";
-        butter.addEditor( path, editorOptions.plugin, view );
-      }; //init
-    } //Editor
+        if ( editorOptions.editor.match( /https?:\/\// ) ) {
+          editorBaseBath = "";
+        }
 
-    var editors = [],
-        editorList = PopcornMaker.getJSON( options.config );
+        this.init = function( butter ) {
+          var path = editorBasePath + "/" + editorOptions.editor;
+          var view = editorOptions.view !== "window" ? "editor-popup" : "window";
+          butter.eventeditor.addEditor( path, editorOptions.plugin, view );
+        }; //init
+      } //Editor
 
-    for ( var i=0; i<editorList.length; ++i ) {
-      editors.push( new Editor( editorList[ i ] ) );
-    } //for
+      var editors = [],
+          editorList = utils.getJSON( options.config );
 
-    this.initEditors = function( butter ) {
-      for ( var i=0; i<editors.length; ++i ) {
-        editors[ i ].init( butter );
-      }
-    };
+      for ( var i=0; i<editorList.length; ++i ) {
+        editors.push( new Editor( editorList[ i ] ) );
+      } //for
 
-  } //EditorManager
+      this.initEditors = function( butter ) {
+        for ( var i=0; i<editors.length; ++i ) {
+          editors[ i ].init( butter );
+        }
+      };
 
-  window.EditorManager = EditorManager;
+    } //EditorManager
+
+    return EditorManager;
+
+  }); //define
+
 })();

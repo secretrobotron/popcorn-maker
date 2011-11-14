@@ -191,7 +191,7 @@ THE SOFTWARE.
               if ( succeeded ) {
                 return;
               }
-              if ( targetWindow.close ) {
+              if ( targetWindow && targetWindow.close ) {
                 targetWindow.close();
               }
               if ( targetWindow && targetWindow.parentNode ) {

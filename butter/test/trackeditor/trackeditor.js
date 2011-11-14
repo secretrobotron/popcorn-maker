@@ -1,74 +1,64 @@
 /*global text,expect,ok,module,notEqual,test,window*/
 (function () {
 
-  require.config({
-    baseUrl: "../../src",
+  var butter;
+
+  module ( "trackeditor", {
+    setup: function() {
+      stop();
+      new Butter({
+        modules: {
+          "trackeditor": {
+            target: "target-div",
+          }
+        },
+        ready: function( e ) {
+          butter = e.data;
+          start();
+        }
+      });
+    },
+    teardown: function() {
+    }
   });
 
-  require( [  "../../external/jquery/jquery.js", 
-              "../../external/jquery-ui/jquery-ui.min.js",
-              "butter" ], function( $, $$, Butter ) {
+  test( "Setup", function() {
+    expect( 2 );
+    ok( butter.trackeditor, "trackeditor exists" );
+    ok( butter.trackeditor.Editor, "Editor exists" );
+  });
 
-    var butter;
+  test( "Functionality", function() {
+    expect( 10 );
+    ok( butter.trackeditor.target.id === "target-div", "target is correct" );
 
-    module ( "Editor Setup", {
-      setup: function() {
-        stop();
-        new Butter({
-          modules: {
-            "trackeditor": {
-              target: "target-div",
-            }
-          },
-          ready: function( e ) {
-            butter = e.data;
-            start();
-          }
-        });
-      },
-      teardown: function() {
-      }
-    });
+    butter.addMedia({ name: "Media 1" })
+          .addTrack({
+            name: "Track 1",
+            target: "Target 1"
+          })
+          .addTrackEvent({
+            name: "TrackEvent 1", 
+          });
 
-    test( "Setup", function() {
-      expect( 2 );
-      ok( butter.trackeditor, "trackeditor exists" );
-      ok( butter.trackeditor.Editor, "Editor exists" );
-    });
+    var editor = new butter.trackeditor.Editor( butter.getTrack({ name: "Track 1" }) );
+    ok( editor.close, "close" );
+    ok( editor.remove, "remove" );
+    ok( editor.track, "track" );
+    ok( editor.target === "Target 1", "target" );
 
-    test( "Functionality", function() {
-      expect( 10 );
-      ok( butter.trackeditor.target.id === "target-div", "target is correct" );
+    editor.target = "Target 2";
+    ok( editor.target === "Target 2", "target changed properly" );
 
-      butter.addMedia({ name: "Media 1" })
-            .addTrack({
-              name: "Track 1",
-              target: "Target 1"
-            })
-            .addTrackEvent({
-              name: "TrackEvent 1", 
-            });
+    butter.tracks[ 0 ].target = "Target 3";
+    ok( editor.target === "Target 3", "target changed properly" );
+    ok( butter.tracks[ 0 ].trackEvents[ 0 ].target === "Target 3", "track event target changed properly" );
 
-      var editor = new butter.trackeditor.Editor( butter.getTrack({ name: "Track 1" }) );
-      ok( editor.close, "close" );
-      ok( editor.remove, "remove" );
-      ok( editor.track, "track" );
-      ok( editor.target === "Target 1", "target" );
-
-      editor.target = "Target 2";
-      ok( editor.target === "Target 2", "target changed properly" );
-
-      butter.tracks[ 0 ].target = "Target 3";
-      ok( editor.target === "Target 3", "target changed properly" );
-      ok( butter.tracks[ 0 ].trackEvents[ 0 ].target === "Target 3", "track event target changed properly" );
-
-      var json = editor.json;
-      ok( json && json.name === "Track 1", "json output is correct" );
-      json.name = "1 kcarT";
-      editor.json = json;
-      ok( json && json.name === "1 kcarT", "track is correct after json input change" );
-    });
-
+    var json = editor.json;
+    ok( json && json.name === "Track 1", "json output is correct" );
+    json.name = "1 kcarT";
+    editor.json = json;
+    ok( json && json.name === "1 kcarT", "track is correct after json input change" );
   });
 
 })();

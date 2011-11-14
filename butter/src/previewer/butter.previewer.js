@@ -1,36 +1,53 @@
+/*jshint white: false, strict: false, plusplus: false, evil: true,
+  onevar: false, nomen: false */
+/*global require: false, document: false, console: false, window: false,
+  setTimeout: false */
+
+/**
+ * In the source case, use document.write to write out the require tag,
+ * and load all moduels as distinct scripts for debugging. After a build,
+ * all the modules are inlined, so will not use the document.write path.
+ * Use has() testing module, since the requirejs optimizer will convert
+ * the has test to false, and minification will strip the false code
+ * branch. http://requirejs.org/docs/optimization.html#hasjs
+ */
 (function () {
+    // Stub for has function.
+    function has() {
+        return true;
+    }
 
-  require.config({
-    baseUrl: "../../src"
-  });
+    if ( has( 'source-config' ) ) {
+        // Get the location of the butter source.
+        // The last script tag should be the butter source
+        // tag since in dev, it will be a blocking script tag,
+        // so latest tag is the one for this script.
+        var scripts = document.getElementsByTagName( 'script' ),
+        path = scripts[scripts.length - 1].src;
+        path = path.split( '/' );
+        path.pop();
+        path = path.join( '/' ) + '/';
 
-  define( [ "core/logger", "core/eventmanager", "comm/comm", "previewer/basic-link", "previewer/custom-link", "previewer/media" ], function( Logger, EventManager, Comm, BasicLink, CustomLink, Media ) {
+        document.write( '<script src="' + path + '../../external/require/require.js"></' + 'script>' );
 
-    function processStartEvent( e, callback ) {
-      var message = Comm.parseStartEvent( e, window );
-      if ( message && message.type === "setup" ) {
-        callback( message );
+        // Set up paths to find scripts.
+        document.write('<script>require.config( { baseUrl: "' + path + '",' +
+                'paths: {' +
+                // Paths are relative to baseUrl; Notice the commas!
+                '}' +
+                '} );' +
+                'require(["previewer"])</' + 'script>');
+    }
+
+    var ButterTemplate = function() {
+      if ( !ButterTemplate.__waiting ) {
+        ButterTemplate.__waiting = [];
       } //if
-    };
+      ButterTemplate.__waiting.push( arguments );
+    }; //ButterTemplate
 
-    function bootStrapper( e ) {
-      processStartEvent( e, function ( message ) {
-        window.removeEventListener( 'message', bootStrapper, false );
-        var link = new BasicLink({
-          defaultMedia: message.message.defaultMedia,
-          importData: message.message.importData,
-          popcornUrl: message.message.popcornUrl,
-        });
-      });
-    } //bootStrapper
+    if ( !window.ButterTemplate ) {
+      window.ButterTemplate = ButterTemplate;
+    } //if
 
-    window.ButterBootstrapper = bootStrapper;
-    window.addEventListener( 'message', window.ButterBootstrapper, false );
-
-    window.ButterBasicLink = BasicLink;
-    window.ButterCustomLink = CustomLink;
-    window.ButterMedia = Media;
-
-  }); //define
-
-})();
+}());

@@ -1,16 +1,22 @@
 (function(){
 
-  PopcornMaker.Preview = function( pm ) {
+  define( [], function() {
 
-    var butter = pm.butter;
+    var Preview = function( pm ) {
 
-    var previewIframe = document.getElementById( 'main' ),
-        header = document.getElementsByTagName( 'header' )[ 0 ];
-    previewIframe.style.height = window.innerHeight - header.clientHeight - 15 + "px";
+      var butter = pm.butter;
 
-    // force the iframe's source to be nothing
-    previewIframe.src = '';
+      var previewIframe = document.getElementById( 'main' ),
+          header = document.getElementsByTagName( 'header' )[ 0 ];
+      previewIframe.style.height = window.innerHeight - header.clientHeight - 15 + "px";
 
-  };
+      // force the iframe's source to be nothing
+      previewIframe.src = '';
+
+    }; //Preview
+
+    return Preview;
+
+  }); //define
 
 })();

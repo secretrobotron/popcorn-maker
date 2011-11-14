@@ -192,10 +192,10 @@
               importData: importData
             }, "setup" );
           } //sendSetup
-          setupInterval = setInterval( sendSetup, 500 );
           server.listen( "link", "setup", function( e ) {
             clearInterval( setupInterval );
           });
+          setupInterval = setInterval( sendSetup, 500 );
 
           this.fetchHTML = function( callback ) {
             logger.log( "Fetching HTML" );

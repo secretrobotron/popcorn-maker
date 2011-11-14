@@ -114,7 +114,7 @@
 
       this.bindFrame = function ( name, frame, readyCallback, messageCallback ) {
         clients[ name ] = new Client( name, frame.contentWindow, messageCallback );
-        frame.addEventListener( "load", function (e) {
+        frame.addEventListener( "load", function ( e ) {
           clients[ name ].init( frame.contentWindow );
           readyCallback && readyCallback( e );
         }, false );
@@ -122,7 +122,7 @@
 
       this.bindWindow = function ( name, win, readyCallback, messageCallback ) {
         clients[ name ] = new Client( name, win, messageCallback );
-        win.addEventListener( "load", function (e) {
+        win.addEventListener( "load", function ( e ) {
           clients[ name ].init( win );
           readyCallback && readyCallback( e );
         }, false );

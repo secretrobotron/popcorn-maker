@@ -1,77 +1,82 @@
+#############################################################################################
+# NOTES:
+#
+# This Makefile assumes that you have the following installed, setup:
+#
+#  * node: http://nodejs.org
+#  * Unixy shell (use msys on Windows)
+#
+#############################################################################################
 
-BUTTER := butter
-SRC_DIR := .
-DIST_DIR := $(SRC_DIR)/dist
-DIST_LIB_DIR := $(DIST_DIR)/lib
-DIST_CSS_DIR := $(DIST_DIR)/css
+BUTTER := butter 
+SRC_DIR := ./src
+TEST_DIR := ./test
+DIST_DIR := ./dist
+EXTERNAL_DIR := ./external
+BUTTER_SRC := $(SRC_DIR)/$(BUTTER).js
+PREVIEWER_SRC := $(SRC_DIR)/previewer/$(BUTTER).previewer.js
 BUTTER_DIST := $(DIST_DIR)/$(BUTTER).js
 BUTTER_MIN := $(DIST_DIR)/$(BUTTER).min.js
-BUTTER_HEAVY := $(DIST_DIR)/$(BUTTER).heavy.js
-BUTTER_HEAVY_CSS := $(DIST_DIR)/$(BUTTER).heavy.css
-SOURCE_DIR := $(SRC_DIR)/src
-MODULES_DIR := $(SOURCE_DIR)/modules
-EXTERNAL_DIR := $(SRC_DIR)/external
-TOOLS_DIR := $(SRC_DIR)/tools
+TOOLS_DIR := ./tools
+DIST_TEST_DIR := $(DIST_DIR)/test
+DIST_TOOLS_DIR := $(DIST_DIR)/tools
 
-MISC_LIBS := \
-  $(MODULES_DIR)/eventeditor/defaultEditor.html
+CORE_FILES := \
+  $(SRC_DIR)/butter.js \
+  $(wildcard $(SRC_DIR)/core/*.js) \
+  $(wildcard $(SRC_DIR)/eventeditor/*.js) \
+  $(wildcard $(SRC_DIR)/pluginmanager/*.js) \
+  $(wildcard $(SRC_DIR)/trackeditor/*.js) \
+  $(wildcard $(SRC_DIR)/timeline/*.js) \
+  $(wildcard $(SRC_DIR)/previewer/*.js) \
+  $(wildcard $(SRC_DIR)/comm/*.js)
 
-JS_LIBS := \
-  $(EXTERNAL_DIR)/jquery/jquery.js \
-  $(EXTERNAL_DIR)/jquery-ui/jquery-ui.min.js \
-  $(EXTERNAL_DIR)/trackLiner/trackLiner.js \
-  $(MODULES_DIR)/previewer/butter.preview-link.js \
-  $(MODULES_DIR)/butter.comm.js
+PREVIEWER_FILES := \
+  $(wildcard $(SRC_DIR)/previewer/*.js)
 
-JS_SRCS := \
-  $(SOURCE_DIR)/butter.js \
-  $(MODULES_DIR)/butter.comm.js \
-  $(MODULES_DIR)/plugintray/butter.plugintray.js \
-  $(MODULES_DIR)/eventeditor/butter.eventeditor.js \
-  $(MODULES_DIR)/previewer/butter.previewer.js \
-  $(MODULES_DIR)/timeline/butter.timeline.js \
-  $(MODULES_DIR)/previewer/butter.preview-link.js \
-  $(MODULES_DIR)/trackeditor/butter.trackeditor.js
+compile = node $(TOOLS_DIR)/node_modules/uglify-js/bin/uglifyjs -o $(1) $(BUTTER_DIST)
 
-CSS_SRCS := \
-  $(EXTERNAL_DIR)/jquery-ui/jquery-ui-1.8.5.custom.css \
-  $(EXTERNAL_DIR)/trackLiner/trackLiner.css
+complete = cat $(BUTTER_MIN) > $(1)
 
-compile = java -jar $(TOOLS_DIR)/closure/compiler.jar \
-                    $(shell for js in $(JS_SRCS) ; do echo --js $$js ; done) \
-	                  --compilation_level SIMPLE_OPTIMIZATIONS \
-	                  --js_output_file $(1)
+jshint = echo "Linting $(1)" ; node $(TOOLS_DIR)/jshint-cmdline.js $(1)
 
-all: $(DIST_DIR) $(BUTTER_DIST) 
+all: $(DIST_DIR) $(BUTTER_DIST) $(BUTTER_MIN) $(PREVIEWER_DIST) $(PREVIEWER_MIN)
 	@@echo "Finished, see $(DIST_DIR)"
-
-$(BUTTER_HEAVY_CSS):
-	@@echo "Building $(BUTTER_HEAVY_CSS)"
-	@@cat $(CSS_SRCS) >> $(BUTTER_HEAVY_CSS)
-
-$(BUTTER_HEAVY): $(DIST_DIR) $(BUTTER_DIST) $(BUTTER_MIN) $(BUTTER_HEAVY_CSS)
-	@@echo "Building $(BUTTER_HEAVY)"
-	@@cat $(JS_LIBS) > $(BUTTER_HEAVY)
-	@@cat $(BUTTER_MIN) >> $(BUTTER_HEAVY)
-
-$(BUTTER_MIN): $(DIST_DIR) $(BUTTER_DIST)
-	@@echo "Building $(BUTTER_MIN)"
-	@@$(call compile,$(BUTTER_MIN))
-
-$(BUTTER_DIST): $(DIST_DIR)
-	@@echo "Building $(BUTTER_DIST)"
-	@@cp $(CSS_SRCS) $(DIST_CSS_DIR)
-	@@cp $(JS_LIBS) $(DIST_LIB_DIR)
-	@@cp $(MISC_LIBS) $(DIST_LIB_DIR)
-	@@cat $(JS_SRCS) > $(BUTTER_DIST)
 
 $(DIST_DIR):
 	@@echo "Creating $(DIST_DIR)"
 	@@mkdir $(DIST_DIR)
-	@@echo "Creating $(DIST_LIB_DIR)"
-	@@mkdir $(DIST_LIB_DIR)
-	@@echo "Creating $(DIST_CSS_DIR)"
-	@@mkdir $(DIST_CSS_DIR)
+
+$(PREVIEWER_DIST): $(DIST_DIR) $(PREVIEWER_SRC)
+	@@echo "Building $(PREVIEWER_DIST)"
+	@@$(TOOLS_DIR)/node r.js -o $(SRC_DIR)/build.js
+
+$(PREVIEWER_MIN): $(DIST_DIR) $(PREVIEWER_SRC)
+	@@echo "Building $(PREVIEWER_MIN)"
+	@@$(call compile,$(PREVIEWER_MIN))
+
+$(BUTTER_DIST): $(DIST_DIR) $(BUTTER_SRC)
+	@@echo "Building $(BUTTER_DIST)"
+	@@cd $(TOOLS_DIR) && node r.js -o build.js
+
+$(BUTTER_MIN): $(DIST_DIR) $(BUTTER_SRC)
+	@@echo "Building $(BUTTER_MIN)"
+	@@$(call compile,$(BUTTER_MIN))
+
+test: $(DIST_DIR) $(BUTTER_MIN)
+	@@echo "Creating tests in $(DIST_TEST_DIR)"
+	@@mv $(BUTTER_MIN) $(BUTTER_DIST)
+	@@cp -R $(TEST_DIR) $(DIST_DIR)
+	@@mv $(DIST_TEST_DIR)/index.html.dist $(DIST_TEST_DIR)/index.html
+	@@mkdir -p $(DIST_TOOLS_DIR)/qunit
+	@@cp -R $(TOOLS_DIR)/qunit/qunit $(DIST_TOOLS_DIR)/qunit
+	@@echo "Starting web server in $(DIST_DIR), browse to http://localhost:9914/ (ctrl+c to stop)..."
+	@@cd $(DIST_DIR) && python ../$(TOOLS_DIR)/test_server.py
 
 clean:
 	@@rm -fr $(DIST_DIR)
+
+check-lint: check-lint-core
+
+check-lint-core:
+	@@$(foreach corefile,$(CORE_FILES),echo "-----" ; $(call jshint,$(corefile)) ; )
