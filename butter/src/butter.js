@@ -17,6 +17,17 @@
         return true;
     }
 
+    var Butter = function() {
+      if ( !Butter.__waiting ) {
+        Butter.__waiting = [];
+      } //if
+      Butter.__waiting.push( arguments );
+    };
+
+    if ( !window.Butter ) {
+      window.Butter = Butter;
+    } //if
+
     if ( has( 'source-config' ) ) {
         // Get the location of the butter source.
         // The last script tag should be the butter source
@@ -28,26 +39,22 @@
         path.pop();
         path = path.join( '/' ) + '/';
 
-        document.write( '<script src="' + path + '../external/require/require.js"></' + 'script>' );
+        if ( !window.require ) {
+          document.write( '<script src="' + path + '../external/require/require.js"></' + 'script>' );
+        } //if
 
         // Set up paths to find scripts.
-        document.write('<script>require.config( { baseUrl: "' + path + '",' +
-                'paths: {' +
-                // Paths are relative to baseUrl; Notice the commas!
-                '}' +
-                '} );' +
-                'require(["butter-main"])</' + 'script>');
+        document.write('<script>' + 
+          '(function(){' + 
+          'require.config({ ' + 
+            'baseUrl: "' + path + '",' +
+            'paths: {' +
+              // Paths are relative to baseUrl; Notice the commas!
+            '}' +
+          '});' +
+          'require(["butter-main"])' + 
+          '})()' +
+        '</script>');
     }
-
-    var Butter = function() {
-      if ( !Butter.__waiting ) {
-        Butter.__waiting = [];
-      } //if
-      Butter.__waiting.push( arguments );
-    };
-
-    if ( !window.Butter ) {
-      window.Butter = Butter;
-    } //if
 
 }());

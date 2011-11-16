@@ -1,5 +1,10 @@
 (function() {
-  require( [ "external" ], function() {
+  require( [ "js/external.js" ], function() {
+
+    require.config({
+      baseUrl: "js"
+    });
+
     require( [ "popcorn-maker" ], function( PopcornMaker ) {
 
       var pm = new PopcornMaker();

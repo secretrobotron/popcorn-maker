@@ -14,9 +14,8 @@
     "preview",
     "editor",
     "welcome",
-    "utils",
-    "butter" ],
-    function( ButtonManager, TemplateManager, EditorManager, PopupManager, Menu, Timeline, Preview, Editor, Welcome, utils, Butter ) {
+    "utils" ],
+    function( ButtonManager, TemplateManager, EditorManager, PopupManager, Menu, Timeline, Preview, Editor, Welcome, utils ) {
 
     var LAYOUTS_DIR = "./layouts",
         EDITORS_DIR = "./editors",
@@ -48,7 +47,9 @@
         template: undefined
       }; //currentProject
 
-      var init = function() {
+      var init = function( e ) {
+        _butter = e.data;
+
         _templateManager = new TemplateManager({
           config: TEMPLATES_CONFIG,
           container: "layout-select",
@@ -114,7 +115,6 @@
         },
         ready: init
       }); //butter
-
 
       function onKeyPress( event ) {
         var inc = event.shiftKey ? 1 : 0.1;
@@ -213,7 +213,7 @@
           var projectData = localProjects[ guid ],
               template = _templateManager.find( { root: projectData.template } );
           _butter.clearProject();         
-          _butter.pluginmanager.clearPlugins();
+          _butter.pluginmanager.clear();
           that.toggleLoadingScreen( true );
           that.toggleKeyboardFunctions( false );
           _popupManager.hidePopups();
@@ -230,7 +230,7 @@
 
       this.newProject = function( projectOptions ) {
         _butter.clearProject();
-        _butter.clearPlugins();
+        _butter.pluginmanager.clear();
         _butter.setProjectDetails( "title", projectOptions.title );
         that.toggleLoadingScreen( true );
         that.toggleKeyboardFunctions( false );
@@ -250,7 +250,7 @@
 
       this.importProject = function( projectData, defaultMedia ) {
         _butter.clearProject(); 
-        _butter.clearPlugins();
+        _butter.pluginmanager.clear();
         that.toggleLoadingScreen( true );
         that.toggleKeyboardFunctions( false );
         that.destroyCurrentPreview();
@@ -275,7 +275,7 @@
 
       this.createPreview = function( previewOptions ) {
         that.destroyCurrentPreview();
-        that.currentProject.preview = new _butter.Preview({
+        that.currentProject.preview = new _butter.previewer.Preview({
           template: previewOptions.template.template,
           defaultMedia: previewOptions.defaultMedia,
           importData: previewOptions.projectData,

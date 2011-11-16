@@ -22,32 +22,43 @@ THE SOFTWARE.
 
 **********************************************************************************/
 
-(function ( window, document, undefined ) {
+(function () {
 
   define( [ "core/logger", 
             "core/eventmanager", 
             "core/track", 
             "core/trackevent", 
             "core/target", 
-            "core/media" ],
+            "core/media",
+            "comm/comm",
+            "eventeditor/module",
+            "previewer/module",
+            "trackeditor/module",
+            "pluginmanager/module",
+            "timeline/module" ],
           function( Logger, EventManager, Track, TrackEvent, Target, Media ) {
 
     var Butter = function ( options ) {
+
+      options = options || {};
 
       var events = {},
           medias = [],
           currentMedia,
           targets = [],
           projectDetails = {},
+          moduleRoot = options.moduleRoot || "/",
           id = "Butter" + Butter.guid++,
           logger = new Logger( id ),
           em = new EventManager( { logger: logger } ),
           that = this;
 
+      if ( moduleRoot && moduleRoot[ moduleRoot.length - 1 ] !== "/" ) {
+        moduleRoot += "/";
+      }
+
       em.apply( "Butter", this );
 
-      options = options || {};
-          
       Object.defineProperty( this, "id", { get: function() { return id; } } );
 
       function checkMedia() {
@@ -473,6 +484,7 @@ THE SOFTWARE.
         Butter.extend( that, [].slice.call( arguments, 1 ) );
       };
 
+      /*
       this.registerModule = function( modules, modulesOptions, callback ) {
         if ( typeof modules !== "object" ) {
           modules = [ modules ];
@@ -488,6 +500,7 @@ THE SOFTWARE.
           callback( arguments );
         });
       }; //registerModule
+      */
 
       if ( options.ready ) {
         em.listen( "ready", options.ready );
@@ -497,13 +510,17 @@ THE SOFTWARE.
         var modulesToLoad = [];
             optionsToGive = [];
         for ( var moduleName in options.modules ) {
-          modulesToLoad.push( moduleName + "/module" );
-          optionsToGive.push( options.modules[ moduleName ] );
+          that[ moduleName ] = require( moduleName + "/module" ).init( that, options.modules[ moduleName ] );
+          //modulesToLoad.push( moduleRoot + moduleName + "/module" );
+          //optionsToGive.push( options.modules[ moduleName ] );
         } //for
+        em.dispatch( "ready", that );
 
+        /*
         that.registerModule( modulesToLoad, optionsToGive, function() {
           em.dispatch( "ready", that );
         });
+        */
       }
       else {
         em.dispatch( "ready", that );
@@ -548,5 +565,5 @@ THE SOFTWARE.
     return Butter;
   });
 
-})( window, window.document );
+})();
 
