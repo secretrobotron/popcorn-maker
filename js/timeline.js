@@ -83,8 +83,8 @@
       function checkScrubber( event ) {
 
         layersDiv.style.top = -tracksDiv.scrollTop + "px";
-        scrubber.style.left = -tracksDiv.scrollLeft + butter.currentTimeInPixels() + "px";
-        progressBar.style.width = -tracksDiv.scrollLeft + butter.currentTimeInPixels() + "px";
+        scrubber.style.left = -tracksDiv.scrollLeft + butter.timeline.currentTimeInPixels() + "px";
+        progressBar.style.width = -tracksDiv.scrollLeft + butter.timeline.currentTimeInPixels() + "px";
 
         var scrubberLeft = parseInt( scrubber.style.left, 10);
 
@@ -112,9 +112,9 @@
         scrubber.style.display = "block";
 
         if ( scrubberLeft >= scrubberContainer.offsetWidth ) {
-          tracksDiv.scrollLeft = butter.currentTimeInPixels() - scrubberContainer.offsetWidth;
+          tracksDiv.scrollLeft = butter.timeline.currentTimeInPixels() - scrubberContainer.offsetWidth;
         } else if ( scrubberLeft < 0 ) {
-          tracksDiv.scrollLeft = butter.currentTimeInPixels();
+          tracksDiv.scrollLeft = butter.timeline.currentTimeInPixels();
         }
 
       });
@@ -159,7 +159,7 @@
 
         scrubberClicked = true;
         butter.targettedEvent = undefined;
-        butter.currentTimeInPixels( event.clientX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft );
+        butter.timeline.currentTimeInPixels( event.clientX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft );
       }, false);
 
       document.addEventListener( "mouseup", function( event ) {
@@ -174,18 +174,18 @@
           var scrubberPos = event.pageX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft;
 
           if ( scrubberPos <= 0 ) {
-            butter.currentTimeInPixels( 0 );
+            butter.timeline.currentTimeInPixels( 0 );
           } else if ( scrubberPos >= timelineTarget.offsetWidth ) {
-            butter.currentTimeInPixels( timelineTarget.offsetWidth );
+            butter.timeline.currentTimeInPixels( timelineTarget.offsetWidth );
           } else {
-            butter.currentTimeInPixels( scrubberPos );
+            butter.timeline.currentTimeInPixels( scrubberPos );
           }
 
         }
       }, false);
 
       butter.listen( "mediatimeupdate", function() {
-        scrubber.style.left = butter.currentTimeInPixels() - tracksDiv.scrollLeft + "px";
+        scrubber.style.left = butter.timeline.currentTimeInPixels() - tracksDiv.scrollLeft + "px";
       });
 
       var drawCanvas = function() {
