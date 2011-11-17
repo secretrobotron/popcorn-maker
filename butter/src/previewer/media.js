@@ -21,9 +21,11 @@
           comm.send( that.popcorn.media.currentTime, "mediatimeupdate" );                
         },false);
         that.popcorn.media.addEventListener( "pause", function() {
+          comm.send( "paused", "log" );
           comm.send( that.id, "mediapaused" );
         }, false);
         that.popcorn.media.addEventListener( "playing", function() {
+          comm.send( "playing", "log" );
           comm.send( that.id, "mediaplaying" );
         }, false);
       }; //setupPopcornHandlers

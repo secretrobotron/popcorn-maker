@@ -51,6 +51,7 @@
           }
           function onMediaTimeUpdate( e ) {
             if ( e.data.currentTime !== currentTime ) {
+              logger.log( "Sending mediatimeupdate: " + currentTime + ", " + e.data.currentTime );
               server.send( "link", e.data.currentTime, "mediatimeupdate" );
             } //if
           }
@@ -137,16 +138,17 @@
             server.listen( "link", "mediapaused", function( e ) {
               logger.log( "Received mediapaused" );
               isPlaying = false;
-              butter.dispatch( "mediaplaying", butter.getMedia( { id: e.data } ), "previewer" );
+              butter.dispatch( "mediapaused", butter.getMedia( { id: e.data } ), "previewer" );
             });
             server.listen( "link", "mediaplaying", function( e ) {
               logger.log( "Received mediaplaying" );
               isPlaying = true;
-              butter.dispatch( "mediapaused", butter.getMedia( { id: e.data } ), "previewer" );
+              butter.dispatch( "mediaplaying", butter.getMedia( { id: e.data } ), "previewer" );
             });
             server.listen( "link", "mediatimeupdate", function( e ) {
-              //logger.log( "Received mediatimeupdate" );
-              currentTime = butter.currentTime = e.data;
+              currentTime = e.data;
+              //logger.log( "Received mediatimeupdate: " + currentTime );
+              butter.currentTime = currentTime;
             });
 
             server.listen( "link", "addmedia", function( e ) {

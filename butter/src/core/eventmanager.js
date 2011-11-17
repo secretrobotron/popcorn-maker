@@ -80,12 +80,12 @@ THE SOFTWARE.
         delete related[ relatedObject ];
       }; //unlistenByType
 
-      this.dispatch = function( type, data ) {
+      this.dispatch = function( type, data, tempTarget ) {
         if ( type ) {
           var theseListeners = listeners[ type ];
           if ( theseListeners ) {
             var e = {
-              target: targetName,
+              target: tempTarget || targetName,
               type: type,
               data: data
             };
@@ -107,7 +107,7 @@ THE SOFTWARE.
       }; //apply
 
       this.repeat = function( e ) {
-        that.dispatch( e.type, e.data );
+        that.dispatch( e.type, e.data, e.target );
       }; //repeat
 
     }; //EventManager

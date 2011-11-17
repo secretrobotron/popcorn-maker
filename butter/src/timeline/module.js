@@ -282,7 +282,9 @@ THE SOFTWARE.
         // called when a track event is double clicked
         dblclick: function( track, trackEventObj, event, ui ) {
 
-          butter.editTrackEvent && butter.editTrackEvent( trackEventObj.options );
+          if ( butter.eventeditor ) {
+            butter.eventeditor.editTrackEvent( trackEventObj.options );
+          }
         }
       });
       

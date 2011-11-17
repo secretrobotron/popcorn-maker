@@ -32,7 +32,11 @@ THE SOFTWARE.
 
       var editors = {},
           commServer = new Comm.CommServer(),
+          logger = new Logger( "EventEditor" ),
+          em = new EventManager( { logger: logger } ),
           that = this;
+
+      em.apply( "EventEditor", this );
 
       var Editor = function ( options ) {
         var target = options.target,
@@ -72,10 +76,11 @@ THE SOFTWARE.
           var targetAdded = function( e ) {
             commServer.send( editorLinkName, butter.targets, "domtargetsupdated" );
           };
-          var clientDimsUpdated = function( dims ) {
+          var clientDimsUpdated = function( e ) {
+            var dims = e.data;
             editorHeight = dims.height;
             editorWidth = dims.width;
-            butter.dispatch( "clientdimsupdated", that, "eventeditor" );
+            em.dispatch( "clientdimsupdated", that );
           };
           var undoListeners = function() {
             butter.unlisten( "trackeventupdated", updateEditor );
@@ -114,7 +119,8 @@ THE SOFTWARE.
               butter.listen( "targetadded", targetAdded );
               butter.listen( "trackeventremoved", checkRemoved );
               
-              commServer.listen( editorLinkName, "okayclicked", function( newOptions ){
+              commServer.listen( editorLinkName, "okayclicked", function( e ){
+                var newOptions = e.data;
                 filterKnownFields( newOptions );
                 trackEvent.popcornOptions = newOptions;
                 if ( targetWindow.close ) {
@@ -125,14 +131,14 @@ THE SOFTWARE.
                 }
                 undoListeners();
                 targetWindow = undefined;
-                butter.dispatch( "trackeventupdated", trackEvent );
-                butter.dispatch( "trackeditclosed", that );
+                em.dispatch( "trackeventupdated", trackEvent );
+                em.dispatch( "trackeditclosed", that );
               });
 
               commServer.listen( editorLinkName, "applyclicked", function( newOptions ) {
                 filterKnownFields( newOptions );
                 trackEvent.popcornOptions = newOptions;
-                butter.dispatch( "trackeventupdated", trackEvent );
+                em.dispatch( "trackeventupdated", trackEvent );
               });
 
               commServer.listen( editorLinkName, "deleteclicked", function() {
@@ -145,7 +151,7 @@ THE SOFTWARE.
                 }
                 undoListeners();
                 targetWindow = undefined;
-                butter.dispatch( "trackeditclosed", that );
+                em.dispatch( "trackeditclosed", that );
               });
 
               commServer.listen( editorLinkName, "cancelclicked", function() {
@@ -157,7 +163,7 @@ THE SOFTWARE.
                 }
                 undoListeners();
                 targetWindow = undefined;
-                butter.dispatch( "trackeditclosed", that );
+                em.dispatch( "trackeditclosed", that );
               });
 
             });
@@ -168,7 +174,7 @@ THE SOFTWARE.
             var checkEditorInterval;
             function editorReady() {
               succeeded = true;
-              butter.dispatch( "trackeditstarted", that );
+              em.dispatch( "trackeditstarted", that );
               commServer.unlisten( editorLinkName, "ready", editorReady );
               clearInterval( checkEditorInterval );
               var targetCollection = butter.targets, targetArray = [];
@@ -199,7 +205,7 @@ THE SOFTWARE.
               }
               undoListeners();
               targetWindow = undefined;
-              butter.dispatch( "trackeditfailed", that );
+              em.dispatch( "trackeditfailed", that );
             }, 5000 );
 
           } //setupServer
@@ -210,7 +216,7 @@ THE SOFTWARE.
               setupServer( "window" );
               targetWindow.addEventListener( "beforeunload", function() {
                 undoListeners();
-                butter.dispatch( "trackeditclosed", that );
+                em.dispatch( "trackeditclosed", that );
                 targetWindow = undefined;
               }, false );
             }
@@ -309,7 +315,14 @@ THE SOFTWARE.
     return {
       name: "eventeditor",
       init: function( butter, options ) {
-        return new EventEditor( butter, options );
+        var ee = new EventEditor( butter, options );
+        ee.listen( "clientdimsupdated", butter.eventManager.repeat );
+        ee.listen( "trackeventupdated", butter.eventManager.repeat );
+        ee.listen( "trackeventupdated", butter.eventManager.repeat );
+        ee.listen( "trackeditstarted", butter.eventManager.repeat );
+        ee.listen( "trackeditclosed", butter.eventManager.repeat );
+        ee.listen( "trackeditfailed", butter.eventManager.repeat );
+        return ee;
       } //init
     };
 

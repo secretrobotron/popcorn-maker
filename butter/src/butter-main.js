@@ -61,6 +61,7 @@ THE SOFTWARE.
       em.apply( "Butter", this );
 
       Object.defineProperty( this, "id", { get: function() { return id; } } );
+      Object.defineProperty( this, "eventManager", { get: function() { return em; } } );
 
       function checkMedia() {
         if ( !currentMedia ) {
