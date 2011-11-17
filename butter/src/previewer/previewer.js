@@ -1,10 +1,8 @@
 (function () {
 
-  require.config({
-    baseUrl: "../../src"
-  });
-
-  define( [ "core/logger", "core/eventmanager", "comm/comm", "previewer/basic-link", "previewer/custom-link", "previewer/media" ], function( Logger, EventManager, Comm, BasicLink, CustomLink, Media ) {
+  define(
+    [ "core/logger", "core/eventmanager", "comm/comm", "previewer/basic-link", "previewer/custom-link", "previewer/media" ], 
+    function( Logger, EventManager, Comm, BasicLink, CustomLink, Media ) {
 
     function processStartEvent( e, callback ) {
       var message = Comm.parseStartEvent( e, window );

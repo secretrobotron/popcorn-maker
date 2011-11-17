@@ -24,7 +24,8 @@ THE SOFTWARE.
 
 (function () {
 
-  define( [ "core/logger", 
+  define( [ "require",
+            "core/logger", 
             "core/eventmanager", 
             "core/track", 
             "core/trackevent", 
@@ -36,7 +37,7 @@ THE SOFTWARE.
             "trackeditor/module",
             "pluginmanager/module",
             "timeline/module" ],
-          function( Logger, EventManager, Track, TrackEvent, Target, Media ) {
+          function( require, Logger, EventManager, Track, TrackEvent, Target, Media ) {
 
     var Butter = function ( options ) {
 

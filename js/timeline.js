@@ -107,7 +107,7 @@
 
         var scrubberLeft = checkScrubber( event );
 
-        timelineDuration.innerHTML = butter.secondsToSMPTE( butter.currentTime );
+        timelineDuration.innerHTML = butter.timeline.secondsToSMPTE( butter.currentTime );
 
         scrubber.style.display = "block";
 
@@ -199,7 +199,7 @@
 
         var inc = canvasDiv.offsetWidth / butter.duration,
             //heights = [ 10, 4, 7, 4 ],
-            textWidth = context.measureText( butter.secondsToSMPTE( 5 ) ).width,
+            textWidth = context.measureText( butter.timeline.secondsToSMPTE( 5 ) ).width,
             padding = 20,
             lastPosition = 0,
             lastTimeDisplayed = -( ( textWidth + padding ) / 2 );
@@ -239,7 +239,7 @@
             if ( ( position - lastTimeDisplayed ) > textWidth + padding ) {
 
               lastTimeDisplayed = position;
-              context.fillText( butter.secondsToSMPTE( i ), -~position - ( textWidth / 2 ), 21 );
+              context.fillText( butter.timeline.secondsToSMPTE( i ), -~position - ( textWidth / 2 ), 21 );
             }
 
             lastPosition = position;

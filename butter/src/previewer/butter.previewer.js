@@ -30,13 +30,18 @@
 
         document.write( '<script src="' + path + '../../external/require/require.js"></' + 'script>' );
 
-        // Set up paths to find scripts.
-        document.write('<script>require.config( { baseUrl: "' + path + '",' +
-                'paths: {' +
-                // Paths are relative to baseUrl; Notice the commas!
-                '}' +
-                '} );' +
-                'require(["previewer"])</' + 'script>');
+        document.write('<script>' + 
+          '(function(){' + 
+          'var ctx = require.config({ ' + 
+            'baseUrl: "' + path + '../",' +
+            'context: "butter.previewer",' +
+            'paths: {' +
+              // Paths are relative to baseUrl; Notice the commas!
+            '}' +
+          '});' +
+          'ctx(["previewer/previewer"])' + 
+          '})()' +
+        '</script>');
     }
 
     var ButterTemplate = function() {

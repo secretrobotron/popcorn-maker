@@ -1,11 +1,15 @@
 (function() {
-  require( [ "js/external.js" ], function() {
 
-    require.config({
-      baseUrl: "js"
-    });
+  var rctx = require.config({
+    baseUrl: "js",
+    paths: {
+      context: "popcorn-maker"
+    }
+  });
 
-    require( [ "popcorn-maker" ], function( PopcornMaker ) {
+  rctx( [ "external" ], function() {
+
+    rctx( [ "popcorn-maker" ], function( PopcornMaker ) {
 
       var pm = new PopcornMaker();
 

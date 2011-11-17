@@ -162,7 +162,7 @@
       this.buildRegistry = function( registry ) {
         for( var manifest in registry ) {
           if ( registry.hasOwnProperty( manifest ) ) {
-            _butter.addPlugin( { type: manifest } );
+            _butter.pluginmanager.add( { type: manifest } );
           }
         } //for
       }; //buildRegistry

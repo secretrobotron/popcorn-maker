@@ -234,7 +234,7 @@ THE SOFTWARE.
                 end = start + 4;
 
             var elementId = ui.draggable[ 0 ].id,
-                extractedType = elementId.substring( butter.pluginElementPrefix.length );
+                extractedType = elementId.substring( butter.pluginmanager.pluginElementPrefix.length );
 
             butter.addTrackEvent( currentMediaInstance.butterTracks[ currentMediaInstance.lastTrack.id() ], new Butter.TrackEvent({ popcornOptions: {start: start, end: end }, type: extractedType }) );
           // setup for createTrackEvent()

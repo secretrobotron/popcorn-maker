@@ -46,13 +46,15 @@
         // Set up paths to find scripts.
         document.write('<script>' + 
           '(function(){' + 
-          'require.config({ ' + 
+          'var ctx = require.config({ ' + 
             'baseUrl: "' + path + '",' +
+            'context: "butter",' +
             'paths: {' +
+              'butter: "' + path + '"' +
               // Paths are relative to baseUrl; Notice the commas!
             '}' +
           '});' +
-          'require(["butter-main"])' + 
+          'ctx(["butter-main"])' + 
           '})()' +
         '</script>');
     }
