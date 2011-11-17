@@ -1,8 +1,11 @@
 (function() {
 
+  var fallbackMedia = "http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm";
+
   function Template ( root, layoutsDir ) {
     var manifest = PopcornMaker.getJSON( layoutsDir + "/" + root + "/manifest.json" ),
         name = manifest.title || root,
+        defaultMedia = manifest.defaultMedia || fallbackMedia,
         thumbnail = new Image();
     if ( manifest.thumbnail ) {
       thumbnail.src = layoutsDir + "/" + root + "/" + manifest.thumbnail;
@@ -12,11 +15,14 @@
     Object.defineProperty( this, "thumbnail", { get: function() { return thumbnail; } });
     Object.defineProperty( this, "template", { get: function() { return layoutsDir + "/" + root + "/" + template; } });
     Object.defineProperty( this, "root", { get: function() { return root } } );
+    Object.defineProperty( this, "defaultMedia", { get: function() { return defaultMedia } } );
   } //Template
 
   function TemplateManager ( options ) {
     var templates = [],
-        templateList = PopcornMaker.getJSON( options.config );
+        templateList = PopcornMaker.getJSON( options.config ),
+        mediaInputBox = document.getElementById( 'timeline-media-input-box' );
+
     for ( var i=0; i<templateList.length; ++i ) {
       templates.push( new Template( templateList[ i ], options.layoutsDir ) );
     } //for
@@ -70,6 +76,7 @@
           for ( var i=0; i<templates.length; ++i ) {
             if ( templates[ i ].template === select.options[ select.selectedIndex ].value ) {
               showThumbnail( templates[ i ].thumbnail );
+              mediaInputBox.value = templates[ i ].defaultMedia;
               break;
             }
           }
