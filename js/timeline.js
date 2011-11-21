@@ -392,21 +392,21 @@
         layersDiv.insertBefore( trackLayers[ "layer-" + event.data.id ], layersDiv.children[ event.data.newPos ] );
       });
 
-      document.getElementsByClassName( "sound-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
+      document.getElementsByClassName( "sound-btn" )[ 0 ].addEventListener( "click", function( event ) {
         butter.mute && butter.mute();
       }, false);
 
-      document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
+      document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "click", function( event ) {
         pm.currentProject.preview.playing ? pm.currentProject.preview.pause() : pm.currentProject.preview.play();
       }, false);
 
-      butter.listen( "mediapaused", function( event ) {
-        document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "-321px -19px";
-      } );
-
       butter.listen( "mediaplaying", function( event ) {
+        document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "-321px -19px";
+      });
+
+      butter.listen( "mediapaused", function( event ) {
         document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "-322px 7px";
-      } );
+      });
 
     }; //Timeline
 
