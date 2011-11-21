@@ -54,20 +54,20 @@ THE SOFTWARE.
           if ( cornOptions.start > inc ) {
 
             cornOptions.start -= inc;
-            if ( !event.ctrlKey ) {
+            if ( !event.metaKey && !event.ctrlKey ) {
 
               cornOptions.end -= inc;
             }
           } else {
 
-            if ( !event.ctrlKey ) {
+            if ( !event.metaKey && !event.ctrlKey ) {
 
               cornOptions.end = cornOptions.end - cornOptions.start;
             }
             cornOptions.start = 0;
           }
 
-          this.dispatch( "trackeventupdated", butter.targettedEvent );
+          butter.dispatch( "trackeventupdated", butter.targettedEvent );
         }
       };
 
@@ -81,20 +81,20 @@ THE SOFTWARE.
           if ( cornOptions.end < butter.duration - inc ) {
 
             cornOptions.end += inc;
-            if ( !event.ctrlKey ) {
+            if ( !event.metaKey && !event.ctrlKey ) {
 
               cornOptions.start += inc;
             }
           } else {
 
-            if ( !event.ctrlKey ) {
+            if ( !event.metaKey && !event.ctrlKey ) {
 
               cornOptions.start += butter.duration - cornOptions.end;
             }
             cornOptions.end = butter.duration;
           }
 
-          this.dispatch( "trackeventupdated", butter.targettedEvent );
+          butter.dispatch( "trackeventupdated", butter.targettedEvent );
         }
       };
 

@@ -121,14 +121,14 @@
 
         if( event.keyCode === 39 ) {
           if ( _butter.targettedEvent ) {
-            _butter.moveFrameRight( event );
+            _butter.timeline.moveFrameRight( event );
           } else {
             _butter.currentTime = _butter.currentTime + inc;
           }
         }
         else if( event.keyCode === 37 ) {
           if ( _butter.targettedEvent ) {
-            _butter.moveFrameLeft( event );
+            _butter.timeline.moveFrameLeft( event );
           } else {
             _butter.currentTime = _butter.currentTime - inc;
           }
