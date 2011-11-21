@@ -26,7 +26,7 @@
     if ( window.location.href.indexOf( "resetSavedProjects=true" ) > -1 ) {
       localStorage.setItem( "PopcornMaker.SavedProjects", "" );
     } //if
-    
+
     function PopcornMaker() {
 
       var that = this,

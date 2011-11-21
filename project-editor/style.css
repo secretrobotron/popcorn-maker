@@ -1,0 +1,68 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+#project-editor-container {
+  position: relative;
+  top: .5%;
+  width: 85%;
+  height: 99%;
+  float: right;
+  right: .5%;
+  border: 1px solid #000;
+  background: #888;
+}
+
+#project-list-container {
+  position: relative;
+  top: .5%;
+  width: 13%;
+  height: 99%;
+  border: 1px solid #000;
+  float: left;
+  left: .5%;
+  background: #888;
+}
+
+#project-list-container ul {
+  margin: 0px;
+  padding: 0px;
+  padding: 1%;
+}
+
+#project-list-container ul li {
+  font: 8pt helvetica;
+  font-weight: bold;
+  padding: 5px;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 4px;
+  background-image: linear-gradient(bottom, rgb(183,180,183) 43%, rgb(224,224,224) 72%);
+  background-image: -o-linear-gradient(bottom, rgb(183,180,183) 43%, rgb(224,224,224) 72%);
+  background-image: -moz-linear-gradient(bottom, rgb(183,180,183) 43%, rgb(224,224,224) 72%);
+  background-image: -webkit-linear-gradient(bottom, rgb(183,180,183) 43%, rgb(224,224,224) 72%);
+  background-image: -ms-linear-gradient(bottom, rgb(183,180,183) 43%, rgb(224,224,224) 72%);
+  background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0.43, rgb(183,180,183)),
+    color-stop(0.72, rgb(224,224,224))
+  );
+  margin: 2%;
+}
+
+#project-editor-container textarea {
+  height: 90%;
+  width: 98.5%;
+  margin: .5%;
+}
+
+#project-editor-container form {
+  margin: .5%;
+}
+
