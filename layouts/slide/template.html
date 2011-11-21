@@ -149,53 +149,11 @@
 				top: [],
 				bottom: []
 			},
-			count = {
-				top: 0,
-				bottom: 0
-			},
 			targets = {
 				top: document.getElementById('top'),
 				bottom: document.getElementById('bottom')
 			},
-			margins = {
-				top: 0,
-				bottom: 0
-			},
-			popcorn,
-			lastCurrentTime = -1,
-			slideRate = 30, slideTime = 0.5;
-
-		function updateFrames(options, currentTime) {
-			var e,
-				target,
-				diff = currentTime - lastCurrentTime,
-				opacity;
-
-			opacity = (options.end - currentTime) / slideTime;
-			opacity = Math.min(1, opacity);
-			opacity = Math.max(0, opacity);
-			if (options.container && opacity !== options._opacity) {
-				options.container.style.opacity = opacity;
-				options._opacity = opacity;
-			}
-
-			if (!diff) {
-				return;
-			}
-
-			for (target in targets) {
-				e = targets[target];
-				margins[target] -= diff * slideRate;
-				if (margins[target] <= 0) {
-					margins[target] = 0;
-					e.style.right = '';
-				} else if (margins[target]) {
-					e.style.right = -margins[target] + '%';
-				}
-			}
-
-			lastCurrentTime = currentTime;
-		}
+			popcorn;
 
 		function setupImageEvent(options) {
 			//make sure containers are inserted in order
@@ -222,24 +180,6 @@
 			options.container.parentNode.insertBefore(options.container, nextContainer);
 		}
 
-		function loadImageEvent(options) {
-			var width, height;
-
-			if (options.thumbImage) {
-				width = options.thumbImage.naturalWidth ||
-					options.thumbImage.videoWidth ||
-					options.thumbImage.width;
-				height = options.thumbImage.naturalHeight ||
-					options.thumbImage.videoHeight ||
-					options.thumbImage.height;
-				options._thumbWidth = 100 * 0.2 * height / width;
-			} else {
-				options._thumbWidth = 0;
-			}
-
-			//options.container.style.width = options._thumbWidth + '%';
-		}
-
 		function teardownImageEvent(options) {
 			var i, queue;
 
@@ -255,64 +195,11 @@
 			}
 		}
 
-		function startPopcornImage(options) {
-			var i, queue, target = options.target,
-				currentTime;
-
-			if (options.target && imageEvents[options.target]) {
-				queue = imageEvents[options.target];
-			} else {
-				return;
-			}
-
-			i = queue.indexOf(options);
-			currentTime = popcorn.currentTime();
-
-			if (!count[target]) {
-				lastCurrentTime = currentTime;
-				margins[target] = 0;
-			}
-
-			count[target]++;
-
-			var target = options.target, e = targets[target], margin;
-			margin = Math.min( (currentTime - options.start) / slideTime, 1);
-			margin = Math.max( margin, 0 );
-			margin *= options._thumbWidth;
-			margins[target] += margin;
-			e.style.right = -margins[target] + '%';
-			
-		}
-		
-		function endPopcornImage(options) {
-			var target = options.target, e = targets[target];
-
-			if (!targets[target]) {
-				return;
-			}
-
-			if (count[target]) {
-				count[target]--;
-			}
-
-			margins[target] -= options._thumbWidth;
-			if (margins[target] <= 0) {
-				margins[target] = 0;
-				e.style.right = '';
-			} else if (margins[target]) {
-				e.style.right = -margins[target] + '%';
-			}
-		}
-
 		function addTrackEvent(trackEvent) {
 			var options = trackEvent.popcornOptions;
 			if (trackEvent.type === 'image') {
 				options.onSetup = setupImageEvent;
-				options.onLoad = loadImageEvent;
-				options.onStart = startPopcornImage;
-				options.onEnd = endPopcornImage;
 				options.onTeardown = teardownImageEvent;
-				options.onFrame = updateFrames;
 			}
 			if (typeof popcorn[ trackEvent.type ] === 'function') {
 				popcorn[ trackEvent.type ]( trackEvent.popcornOptions );
