@@ -123,7 +123,7 @@
 
         if ( event.shiftKey ) {
           event.preventDefault();
-          butter.zoom( event.detail || event.wheelDelta );
+          butter.timeline.zoom( event.detail || event.wheelDelta );
         }
 
         var scrubberLeft = checkScrubber( event );
@@ -259,7 +259,7 @@
         max: 6,
         step: 1,
         slide: function( event, ui ) {
-          butter.zoom( slideValue - ui.value );
+          butter.timeline.zoom( slideValue - ui.value );
           drawCanvas();
           slideValue = ui.value;
         }
