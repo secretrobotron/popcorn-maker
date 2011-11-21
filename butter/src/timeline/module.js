@@ -48,19 +48,20 @@ THE SOFTWARE.
 
         if ( butter.targettedEvent ) {
 
+          event.preventDefault();
           var cornOptions = butter.targettedEvent.popcornOptions;
           var inc = event.shiftKey ? 2.5 : 0.25;
 
           if ( cornOptions.start > inc ) {
 
             cornOptions.start -= inc;
-            if ( !event.metaKey && !event.ctrlKey ) {
+            if ( !event.ctrlKey ) {
 
               cornOptions.end -= inc;
             }
           } else {
 
-            if ( !event.metaKey && !event.ctrlKey ) {
+            if ( !event.ctrlKey ) {
 
               cornOptions.end = cornOptions.end - cornOptions.start;
             }
@@ -75,19 +76,20 @@ THE SOFTWARE.
 
         if ( butter.targettedEvent ) {
 
+          event.preventDefault();
           var cornOptions = butter.targettedEvent.popcornOptions;
           var inc = event.shiftKey ? 2.5 : 0.25;
 
           if ( cornOptions.end < butter.duration - inc ) {
 
             cornOptions.end += inc;
-            if ( !event.metaKey && !event.ctrlKey ) {
+            if ( !event.ctrlKey ) {
 
               cornOptions.start += inc;
             }
           } else {
 
-            if ( !event.metaKey && !event.ctrlKey ) {
+            if ( !event.ctrlKey ) {
 
               cornOptions.start += butter.duration - cornOptions.end;
             }
