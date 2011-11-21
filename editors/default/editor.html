@@ -1,11 +1,11 @@
 <html>
   <head>
     <link rel="stylesheet" href="editor.css">
-    <script type="text/javascript" src="../../lib/butter.js"></script>
+    <script type="text/javascript" src="../../butter/src/eventeditor/butter.editors.js"></script>
     <script type="text/javascript">
       (function(){
+
         var client,
-          butter,
           targets = {},
           elements = {},
           checks = [],
@@ -60,14 +60,13 @@
           };
         }
 
-        document.addEventListener('DOMContentLoaded', function (e) {
+        ButterEditor( function () {
 
-          butter = new Butter();
-          butter.comm();
-          
-          client = new butter.CommClient( "defaultEditor" );
+          client = new ButterEditor.Comm.CommClient( "defaultEditor" );
 
-          client.listen( "edittrackevent", function( message ) {
+          client.listen( "edittrackevent", function( e ) {
+
+            var message = e.data;
             targets = message.targets;
             eventId = message.id;
             constructDefaultEditor ( message.trackEvent );
@@ -75,15 +74,22 @@
             client.send( { "height": body.scrollHeight, "width": body.getBoundingClientRect().width }, "clientdimsupdated" );
           });
           
-          client.listen( "domtargetsupdated", function( message ) {
+          client.listen( "domtargetsupdated", function( e ) {
+
+            var message = e.data;
             targets = message;
           });
           
-          client.listen( "trackeventupdated", function( message ) {
+          client.listen( "trackeventupdated", function( e ) {
+
+            var message = e.data;
+            console.log( message.options );
             ( eventId === message.id ) && updateFields( message.options );
           });
           
-          client.listen( "trackeventremoved", function( id ) {
+          client.listen( "trackeventremoved", function( e ) {
+
+            var id = e.data;
             ( eventId === id ) && client.send( "", "cancelclicked" );
           });
 
@@ -97,7 +103,7 @@
             client.send( "ready", "ready" );
           });
 
-        }, false);
+        });
 
       var constructDefaultEditor = function( trackEvent ) {
 
@@ -284,9 +290,15 @@
           }
         };
         
+        console.log( elements, options );
         for ( elem in options ) {
           if ( options.hasOwnProperty( elem ) ) {
             var field = elements[ elem ];
+            console.log( "OPTIONS", options );
+            console.log( "elem", elem );
+            console.log( "field", field );
+            console.log( "nodeName", field.nodeName );
+            
             updateHTML[ field.nodeName.toLowerCase() ]( field );
           }
         }

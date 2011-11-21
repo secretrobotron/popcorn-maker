@@ -27,7 +27,6 @@
         path = path.split( '/' );
         path.pop();
         path = path.join( '/' ) + '/';
-        console.log( path );
 
         document.write( '<script src="' + path + '../../external/require/require.js"></' + 'script>' );
 
@@ -35,25 +34,25 @@
           '(function(){' + 
           'var ctx = require.config({ ' + 
             'baseUrl: "' + path + '../",' +
-            'context: "butter.previewer",' +
+            'context: "butter.eventeditor",' +
             'paths: {' +
               // Paths are relative to baseUrl; Notice the commas!
             '}' +
           '});' +
-          'ctx(["previewer/previewer"])' + 
+          'ctx(["eventeditor/eventeditor"])' + 
           '})()' +
         '</script>');
     }
 
-    var ButterTemplate = function() {
-      if ( !ButterTemplate.__waiting ) {
-        ButterTemplate.__waiting = [];
+    var ButterEditor = function() {
+      if ( !ButterEditor.__waiting ) {
+        ButterEditor.__waiting = [];
       } //if
-      ButterTemplate.__waiting.push( arguments );
+      ButterEditor.__waiting.push( arguments );
     }; //ButterTemplate
 
-    if ( !window.ButterTemplate ) {
-      window.ButterTemplate = ButterTemplate;
+    if ( !window.ButterEditor) {
+      window.ButterEditor = ButterEditor;
     } //if
 
 }());
