@@ -169,7 +169,9 @@
 
 		return {
 			start: function( event, options ) {
-				options.container.style.display = '';
+				if (options.container) {
+					options.container.style.display = '';
+				}
 
 				if (typeof options.onStart === 'function') {
 					try {
@@ -187,7 +189,9 @@
 				}
 			},
 			end: function( event, options ) {
-				options.container.style.display = 'none';
+				if (options.container) {
+					options.container.style.display = 'none';
+				}
 				
 				if (options.lightboxContainer) {
 					options.lightboxContainer = 'none';
@@ -201,7 +205,7 @@
 				}
 			},
 			_teardown: function( options ) {
-				if (options.container.parentNode) {
+				if (options.container && options.container.parentNode) {
 					options.container.parentNode.removeChild(options.container);
 					container = null;
 					delete options.container;
