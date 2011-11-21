@@ -66,7 +66,7 @@
         }
       }); //save-project-data
 
-      buttonManager.add( "save-project", "save-project-btn", {
+      buttonManager.add( "save-project", $(".save-project-btn"), {
         click: function() {
           pm.currentProject.preview.fetchHTML( function( html ) {
             popupManager.hidePopups();
