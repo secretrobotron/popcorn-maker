@@ -55,7 +55,7 @@ THE SOFTWARE.
           if ( cornOptions.start > inc ) {
 
             cornOptions.start -= inc;
-            if ( !event.ctrlKey ) {
+            if ( !event.ctrlKey && !event.metaKey ) {
 
               cornOptions.end -= inc;
             }
@@ -83,7 +83,7 @@ THE SOFTWARE.
           if ( cornOptions.end < butter.duration - inc ) {
 
             cornOptions.end += inc;
-            if ( !event.ctrlKey ) {
+            if ( !event.ctrlKey && !event.metaKey ) {
 
               cornOptions.start += inc;
             }
