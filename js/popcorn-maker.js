@@ -116,30 +116,30 @@
         ready: init
       }); //butter
 
-      function onKeyPress( event ) {
+      function onKeyDown( event ) {
         var inc = event.shiftKey ? 1 : 0.1;
 
         if( event.keyCode === 39 ) {
           if ( _butter.targettedEvent ) {
-            _butter.moveFrameRight( event );
+            _butter.timeline.moveFrameRight( event );
           } else {
             _butter.currentTime = _butter.currentTime + inc;
           }
         }
         else if( event.keyCode === 37 ) {
           if ( _butter.targettedEvent ) {
-            _butter.moveFrameLeft( event );
+            _butter.timeline.moveFrameLeft( event );
           } else {
             _butter.currentTime = _butter.currentTime - inc;
           }
         }
-        else if ( event.charCode === 32 ) {
+        else if ( event.keyCode === 32 ) {
           if ( !_popupManager.open ) {
             event.preventDefault();
             that.currentProject.preview.playing ? that.currentProject.preview.pause() : that.currentProject.preview.play();
           }
         }
-      } //onKeyPress
+      } //onKeyDown
 
       this.toggleLoadingScreen = function( state ) {
         if ( state ) {
@@ -152,10 +152,10 @@
 
       this.toggleKeyboardFunctions = function( state ) {
         if ( state ) {
-          document.addEventListener( "keypress", onKeyPress, false);
+          document.addEventListener( "keydown", onKeyDown, false);
         }
         else {
-          document.removeEventListener( "keypress", onKeyPress, false);
+          document.removeEventListener( "keydown", onKeyDown, false);
         }
       } //toggleKeyboardFunctions
 
