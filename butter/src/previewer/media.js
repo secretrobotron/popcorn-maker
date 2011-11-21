@@ -128,11 +128,11 @@
         var players = {
           "youtu": function() {
             return "var popcorn = Popcorn.youtube( '" + that.target + "', '" +
-              that.url + "' );\n";
+              that.url + "'" + popcornOptions + " );\n";
           },
           "vimeo": function() {
             return "var popcorn = Popcorn.vimeo( '" + that.target + "', '" +
-            that.url + "');\n";
+            that.url + "'" + popcornOptions + " );\n";
           },
           "soundcloud": function() {
             return "var popcorn = Popcorn( Popcorn.soundcloud( '" + that.target + "'," +
