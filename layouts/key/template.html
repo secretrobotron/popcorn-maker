@@ -121,19 +121,27 @@
 		/*
 			Fonts
 		*/
-		@import url(http://fonts.googleapis.com/css?family=Rokkitt|Oswald);
+		@import url(http://fonts.googleapis.com/css?family=Bevan|Oswald);
 		
 		#video-container {
-			font-family: 'Rokkitt', serif;
+			font-family: 'Bevan', serif;
 			font-size: 40px;
 			line-height: normal;
-			color: red;
+			color: #cc3333;
 		}
 
 		#video-container > div {
 			line-height: normal;
 		}
 		
+		#video-container a:visited {
+			color: #cc3333;
+		}
+
+		#video-container a {
+			text-decoration: underline;
+		}
+
 		#front > div, #back > div {
 			position: absolute;
 		}
@@ -149,8 +157,27 @@
 			color: black;
 		}
 
+		#front a:visited {
+			color: black;
+		}
+
 		#front > div.title {
 			border-left: none;
+		}
+		
+		.popcorn-lightbox-link {
+			text-decoration: underline;
+		}
+		
+		body .popcorn-lightbox-lightbox {
+			color: black;
+			background-color: white;
+			border: 4px solid rgba(0, 0, 0, 0.6);
+		}
+		
+		.popcorn-lightbox-lightbox a, 
+		.popcorn-lightbox-lightbox a:visited {
+			color: #0099CC;
 		}
 
 		</style>
