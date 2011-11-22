@@ -47,7 +47,8 @@
 		if (!styleSheet) {
 			styleSheet = document.createElement('style');
 			styleSheet.setAttribute('type', 'text/css');
-			styleSheet.appendChild(document.createTextNode('.popcorn-lightbox { cursor: pointer; }\n' +
+			styleSheet.appendChild(document.createTextNode('.popcorn-lightbox { overflow: auto; }\n' +
+			'.popcorn-lightbox-link { cursor: pointer; }\n' +
 			'.popcorn-lightbox-lightbox { position: fixed; padding: 40px; background-color: rgba(0, 0, 0, 0.7); color: white; border: 4px solid rgba(255, 255, 255, 0.6); border-radius: 8px; z-index: 999999; margin: 10% auto; max-width: 90%; max-height: 90%; }\n' +
 			'.popcorn-lightbox-lightbox > .close { position:absolute; top: 4px; right: 4px; cursor: pointer; text-decoration: underline; }'
 			));
@@ -114,6 +115,8 @@
 		container.innerHTML = options.html;
 		
 		if (options.lightbox) {
+			container.classList.add('popcorn-lightbox-link');
+			
 			lightboxContainer = document.createElement('div');
 			lightboxContainer.setAttribute('class', classes + ' popcorn-lightbox-lightbox');
 			lightboxContainer.innerHTML = options.lightbox;
@@ -122,14 +125,20 @@
 			container.addEventListener('click', function() {
 				playing = !video.paused;
 				video.pause();
-				lightboxContainer.style.display = '';
 				
-				var top = Math.max((window.innerHeight - lightboxContainer.offsetHeight) / 2, 0);
-				top = Math.min(top, window.innerHeight * 0.3);
+				if (lightboxContainer) {
+					lightboxContainer.style.display = '';
+					
+					lightboxContainer.style.maxHeight = window.innerHeight * 0.7 + 'px';
 
-				lightboxContainer.style.top = top + 'px';
+					var top = Math.max((window.innerHeight - lightboxContainer.offsetHeight) / 2, 0);
+					top = Math.min(top, window.innerHeight * 0.15);
 
-				lightboxContainer.style.left = Math.max((window.innerWidth - lightboxContainer.offsetWidth) / 2, 0) + 'px';
+					lightboxContainer.style.top = top + 'px';
+
+					lightboxContainer.style.left = Math.max((window.innerWidth - lightboxContainer.offsetWidth) / 2, 0) + 'px';
+					
+				}
 			}, false);
 			
 			close = document.createElement('div');
