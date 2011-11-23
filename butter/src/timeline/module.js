@@ -169,15 +169,12 @@ THE SOFTWARE.
         
           this.initialized = true;
           this.duration = media.duration;
-          
-          //target.appendChild( this.container = createContainer() );
 
           this.trackLine = new TrackLiner({
             element: this.tracks,
             dynamicTrackCreation: true,
             scale: 1,
-            duration: this.duration//,
-            //restrictToKnownPlugins: true
+            duration: this.duration
           });
 
           this.trackLine.listen( "trackupdated", function( event ) {
@@ -357,7 +354,7 @@ THE SOFTWARE.
 
         var trackLinerTrackEvent = currentMediaInstance.trackLinerTracks[ trackEvent.track.id ].createTrackEvent( trackEvent );
         currentMediaInstance.trackLinerTrackEvents[ trackEvent.id ] = trackLinerTrackEvent;
-        currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ]
+        currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ] = trackEvent;
       };
 
       butter.listen( "trackeventadded", function( event ) {
