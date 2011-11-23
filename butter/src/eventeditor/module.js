@@ -65,10 +65,11 @@ THE SOFTWARE.
 
         this.construct = function( trackEvent ) {
           var updateEditor = function( e ){
-            commServer.send( editorLinkName, {
+            var sendObj = {
               "id": e.data.id, 
               "options": e.data.popcornOptions
-            }, "trackeventupdated" );
+            };
+            commServer.send( editorLinkName, sendObj, "trackeventupdated" );
           };
           var checkRemoved = function( e ) {
             commServer.send( editorLinkName, e.data.id, "trackeventremoved" );
@@ -135,7 +136,8 @@ THE SOFTWARE.
                 em.dispatch( "trackeditclosed", that );
               });
 
-              commServer.listen( editorLinkName, "applyclicked", function( newOptions ) {
+              commServer.listen( editorLinkName, "applyclicked", function( e ) {
+                var newOptions = e.data;
                 filterKnownFields( newOptions );
                 trackEvent.popcornOptions = newOptions;
                 em.dispatch( "trackeventupdated", trackEvent );

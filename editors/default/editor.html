@@ -83,7 +83,6 @@
           client.listen( "trackeventupdated", function( e ) {
 
             var message = e.data;
-            console.log( message.options );
             ( eventId === message.id ) && updateFields( message.options );
           });
           
@@ -290,15 +289,9 @@
           }
         };
         
-        console.log( elements, options );
         for ( elem in options ) {
           if ( options.hasOwnProperty( elem ) ) {
             var field = elements[ elem ];
-            console.log( "OPTIONS", options );
-            console.log( "elem", elem );
-            console.log( "field", field );
-            console.log( "nodeName", field.nodeName );
-            
             updateHTML[ field.nodeName.toLowerCase() ]( field );
           }
         }
