@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" class="no-js">
-<head> 
+<head>
   <link rel="icon" href="images/icon.ico" type="image/x-icon" />
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -27,37 +27,38 @@
 <header>
 
   <h1 class="logo"><a href="#"><img class="logo-popcorn-maker" src="images/icon.ico" width="20" height="20" />Popcorn Maker</a></h1>
- 
+
   <div class="header-right">
- 
-    <div class="my-projects-drpdwn">
+
+    <!--<div class="my-projects-drpdwn">
       <select id="projects-dropdown" name="projects-dd" class="projects-dd" style="width:258px;" tabindex="1">
       </select>
       <ul class="actions">
         <li class="bubble_pointer"></li>
         <li class="edit"><a id="edit-selected-project" class="edit-selected-project" title="Edit Project" href="#">edit</a></li>
       </ul>
-    </div>
-               
+    </div>-->
+
     <form action="">
       <ul class="header-buttons">
         <li class="add-btn"><a class="add-project-btn" href="#" title="New Project">New Project</a></li>
+        <li class="edit-proj-btn"><a id="edit-projects" class="edit-projects" title="Edit Projects" href="#">edit</a></li>
         <li class="save-btn"><a class="save-project-btn" href="#" title="Save Project">Save Project</a></li>
         <li class="help-btn"><a class="open-help" href="#" title="Help">Help</a></li>
       </ul>
     </form>
-   
+
  </div>
 
 </header>
 <!-- ########## END HEADER ########## -->
 
-<!-- ########## START IFRAME SECTION ########## -->    
+<!-- ########## START IFRAME SECTION ########## -->
 <iframe id="main" src="">
 </iframe>
 <!-- ########## END IFRAME SECTION ########## -->
 
-<!-- ########## START HIDE TIMELINE BUTTON ########## -->    
+<!-- ########## START HIDE TIMELINE BUTTON ########## -->
 <div class="hide-timeline">
  <a href="#" >Hide Timeline</a>
 </div>
@@ -72,15 +73,15 @@
    <a href="#" class="timeline-title media-title-div">No Media</a>
    <ul class="actions"><li class="bubble_pointer"></li><li class="edit"><a class="edit-timeline-media" href="#">edit</a></li></ul>
   </div>
-  
+
  </div>
 <!-- ***** END PROPERTIES HEADER ***** -->
 
-<!-- ***** START TOOLBOX ***** --> 
+<!-- ***** START TOOLBOX ***** -->
  <div class="enable-scroll tiny-scroll toolbox collapsed">
- 
+
   <div class="collapse-btn collapse"><a href="#">Collapse</a><span></span></div>
-  
+
   <!-- ***** START SCROLLBAR ***** -->
   <div class="scrollbar">
    <div class="track">
@@ -91,7 +92,7 @@
    </div>
   </div>
   <!-- ***** END SCROLLBAR ***** -->
-  
+
   <!-- ***** START VIEWPORT ***** -->
   <div class="viewport">
      <div class="overview">
@@ -101,25 +102,25 @@
         <div id="contentheader">
           <ul class="tools" id="plugin-tray">
           </ul>
-         </div> 
+         </div>
      </div>
-  </div>     
+  </div>
  <!-- ***** END SCROLLBAR ***** -->
- 
- </div>
-<!-- ***** END TOOLBOX ***** -->        
 
-    	
-    	
-<!-- ***** START TIMELINE ***** -->    	
+ </div>
+<!-- ***** END TOOLBOX ***** -->
+
+
+
+<!-- ***** START TIMELINE ***** -->
   <div id="timeline" class="timeline">
-  
+
    <!-- ***** START PLAYBACK CONTROLS ***** -->
    <div class="playback-controls">
      <div class="play-btn"><a href="#"><span >play/pause</span></a></div>
-     
+
      <div class="timeline-duration" id="timeline-duration">00:00:00</div>
-     
+
      <div class="timeline-progress-wrapper disable-select">
        <div id="scrubber-container" class="disable-select" style="z-index: 1; position: relative;">
          <div id="scrubber-interact" class="disable-select" style="position: absolute; left: 0px; top: -10px; height: 400%; width: 100%;"></div>
@@ -132,43 +133,43 @@
            </div>
          </div>
        </div>
-     <!-- ***** TIMING NOTCHES ***** -->  
+     <!-- ***** TIMING NOTCHES ***** -->
        <div class="timing-notches-div disable-select">
        	 <canvas id="timing-notches-canvas" class="disable-select"></canvas>
        </div>
-     <!-- ***** END TIMING NOTCHES ***** -->  
+     <!-- ***** END TIMING NOTCHES ***** -->
      </div>
-     
+
      <div class="sound-btn"><a href="#"><span >play/pause</span></a></div>
    </div>
    <!-- ***** END PLAYBACK CONTROLS ***** -->
-   
+
    <!-- ***** START LAYERS PANEL ***** -->
    <div class="enable-scroll">
-      
-      <!-- ***** START VIEWPORT ***** -->               
+
+      <!-- ***** START VIEWPORT ***** -->
       <div style="color: white; overflow: hidden; position: absolute; width: 180px; height: 108px;"><div style="position: absolute;" class="timeline-div" id="layers-div" >
-      </div></div> 
-<div align="center" style="position:absolute; bottom:0; margin-left:7px; width:93px; height:16px; margin-bottom:10px;"><div id="slider"></div></div>    
+      </div></div>
+<div align="center" style="position:absolute; bottom:0; margin-left:7px; width:93px; height:16px; margin-bottom:10px;"><div id="slider"></div></div>
       <div class="viewport" id="tracks-div" style="position: absolute; overflow: scroll; left: 120px; right: 10px;">
         <!--<div class="timeline-left timeline-div"></div>-->
-        
+
         <div class="overview timeline-right timeline-div" id="timeline-div">
         </div>
       </div>
       <!-- ***** END VIEWPORT ***** -->
-                        
+
      </div>
      <!-- ***** END LAYERS PANEL ***** -->
-               
+
   </div>
   <!-- ***** END TIMELINE ***** -->
-  
+
 </section>
 <!-- ########## END PROPERTIES PANEL ########## -->
 
 
-<!-- ########## START POPUPS ########## -->    
+<!-- ########## START POPUPS ########## -->
  <div class="popupDiv close-div">
  	<div class="balck-overlay balck-overlay-dims"></div>
  	<div class="popup-container">
@@ -203,7 +204,7 @@
             </div>
           </div>
         </div>
-        
+
         <div id="edit-track-popup" class="edit-track-popup pop-up close-div draggable"> <!-- popup 2 -->
           <a class="popup-close-btn" href="#"><span></span></a>
         	<div class="popup-header">
@@ -228,7 +229,7 @@
             </div>
           </div>
         </div><!-- end popup 2 -->
-        
+
         <div id="save-popup" class="save-popup pop-up close-div"> <!-- popup 3 -->
             <a class="popup-close-btn" href="#"><span></span></a>
         	<div class="popup-header">
@@ -245,17 +246,17 @@
                 <div class="download-html">
 
                   <!--<input type="submit" class="download-btn" name="download-btn" value="Download as HTML">-->
-                  <label class="save-prj-lbl" for="project-title-textbox">Title:</label><input type="text" id="project-title-textbox" class="project-title-textbox" name="project-title-textbox" >
+                  <label class="save-prj-lbl" for="project-savename-textbox">Save As:</label><input type="text" id="project-title-textbox" class="project-title-textbox" name="project-title-textbox" >
                   <input type="submit" class="save-project-data-btn" name="save-project-data-btn" value="Save Project">
                   <!--<input type="button" class="publish-project-btn" name="publish-project-btn" value="Publish Project">-->
-                  
+
                 </div>
             </div>
         </div><!-- end popup 3 -->
-        
+
         <div id="editor-popup" class="editor-popup pop-up close-div draggable"> <!-- popup 4 -->
         </div><!-- end popup 4 -->
-        
+
         <div id="edit-target-popup" class="edit-target-popup pop-up close-div draggable"> <!-- popup 5 -->
           <span style="color: white;">Target Elements: </span><select id="track-edit-target" class="edit-track-button"></select><br/>
           <textarea rows="21" cols="51" id="track-edit-JSON"></textarea>
@@ -265,9 +266,9 @@
           <button id="delete-track-edit" class="edit-track-button">delete</button>
           <button id="clear-track-edit" class="edit-track-button">clear</button>
         </div><!-- end popup 5 -->
-        
-        
-        
+
+
+
         <div id="delete-track-popup" class="project-title-popup pop-up close-div draggable">
           <a class="popup-close-btn" href="#"><span></span></a>
           	<div class="popup-header">
@@ -279,22 +280,39 @@
                 <p class="desc">Are you sure you want to delete this track?</p>
               </div>
         </div>
-        <div id="project-title-popup" class="project-title-popup pop-up close-div draggable"> <!-- project-title-popup -->
+
+        <div id="edit-project-popup" class="project-title-popup pop-up close-div draggable"> <!-- project-title-popup -->
             <a class="popup-close-btn" href="#"><span></span></a>
         	<div class="popup-header">
-            	<h3>Edit Title</h3>
+            <h3>Edit Projects</h3>
+          </div>
+          <div class="popup-content">
+            <div>
+              <select size="12" class="projects-list" >
+              </select>
+              <div class="project-info-div">
+                <span>
+                <br />
+                  <textnode class="input-title-text">Title</textnode><br />
+                  <input type="text" id="project-title-input-box" >
+                  <br /><br />
+                  <textnode class="input-title-text">Last Modified:</textnode><br />
+                  <textNode id="date-saved"></textnode>
+                </span>
+                <br />
+                <br />
+                <div class="edit-project-buttons-div">
+                  <input type="submit" id="change-title-btn" class="change-title-btn" value="Rename">
+                  <input type="submit" id="load-selected-project-btn" class="change-title-btn" value="Load">
+                  <input type="submit" id="delete-selected-project-btn" class="change-title-btn" value="Delete">
+                  <br />
+                  <p class="desc">Changes apply to the selected project in the list</p>
+                </div>
+              </div>
             </div>
-            <div class="popup-content">
-          	  <p>
-                  <label for="project-title">Title</label>
-                  <input type="text" name="project-title" id="project-title" value="">
-              </p>
-              <br />
-              <input type="submit" id="change-title-btn" class="change-title-btn" value="change">
-              <p class="desc">Use this dialog to Change the title of the selected Popcorn Maker Project.</p>
-            </div>
+          </div>
         </div><!-- end popup project-title-popup -->
-        
+
         <div id="load-confirmation-dialog" class="project-title-popup pop-up close-div draggable">
           <a class="popup-close-btn load" href="#"><span></span></a>
         	<div class="popup-header">
@@ -305,7 +323,7 @@
               <input type="submit" id="confirm-load-btn" class="confirm-load-btn" value="Load Project">
             </div>
         </div>
-        
+
         <div id="add-project-popup"><!-- welcome popup -->
           <a class="popup-close-btn" href="#"><span></span></a>
           <div class="popup-header">
@@ -322,7 +340,7 @@
               	<div class="timeline-media-div">
               	  <span class="input-title-text">Timeline Media</span><br />
               	  <input type="text" class=proj-title-input" id="timeline-media-input-box" value="http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm"></input><br />
-              	  <span class="tip-text-new-project"> Show us where your media file lives. Youtube, Vimeo,<br /> 
+              	  <span class="tip-text-new-project"> Show us where your media file lives. Youtube, Vimeo,<br />
               	    and Soundcloud URLs work too.<br /><br />
               	    <a href="#">Learn more about what kinds of media work in Popcorn Maker.</a>
               	  </span>
@@ -350,7 +368,7 @@
               </div>
             </div>
         </div>
-        
+
         <!-- ###### FIRST RUN POPUPS ######## -->
         <div id="welcome-popup"><!-- welcome popup -->
           <a class="popup-close-btn" href="#"><span></span></a>
@@ -449,7 +467,7 @@
                            <option name="two" value="PrototypeCombobox" >Prototype Combobox</option>
                            <option selected="selected" value="jQuery Tabs" >jQuery Tabs</option>
                            <option value="Common Accordion" >Common Accordion</option>
-                           </select>            
+                           </select>
                         </div>
                         <div class ="slides faq">
                             <ul class="slides_container faqs">
@@ -475,11 +493,11 @@
                 </div>
             </div>
         </div><!-- END HELP popup -->
-        <!-- ###### END FIRST RUN POPUPS ######## -->  
-        
+        <!-- ###### END FIRST RUN POPUPS ######## -->
+
     </div>
  </div>
-<!-- ########## END POPUPS ########## -->  
+<!-- ########## END POPUPS ########## -->
 <div id="loading-overlay">
   <h1>Loading...</h1>
 </div>

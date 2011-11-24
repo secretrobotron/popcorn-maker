@@ -1243,15 +1243,15 @@ ul.actions li.bubble_pointer
 }
 .project-title-textbox,.save-prj-lbl
 {
-	height: auto;
+	height: 14px;
 	margin: 0;
-	padding: 7px 0;
+	padding: 5px 0;
 	position: absolute;
-	top: 50px;
+	top: 56px;
 }
 .project-title-textbox
 {
-	left: 30px;
+	left: 55px;
 	width: 130px !important;
 }
 .save-prj-lbl
@@ -1300,7 +1300,7 @@ ul.actions li.bubble_pointer
 	border: 1px solid #282828 !important;
 	color: #ccc;
 	float: left;
-	margin-left: 60px;
+	margin-left: 70px;
 	padding: 5px 10px;
 }
 .pin
@@ -2372,4 +2372,31 @@ color-stop(1, rgb(255,255,255))
 {
 	height: 100px;
 	width: 100px;
+}
+.projects-list
+{
+  width: 125px;
+}
+.project-info-div
+{
+  float: right;
+  width: 260px;
+  height: 185px;
+}
+.project-info-div span
+{
+  width: 100%;
+}
+div.edit-project-buttons-div
+{
+  width: 260px;
+  float: right;
+}
+input#project-title-input-box
+{
+  width: 160px;
+}
+.edit-project-buttons-div p.desc {
+    width: 260px !important;
+    font-size: 9pt;
 }

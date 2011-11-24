@@ -83,8 +83,8 @@
         _editor = new Editor( that );
         _preview = new Preview( that );
         _welcome = new Welcome( that );
-     
-        _timeline.showTools(); 
+
+        _timeline.showTools();
         _popupManager.hidePopups();
         _popupManager.showPopup( "welcome" );
       }; //init
@@ -179,7 +179,8 @@
           template: that.currentProject.template.root,
           title: that.currentProject.title,
           guid: that.currentProject.guid || utils.getUUID(),
-          project: _butter.exportProject()
+          project: _butter.exportProject(),
+          timeStamp: that.currentProject.timeStamp
         };
       }; //getProjectExport
 
@@ -194,11 +195,11 @@
           if ( !overwrite ) {
             that.currentProject.guid = utils.getUUID();
           } //if
-   
+
+          that.currentProject.timeStamp = Date.now();
           var projectToSave = that.getProjectExport();
           localProjects[ projectToSave.guid ] = projectToSave;
           localStorage.setItem( "PopcornMaker.SavedProjects", JSON.stringify( localProjects ) );
-          _menu.populateSavedProjectsList();
           _popupManager.hidePopups();
         }
         catch ( e ) {
@@ -212,7 +213,7 @@
         if ( localProjects && localProjects[ guid ] ) {
           var projectData = localProjects[ guid ],
               template = _templateManager.find( { root: projectData.template } );
-          _butter.clearProject();         
+          _butter.clearProject();
           _butter.pluginmanager.clear();
           that.toggleLoadingScreen( true );
           that.toggleKeyboardFunctions( false );
@@ -221,8 +222,9 @@
             template: template,
             projectData: projectData.project,
             onload: function( preview ) {
-              that.currentProject.title = projectData.title;
+              that.currentProject.title = projectData.project.project.title;
               that.currentProject.guid = projectData.guid;
+              that.currentProject.timeStamp = projectData.timeStamp;
             }
           });
         } //if
@@ -249,17 +251,17 @@
       }; //newProject
 
       this.importProject = function( projectData, defaultMedia ) {
-        _butter.clearProject(); 
+        _butter.clearProject();
         _butter.pluginmanager.clear();
         that.toggleLoadingScreen( true );
         that.toggleKeyboardFunctions( false );
         that.destroyCurrentPreview();
 
-        if (  projectData && 
-              projectData.project && 
-              projectData.project.media && 
+        if (  projectData &&
+              projectData.project &&
+              projectData.project.media &&
               projectData.project.media.length > 0 ) {
-          defaultMedia = projectData.project.media[ 0 ].url;       
+          defaultMedia = projectData.project.media[ 0 ].url;
         } //if
 
         that.createPreview({
@@ -269,6 +271,7 @@
           onload: function() {
             that.currentProject.guid = projectData.guid || utils.getUUID();
             that.currentProject.title = projectData.title;
+            that.currentProject.timeStamp = projectData.timeStamp;
           }
         });
       }; //importProject
@@ -291,6 +294,10 @@
           } //onload
         }); //Preview
       }; //createPreview
+
+      this.setTitle = function( title ) {
+        title &&  typeof title === "string" && _butter.setProjectDetails( "title", title );
+      }
 
     } //PopcornMaker
 
