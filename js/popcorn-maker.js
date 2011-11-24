@@ -63,7 +63,6 @@
         _buttonManager = new ButtonManager();
 
         _editorManager.initEditors( _butter );
-        _butter.setProjectDetails("title", "Untitled Project" );
 
         _popupManager.addPopup( "change-media", "#change-media-popup" );
         _popupManager.addPopup( "edit-track", "#edit-track-popup" );
@@ -222,7 +221,7 @@
             template: template,
             projectData: projectData.project,
             onload: function( preview ) {
-              that.currentProject.title = projectData.project.project.title;
+              that.currentProject.title = projectData.title;
               that.currentProject.guid = projectData.guid;
               that.currentProject.timeStamp = projectData.timeStamp;
             }
@@ -233,7 +232,6 @@
       this.newProject = function( projectOptions ) {
         _butter.clearProject();
         _butter.pluginmanager.clear();
-        _butter.setProjectDetails( "title", projectOptions.title );
         that.toggleLoadingScreen( true );
         that.toggleKeyboardFunctions( false );
         that.destroyCurrentPreview();
@@ -294,10 +292,6 @@
           } //onload
         }); //Preview
       }; //createPreview
-
-      this.setTitle = function( title ) {
-        title &&  typeof title === "string" && _butter.setProjectDetails( "title", title );
-      }
 
     } //PopcornMaker
 

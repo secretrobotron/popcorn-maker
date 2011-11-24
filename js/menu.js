@@ -25,6 +25,7 @@
       popupManager.addPopup( "add-project", "#add-project-popup" );
       popupManager.addPopup( "edit-project", "#edit-project-popup" );
       popupManager.addPopup( "error", "#error-popup" );
+      popupManager.addPopup( "delete-project", "#delete-project-popup" );
 
       buttonManager.add( "open-help", $( '.open-help, .help' ), {
         click: function() {
@@ -59,7 +60,7 @@
 
       buttonManager.add( "save-project-data", $(".save-project-data-btn"), {
         click: function() {
-          var title = $('.project-savename-textbox').val() || pm.currentProject.title;
+          var title = $('.project-title-textbox').val() || pm.currentProject.title;
           title = utils.getSafeString( title );
           pm.currentProject.title = title;
           pm.saveProject();
@@ -77,6 +78,32 @@
           });
         }
       }); //save-project-btn
+
+      buttonManager.add( "confirm-delete-project", $( "#confirm-deleteProjectBtn" ) , {
+        click: function() {
+          var localProjects = localStorage.getItem( "PopcornMaker.SavedProjects" ),
+              guid;
+
+          localProjects = localProjects ? JSON.parse( localProjects ) : {};
+
+          guid = $projectsListBox.val();
+
+          if ( localProjects[ guid ] ) {
+            delete localProjects[ guid ];
+            localStorage.setItem( "PopcornMaker.SavedProjects", JSON.stringify( localProjects ) );
+            popupManager.hidePopups();
+          }
+        }
+      });
+
+      buttonManager.add( "delete-project", $( "#delete-selected-project-btn" ), {
+        click: function() {
+          if ( $projectsListBox.val() ) {
+            popupManager.hidePopups();
+            popupManager.showPopup( "delete-project" );
+          }
+        }
+      });
 
       buttonManager.add( "change-url", $( ".change-url-btn" ), {
         click: function() {
@@ -99,7 +126,11 @@
         click: function () {
           updateProjectList();
           $projectsListBox[ 0 ].selectedIndex = -1;
+          if ( !$projectsListBox[ 0 ].options.length ) {
+            $( "#project-title-input-box" ).attr( "disabled", "disabled" );
+          }
           $( "#project-title-input-box" ).val( "" );
+          $( "#date-saved" ).text( "" );
           popupManager.showPopup( "edit-project" );
         }
       }); //edit-selected-project
