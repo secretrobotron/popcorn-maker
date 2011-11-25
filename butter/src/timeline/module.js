@@ -201,114 +201,95 @@ THE SOFTWARE.
             var track = event.data.track,
                 index = event.data.index;
 
-            currentMediaInstance.butterTracks[ track.id() ].newPos = index;
-            butter.dispatch( "trackmoved", currentMediaInstance.butterTracks[ track.id() ] );
+            currentMediaInstance.butterTracks[ track.id ].newPos = index;
+            butter.dispatch( "trackmoved", currentMediaInstance.butterTracks[ track.id ] );
+          });
+
+          this.trackLine.listen( "trackadded", function( event ) {
+
+            var trackLinerTrack = event.data.track,
+                butterTrack = currentMediaInstance.butterTracks[ trackLinerTrack.id ];
+
+            // track is being created by trackLiner
+            if ( !butterTrack ) {
+
+              butterTrack = new Butter.Track();
+
+              // make a function for this
+              currentMediaInstance.trackLinerTracks[ butterTrack.id ] = trackLinerTrack;
+              currentMediaInstance.butterTracks[ trackLinerTrack.id ] = butterTrack;
+
+              butter.addTrack( butterTrack );
+            }
+          });
+
+          this.trackLine.listen( "trackremoved", function( event ) {
+
+            butter.removeTrack( event.data.track, "timeline" );
           });
 
           this.trackLine.listen( "trackeventupdated", function( e ) {
 
-            var track = e.data.track,
-                trackEventObj = e.data.trackEvent,
-                event = e.data.event,
-                ui = e.data.ui,
-                trackLinerTrack = track;
+            var trackLinerTrack = e.data.track,
+                butterTrack = currentMediaInstance.butterTracks[ trackLinerTrack.id ],
+                trackLinerTrackEvent = e.data.trackEvent,
+                butterTrackEvent = currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ];
 
-            trackEventObj.options.popcornOptions.start = Math.max( 0, trackEventObj.element.offsetLeft / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
-            trackEventObj.options.popcornOptions.end = Math.max( 0, ( trackEventObj.element.offsetLeft + trackEventObj.element.offsetWidth ) / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
+            butterTrackEvent.popcornOptions.start = Math.max( 0, trackLinerTrackEvent.options.left / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
+            butterTrackEvent.popcornOptions.end = Math.max( 0, ( trackLinerTrackEvent.options.left + trackLinerTrackEvent.options.width ) / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
 
-            // if the track is not registered in butter
-            // remove it, and call b.addTrack
-            if ( !currentMediaInstance.butterTracks[ track.id() ] ) {
-
-              currentMediaInstance.trackLine.removeTrack( trackLinerTrack );
-
-              butter.addTrack( new Butter.Track() );
-              trackLinerTrack = currentMediaInstance.lastTrack;
-              trackLinerTrack.addTrackEvent( trackEventObj );
-            }
-
-            currentMediaInstance.lastTrack = trackLinerTrack;
-
-            butter.dispatch( "trackeventupdated", trackEventObj.options );
+            butter.dispatch( "trackeventupdated", butterTrackEvent, "timeline" );
           });
 
-          this.trackLine.listen( "trackeventcreated", function( e ) {
+          this.trackLine.listen( "trackeventadded", function( e ) {
 
-            var track = e.data.track,
-                trackEventObj = e.data.trackEvent,
-                event = e.data.event,
-                ui = e.data.ui;
+            var trackLinerTrack = e.data.track,
+                butterTrack = currentMediaInstance.butterTracks[ trackLinerTrack.id ],
+                trackLinerTrackEvent = e.data.trackEvent,
+                butterTrackEvent = currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ],
+                name = e.data.name;
 
-            if ( trackEventObj.popcornOptions ) {
+            if ( !butterTrackEvent ) {
 
-              var start = trackEventObj.popcornOptions.start,
-                  end = trackEventObj.popcornOptions.end,
-                  width = Math.max( 3, ( end - start ) / currentMediaInstance.duration * track.getElement().offsetWidth ),
-                  left = start / currentMediaInstance.duration * track.getElement().offsetWidth;
-
-              trackEventObj.left = left;
-              trackEventObj.innerHTML = trackEventObj.type;
-              trackEventObj.classes = [ "track-event", "butter-track-event", trackEventObj.type ];
-              trackEventObj.width = width;
-            }
-          });
-
-          this.trackLine.listen( "trackeventdropped", function( e ) {
-
-            var track = e.data.track,
-                trackEventObj = e.data.trackEvent,
-                event = e.data.event,
-                ui = e.data.ui;
-
-            if ( ui ) {
-
-              var trackLinerTrack = track;
-
-              // if the track is not registered in butter
-              // remove it, and call b.addTrack
-              if ( !currentMediaInstance.butterTracks[ track.id() ] ) {
-
-                currentMediaInstance.trackLine.removeTrack( trackLinerTrack );
-
-                butter.addTrack( new Butter.Track() );
-                trackLinerTrack = currentMediaInstance.lastTrack;
-              }
-              currentMediaInstance.lastTrack = trackLinerTrack;
-
-              var start = trackEventObj.left / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration,
+              var start = trackLinerTrackEvent.options.left / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration,
                   end = start + 4;
 
-              var elementId = ui.draggable[ 0 ].id,
-                  extractedType = elementId.substring( butter.pluginmanager.pluginElementPrefix.length );
+              butterTrackEvent = new Butter.TrackEvent({
+                popcornOptions: {
+                  start: start,
+                  end: end },
+                type: e.data.trackEvent.element.children[ 0 ].title
+              });
 
-              butter.addTrackEvent( currentMediaInstance.butterTracks[ currentMediaInstance.lastTrack.id() ], new Butter.TrackEvent({ popcornOptions: {start: start, end: end }, type: extractedType }) );
+              // make a function for this
+              currentMediaInstance.trackLinerTrackEvents[ butterTrackEvent.id ] = trackLinerTrackEvent;
+              currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ] = butterTrackEvent;
+
+              butter.addTrackEvent( butterTrack, butterTrackEvent );
             }
           });
 
           this.trackLine.listen( "trackeventclicked", function( e ) {
 
             var track = e.data.track,
-                trackEventObj = e.data.trackEvent,
-                event = e.data.event,
-                ui = e.data.ui;
+                trackEventObj = e.data.trackEvent;
 
             butter.targettedEvent = trackEventObj.options;
           });
 
           this.trackLine.listen( "trackeventdoubleclicked", function( e ) {
 
-            var track = e.data.track,
-                trackEventObj = e.data.trackEvent,
-                event = e.data.event,
-                ui = e.data.ui;
+            var trackLinerTrack = e.data.track,
+                butterTrack = currentMediaInstance.butterTracks[ trackLinerTrack.id ],
+                trackLinerTrackEvent = e.data.trackEvent,
+                butterTrackEvent = currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ];
 
             if ( butter.eventeditor ) {
 
-              butter.eventeditor.editTrackEvent( trackEventObj.options );
+              butter.eventeditor.editTrackEvent( butterTrackEvent );
             }
           });
 
-          this.lastTrack;
           this.butterTracks = {};
           this.trackLinerTracks = {};
           this.butterTrackEvents = {};
@@ -340,12 +321,6 @@ THE SOFTWARE.
 
           return;
         }
-
-        var trackLinerTrack = currentMediaInstance.trackLine.createTrack();
-
-        currentMediaInstance.trackLinerTracks[ track.id ] = trackLinerTrack;
-        currentMediaInstance.lastTrack = trackLinerTrack;
-        currentMediaInstance.butterTracks[ trackLinerTrack.id() ] = track;
       };
 
       butter.listen( "trackadded", function( event ) {
@@ -355,21 +330,36 @@ THE SOFTWARE.
           return;
         }
 
-         addTrack( event.data );
+        var butterTrack = event.data,
+            trackLinerTrack = currentMediaInstance.trackLinerTracks[ butterTrack.id ];
 
+        // track is being created by butter
+        if ( !trackLinerTrack ) {
+
+          trackLinerTrack = currentMediaInstance.trackLine.createTrack();
+
+          // make a function for this
+          currentMediaInstance.trackLinerTracks[ butterTrack.id ] = trackLinerTrack;
+          currentMediaInstance.butterTracks[ trackLinerTrack.id ] = butterTrack;
+
+          currentMediaInstance.trackLine.addTrack( trackLinerTrack );
+        }
       });
 
       butter.listen( "trackremoved", function( event ) {
 
-        var track = event.data,
-            trackLinerTrack = currentMediaInstance.trackLinerTracks[ track.id ],
-            trackEvents = trackLinerTrack.trackEvents,
-            trackEvent;
+        if ( event.target !== "timeline" ) {
 
-        currentMediaInstance.trackLine.removeTrack( trackLinerTrack );
+          var track = event.data,
+              trackLinerTrack = currentMediaInstance.trackLinerTracks[ track.id ],
+              trackEvents = trackLinerTrack.trackEvents,
+              trackEvent;
 
-        delete currentMediaInstance.butterTracks[ trackLinerTrack.id() ];
-        delete currentMediaInstance.trackLinerTracks[ track.id ];
+          currentMediaInstance.trackLine.removeTrack( trackLinerTrack );
+
+          delete currentMediaInstance.butterTracks[ trackLinerTrack.id ];
+          delete currentMediaInstance.trackLinerTracks[ track.id ];
+        }
       });
 
       var addTrackEvent = function( trackEvent ) {
@@ -385,15 +375,38 @@ THE SOFTWARE.
         currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ] = trackEvent;
       };
 
-      butter.listen( "trackeventadded", function( event ) {
+      butter.listen( "trackeventadded", function( e ) {
       
         if ( !currentMediaInstance ) {
 
           return;
         }
 
-        addTrackEvent( event.data );
-        butter.targettedEvent = event.data;
+        var butterTrack = e.data.track,
+            trackLinerTrack = currentMediaInstance.trackLinerTracks[ butterTrack.id ],
+            butterTrackEvent = e.data,
+            trackLinerTrackEvent = currentMediaInstance.trackLinerTrackEvents[ butterTrackEvent.id ];
+
+        if ( !trackLinerTrackEvent ) {
+
+          var start = butterTrackEvent.popcornOptions.start,
+              end = butterTrackEvent.popcornOptions.end,
+              width = Math.max( 3, ( end - start ) / currentMediaInstance.duration * trackLinerTrack.getElement().offsetWidth ),
+              left = start / currentMediaInstance.duration * trackLinerTrack.getElement().offsetWidth;
+
+          trackLinerTrackEvent = trackLinerTrack.createTrackEvent({
+            width: width,
+            left: left,
+            innerHTML: butterTrackEvent.type
+          });
+
+          currentMediaInstance.trackLinerTrackEvents[ butterTrackEvent.id ] = trackLinerTrackEvent;
+          currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ] = butterTrackEvent;
+
+          trackLinerTrack.addTrackEvent( trackLinerTrackEvent );
+        }
+
+        butter.targettedEvent = butterTrackEvent;
       });
 
       butter.listen( "trackeventremoved", function( event ) {
@@ -402,7 +415,6 @@ THE SOFTWARE.
             trackLinerTrackEvent = currentMediaInstance.trackLinerTrackEvents[ trackEvent.id ],
             trackLinerTrack = currentMediaInstance.trackLine.getTrack( trackLinerTrackEvent.trackId );
 
-        currentMediaInstance.lastTrack = trackLinerTrack;
         trackLinerTrack && trackLinerTrack.removeTrackEvent( trackLinerTrackEvent.element.id );
 
         delete currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ];
@@ -477,17 +489,21 @@ THE SOFTWARE.
       });
 
 
-      butter.listen( "trackeventupdated", function( event ) {
+      butter.listen( "trackeventupdated", function( e ) {
 
-        var trackEvent = event.data,
-            trackLinerTrackEvent = currentMediaInstance.trackLinerTrackEvents[ trackEvent.id ],
-            elem = trackLinerTrackEvent.element,
-            trackLinerTrack = currentMediaInstance.trackLine.getTrack( trackLinerTrackEvent.trackId ),      
-            start = trackEvent.popcornOptions.start,
-            end = trackEvent.popcornOptions.end;
-            
-        trackLinerTrackEvent.element.style.width = Math.max( 3, ( end - start ) / currentMediaInstance.duration * target.offsetWidth ) + "px";
-        trackLinerTrackEvent.element.style.left = start / currentMediaInstance.duration * target.offsetWidth + "px";
+        // accounting for new events changed from butter
+        if ( e.target !== "timeline" ) {
+
+          var butterTrackEvent = e.data
+              trackLinerTrackEvent = currentMediaInstance.trackLinerTrackEvents[ butterTrackEvent.id ],
+              start = butterTrackEvent.popcornOptions.start,
+              end = butterTrackEvent.popcornOptions.end;
+
+          trackLinerTrackEvent.options.left = start / currentMediaInstance.duration * target.offsetWidth;
+          trackLinerTrackEvent.options.width = Math.max( 3, ( end - start ) / currentMediaInstance.duration * target.offsetWidth );
+
+          currentMediaInstance.trackLine.getTrack( trackLinerTrackEvent.trackId ).updateTrackEvent( trackLinerTrackEvent );
+        }
       });
 
       this.currentTimeInPixels = function( pixel ) {

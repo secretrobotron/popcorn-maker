@@ -16,8 +16,7 @@
 
   var EventManager = function( emOptions ) {
 
-    var emOptions = emOptions || {}
-        listeners = {},
+    var listeners = {},
         related = {},
         id = "EventManager" + EventManager.guid++,
         logger = emOptions.logger || new Logger( id ),
@@ -120,7 +119,7 @@
           container = document.createElement( "div" ),
           self = this;
 
-      var eventManager = new EventManager();
+      var eventManager = new EventManager({});
       eventManager.apply( "trackLiner", this );
 
       if ( typeof( options ) === "string" ) {
@@ -150,33 +149,37 @@
         greedy: true
       });
 
+      var trackEventDropped = function ( track, e, ui ) {
+
+        var eventId = ui.draggable[ 0 ].id,
+            trackId = track.id,
+            parentId = ui.draggable[ 0 ].parentNode.id;
+
+        if ( self.getTrack( parentId ) ) {
+
+          track.addTrackEvent( self.getTrack( parentId ).removeTrackEvent( eventId ) );
+        } else {
+
+          var clientRects = parent.getClientRects();
+
+          track.addTrackEvent( track.createTrackEvent({
+              left: ( e.clientX - clientRects[ 0 ].left ) / scale,
+              width: 50,
+              innerHTML: ui.draggable[ 0 ].innerHTML
+            }));
+        } //if
+      };
+
       $( parent ).droppable({
         // this is dropping an event on empty space
         drop: function( event, ui ) {
   
           if ( dynamicTrackCreation && ui.draggable[ 0 ].className.indexOf( "ui-draggable" ) > -1 ) {
-  
-            var eventId = ui.draggable[ 0 ].id,
-                parentId = ui.draggable[ 0 ].parentNode.id,
-                newTrack = self.createTrack();
 
-            // trackEvent already exists
-            if ( self.getTrack( parentId ) ) {
+            var newTrack = self.createTrack();
+            self.addTrack( newTrack );
 
-              newTrack.addTrackEvent( self.getTrack( parentId ).removeTrackEvent( eventId ) );
-            } else {
-
-              var clientRects = parent.getClientRects();
-
-              eventManager.dispatch( "trackeventdropped", {
-                track: newTrack,
-                trackEvent: {
-                  left: ( event.clientX - clientRects[ 0 ].left ) / scale
-                },
-                event: event,
-                ui: ui
-              });
-            } //if
+            trackEventDropped( newTrack, event, ui );
           } //if
         }
       });
@@ -197,8 +200,6 @@
 
         var track = new Track(),
             element = track.getElement();
-        
-        container.appendChild( element );
 
         if ( name ) {
 
@@ -213,7 +214,7 @@
           element.appendChild( titleElement );
         } //if
 
-        return tracks[ track.getElement().id ] = track;;
+        return tracks[ track.getElement().id ] = track;
       };
 
       this.getTracks = function () {
@@ -230,12 +231,18 @@
 
         container.appendChild( track.getElement() );
         tracks[ track.getElement().id ] = track;
+        eventManager.dispatch( "trackadded", {
+          track: track
+        });
       };
 
       this.removeTrack = function( track ) {
 
         container.removeChild( track.getElement() );
         delete tracks[ track.getElement().id ];
+        eventManager.dispatch( "trackremoved", {
+          track: track
+        });
         return track;
       };
 
@@ -273,33 +280,14 @@
             element = document.createElement( "div" );
 
         element.className = "trackliner-track";
-        element.id = trackId;
+        this.id = element.id = trackId;
 
         $( element ).droppable({ 
           greedy: true,
           // this is dropping an event on a track
           drop: function( event, ui ) {
 
-            var eventId = ui.draggable[ 0 ].id,
-                trackId = this.id,
-                parentId = ui.draggable[ 0 ].parentNode.id;
-
-            if ( self.getTrack( parentId ) ) {
-
-              that.addTrackEvent( self.getTrack( parentId ).removeTrackEvent( eventId ) );
-            } else {
-
-              var clientRects = parent.getClientRects();
-
-              eventManager.dispatch( "trackeventdropped", {
-                track: that,
-                trackEvent: {
-                  left: ( event.clientX - clientRects[ 0 ].left ) / scale
-                },
-                event: event,
-                ui: ui
-              });
-            } //if
+            trackEventDropped( that, event, ui );
           }
         });
 
@@ -348,20 +336,7 @@
           var trackEvent = {},
               eventId = "trackEvent" + eventCount++;
 
-          eventManager.dispatch( "trackeventcreated", {
-            track: that,
-            trackEvent: inputOptions,
-            event: event,
-            ui: ui
-          });
-
-          var trackOptions = inputOptions;
-
-          if ( trackOptions ) {
-
-            trackEvent.start = inputOptions.left || 0;
-            trackEvent.end = inputOptions.width || 0;
-            trackEvent.end += trackEvent.start;
+          if ( inputOptions ) {
 
             var movedCallback = function( event, ui ) {
 
@@ -370,22 +345,18 @@
 
               eventElement.style.top = "0px";
 
-              trackEvent.start = $( eventElement ).offset().left;
-              trackEvent.end = $( eventElement ).width() + trackEvent.start;
-              trackEvent.start /= scale;
-              trackEvent.end /= scale;
+              trackEvent.options.left = eventElement.offsetLeft;
+              trackEvent.options.width = eventElement.offsetWidth;
 
               eventManager.dispatch( "trackeventupdated", {
                 track: track,
-                trackEvent: trackEvent,
-                event: event,
-                ui: ui
+                trackEvent: trackEvent
               });
             };
 
             trackEvent.options = inputOptions;
 
-            trackEvent.element = trackOptions.element || this.createEventElement ( trackOptions );
+            trackEvent.element = inputOptions.element || this.createEventElement ( inputOptions );
             trackEvent.element.id = eventId;
             trackEvent.element.addEventListener( "click", function ( e ) {
 
@@ -450,6 +421,28 @@
           element.appendChild( trackEvent.element );
           trackEvent.trackId = trackId;
 
+          eventManager.dispatch( "trackeventadded", {
+            track: that,
+            trackEvent: trackEvent
+          });
+
+          return trackEvent;
+        };
+
+        this.updateTrackEvent = function( trackEvent ) {
+
+          var eventElement = trackEvent.element,
+              track = self.getTrack( trackEvent.trackId );
+
+          eventElement.style.top = "0px";
+          eventElement.style.width = trackEvent.options.width + "px";
+          eventElement.style.left = trackEvent.options.left + "px";
+
+          eventManager.dispatch( "trackeventupdated", {
+            track: track,
+            trackEvent: trackEvent
+          });
+
           return trackEvent;
         };
 
@@ -474,7 +467,7 @@
           return trackEvent;
         };
 
-        this.toString = this.id = function() {
+        this.toString = function() {
 
           return trackId;
         };

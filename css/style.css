@@ -868,27 +868,6 @@ ul.actions li.bubble_pointer
 {
 	background-position: -220px -64px;
 }
-.track-event
-{
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-	color: #333;
-	cursor: move;
-	display: block;
-	font: normal 10px/25px Arial, Helvetica, sans-serif;
-	height: 25px;
-	line-height: 25px;
-	moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-	o-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-	opacity: 0.8;
-	position: absolute;
-	text-align: center;
-	text-transform: uppercase;
-	webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-.track-event:hover
-{
-	opacity: 1;
-}
 .dd
 {
 	background-color: #666;
@@ -1928,7 +1907,7 @@ p.copyright a:last-child
 	o-box-shadow: inset 0 1px 0 #5d5d5d;
 	webkit-box-shadow: inset 0 1px 0 #5d5d5d;
 }
-.timeline-heading,.enable-scroll,.track-event
+.timeline-heading,.enable-scroll
 {
 	border-radius: 5px;
 	moz-border-radius: 5px;
@@ -2083,19 +2062,6 @@ p.desc
 {
 	height: 100%;
 	width: 100%;
-}
-.butter-track-event
-{
-	background-color: #ff3;
-	background-image: -moz-linear-gradient(center bottom,#ff0 0,#C8C800 100%);
-	background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0,#ff0),color-stop(1,#C8C800));
-	overflow: hidden;
-}
-.butter-track-event.footnote
-{
-	background-color: #8dd75a;
-	background-image: -moz-linear-gradient(center bottom,#47801E 0,#8CD75A 100%);
-	background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0, #47801E),color-stop(1,#8CD75A));
 }
 .edit-track-button
 {
