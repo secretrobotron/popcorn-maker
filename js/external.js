@@ -10,7 +10,6 @@
         "lib/jquery_002.js",
         "lib/jquery-ui.js",
         "lib/jquery.qtip.pack.js",
-        "lib/trackLiner.js",
       ], function( Butter ) {
     });
 

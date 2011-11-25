@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 (function() {
 
-  define( [ "core/logger", "core/eventmanager", "core/trackevent", "comm/comm" ], function( Logger, EventManager, TrackEvent, Comm ) {
+  define( [ "core/logger", "core/eventmanager", "core/trackevent", "comm/comm", "butter/external/trackLiner/trackLiner.js" ], function( Logger, EventManager, TrackEvent, Comm ) {
 
     var Timeline = function( butter, options ) {
 
@@ -48,13 +48,14 @@ THE SOFTWARE.
 
         if ( butter.targettedEvent ) {
 
+          event.preventDefault();
           var cornOptions = butter.targettedEvent.popcornOptions;
           var inc = event.shiftKey ? 2.5 : 0.25;
 
           if ( cornOptions.start > inc ) {
 
             cornOptions.start -= inc;
-            if ( !event.ctrlKey ) {
+            if ( !event.ctrlKey && !event.metaKey ) {
 
               cornOptions.end -= inc;
             }
@@ -67,7 +68,7 @@ THE SOFTWARE.
             cornOptions.start = 0;
           }
 
-          this.dispatch( "trackeventupdated", butter.targettedEvent );
+          butter.dispatch( "trackeventupdated", butter.targettedEvent );
         }
       };
 
@@ -75,13 +76,14 @@ THE SOFTWARE.
 
         if ( butter.targettedEvent ) {
 
+          event.preventDefault();
           var cornOptions = butter.targettedEvent.popcornOptions;
           var inc = event.shiftKey ? 2.5 : 0.25;
 
           if ( cornOptions.end < butter.duration - inc ) {
 
             cornOptions.end += inc;
-            if ( !event.ctrlKey ) {
+            if ( !event.ctrlKey && !event.metaKey ) {
 
               cornOptions.start += inc;
             }
@@ -94,7 +96,7 @@ THE SOFTWARE.
             cornOptions.end = butter.duration;
           }
 
-          this.dispatch( "trackeventupdated", butter.targettedEvent );
+          butter.dispatch( "trackeventupdated", butter.targettedEvent );
         }
       };
 

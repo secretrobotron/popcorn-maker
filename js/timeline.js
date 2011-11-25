@@ -123,7 +123,7 @@
 
         if ( event.shiftKey ) {
           event.preventDefault();
-          butter.zoom( event.detail || event.wheelDelta );
+          butter.timeline.zoom( event.detail || event.wheelDelta );
         }
 
         var scrubberLeft = checkScrubber( event );
@@ -259,7 +259,7 @@
         max: 6,
         step: 1,
         slide: function( event, ui ) {
-          butter.zoom( slideValue - ui.value );
+          butter.timeline.zoom( slideValue - ui.value );
           drawCanvas();
           slideValue = ui.value;
         }
@@ -392,21 +392,21 @@
         layersDiv.insertBefore( trackLayers[ "layer-" + event.data.id ], layersDiv.children[ event.data.newPos ] );
       });
 
-      document.getElementsByClassName( "sound-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
+      document.getElementsByClassName( "sound-btn" )[ 0 ].addEventListener( "click", function( event ) {
         butter.mute && butter.mute();
       }, false);
 
-      document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "mousedown", function( event ) {
+      document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "click", function( event ) {
         pm.currentProject.preview.playing ? pm.currentProject.preview.pause() : pm.currentProject.preview.play();
       }, false);
 
-      butter.listen( "mediapaused", function( event ) {
-        document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "-321px -19px";
-      } );
-
       butter.listen( "mediaplaying", function( event ) {
+        document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "-321px -19px";
+      });
+
+      butter.listen( "mediapaused", function( event ) {
         document.getElementsByClassName( "play-btn" )[ 0 ].children[ 0 ].children[ 0 ].style.backgroundPosition = "-322px 7px";
-      } );
+      });
 
     }; //Timeline
 
