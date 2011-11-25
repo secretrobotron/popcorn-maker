@@ -36,11 +36,11 @@ THE SOFTWARE.
       }
       var target = document.getElementById( options.target ) || options.target,
           that = this;
-      
+
       var Editor = function( track ) {
         var target = document.getElementById( options.target ) || options.target,
             that = this;
-
+        console.log( track );
         butter.listen( "trackremoved", function( event ) {
           if ( event.data === track ) {
             that.close();

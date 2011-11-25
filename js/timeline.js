@@ -1,5 +1,5 @@
 (function() {
-  define( [], function() {
+  define( [ "utils" ], function( utils ) {
 
     var Timeline = function( pm ) {
 
@@ -8,8 +8,8 @@
 
       var propertiesPanel = $( "#properties-panel" ),
           hideTimelineDiv = $( ".hide-timeline" );
-   
-      hideTimelineDiv.css( 'bottom', '36px' );	
+
+      hideTimelineDiv.css( 'bottom', '36px' );
       hideTimelineDiv.css( 'display', 'block' );
       propertiesPanel.css( 'height','38px' );
       propertiesPanel.css( 'display','block' );
@@ -35,7 +35,7 @@
         function() {
           $('.collapse-btn a').css('backgroundPosition','-330px -167px');
           $(".toolbox").animate({ width: "120px" }, 500);
-          $('.collapse-btn a').text("collapse"); 
+          $('.collapse-btn a').text("collapse");
           $(".timeline").stop().animate({ paddingRight:'160px'}, 500);
         }
       );
@@ -44,10 +44,10 @@
         $(this).css('backgroundPosition','-239px -7px');
         $(".hide-timeline").animate({ bottom: '36px' }, 500);
         $("#properties-panel").animate({ height: '38px' }, 500);
-        $(this).text("Show Timeline"); 
+        $(this).text("Show Timeline");
       },function() {
         $(this).css('backgroundPosition','-239px 10px');
-        $(this).text("Hide Timeline"); 
+        $(this).text("Hide Timeline");
         $(".hide-timeline").animate({ bottom: "268px" }, 500);
         $("#properties-panel").animate({ height: "270px" }, 500);
       });
@@ -65,7 +65,7 @@
       });
 
       $(".p-timeline-title").html( "Untitled Project" );
-      
+
       butter.listen( "mediaready", function() {
         $(".media-title-div").html( butter.currentMedia.url );
       });
@@ -273,7 +273,9 @@
 
         var layerDiv = document.createElement( "div" );
         layerDiv.id = "layer-" + track.id;
-        layerDiv.innerHTML = layerDiv.id;
+        $( layerDiv ).append( $( "<textnode/>", {
+          innerHTML: layerDiv.id
+        })[ 0 ] );
         layerDiv.setAttribute("class", "layer-btn");
         layerDiv.style.position = "relative";
 
@@ -303,24 +305,26 @@
 
           editTrackTargets.innerHTML = "<option value=\"\">Media Element (if applicable)</option>";
 
-          var targets = butter.serializeTargets();
+          var targets = butter.serializeTargets(),
+              $trackTitletb = $( "#track-title-input-box" ),
+              $textNode = $( $( layerDiv ).children( "textnode" )[0] );
 
           for ( var i = 0; i < targets.length; i++ ) {
 
             editTrackTargets.innerHTML += "<option value=\"" + targets[ i ].name + "\">" + targets[ i ].name + "</option>";
           }
 
-          var editor = new butter.TrackEditor( track );
-          trackJSONtextArea.value = editor.json;
+          var editor = new butter.trackeditor.Editor( track );
+          trackJSONtextArea.value = JSON.stringify( editor.json );
           editTrackTargets.value = editor.target;
 
-          //$('.close-div').fadeOut('fast');
+          $trackTitletb.val( $textNode.text() );
+
           popupManager.showPopup( "edit-target" );
 
           var closeTrackEditor = function() {
+            $trackTitletb.val( "" );
             popupManager.hidePopups();
-            //$(' .balck-overlay ').delay( 200 ).hide();
-            document.getElementById( "cancel-track-edit" ).removeEventListener( "click", clickCancel, false );
             document.getElementById( "apply-track-edit" ).removeEventListener( "click", clickApply, false );
             document.getElementById( "ok-track-edit" ).removeEventListener( "click", clickOk, false );
             document.getElementById( "delete-track-edit" ).removeEventListener( "click", clickDelete, false );
@@ -328,36 +332,33 @@
             trackJSONtextArea.removeEventListener( "change", changeTarget, false );
           }; //closeTrackEditor
 
-          var applyTrackEditor = function() {
+          function applyTrackEditor() {
+            var newName = utils.getSafeString( $trackTitletb.val() );
+            $textNode.text( newName || layerDiv.id );
             editor.target = editTrackTargets.value;
-          }; //applyTrackEditor
-
-          function clickCancel( e ) { 
-            closeTrackEditor(); 
           }
-          function clickOk( e ) { 
+          function clickOk( e ) {
             applyTrackEditor();
             closeTrackEditor();
           }
-          function clickApply( e ) { 
-            applyTrackEditor(); 
+          function clickApply( e ) {
+            applyTrackEditor();
           }
-          function clickDelete( e ) { 
+          function clickDelete( e ) {
             editor.remove();
             closeTrackEditor();
           }
-          function clickClear( e ) { 
+          function clickClear( e ) {
             trackJSONtextArea.value = "";
             editor.clear();
           }
-          function clickEdit( e ) { 
-            closeTrackEditor(); 
+          function clickEdit( e ) {
+            closeTrackEditor();
           }
-          function changeTarget( e ) { 
+          function changeTarget( e ) {
             editor.json = this.value;
           }
 
-          document.getElementById( "cancel-track-edit" ).addEventListener( "click", clickCancel, false );
           document.getElementById( "apply-track-edit" ).addEventListener( "click", clickApply, false );
           document.getElementById( "ok-track-edit" ).addEventListener( "click", clickOk, false );
           document.getElementById( "delete-track-edit" ).addEventListener( "click", clickDelete, false );

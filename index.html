@@ -249,23 +249,32 @@
                   <label class="save-prj-lbl" for="project-savename-textbox">Save As:</label><input type="text" id="project-title-textbox" class="project-title-textbox" name="project-title-textbox" >
                   <input type="submit" class="save-project-data-btn" name="save-project-data-btn" value="Save Project">
                   <!--<input type="button" class="publish-project-btn" name="publish-project-btn" value="Publish Project">-->
-
-                </div>
+              </div>
             </div>
         </div><!-- end popup 3 -->
 
         <div id="editor-popup" class="editor-popup pop-up close-div draggable"> <!-- popup 4 -->
         </div><!-- end popup 4 -->
 
-        <div id="edit-target-popup" class="edit-target-popup pop-up close-div draggable"> <!-- popup 5 -->
-          <span style="color: white;">Target Elements: </span><select id="track-edit-target" class="edit-track-button"></select><br/>
-          <textarea rows="21" cols="51" id="track-edit-JSON"></textarea>
-          <button id="cancel-track-edit" class="edit-track-button">close</button>
-          <button id="apply-track-edit" class="edit-track-button">apply</button>
-          <button id="ok-track-edit" class="edit-track-button">ok</button>
-          <button id="delete-track-edit" class="edit-track-button">delete</button>
-          <button id="clear-track-edit" class="edit-track-button">clear</button>
-        </div><!-- end popup 5 -->
+        <div id="edit-target-popup" class="edit-target-popup pop-up close-div draggable"> <!-- Track Editor Pop-up -->
+          <a class="popup-close-btn" href="#"><span></span></a>
+          <div class="popup-header">
+            <h3>Edit Track</h3>
+          </div>
+          <div class="popup-content">
+            <span>Target Elements: </span><select id="track-edit-target" class="edit-track-button"></select>
+            <span>Track Title: </span><input type="text" maxlength="12" id="track-title-input-box"></input>
+            <br/>
+            <textarea rows="21" cols="85" id="track-edit-JSON"></textarea>
+            <br />
+            <div id="track-edit-btn-div">
+              <button id="apply-track-edit" class="edit-track-button">apply</button>
+              <button id="ok-track-edit" class="edit-track-button">ok</button>
+              <button id="delete-track-edit" class="edit-track-button">delete</button>
+              <button id="clear-track-edit" class="edit-track-button">clear</button>
+            </div>
+          </div>
+        </div><!-- Track Editor Pop-up -->
 
         <div id="delete-track-popup" class="project-title-popup pop-up close-div draggable">
           <a class="popup-close-btn" href="#"><span></span></a>
