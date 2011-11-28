@@ -239,12 +239,16 @@
             if ( ( position - lastTimeDisplayed ) > textWidth + padding ) {
 
               lastTimeDisplayed = position;
+              // text color
+              context.fillStyle = "#999999";
               context.fillText( butter.timeline.secondsToSMPTE( i ), -~position - ( textWidth / 2 ), 21 );
             }
 
             lastPosition = position;
           }
         }
+        // stroke color
+        context.strokeStyle = "#999999";
         context.stroke();
         context.closePath();
       };
