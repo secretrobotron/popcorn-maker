@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title></title>
-		<script type="text/javascript" src="../../lib/butter.js"></script>
+    <script type="text/javascript" src="../../butter/src/eventeditor/butter.editors.js"></script>
 		<script type="text/javascript" src="../shared/js/editor-state.js"></script>
 		<link rel="stylesheet" type="text/css" href="../shared/css/editor.css"/>
 	</head>
@@ -54,8 +54,8 @@
 					<td><textarea id="text"></textarea></td>
 				</tr>
 				<tr>
-					<th><label for="link">Link:</label></th>
-					<td><input type="text" id="link"/></td>
+					<th><label for="href">Link:</label></th>
+					<td><input type="text" id="href"/></td>
 				</tr>
 			</tbody>
 
@@ -116,7 +116,7 @@
 		</div>
 		<script type="text/javascript">
 		
-		(function() {
+		ButterEditor(function() {
 			var bin, icons = [], userIcons, i, editor;
 			
 			editor = new EditorState({
@@ -137,7 +137,7 @@
 				mode: 'text',
 				thumb: 'url',
 				text: 'text',
-				link: 'url',
+				href: 'url',
 				classes: 'text',
 				align: 'text',
 				style: 'text',
@@ -196,7 +196,7 @@
 					header.classList.add('collapse');
 				}
 			}
-		}());
+		});
 		</script>
 	</body>
 </html>
