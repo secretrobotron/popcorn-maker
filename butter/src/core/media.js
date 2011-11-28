@@ -127,6 +127,7 @@ THE SOFTWARE.
         track.listen( "tracktargetchanged", em.repeat );
         track.listen( "trackeventadded", em.repeat );
         track.listen( "trackeventremoved", em.repeat );
+        track.listen( "trackeventupdated", em.repeat );
         em.dispatch( "trackadded", track );
         var trackEvents = track.trackEvents;
         if ( trackEvents.length > 0 ) {

@@ -30,7 +30,7 @@
           that.popcornOptions.target = val;
         }
       }); //target
-
+      
       Object.defineProperty( this, "name", {
         get: function() {
           return name;

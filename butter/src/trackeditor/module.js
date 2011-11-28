@@ -66,6 +66,7 @@ THE SOFTWARE.
 
         this.clear = function() {
           var trackEvents = track.trackEvents;
+
           while ( trackEvents.length ) {
             butter.removeTrackEvent( track, trackEvents[ 0 ] );
           } //while
@@ -74,24 +75,15 @@ THE SOFTWARE.
         Object.defineProperty( this, "json", {
           get: function() {
             return track.json;
-/*
-            var trackEvents = track.trackEvents,
-                returnArray = [];
-            for ( var i = 0, l = trackEvents.length; i < l; i++ ) {
-              returnArray.push( JSON.stringify( { type: trackEvents[ i ].type, options: trackEvents[ i ].popcornOptions } ) );
-            }
-            return returnArray;
-*/
           },
           set: function( val ) {
             that.clear();
             track.json = val;
-/*
-            var newArray = JSON.parse( "[" + val + "]" );
-            for ( var i = 0, l = newArray.length; i < l; i++ ) {
-              track.addTrackEvent( new Butter.TrackEvent({ popcornOptions: newArray[ i ].options, type: newArray[ i ].type }) )
+
+            var trackEvents = JSON.parse( val ).trackEvents;
+            for ( var i = 0, l = trackEvents.length; i < l; i++ ) {
+              track.addTrackEvent( new Butter.TrackEvent({ popcornOptions: trackEvents[ i ].popcornOptions, type: trackEvents[ i ].type }) )
             }
-*/
           }
         }); //json
 
