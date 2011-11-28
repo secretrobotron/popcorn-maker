@@ -2400,3 +2400,6 @@ input#project-title-input-box
     width: 260px !important;
     font-size: 9pt;
 }
+A.credit-href {
+  text-decoration: underline;
+}
