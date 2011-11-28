@@ -469,7 +469,8 @@ THE SOFTWARE.
           trackLinerEvent.element.style.width = Math.max( 3, ( end - start ) / currentMediaInstance.duration * target.offsetWidth ) + "px";
           trackLinerEvent.element.style.left = start / currentMediaInstance.duration * target.offsetWidth + "px";
         }
-        //b.dispatch( "mediatimeupdate", currentMediaInstance.media, "timeline" );
+
+        return currentZoom;
       };
 
     }; //Timeline

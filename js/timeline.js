@@ -119,11 +119,22 @@
 
       });
 
+      var sliderElement = $( "#slider" );
+      sliderElement.slider({
+        value: 1,
+        min: 1,
+        max: 7,
+        step: 1,
+        slide: function( event, ui ) {
+
+          slideValue = zoom( slideValue - ui.value );
+        }
+      });
+
       var zoom = function( delta ) {
 
-        butter.timeline.zoom( delta );
-
-        var scrubberLeft = checkScrubber();
+        var newZoom = butter.timeline.zoom( delta ),
+            scrubberLeft = checkScrubber();
 
         if ( scrubberLeft - 5 > scrubberContainer.offsetWidth || scrubberLeft < 0 ) {
           scrubber.style.display = "none";
@@ -132,6 +143,8 @@
         }
 
         drawCanvas();
+
+        return newZoom;
       };
 
       var mouseEvent = function( event ) {
@@ -139,12 +152,14 @@
         if ( event.shiftKey ) {
 
           event.preventDefault();
-          zoom( event.detail || event.wheelDelta );
+          slideValue = zoom( event.detail || event.wheelDelta );
+          sliderElement.slider( "value", slideValue );
         }
       };
 
       timelineDiv.addEventListener( "DOMMouseScroll", mouseEvent, false );
       timelineDiv.addEventListener( "mousewheel", mouseEvent, false );
+      timelineDiv.addEventListener( "click", mouseEvent, false );
 
       tracksDiv.addEventListener( "scroll", function( event ) {
 
@@ -261,18 +276,6 @@
 
       butter.listen( "timelineready", function( event ) {
         drawCanvas();
-      });
-
-      $( "#slider" ).slider({
-        value:0,
-        min: 0,
-        max: 6,
-        step: 1,
-        slide: function( event, ui ) {
-
-          zoom( slideValue - ui.value );
-          slideValue = ui.value;
-        }
       });
 
       var trackLayers = {};
