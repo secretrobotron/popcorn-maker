@@ -14,7 +14,8 @@
 
 
     var waiting = window.ButterEditor.__waiting;
-      window.ButterEditor = ButterEditor;
+
+    window.ButterEditor = ButterEditor;
 
     if ( waiting ) {
 

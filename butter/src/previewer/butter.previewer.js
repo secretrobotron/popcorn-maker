@@ -27,7 +27,6 @@
         path = path.split( '/' );
         path.pop();
         path = path.join( '/' ) + '/';
-        console.log( path );
 
         document.write( '<script src="' + path + '../../external/require/require.js"></' + 'script>' );
 
