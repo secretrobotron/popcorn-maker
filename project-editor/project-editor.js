@@ -53,7 +53,7 @@
           var saveObj = JSON.parse( editor.value );
           data = JSON.stringify( saveObj );
           localProjects[ guid ] = saveObj;
-          localStorage.setItem( "PopcornMaker.SavedProjects", JSON.stringify( localProjects ) )
+          localStorage.setItem( "PopcornMaker.SavedProjects", JSON.stringify( localProjects ) );
           element.innerHTML = saveObj.title;
           alert( "Saved" );
         }
@@ -68,7 +68,7 @@
 
       this.destroy = function() {
         delete localProjects[ guid ];
-        localStorage.setItem( "PopcornMaker.SavedProjects", localProjects )
+        localStorage.setItem( "PopcornMaker.SavedProjects", JSON.stringify( localProjects ) );
         var idx = projects.indexOf( that );
         projects.splice( idx, 1 );
         projectList.removeChild( element );
@@ -109,9 +109,10 @@
 
     document.getElementById( "project-list-clear" ).addEventListener( "click", function( e ) {
       if ( confirm( "Are you sure?" ) ) {
-        for ( var i=0; i<projects.length; ++i ) {
-          projects[ i ].destroy();
+        while ( projects.length ) {
+          projects[ 0 ].destroy();
         } //for
+        editor.value = "";
       } //if
     }, false );
   });

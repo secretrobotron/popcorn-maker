@@ -80,7 +80,7 @@
       var timelineTarget = document.getElementById( "timeline-div" );
       var slideValue = 0;
 
-      function checkScrubber( event ) {
+      function checkScrubber() {
 
         layersDiv.style.top = -tracksDiv.scrollTop + "px";
         scrubber.style.left = -tracksDiv.scrollLeft + butter.timeline.currentTimeInPixels() + "px";
@@ -105,7 +105,7 @@
 
       butter.listen( "mediatimeupdate", function( event ) {
 
-        var scrubberLeft = checkScrubber( event );
+        var scrubberLeft = checkScrubber();
 
         timelineDuration.innerHTML = butter.timeline.secondsToSMPTE( butter.currentTime );
 
@@ -119,14 +119,11 @@
 
       });
 
-      var zoom = function( event ) {
+      var zoom = function( delta ) {
 
-        if ( event.shiftKey ) {
-          event.preventDefault();
-          butter.timeline.zoom( event.detail || event.wheelDelta );
-        }
+        butter.timeline.zoom( delta );
 
-        var scrubberLeft = checkScrubber( event );
+        var scrubberLeft = checkScrubber();
 
         if ( scrubberLeft - 5 > scrubberContainer.offsetWidth || scrubberLeft < 0 ) {
           scrubber.style.display = "none";
@@ -137,12 +134,21 @@
         drawCanvas();
       };
 
-      timelineDiv.addEventListener( "DOMMouseScroll", zoom, false );
-      timelineDiv.addEventListener( "mousewheel", zoom, false );
+      var mouseEvent = function( event ) {
+
+        if ( event.shiftKey ) {
+
+          event.preventDefault();
+          zoom( event.detail || event.wheelDelta );
+        }
+      };
+
+      timelineDiv.addEventListener( "DOMMouseScroll", mouseEvent, false );
+      timelineDiv.addEventListener( "mousewheel", mouseEvent, false );
 
       tracksDiv.addEventListener( "scroll", function( event ) {
 
-        var scrubberLeft = checkScrubber( event );
+        var scrubberLeft = checkScrubber();
 
         if ( scrubberLeft - 5 > scrubberContainer.offsetWidth || scrubberLeft < 0 ) {
           scrubber.style.display = "none";
@@ -239,12 +245,16 @@
             if ( ( position - lastTimeDisplayed ) > textWidth + padding ) {
 
               lastTimeDisplayed = position;
+              // text color
+              context.fillStyle = "#999999";
               context.fillText( butter.timeline.secondsToSMPTE( i ), -~position - ( textWidth / 2 ), 21 );
             }
 
             lastPosition = position;
           }
         }
+        // stroke color
+        context.strokeStyle = "#999999";
         context.stroke();
         context.closePath();
       };
@@ -259,8 +269,8 @@
         max: 6,
         step: 1,
         slide: function( event, ui ) {
-          butter.timeline.zoom( slideValue - ui.value );
-          drawCanvas();
+
+          zoom( slideValue - ui.value );
           slideValue = ui.value;
         }
       });

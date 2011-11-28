@@ -25,11 +25,11 @@ THE SOFTWARE.
 (function () {
 
   define( [ "require",
-            "core/logger", 
-            "core/eventmanager", 
-            "core/track", 
-            "core/trackevent", 
-            "core/target", 
+            "core/logger",
+            "core/eventmanager",
+            "core/track",
+            "core/trackevent",
+            "core/target",
             "core/media",
             "comm/comm",
             "eventeditor/module",
@@ -47,7 +47,6 @@ THE SOFTWARE.
           medias = [],
           currentMedia,
           targets = [],
-          projectDetails = {},
           moduleRoot = options.moduleRoot || "/",
           id = "Butter" + Butter.guid++,
           logger = new Logger( id ),
@@ -224,7 +223,7 @@ THE SOFTWARE.
         var idx = targets.indexOf( target );
         if ( idx > -1 ) {
           targets.splice( idx, 1 );
-          delete targets[ target.name ]; 
+          delete targets[ target.name ];
           em.dispatch( "targetremoved", target );
           return target;
         } //if
@@ -242,7 +241,7 @@ THE SOFTWARE.
         var sTargets = [];
         for ( var i=0, l=targets.length; i<l; ++i ) {
           sTargets.push( targets[ i ].json );
-        } 
+        }
         return sTargets;
       }; //serializeTargets
 
@@ -254,7 +253,7 @@ THE SOFTWARE.
                 targets[ i ].name === target ) {
             return targets[ i ];
           }
-        } 
+        }
         return undefined;
       }; //getTaget
 
@@ -263,7 +262,6 @@ THE SOFTWARE.
        ****************************************************************/
       //importProject - Import project data
       this.importProject = function ( projectData ) {
-        projectDetails = projectData.project;
         if ( projectData.targets ) {
           for ( var i=0, l=projectData.targets.length; i<l; ++i ) {
 
@@ -290,7 +288,7 @@ THE SOFTWARE.
 
             var mediaData = projectData.media[ i ],
                 m = that.getMedia( { target: mediaData.target } );
-            
+
             if ( !m ) {
               m = new Media();
               m.json = projectData.media[ i ];
@@ -299,7 +297,7 @@ THE SOFTWARE.
             else {
               m.json = projectData.media[ i ];
             }
-            
+
           } //for
         } //if projectData.media
       }; //importProject
@@ -311,28 +309,12 @@ THE SOFTWARE.
           exportJSONMedia.push( medias[ m ].json );
         }
         var projectData = {
-          project: projectDetails,
           targets: that.serializeTargets(),
           media: exportJSONMedia
         };
         return projectData;
       };
 
-      //setProjectDetails - set the details of the project
-      this.setProjectDetails = function ( key, value ) {
-        projectDetails[ key ] = value;
-      };
-
-      //getProjectDetails - get the projects details
-      this.getProjectDetails = function ( key ) {
-        if ( key ) {
-          return projectDetails[ key ];
-        }
-        else {
-          return projectDetails;
-        }
-      };
-      
       this.clearProject = function() {
         while ( targets.length > 0 ) {
           that.removeTarget( targets[ 0 ] );
@@ -397,7 +379,7 @@ THE SOFTWARE.
       //getMedia - get the media's information
       this.getMedia = function ( media ) {
         for ( var i=0,l=medias.length; i<l; ++i ) {
-          if (  ( media.id !== undefined && medias[ i ].id === media.id ) || 
+          if (  ( media.id !== undefined && medias[ i ].id === media.id ) ||
                 ( media.name && medias[ i ].name === media.name ) ||
                 ( media.target && medias[ i ].target === media.target ) ||
                 medias[ i ].name === media ) {
