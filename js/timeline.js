@@ -314,16 +314,14 @@
             editTrackTargets.innerHTML += "<option value=\"" + targets[ i ].name + "\">" + targets[ i ].name + "</option>";
           }
 
-          var editor = new butter.TrackEditor( track );
-          trackJSONtextArea.value = editor.json;
+          var editor = new butter.trackeditor.Editor( track );
+          trackJSONtextArea.value = JSON.stringify(editor.json);
           editTrackTargets.value = editor.target;
 
-          //$('.close-div').fadeOut('fast');
           popupManager.showPopup( "edit-target" );
 
           var closeTrackEditor = function() {
             popupManager.hidePopups();
-            //$(' .balck-overlay ').delay( 200 ).hide();
             document.getElementById( "cancel-track-edit" ).removeEventListener( "click", clickCancel, false );
             document.getElementById( "apply-track-edit" ).removeEventListener( "click", clickApply, false );
             document.getElementById( "ok-track-edit" ).removeEventListener( "click", clickOk, false );
