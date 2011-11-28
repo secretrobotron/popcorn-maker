@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title></title>
-		<script type="text/javascript" src="../../lib/butter.js"></script>
+    <script type="text/javascript" src="../../butter/src/eventeditor/butter.editors.js"></script>
 		<script type="text/javascript" src="../shared/js/editor-state.js"></script>
 		<link rel="stylesheet" type="text/css" href="../shared/css/editor.css"/>
 	</head>
@@ -93,7 +93,7 @@
 		</div>
 		<script type="text/javascript">
 		
-		(function() {
+		ButterEditor(function() {
 			var bin, icons = [], userIcons, i, editor;
 			
 			editor = new EditorState({
@@ -169,7 +169,7 @@
 					header.classList.add('collapse');
 				}
 			}
-		}());
+		});
 		</script>
 	</body>
 </html>
