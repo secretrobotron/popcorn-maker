@@ -338,9 +338,31 @@
             	<h3>Load Project?</h3>
             </div>
             <div class="popup-content">
-              <p class="desc">Loading the selected project will erase any unsaved changes to the current project. Ar you sure you wish to continue?</p>
+              <p class="desc">Loading the selected project will erase any unsaved changes to the current project. Are you sure you wish to continue?</p>
               <input type="submit" id="confirm-load-btn" class="confirm-load-btn" value="Load Project">
             </div>
+        </div>
+
+        <div id="delete-track-confirmation" class="pop-up close-div draggable">
+          <a class="popup-close-btn load" href="#"><span></span></a>
+        	<div class="popup-header">
+            <h3>Delete Track?</h3>
+          </div>
+          <div class="popup-content">
+            <p class="desc">Deleting a track cannot be undone. Are you sure you wish to continue?</p>
+            <input type="submit" id="delete-track-confirm-btn" class="confirm-load-btn" value="Delete">
+          </div>
+        </div>
+
+        <div id="clear-track-confirmation" class="pop-up close-div draggable">
+          <a class="popup-close-btn load" href="#"><span></span></a>
+        	<div class="popup-header">
+            <h3>Clear Track?</h3>
+          </div>
+          <div class="popup-content">
+            <p class="desc">Clearing a track cannot be undone. Are you sure you wish to continue?</p>
+            <input type="submit" id="clear-track-confirm-btn" class="confirm-load-btn" value="Clear Track">
+          </div>
         </div>
 
         <div id="add-project-popup"><!-- welcome popup -->

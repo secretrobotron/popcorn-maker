@@ -4,7 +4,8 @@
     var Timeline = function( pm ) {
 
       var butter = pm.butter,
-          popupManager = pm.popupManager;
+          popupManager = pm.popupManager,
+          buttonManager = pm.buttonManager;
 
       var propertiesPanel = $( "#properties-panel" ),
           hideTimelineDiv = $( ".hide-timeline" );
@@ -265,9 +266,9 @@
         }
       });
 
-      var trackLayers = {};
-      var editTrackTargets =  document.getElementById( "track-edit-target" );
-      var trackJSONtextArea = document.getElementById( "track-edit-JSON" );
+      var trackLayers = {},
+          editTrackTargets =  document.getElementById( "track-edit-target" ),
+          trackJSONtextArea = document.getElementById( "track-edit-JSON" );
 
       var createLayer = function( track ) {
 
@@ -320,8 +321,6 @@
 
           $trackTitletb.val( $textNode.text() );
 
-          popupManager.showPopup( "edit-target" );
-
           var closeTrackEditor = function() {
             $trackTitletb.val( "" );
             popupManager.hidePopups();
@@ -330,7 +329,14 @@
             document.getElementById( "delete-track-edit" ).removeEventListener( "click", clickDelete, false );
             document.getElementById( "clear-track-edit" ).removeEventListener( "click", clickClear, false );
             trackJSONtextArea.removeEventListener( "change", changeTarget, false );
+            $( "#delete-track-confirmation" ).children( "a.popup-close-btn" ).unbind( "click" );
+            $( "#clear-track-confirmation" ).children( "a.popup-close-btn" ).unbind( "click" );
+
           }; //closeTrackEditor
+
+          popupManager.showPopup( "edit-target", {
+            onClose: closeTrackEditor
+          });
 
           function applyTrackEditor() {
             var newName = utils.getSafeString( $trackTitletb.val() );
@@ -345,13 +351,45 @@
             applyTrackEditor();
           }
           function clickDelete( e ) {
-            editor.remove();
-            closeTrackEditor();
+            popupManager.hidePopups();
+            popupManager.showPopup( "delete-track-confirm", {
+              onClose: function() {
+                popupManager.hidePopups();
+                popupManager.showPopup( "edit-target", {
+                  onClose: closeTrackEditor
+                });
+              }
+            });
           }
+          buttonManager.add( "delete-track", $( "#delete-track-confirm-btn" ), {
+            click: function() {
+              editor.remove();
+              closeTrackEditor();
+            }
+          });
+
           function clickClear( e ) {
-            trackJSONtextArea.value = "";
-            editor.clear();
+            popupManager.hidePopups();
+            popupManager.showPopup( "clear-track-confirm", {
+              onClose: function() {
+                popupManager.hidePopups();
+                popupManager.showPopup( "edit-target", {
+                  onClose: closeTrackEditor
+                });
+              }
+            });
           }
+          buttonManager.add( "clear-track", $( "#clear-track-confirm-btn" ), {
+            click: function() {
+              $( "#clear-track-confirmation" ).children( "a.popup-close-btn" ).unbind( "click" );
+              trackJSONtextArea.value = "";
+              editor.clear();
+              popupManager.hidePopups();
+              popupManager.showPopup( "edit-target", {
+                onClose: closeTrackEditor
+              });
+            }
+          });
           function clickEdit( e ) {
             closeTrackEditor();
           }
