@@ -252,7 +252,7 @@ THE SOFTWARE.
             if ( !butterTrackEvent ) {
 
               var start = trackLinerTrackEvent.options.left / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration,
-                  end = start + 4;
+                  end = start + ( trackLinerTrackEvent.options.width / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
 
               butterTrackEvent = new Butter.TrackEvent({
                 popcornOptions: {
