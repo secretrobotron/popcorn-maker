@@ -518,6 +518,7 @@ THE SOFTWARE.
       };
 
       var trackLinerEvent,
+          butterTrackEvent,
           start,
           end,
           originalWidth = target.offsetWidth,
@@ -544,9 +545,10 @@ THE SOFTWARE.
         for ( var i in currentMediaInstance.trackLinerTrackEvents ) {
 
           trackLinerEvent = currentMediaInstance.trackLinerTrackEvents[ i ];
+          butterTrackEvent = currentMediaInstance.butterTrackEvents[ trackLinerEvent.element.id ];
 
-          start = trackLinerEvent.options.popcornOptions.start;
-          end = trackLinerEvent.options.popcornOptions.end;
+          start = butterTrackEvent.popcornOptions.start;
+          end = butterTrackEvent.popcornOptions.end;
 
           trackLinerEvent.element.style.width = Math.max( 3, ( end - start ) / currentMediaInstance.duration * target.offsetWidth ) + "px";
           trackLinerEvent.element.style.left = start / currentMediaInstance.duration * target.offsetWidth + "px";
