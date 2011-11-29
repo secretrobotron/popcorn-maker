@@ -1,0 +1,6 @@
+{
+  "title": "Map",
+  "editor": "editor-map.html",
+  "view": "popup",
+  "plugin": "map"
+}
