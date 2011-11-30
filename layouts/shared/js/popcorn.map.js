@@ -86,7 +86,7 @@
 			
 			if (!latLng) {
 				if (options.bounds) {
-					if (!options.bounds instanceof google.maps.LatLngBounds) {
+					if (! (options.bounds instanceof google.maps.LatLngBounds) ) {
 						options.bounds = options.bounds.split(',');
 						try {
 							options.bounds = new google.maps.LatLngBounds(
@@ -398,7 +398,8 @@
 						options.marker.setVisible(false);
 					}
 
-					if (mapDiv) {
+					if (map) {
+						mapDiv = map.getDiv();
 						if (!activeEvents.length) {
 							//IE doesn't support classLists, so we do it the old-fashioned way
 							classes = mapDiv.getAttribute('class') || '';
