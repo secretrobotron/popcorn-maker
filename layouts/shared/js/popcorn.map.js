@@ -7,7 +7,8 @@
 		geocoder,
 		waitingToLoad = [],
 		allMaps = [],
-		mapsById = {};
+		mapsById = {},
+		styleSheet;
 
 
 	function zoomMap(mapData, map, marker) {
@@ -34,15 +35,16 @@
 		
 	Popcorn.plugin( "map", function( options ) {
 		var popcorn = this,
-			activeEvents,
+			activeEvents, allEvents,
 			mapDiv,
 			map,
 			mapData,
+			target,
 			latLng;
 		
 
 		function load() {
-			var callbackName;
+			var callbackName, classes;
 		
 			if (!mapDiv) {
 				return;
@@ -113,7 +115,11 @@
 				} else {
 					var i;
 					for (i = 0; i < allMaps.length; i++) {
-						if (allMaps[i].map.getDiv() === target) {
+						mapDiv = allMaps[i].map.getDiv();
+						if (mapDiv === target ||
+							mapDiv.parentNode === target ||
+							mapDiv.parentNode && mapDiv.parentNode.parentNode === target) {
+
 							mapData = allMaps[i];
 							map = mapData.map;
 							break;
@@ -122,22 +128,35 @@
 				}
 				
 				if (!map) {
+					//map container needs to be empty
+					if (!mapDiv.children && mapDiv.childNodes.length || mapDiv.children.length) {
+						mapDiv.appendChild(document.createElement('div'));
+						mapDiv = mapDiv.childNodes[mapDiv.childNodes.length - 1];
+					}
+					
 					//still don't have a map, so let's create one
 					map = new google.maps.Map(mapDiv, {
 						zoom: 14,
 						mapTypeId: google.maps.MapTypeId.ROADMAP
 					});
+					classes = mapDiv.getAttribute('class') || '';
+					classes = classes.split(' ');
+					if (classes.indexOf('popcorn-map') < 0) {
+						classes.push('popcorn-map');
+					}
+					mapDiv.setAttribute('class', classes.join(' '));
 					
 					//map.setCenter( latLng );
 					
 					mapData = {
 						map: map,
 						bounds: new google.maps.LatLngBounds(),
-						activeEvents: []
+						activeEvents: [],
+						allEvents: []
 					};
 					
-					if (mapDiv.id) {
-						mapsById[ mapDiv.id ] = mapData;
+					if (target.id) {
+						mapsById[ target.id ] = mapData;
 					}
 					
 					allMaps.push(mapData);
@@ -145,6 +164,8 @@
 			}
 			
 			activeEvents = mapData.activeEvents;
+			allEvents = mapData.allEvents;
+			allEvents.push(options);
 
 			mapData.bounds.extend(latLng);
 			map.fitBounds(mapData.bounds);
@@ -185,7 +206,6 @@
 	
 		return {
 			_setup: function( options ) {
-				var target;
 				if (!options.target ||
 					!options.location && (!options.lat || !options.lng) ) {
 					return;
@@ -210,7 +230,11 @@
 					} else {
 						var i;
 						for (i = 0; i < allMaps.length; i++) {
-							if (allMaps[i].map.getDiv() === target) {
+							mapDiv = allMaps[i].map.getDiv();
+							if (mapDiv === target ||
+								mapDiv.parentNode === target ||
+								mapDiv.parentNode && mapDiv.parentNode.parentNode === target) {
+
 								mapData = allMaps[i];
 								map = mapData.map;
 								break;
@@ -218,7 +242,7 @@
 						}
 					}
 				} else if (target.setMapTypeId && target.getDiv) {
-					//seems only way to check for google map object is to duck type
+					//seems only way to check for google map object is to duck-type
 					map = target;
 					mapDiv = target.getDiv();
 					if (mapDiv.id) {
@@ -228,7 +252,8 @@
 							mapData = {
 								map: map,
 								bounds: new google.maps.LatLngBounds(),
-								activeEvents: []
+								activeEvents: [],
+								allEvents: []
 							};
 							mapsById[ mapDiv.id ] = mapData;
 						}
@@ -247,62 +272,121 @@
 					}
 				}
 				
+				if (!styleSheet) {
+					styleSheet = document.createElement('style');
+					styleSheet.setAttribute('type', 'text/css');
+					styleSheet.appendChild(
+						document.createTextNode('.popcorn-map { display: none; width: 100%; height: 100%; }\n' +
+						'.popcorn-map.active { display: block; }\n'
+					));
+					document.head.appendChild(styleSheet);
+				}
+
 				load();
 			},
 			start: function( event, options ) {
-				activeEvents.push(options);
-				
-				//zoomMap(mapData, options.map, options.marker);
-				
-				if (options.marker) {
-					options.marker.setVisible(true);
+				var classes;
+
+				if (activeEvents) {
+					activeEvents.push(options);
 				}
 				
-				if (typeof options.onStart === 'function') {
-					options.onStart(options);
+				if (options) {
+					if (options.marker) {
+						options.marker.setVisible(true);
+					}
+
+					if (mapDiv) {
+						//IE doesn't support classLists, so we do it the old-fashioned way
+						classes = mapDiv.getAttribute('class') || '';
+						classes = classes.split(' ');
+						if (classes.indexOf('active') < 0) {
+							classes.push('active');
+						}
+						mapDiv.setAttribute('class', classes.join(' '));
+						google.maps.event.trigger(map, 'resize');
+					}
+
+					zoomMap(mapData, options.map, options.marker);
+				
+					if (typeof options.onStart === 'function') {
+						options.onStart(options);
+					}
 				}
 			},
 			frame: function( event, options, time ) {
-				if (typeof options.onFrame === 'function') {
+				if (options && typeof options.onFrame === 'function') {
 					options.onFrame( options, time );
 				}
 			},
 			end: function( event, options ) {
-				
-				var index = activeEvents.indexOf(options);
-				if (index >= 0) {
-					activeEvents.splice(index, 1);
-				}
-				
-				//zoomMap(mapData, options.map);
-				
-				if (popcorn.currentTime() < options.start && options.marker) {
-					options.marker.setVisible(false);
-				}
+				var classes, index;
 
-				if (typeof options.onEnd === 'function') {
-					options.onEnd(options);
+				if (activeEvents) {
+					var index = activeEvents.indexOf(options);
+					if (index >= 0) {
+						activeEvents.splice(index, 1);
+					}
+				}
+				
+				if (options) {
+					if (options.marker) {
+						options.marker.setVisible(false);
+					}
+
+					if (mapDiv && !activeEvents.length) {
+						//IE doesn't support classLists, so we do it the old-fashioned way
+						classes = mapDiv.getAttribute('class') || '';
+						classes = classes.split(' ');
+						index = classes.indexOf('active');
+						if (index >= 0) {
+							classes.splice(index, 1);
+						}
+						mapDiv.setAttribute('class', classes.join(' '));
+					}
+					
+					zoomMap(mapData, options.map);
+
+					if (typeof options.onEnd === 'function') {
+						options.onEnd(options);
+					}
 				}
 			},
 			_teardown: function( event, opts ) {
-				if (typeof options.onEnd === 'function') {
-					options.onEnd(options);
-				}
+				var index;
 
-				mapDiv = null;
-				mapData = null;
-				map = null;
-				activeEvents = null;
-				latLng = null;
-				
 				if (options) {
+					if (typeof options.onEnd === 'function') {
+						options.onEnd(options);
+					}
+
 					if (options.marker) {
 						options.marker.setVisible(false);
 						options.marker.setMap(null);
 						options.marker = null;
 					}
 					options = null;
+
+					//clean up after any maps and divs we may have added
+					if (allEvents && allEvents.indexOf) {
+						index = allEvents.indexOf(options);
+						if (index >= 0) {
+							allEvents.splice(index, 1);
+							/*
+							if (!allEvents.length) {
+								if (mapDiv && mapDiv !== target && mapDiv.parentNode) {
+									mapDiv.parentNode.removeChild(mapDiv);
+								}
+								map = null;
+							}
+							*/
+						}
+					}
 				}
+				mapDiv = null;
+				mapData = null;
+				activeEvents = null;
+				latLng = null;
 				opts = null;
 			},
 			manifest: {

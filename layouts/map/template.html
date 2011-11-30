@@ -13,7 +13,7 @@
 		set your own references to be absolute URLs on your server. 
 		-->
 		<!--
-		<base href="http://mozillapopcorn.org/maker/layouts/slide/"/>
+		<base href="http://mozillapopcorn.org/maker/layouts/map/"/>
 		-->
 		<style type="text/css">
 		
@@ -92,6 +92,21 @@
 			left: 0;
 		}
 
+		.popcorn-map {
+			position: absolute;
+			top: 0;
+			left: 0;
+			opacity: 0;
+			-moz-transition: opacity 0.4s;
+			-webkit-transition: opacity 0.4s;
+			-o-transition: opacity 0.4s;
+			-ie-transition: opacity 0.4s;
+			transition: opacity 0.4s;
+		}
+		
+		.popcorn-map.active {
+			opacity: 1;
+		}
 
 		</style>
 		<link rel="stylesheet" href="css/video-js.css" type="text/css" media="screen" title="Video JS">
@@ -122,6 +137,10 @@
 
 		function addTrackEvent(trackEvent) {
 			var options = trackEvent.popcornOptions;
+			
+			if (trackEvent.type === 'map') {
+			}
+			
 			if (typeof popcorn[ trackEvent.type ] === 'function') {
 				popcorn[ trackEvent.type ]( trackEvent.popcornOptions );
 			}
@@ -135,14 +154,6 @@
 					for ( var m=0; m<medias.length; ++m ) {
 						var media = medias[ m ];
 						popcorn = Popcorn( '#' + media.target, { frameAnimation: true } );
-
-popcorn.map({
-	start: 1,
-	end: 10,
-	location: '11215',
-	target: 'main-container'
-});
-
 						if ( media.tracks ) {
 							for ( var t=0; t<media.tracks.length; ++t ) {
 								var track = media.tracks[ t ];

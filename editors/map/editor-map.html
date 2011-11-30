@@ -98,6 +98,7 @@
 		(function() {
 			var bin, icons = [], userIcons, i, editor,
 				gmaps, geocoder,
+				geocache = {},
 				map, latLng, marker, tempMarker,
 				latLngTimeout, locationTimeout;
 			
@@ -168,7 +169,7 @@
 						return;
 					}
 
-					loc = elements.location.value;
+					loc = editor.fields.address.element.value;
 					loc = loc.replace(/^[\s\t\n\r ]+/, '');
 					loc = loc.replace(/[\s\t\n\r ]+$/, '');
 					loc = loc.replace(/[\s\t\n\r ]+/, ' ', 'g');
@@ -192,28 +193,23 @@
 						return;
 					}
 
-					if ( field.id === 'lat') {
-						lat = value;
-						lng = editor.trackEvent.lng;
-						if ( lat !== '' && isNaN(lat) || lat < -90 || lat > 90 ) {
-							field.element.style.backgroundColor = '#f11';
-							lat = '';
-						} else {
-							field.element.style.backgroundColor = '';
-						}
+					lat = editor.trackEvent.lat;
+					if ( lat !== '' && isNaN(lat) || lat < -90 || lat > 90 ) {
+						editor.fields.lat.element.style.backgroundColor = '#f11';
+						lat = '';
 					} else {
-						lat = editor.trackEvent.lat;
-						lng = value;
-
-						if ( lng !== '' && isNaN(lng) || lng < -180 || lng > 180 ) {
-							field.element.style.backgroundColor = '#f11';
-							lng = '';
-						} else {
-							field.element.style.backgroundColor = '';
-						}
+						editor.fields.lat.element.style.backgroundColor = '';
 					}
 
-					if (!isNaN(lat) && !isNaN(lng) ) {
+					lng = editor.trackEvent.lng;
+					if ( lng !== '' && isNaN(lng) || lng < -180 || lng > 180 ) {
+						editor.fields.lng.element.style.backgroundColor = '#f11';
+						lng = '';
+					} else {
+						editor.fields.lng.element.style.backgroundColor = '';
+					}
+
+					if (!isNaN(lat) && !isNaN(lng) && lat !== '' && lng != '') {
 						//saveLocation( new gmaps.LatLng(lat, lng) );
 						var loc = new gmaps.LatLng(lat, lng);
 						tempMarker.setVisible(false);
@@ -237,17 +233,17 @@
 					mapTypeId: gmaps.MapTypeId.ROADMAP
 				});
 				
+				tempMarker = new gmaps.Marker({
+					map: map,
+					visible: false,
+					draggable: true
+				});
+				
 				marker = new gmaps.Marker({
 					map: map,
 					visible: false,
 					draggable: true,
 					icon: 'https://www.google.com/intl/en_ALL/mapfiles/marker_purple.png'
-				});
-				
-				tempMarker = new gmaps.Marker({
-					map: map,
-					visible: false,
-					draggable: true
 				});
 				
 				gmaps.event.addListener(marker, 'dragend', saveLocation);
@@ -311,8 +307,7 @@
 				title: 'text',
 				address: {
 					type: 'text',
-					callback: function(one, two, three) {
-					}
+					callback: checkLocation
 				},
 				lat: {
 					type: 'number',
