@@ -47,6 +47,7 @@
 			mapDiv,
 			map,
 			mapData,
+			infoWindow,
 			target,
 			latLng;
 		
@@ -223,9 +224,29 @@
 			var marker = new google.maps.Marker({
 				map: map, 
 				position: latLng,
+				title: options.title || options.address,
 				animation: google.maps.Animation.DROP,
 				visible: (activeEvents.indexOf(options) >= 0)
 			});
+			
+			
+			var infoContent;
+			if (options.title) {
+				if (options.link) {
+					infoContent = document.createElement('a');
+					infoContent.setAttribute('href', options.link);
+					infoContent.appendChild(document.createTextNode(options.title));
+				} else {
+					infoContent = document.createTextNode(options.title);
+				}
+				infoWindow = new google.maps.InfoWindow({
+					content: infoContent
+				});
+				google.maps.event.addListener(marker, 'click', function() {
+					popcorn.pause();
+					infoWindow.open(map,marker);
+				});
+			}
 		
 			options.map = map;
 			options.marker = marker;
@@ -335,8 +356,8 @@
 					styleSheet = document.createElement('style');
 					styleSheet.setAttribute('type', 'text/css');
 					styleSheet.appendChild(
-						document.createTextNode('.popcorn-map { display: none; width: 100%; height: 100%; }\n' +
-						'.popcorn-map.active { display: block; }\n'
+						document.createTextNode('.popcorn-map { visibility: hidden; width: 100%; height: 100%; }\n' +
+						'.popcorn-map.active { visibility: visible; }\n'
 					));
 					document.head.appendChild(styleSheet);
 				}
@@ -395,6 +416,9 @@
 				
 				if (options) {
 					if (options.marker) {
+						if (infoWindow) {
+							infoWindow.close();
+						}
 						options.marker.setVisible(false);
 					}
 
@@ -449,6 +473,7 @@
 						}
 					}
 				}
+				infoWindow = null;
 				mapDiv = null;
 				mapData = null;
 				activeEvents = null;
