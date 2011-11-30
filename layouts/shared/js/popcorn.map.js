@@ -321,7 +321,7 @@
 			},
 			end: function( event, options ) {
 				var classes, index;
-
+				
 				if (activeEvents) {
 					var index = activeEvents.indexOf(options);
 					if (index >= 0) {
@@ -343,9 +343,9 @@
 							classes.splice(index, 1);
 						}
 						mapDiv.setAttribute('class', classes.join(' '));
+					} else {
+						zoomMap(mapData, options.map);
 					}
-					
-					zoomMap(mapData, options.map);
 
 					if (typeof options.onEnd === 'function') {
 						options.onEnd(options);
