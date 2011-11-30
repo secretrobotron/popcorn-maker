@@ -85,7 +85,7 @@
 						geocoder = new google.maps.Geocoder();
 					}
 					
-					geocoder.geocode( { address: options.location },
+					geocoder.geocode( { address: options.address },
 						function(results, status) {
 							if (status == google.maps.GeocoderStatus.OK) {
 								latLng = results[0].geometry.location;
@@ -93,11 +93,11 @@
 								options.lat = latLng.lat();
 								options.lng = latLng.lng();
 								
-								console.log('Found Location', options.location, options.label, latLng.lat(), latLng.lng() );
+								console.log('Found Location', options.address, options.label, latLng.lat(), latLng.lng() );
 								
 								load();
 							} else {
-								console.log('Location not found', options.location, options.label);
+								console.log('Location not found', options.address, options.label);
 							}
 						}
 					);
@@ -207,7 +207,7 @@
 		return {
 			_setup: function( options ) {
 				if (!options.target ||
-					!options.location && (!options.lat || !options.lng) ) {
+					!options.address && (!options.lat || !options.lng) ) {
 					return;
 				}
 				
@@ -226,6 +226,7 @@
 						if ( mapsById[ target.id ] ) {
 							mapData = mapsById[ target.id ];
 							map = mapData.map;
+							mapDiv = map.getDiv();
 						}
 					} else {
 						var i;
@@ -365,7 +366,6 @@
 						options.marker.setMap(null);
 						options.marker = null;
 					}
-					options = null;
 
 					//clean up after any maps and divs we may have added
 					if (allEvents && allEvents.indexOf) {
@@ -387,6 +387,7 @@
 				mapData = null;
 				activeEvents = null;
 				latLng = null;
+				options = null;
 				opts = null;
 			},
 			manifest: {
@@ -423,10 +424,10 @@
 						type: "text",
 						label: "Lng"
 					},
-					location: {
+					address: {
 						elem: "input",
 						type: "text",
-						label: "Location"
+						label: "Address"
 					},
 					onSetup: {
 						type: "function",
