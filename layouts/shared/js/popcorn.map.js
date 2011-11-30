@@ -88,7 +88,7 @@
 					
 					geocoder.geocode( { address: options.address },
 						function(results, status) {
-							if (status == google.maps.GeocoderStatus.OK) {
+							if (options && status == google.maps.GeocoderStatus.OK) {
 								latLng = results[0].geometry.location;
 								options.latLng = latLng;
 								options.lat = latLng.lat();
