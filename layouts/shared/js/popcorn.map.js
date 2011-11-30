@@ -8,6 +8,7 @@
 		waitingToLoad = [],
 		allMaps = [],
 		mapsById = {},
+		activeEventsById = {},
 		styleSheet;
 
 
@@ -25,7 +26,7 @@
 		
 		for (i = 0; i < activeEvents.length; i++) {
 			bounds.extend(activeEvents[i].latLng);
-			s.push(activeEvents[i].label);
+			s.push(activeEvents[i].title);
 		}
 
 		map.fitBounds(bounds);
@@ -93,11 +94,11 @@
 								options.lat = latLng.lat();
 								options.lng = latLng.lng();
 								
-								console.log('Found Location', options.address, options.label, latLng.lat(), latLng.lng() );
+								console.log('Found Location', options.address, options.title, latLng.lat(), latLng.lng() );
 								
 								load();
 							} else {
-								console.log('Location not found', options.address, options.label);
+								console.log('Location not found', options.address, options.title);
 							}
 						}
 					);
@@ -151,7 +152,7 @@
 					mapData = {
 						map: map,
 						bounds: new google.maps.LatLngBounds(),
-						activeEvents: [],
+						activeEvents: activeEventsById[target.id] || [],
 						allEvents: []
 					};
 					
@@ -160,6 +161,26 @@
 					}
 					
 					allMaps.push(mapData);
+
+					if (mapData.activeEvents.length) {
+						//IE doesn't support classLists, so we do it the old-fashioned way
+						var classes = mapDiv.getAttribute('class') || '';
+						classes = classes.split(' ');
+						if (classes.indexOf('active') < 0) {
+							classes.push('active');
+						}
+						mapDiv.setAttribute('class', classes.join(' '));
+						
+						google.maps.event.trigger(map, 'resize');
+
+						for (i = 0; i < mapData.activeEvents.length; i++) {
+							if (mapData.activeEvents[i].marker) {
+								mapData.activeEvents[i].marker.setVisibile(true);
+							}
+						}
+
+						zoomMap(mapData, map);
+					}
 				}
 			}
 			
@@ -174,7 +195,7 @@
 				map: map, 
 				position: latLng,
 				animation: google.maps.Animation.DROP,
-				visible: false
+				visible: (activeEvents.indexOf(options) >= 0)
 			});
 		
 			options.map = map;
@@ -273,6 +294,13 @@
 					}
 				}
 				
+				if (target.id) {
+					if (!activeEventsById[target.id]) {
+						activeEventsById[target.id] = [];
+					}
+					activeEvents = activeEventsById[target.id];
+				}
+				
 				if (!styleSheet) {
 					styleSheet = document.createElement('style');
 					styleSheet.setAttribute('type', 'text/css');
@@ -297,7 +325,7 @@
 						options.marker.setVisible(true);
 					}
 
-					if (mapDiv) {
+					if (mapDiv && window.google && window.google.maps) {
 						//IE doesn't support classLists, so we do it the old-fashioned way
 						classes = mapDiv.getAttribute('class') || '';
 						classes = classes.split(' ');
@@ -305,10 +333,11 @@
 							classes.push('active');
 						}
 						mapDiv.setAttribute('class', classes.join(' '));
+						
 						google.maps.event.trigger(map, 'resize');
+						zoomMap(mapData, options.map);
 					}
 
-					zoomMap(mapData, options.map, options.marker);
 				
 					if (typeof options.onStart === 'function') {
 						options.onStart(options);
@@ -335,17 +364,19 @@
 						options.marker.setVisible(false);
 					}
 
-					if (mapDiv && !activeEvents.length) {
-						//IE doesn't support classLists, so we do it the old-fashioned way
-						classes = mapDiv.getAttribute('class') || '';
-						classes = classes.split(' ');
-						index = classes.indexOf('active');
-						if (index >= 0) {
-							classes.splice(index, 1);
+					if (mapDiv) {
+						if (!activeEvents.length) {
+							//IE doesn't support classLists, so we do it the old-fashioned way
+							classes = mapDiv.getAttribute('class') || '';
+							classes = classes.split(' ');
+							index = classes.indexOf('active');
+							if (index >= 0) {
+								classes.splice(index, 1);
+							}
+							mapDiv.setAttribute('class', classes.join(' '));
+						} else if (options.map) {
+							zoomMap(mapData, options.map);
 						}
-						mapDiv.setAttribute('class', classes.join(' '));
-					} else {
-						zoomMap(mapData, options.map);
 					}
 
 					if (typeof options.onEnd === 'function') {
@@ -409,10 +440,10 @@
 						label: "Out"
 					},
 					target: "map",
-					label: {
+					title: {
 						elem: "input",
 						type: "text",
-						label: "Label"
+						label: "Title"
 					},
 					lat: {
 						elem: "input",
