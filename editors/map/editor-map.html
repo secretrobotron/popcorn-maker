@@ -127,6 +127,13 @@
 */
 			}
 			
+			function saveBounds() {
+				var bounds = map.getBounds();
+				if (editor.trackEvent.address || editor.trackEvent.lat && editor.trackEvent.lng) {
+					editor.setField('bounds', bounds.toUrlValue());
+				}
+			}
+			
 			function geocode(location) {
 
 				function processResults(results) {
@@ -232,6 +239,8 @@
 					zoom: 3,
 					mapTypeId: gmaps.MapTypeId.ROADMAP
 				});
+
+				gmaps.event.addListener(map, 'bounds_changed', saveBounds);
 				
 				tempMarker = new gmaps.Marker({
 					map: map,
@@ -317,6 +326,7 @@
 					type: 'number',
 					callback: checkLatLng
 				},
+				bounds: 'object',
 				target: {
 					type: 'target',
 					fieldset: 'target-section'

@@ -14,7 +14,7 @@
 
 	function zoomMap(mapData, map, marker) {
 		var i, activeEvents = mapData.activeEvents,
-			bounds, listener;
+			bounds, listener, event;
 		var s = [];
 
 		if (!activeEvents.length) {
@@ -25,7 +25,14 @@
 		bounds = new google.maps.LatLngBounds();
 		
 		for (i = 0; i < activeEvents.length; i++) {
-			bounds.extend(activeEvents[i].latLng);
+			event = activeEvents[i];
+			if (event.latLng) {
+				bounds.extend(activeEvents[i].latLng);
+			}
+
+			if (event.bounds && event.bounds instanceof google.maps.LatLngBounds) {
+				bounds.union(event.bounds);
+			}
 			s.push(activeEvents[i].title);
 		}
 
@@ -78,9 +85,25 @@
 			}
 			
 			if (!latLng) {
+				if (options.bounds) {
+					if (!options.bounds instanceof google.maps.LatLngBounds) {
+						options.bounds = options.bounds.split(',');
+						try {
+							options.bounds = new google.maps.LatLngBounds(
+								new google.maps.LatLng(parseFloat(options.bounds[0]), parseFloat(options.bounds[1])),
+								new google.maps.LatLng(parseFloat(options.bounds[2]), parseFloat(options.bounds[3]))
+							);
+						} catch (e) {
+							console.log('error', e);
+							delete options.bounds;
+						}
+					}
+				}
+
 				if (!isNaN(options.lat) && !isNaN(options.lng)) {
 					latLng = new google.maps.LatLng(options.lat, options.lng);
 					options.latLng = latLng;
+					
 				} else {
 					if (!geocoder) {
 						geocoder = new google.maps.Geocoder();
@@ -88,11 +111,16 @@
 					
 					geocoder.geocode( { address: options.address },
 						function(results, status) {
-							if (options && status == google.maps.GeocoderStatus.OK) {
+							if (!options) {
+								return;
+							}
+
+							if (status == google.maps.GeocoderStatus.OK) {
 								latLng = results[0].geometry.location;
 								options.latLng = latLng;
 								options.lat = latLng.lat();
 								options.lng = latLng.lng();
+								options.bounds = results[0].geometry.viewport;
 								
 								console.log('Found Location', options.address, options.title, latLng.lat(), latLng.lng() );
 								
@@ -181,6 +209,7 @@
 
 						zoomMap(mapData, map);
 					}
+
 				}
 			}
 			
@@ -204,6 +233,7 @@
 			if (typeof options.onLoad === 'function') {
 				options.onLoad(options);
 			}
+
 		}
 		
 		//if event callbacks are strings, swap them out for functions
@@ -325,7 +355,8 @@
 						options.marker.setVisible(true);
 					}
 
-					if (mapDiv && window.google && window.google.maps) {
+					if (mapDiv && window.google && window.google.maps &&
+						(options.map || map) ) {
 						//IE doesn't support classLists, so we do it the old-fashioned way
 						classes = mapDiv.getAttribute('class') || '';
 						classes = classes.split(' ');
@@ -335,7 +366,10 @@
 						mapDiv.setAttribute('class', classes.join(' '));
 						
 						google.maps.event.trigger(map, 'resize');
-						zoomMap(mapData, options.map);
+						
+						if (options.latLng) {
+							zoomMap(mapData, options.map || map);
+						}
 					}
 
 				
