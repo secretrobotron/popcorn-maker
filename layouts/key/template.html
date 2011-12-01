@@ -12,8 +12,15 @@
 		and make sure all the scripts refer to the right absolute URLs, or
 		set your own references to be absolute URLs on your server. 
 		-->
+		<!--
 		<base href="http://mozillapopcorn.org/maker/layouts/key/"/>
+		-->
 		<style type="text/css">
+		
+		/*
+			Fonts
+		*/
+		@import url(http://fonts.googleapis.com/css?family=Bevan|Oswald);
 		
 		/*
 			styles borrowed from takepart.com
@@ -118,20 +125,27 @@
 			float: right;
 		}
 
-		/*
-			Fonts
-		*/
-		@import url(http://fonts.googleapis.com/css?family=Rokkitt|Oswald);
-		
 		#video-container {
-			font-family: 'Rokkitt', serif;
+			font-family: 'Bevan', serif;
 			font-size: 40px;
 			line-height: normal;
-			color: red;
+			color: #cc3333;
 		}
 
 		#video-container > div {
 			line-height: normal;
+		}
+		
+		#video-container a:visited {
+			color: #cc3333;
+		}
+
+		#video-container a {
+			text-decoration: underline;
+		}
+
+		#front > div, #back > div {
+			position: absolute;
 		}
 
 		#front > div {
@@ -145,8 +159,27 @@
 			color: black;
 		}
 
+		#front a:visited {
+			color: black;
+		}
+
 		#front > div.title {
 			border-left: none;
+		}
+		
+		.popcorn-lightbox-link {
+			text-decoration: underline;
+		}
+		
+		body .popcorn-lightbox-lightbox {
+			color: black;
+			background-color: white;
+			border: 4px solid rgba(0, 0, 0, 0.6);
+		}
+		
+		.popcorn-lightbox-lightbox a, 
+		.popcorn-lightbox-lightbox a:visited {
+			color: #0099CC;
 		}
 
 		</style>
@@ -154,11 +187,6 @@
 		<script data-butter="project-data" type="application/json"></script>
 	</head>
 	<body>
-		<div id="scale-buttons">
-			<button id="smaller">-</button>
-			<button id="actual-size">1x</button>
-			<button id="bigger">+</button>
-		</div>
 		<div id="page-wrapper">
 			<div id="page" class="page clearfix">
 				<div id="video-container" class="video-js-box" data-butter="target">
@@ -189,13 +217,64 @@
 	(function() {
 		//custom stuff for setting up Seriously
 		var video, seriouslyEvents = 0, defaultSeriously, canvas;
+
+		function prepareVideoPlayer(video) {
+			/*
+			VideoJS unfortunately checks for <source> elements
+			in the video to validate that it can play, which is
+			a bad idea on many levels. Butter removes any <source>
+			elements and sets a single src attribute.
+			
+			In general, we should be using a different player, but
+			for now, making this work by putting the source element
+			back in place.
+			*/
+			
+			var source, src, i, re,
+				types = ['webm', 'mp4', 'ogg'];
+			
+			if (typeof video === 'string') {
+				video = document.getElementById(video);
+			}
+			
+			if (!video) {
+				return;
+			}
+			
+			if (!video.children|| !video.children.length) {
+				re = new RegExp('\\.(' + types.join('|') + ')$');
+				source = document.createElement('source');
+				source.setAttribute('src', video.src);
+				src = re.exec(video.src);
+				if (src && src.length > 1) {
+					source.setAttribute('type', 'video/' + src[1]);
+				}
+
+				video.appendChild(source);
+
+				for (i = 0; i < types.length; i++) {
+					src = video.src.replace(re, '.' + types[i]);
+					if (src !== video.src) {
+						source = document.createElement('source');
+						source.setAttribute('src', src);
+						source.setAttribute('type', 'video/' + types[i]);
+						video.appendChild(source);
+					}
+				}
+			}
+			
+			var player = new VideoJS( video );
+			return player;
+		}
+
 		function setUpVideoSize(id) {
 			var time = parseFloat(window.location.hash.substr(1));
 			if (!isNaN(time) && time > 0 && time < video.duration) {
 				video.currentTime = time;
 			}
 		
-			var videoJS = VideoJS.setup(video.id);
+			//var videoJS = VideoJS.setup(video.id);
+			var videoJS = prepareVideoPlayer(video.id);
 			videoJS.width(940);
 			videoJS.height(940 * video.videoHeight / video.videoWidth);
 
@@ -359,11 +438,5 @@
 			}
 		});
 	})();
-	</script>
-	<script type="text/javascript">
-	
-	window.addEventListener('DOMContentLoaded', function() {
-	}, false);
-	
 	</script>
 </html>

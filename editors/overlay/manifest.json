@@ -1,0 +1,6 @@
+{
+  "title": "Image or Video Overlay",
+  "editor": "editor-overlay.html",
+  "view": "popup",
+  "plugin": "overlay"
+}

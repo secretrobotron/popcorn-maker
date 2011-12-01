@@ -414,7 +414,9 @@ todo: animate top, left and other styles (color, font size, etc.)
 
 		return {
 			start: function( event, options ) {
-				options.container.style.display = '';
+				if (options.container) {
+					options.container.style.display = '';
+				}
 				
 				if (audio && audio.duration && !video.paused &&
 					video.currentTime - 1 < options.start) {

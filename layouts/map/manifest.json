@@ -1,0 +1,9 @@
+{
+  "title": "Map",
+  "thumbnail": "thumbnail.png",
+  "template": "template.html",
+  "files": [
+    "template.html",
+    "thumbnail.png"
+  ]
+}

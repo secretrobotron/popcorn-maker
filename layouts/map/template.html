@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<!-- Set your own title here -->
-		<title>Popcorn.js Slide</title>
+		<title>Popcorn.js Map</title>
 		<!--
 		The base tag makes all relative URLs point to Mozillas server where
 		all the extra scripts and images are hosted.
@@ -12,7 +12,9 @@
 		and make sure all the scripts refer to the right absolute URLs, or
 		set your own references to be absolute URLs on your server. 
 		-->
-		<base href="http://mozillapopcorn.org/maker/layouts/slide/"/>
+		<!--
+		<base href="http://mozillapopcorn.org/maker/layouts/map/"/>
+		-->
 		<style type="text/css">
 		
 		body {
@@ -39,22 +41,6 @@
 
 		#video {
 			width: 100%;
-		}
-
-		.slider {
-			position: absolute;
-			width: 96%;
-			height: 20%;
-			margin: 0 2%;
-			text-align: right;
-		}
-
-		#top {
-			top: 10%;
-		}
-
-		#bottom {
-			bottom: 10%;
 		}
 		
 		#video-container .vjs-big-play-button,
@@ -106,18 +92,20 @@
 			left: 0;
 		}
 
-		.slider .popcorn-image {
-			height: 100%;
-			margin-left: 10px;
-			text-align: left;
+		.popcorn-map {
+			position: absolute;
+			top: 0;
+			left: 0;
+			opacity: 0;
+			-moz-transition: opacity 0.4s;
+			-webkit-transition: opacity 0.4s;
+			-o-transition: opacity 0.4s;
+			-ie-transition: opacity 0.4s;
+			transition: opacity 0.4s;
 		}
-
-		.slider .popcorn-image > figure {
-			height: 100%;
-		}
-
-		.slider .popcorn-image-thumb {
-			height: 100%;
+		
+		.popcorn-map.active {
+			opacity: 1;
 		}
 
 		</style>
@@ -128,195 +116,82 @@
 		<header></header>
 		<div style=" width: 100%">
 			<div id="main-container">
-				<div id="video-container" class="video-js-box">
+				<div id="video-container" class="video-js-box" data-butter="target">
 					<video id="video" preload class="video-js" data-butter="media" controls>
 						<source src="http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm" type='video/webm; codecs="vp8, vorbis"'/>
 					</video>
 				</div>
-				<div class="slider" id="top" data-butter="target"></div>
-				<div class="slider" id="bottom" data-butter="target"></div>
 			</div>
 		</div>
-		<button id="go">Go</button>
 	</body>
+	<script type="text/javascript" src="external/video.js"></script>
 	<script type="text/javascript" src="../../lib/popcorn/popcorn.js"></script>
-	<script type="text/javascript" src="js/popcorn.image.js"></script>
+	<script type="text/javascript" src="../shared/js/popcorn.words.js"></script>
+	<script type="text/javascript" src="../shared/js/popcorn.lightbox.js"></script>
+	<script type="text/javascript" src="../shared/js/popcorn.map.js"></script>
 	<script src="../../lib/butter.js"></script>
 	<script>
 	(function() {
 
-		var imageEvents = {
-				top: [],
-				bottom: []
-			},
-			count = {
-				top: 0,
-				bottom: 0
-			},
-			targets = {
-				top: document.getElementById('top'),
-				bottom: document.getElementById('bottom')
-			},
-			margins = {
-				top: 0,
-				bottom: 0
-			},
-			popcorn,
-			lastCurrentTime = -1,
-			slideRate = 30, slideTime = 0.5;
-
-		function updateFrames(options, currentTime) {
-			var e,
-				target,
-				diff = currentTime - lastCurrentTime,
-				opacity;
-
-			opacity = (options.end - currentTime) / slideTime;
-			opacity = Math.min(1, opacity);
-			opacity = Math.max(0, opacity);
-			if (options.container && opacity !== options._opacity) {
-				options.container.style.opacity = opacity;
-				options._opacity = opacity;
-			}
-
-			if (!diff) {
-				return;
-			}
-
-			for (target in targets) {
-				e = targets[target];
-				margins[target] -= diff * slideRate;
-				if (margins[target] <= 0) {
-					margins[target] = 0;
-					e.style.right = '';
-				} else if (margins[target]) {
-					e.style.right = -margins[target] + '%';
-				}
-			}
-
-			lastCurrentTime = currentTime;
-		}
-
-		function setupImageEvent(options) {
-			//make sure containers are inserted in order
-			var queue, nextContainer, i, evt;
-			if (options.target && imageEvents[options.target]) {
-				queue = imageEvents[options.target];
-			} else {
-				return;
-			}
-
-			for (i = queue.length - 1; i >= 0; i--) {
-				evt = queue[i];
-				if (evt.start > options.start ||
-					evt.start === options.start && evt.end > options.end) {
-
-					nextContainer = evt.container;
-				} else {
-					break;
-				}
-			}
-
-			i++
-			queue.splice(i, 0, options);
-			options.container.parentNode.insertBefore(options.container, nextContainer);
-		}
-
-		function loadImageEvent(options) {
-			var width, height;
-
-			if (options.thumbImage) {
-				width = options.thumbImage.naturalWidth ||
-					options.thumbImage.videoWidth ||
-					options.thumbImage.width;
-				height = options.thumbImage.naturalHeight ||
-					options.thumbImage.videoHeight ||
-					options.thumbImage.height;
-				options._thumbWidth = 100 * 0.2 * height / width;
-			} else {
-				options._thumbWidth = 0;
-			}
-
-			//options.container.style.width = options._thumbWidth + '%';
-		}
-
-		function teardownImageEvent(options) {
-			var i, queue;
-
-			if (options.target && imageEvents[options.target]) {
-				queue = imageEvents[options.target];
-			} else {
-				return;
-			}
-
-			i = queue.indexOf(options);
-			if (i >= 0) {
-				queue.splice(i, 1);
-			}
-		}
-
-		function startPopcornImage(options) {
-			var i, queue, target = options.target,
-				currentTime;
-
-			if (options.target && imageEvents[options.target]) {
-				queue = imageEvents[options.target];
-			} else {
-				return;
-			}
-
-			i = queue.indexOf(options);
-			currentTime = popcorn.currentTime();
-
-			if (!count[target]) {
-				lastCurrentTime = currentTime;
-				margins[target] = 0;
-			}
-
-			count[target]++;
-
-			var target = options.target, e = targets[target], margin;
-			margin = Math.min( (currentTime - options.start) / slideTime, 1);
-			margin = Math.max( margin, 0 );
-			margin *= options._thumbWidth;
-			margins[target] += margin;
-			e.style.right = -margins[target] + '%';
-			
-		}
-		
-		function endPopcornImage(options) {
-			var target = options.target, e = targets[target];
-
-			if (!targets[target]) {
-				return;
-			}
-
-			if (count[target]) {
-				count[target]--;
-			}
-
-			margins[target] -= options._thumbWidth;
-			if (margins[target] <= 0) {
-				margins[target] = 0;
-				e.style.right = '';
-			} else if (margins[target]) {
-				e.style.right = -margins[target] + '%';
-			}
-		}
+		var popcorn;
 
 		function addTrackEvent(trackEvent) {
 			var options = trackEvent.popcornOptions;
-			if (trackEvent.type === 'image') {
-				options.onSetup = setupImageEvent;
-				options.onLoad = loadImageEvent;
-				options.onStart = startPopcornImage;
-				options.onEnd = endPopcornImage;
-				options.onTeardown = teardownImageEvent;
-				options.onFrame = updateFrames;
+			
+			if (trackEvent.type === 'map') {
 			}
+			
 			if (typeof popcorn[ trackEvent.type ] === 'function') {
 				popcorn[ trackEvent.type ]( trackEvent.popcornOptions );
 			}
+		}
+		
+		function prepareVideoPlayer(video) {
+			/*
+			VideoJS unfortunately checks for <source> elements
+			in the video to validate that it can play, which is
+			a bad idea on many levels. Butter removes any <source>
+			elements and sets a single src attribute.
+			
+			In general, we should be using a different player, but
+			for now, making this work by putting the source element
+			back in place.
+			*/
+			
+			var source, src, i, re,
+				types = ['webm', 'mp4', 'ogg'];
+			
+			if (typeof video === 'string') {
+				video = document.getElementById(video);
+			}
+			
+			if (!video) {
+				return;
+			}
+			
+			if (!video.children|| !video.children.length) {
+				re = new RegExp('\\.(' + types.join('|') + ')$');
+				source = document.createElement('source');
+				source.setAttribute('src', video.src);
+				src = re.exec(video.src);
+				if (src && src.length > 1) {
+					source.setAttribute('type', 'video/' + src[1]);
+				}
+
+				video.appendChild(source);
+
+				for (i = 0; i < types.length; i++) {
+					src = video.src.replace(re, '.' + types[i]);
+					if (src !== video.src) {
+						source = document.createElement('source');
+						source.setAttribute('src', src);
+						source.setAttribute('type', 'video/' + types[i]);
+						video.appendChild(source);
+					}
+				}
+			}
+			
+			var player = new VideoJS( video );
 		}
 		
 		var butterMapping = [];
@@ -327,7 +202,7 @@
 					for ( var m=0; m<medias.length; ++m ) {
 						var media = medias[ m ];
 						popcorn = Popcorn( '#' + media.target, { frameAnimation: true } );
-
+						prepareVideoPlayer(media.target);
 						if ( media.tracks ) {
 							for ( var t=0; t<media.tracks.length; ++t ) {
 								var track = media.tracks[ t ];
@@ -401,6 +276,8 @@
 						media.setupPopcornHandlers( link.comm );
 						link.sendMedia( media );
 					});
+
+					prepareVideoPlayer( media.target );
 				}
 			},
 			onsetup: function( options ) {
@@ -408,16 +285,6 @@
 			}
 		});
 
-
-		document.getElementById('go').onclick = function() {
-			document.getElementById('video').currentTime = 1.1;
-		};
 	})();
-	</script>
-	<script type="text/javascript">
-	
-	window.addEventListener('DOMContentLoaded', function() {
-	}, false);
-	
 	</script>
 </html>

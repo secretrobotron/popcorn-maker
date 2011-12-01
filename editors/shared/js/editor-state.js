@@ -417,7 +417,7 @@
 		this.pushState();
 
 		if (this.saveValue[field.type]) {
-			this.trackEvent[fieldName] = this.saveValue[field.type](value);
+			this.trackEvent[fieldName] = this.saveValue[field.type](value, field);
 		} else {
 			this.trackEvent[fieldName] = value;
 		}
