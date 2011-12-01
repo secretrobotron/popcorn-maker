@@ -12,7 +12,6 @@
     ButterEditor.EventManager = EventManager;
     ButterEditor.Comm = Comm;
 
-
     var waiting = window.ButterEditor.__waiting;
 
     window.ButterEditor = ButterEditor;
