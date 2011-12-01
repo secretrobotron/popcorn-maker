@@ -123,8 +123,8 @@
 				</div>
 			</div>
 		</div>
-		<button id="go">Go</button>
 	</body>
+	<script type="text/javascript" src="external/video.js"></script>
 	<script type="text/javascript" src="../../lib/popcorn/popcorn.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.words.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.lightbox.js"></script>
@@ -146,6 +146,54 @@
 			}
 		}
 		
+		function prepareVideoPlayer(video) {
+			/*
+			VideoJS unfortunately checks for <source> elements
+			in the video to validate that it can play, which is
+			a bad idea on many levels. Butter removes any <source>
+			elements and sets a single src attribute.
+			
+			In general, we should be using a different player, but
+			for now, making this work by putting the source element
+			back in place.
+			*/
+			
+			var source, src, i, re,
+				types = ['webm', 'mp4', 'ogg'];
+			
+			if (typeof video === 'string') {
+				video = document.getElementById(video);
+			}
+			
+			if (!video) {
+				return;
+			}
+			
+			if (!video.children|| !video.children.length) {
+				re = new RegExp('\\.(' + types.join('|') + ')$');
+				source = document.createElement('source');
+				source.setAttribute('src', video.src);
+				src = re.exec(video.src);
+				if (src && src.length > 1) {
+					source.setAttribute('type', 'video/' + src[1]);
+				}
+
+				video.appendChild(source);
+
+				for (i = 0; i < types.length; i++) {
+					src = video.src.replace(re, '.' + types[i]);
+					if (src !== video.src) {
+						source = document.createElement('source');
+						source.setAttribute('src', src);
+						source.setAttribute('type', 'video/' + types[i]);
+						video.appendChild(source);
+					}
+				}
+			}
+			
+			var player = new VideoJS( video );
+		}
+		
 		var butterMapping = [];
 		var template = new Butter.Template({
 			loadFromData: function( importData ) {
@@ -154,6 +202,7 @@
 					for ( var m=0; m<medias.length; ++m ) {
 						var media = medias[ m ];
 						popcorn = Popcorn( '#' + media.target, { frameAnimation: true } );
+						prepareVideoPlayer(media.target);
 						if ( media.tracks ) {
 							for ( var t=0; t<media.tracks.length; ++t ) {
 								var track = media.tracks[ t ];
@@ -227,6 +276,8 @@
 						media.setupPopcornHandlers( link.comm );
 						link.sendMedia( media );
 					});
+
+					prepareVideoPlayer( media.target );
 				}
 			},
 			onsetup: function( options ) {
