@@ -1,4 +1,4 @@
-// PLUGIN: image
+// PLUGIN: overlay
 
 (function (Popcorn) {
 
@@ -26,7 +26,7 @@
 			
 		};
 
-	Popcorn.plugin( 'image' , function(options) {
+	Popcorn.plugin( 'overlay' , function(options) {
 		var popcorn,
 			video,
 			target,
@@ -137,14 +137,14 @@
 			styleSheet = document.createElement('style');
 			styleSheet.setAttribute('type', 'text/css');
 			styleSheet.appendChild(document.createTextNode(
-			'.popcorn-image { cursor: pointer; display: none; position: relative; }\n' +
-			'.popcorn-image.active { display: inline-block; }\n' +
-			'.popcorn-image > figure { position: relative; margin: 0; display: inline-block; }\n' +
-			'.popcorn-image > figure > figcaption { position: absolute; top: 0; left: 0; font-size: 16px; width: 100%; padding: 4px; background-color: rgba(0, 0, 0, 0.5); color: white; visibility: hidden; overflow: hidden; }\n' +
-			'.popcorn-image > figure:hover > figcaption { visibility: visible; }\n' +
-			'.popcorn-image-lightbox { position: fixed; padding: 40px; background-color: rgba(0, 0, 0, 0.7); color: white; border: 4px solid rgba(255, 255, 255, 0.6); border-radius: 8px; z-index: 999999; margin: 10% auto; max-width: 90%; max-height: 90%; display: none; }\n' +
-			'.popcorn-image-lightbox > .close { position:absolute; top: 4px; right: 4px; cursor: pointer; text-decoration: underline; }'+
-			'.popcorn-image-lightbox.active { display: block; }'
+			'.popcorn-overlay { cursor: pointer; display: none; position: relative; }\n' +
+			'.popcorn-overlay.active { display: inline-block; }\n' +
+			'.popcorn-overlay > figure { position: relative; margin: 0; display: inline-block; }\n' +
+			'.popcorn-overlay > figure > figcaption { position: absolute; top: 0; left: 0; font-size: 16px; width: 100%; padding: 4px; background-color: rgba(0, 0, 0, 0.5); color: white; visibility: hidden; overflow: hidden; }\n' +
+			'.popcorn-overlay > figure:hover > figcaption { visibility: visible; }\n' +
+			'.popcorn-overlay-lightbox { position: fixed; padding: 40px; background-color: rgba(0, 0, 0, 0.7); color: white; border: 4px solid rgba(255, 255, 255, 0.6); border-radius: 8px; z-index: 999999; margin: 10% auto; max-width: 90%; max-height: 90%; display: none; }\n' +
+			'.popcorn-overlay-lightbox > .close { position:absolute; top: 4px; right: 4px; cursor: pointer; text-decoration: underline; }'+
+			'.popcorn-overlay-lightbox.active { display: block; }'
 			));
 			document.head.appendChild(styleSheet);
 		}
@@ -198,7 +198,7 @@
 		if (options.thumb) {
 			node = document.createElement('img');
 			node.src = options.thumb;
-			node.setAttribute('class','popcorn-image-thumb');
+			node.setAttribute('class','popcorn-overlay-thumb');
 			options.thumbImage = node;
 			figure.appendChild(node);
 
@@ -210,7 +210,7 @@
 		} else {
 			node = makeMedia(options.url, options.mode);
 			
-			node.setAttribute('class','popcorn-image-thumb');
+			node.setAttribute('class','popcorn-overlay-thumb');
 			options.thumbImage = node;
 			figure.appendChild(node);
 
@@ -223,7 +223,7 @@
 
 		if (options.url && options.mode) {
 			lightboxContainer = document.createElement('div');
-			lightboxContainer.setAttribute('class', 'popcorn-image-lightbox');
+			lightboxContainer.setAttribute('class', 'popcorn-overlay-lightbox');
 
 			if (options.mode === 'image') {
 				node = document.createElement('img');
@@ -314,12 +314,12 @@
 		if (options.classes) {
 			if (options.classes.length && options.classes.join) {
 				//an array works
-				container.setAttribute('class', 'popcorn-image ' + options.classes.join(' '));
+				container.setAttribute('class', 'popcorn-overlay ' + options.classes.join(' '));
 			} else {
-				container.setAttribute('class', 'popcorn-image ' + options.classes.split(/,\s\n\r/).join(' '));
+				container.setAttribute('class', 'popcorn-overlay ' + options.classes.split(/,\s\n\r/).join(' '));
 			}
 		} else {
-			container.setAttribute('class', 'popcorn-image');
+			container.setAttribute('class', 'popcorn-overlay');
 		}
 
 
@@ -399,7 +399,7 @@
 	},
 	{
 		about: {
-			name: 'Popcorn Image and Video Plugin',
+			name: 'Popcorn Image and Video Overlay Plugin',
 			version: 0.1,
 			author: 'Brian Chirls',
 			website: 'http://chirls.com'

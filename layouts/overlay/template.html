@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<!-- Set your own title here -->
-		<title>Popcorn.js Slide</title>
+		<title>Popcorn.js Overlay</title>
 		<!--
 		The base tag makes all relative URLs point to Mozillas server where
 		all the extra scripts and images are hosted.
@@ -12,7 +12,9 @@
 		and make sure all the scripts refer to the right absolute URLs, or
 		set your own references to be absolute URLs on your server. 
 		-->
-		<base href="http://mozillapopcorn.org/maker/layouts/slide/"/>
+		<!--
+		<base href="http://mozillapopcorn.org/maker/layouts/overlay/"/>
+		-->
 		<style type="text/css">
 		
 		body {
@@ -106,17 +108,17 @@
 			left: 0;
 		}
 
-		.slider .popcorn-image {
+		.slider .popcorn-overlay {
 			height: 100%;
 			margin-left: 10px;
 			text-align: left;
 		}
 
-		.slider .popcorn-image > figure {
+		.slider .popcorn-overlay > figure {
 			height: 100%;
 		}
 
-		.slider .popcorn-image-thumb {
+		.slider .popcorn-overlay-thumb {
 			height: 100%;
 		}
 
@@ -139,7 +141,7 @@
 		</div>
 	</body>
 	<script type="text/javascript" src="../../lib/popcorn/popcorn.js"></script>
-	<script type="text/javascript" src="js/popcorn.image.js"></script>
+	<script type="text/javascript" src="js/popcorn.overlay.js"></script>
 	<script src="../../lib/butter.js"></script>
 	<script>
 	(function() {
@@ -196,7 +198,7 @@
 
 		function addTrackEvent(trackEvent) {
 			var options = trackEvent.popcornOptions;
-			if (trackEvent.type === 'image') {
+			if (trackEvent.type === 'overlay') {
 				options.onSetup = setupImageEvent;
 				options.onTeardown = teardownImageEvent;
 			}
