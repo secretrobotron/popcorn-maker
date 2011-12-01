@@ -1,9 +1,9 @@
 {
   "title": "Overlay",
-  "thumbnail": "thumbnail.gif",
+  "thumbnail": "thumbnail.png",
   "template": "template.html",
   "files": [
     "template.html",
-    "thumbnail.gif"
+    "thumbnail.png"
   ]
 }
