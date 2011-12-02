@@ -97,15 +97,26 @@
 			top: 0;
 			left: 0;
 			opacity: 0;
-			-moz-transition: opacity 0.4s;
-			-webkit-transition: opacity 0.4s;
-			-o-transition: opacity 0.4s;
-			-ie-transition: opacity 0.4s;
-			transition: opacity 0.4s;
+			-moz-transition: opacity 0.4s, visibility 0s;
+			-webkit-transition: opacity 0.4s, visibility 0s;
+			-o-transition: opacity 0.4s, visibility 0s;
+			-ie-transition: opacity 0.4s, visibility 0s;
+			transition: opacity 0.4s, visibility 0s;
+
+			-moz-transition-delay: 0s, 0.4s;
+			-webkit-transition-delay: 0s, 0.4s;
+			-o-transition-delay: 0s, 0.4s;
+			-ie-transition-delay: 0s, 0.4s;
+			transition-delay: 0s, 0.4s;
 		}
 		
 		.popcorn-map.active {
 			opacity: 1;
+			-moz-transition-delay: 0s;
+			-webkit-transition-delay: 0s;
+			-o-transition-delay: 0s;
+			-ie-transition-delay: 0s;
+			transition-delay: 0s;
 		}
 
 		</style>
