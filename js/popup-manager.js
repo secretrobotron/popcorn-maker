@@ -84,6 +84,14 @@
             }
           }
         }
+
+        if ( options.onClose && typeof options.onClose === "function" ) {
+          var closebtn = popup.children( "a.popup-close-btn" );
+          closebtn && closebtn.click( function() {
+            $( this ).unbind( "click" );
+            options.onClose();
+          });
+        }
       }; //showPopup
 
       this.hidePopup = function( name ) {

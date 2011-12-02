@@ -16,6 +16,7 @@
             functions: functions
           };
           if ( button.jquery ) {
+            button.unbind();
             buttons[ name ].bind = function( name, fn ) {
               button.bind( name, fn );
             }

@@ -1,0 +1,83 @@
+.trackliner-track {
+  box-shadow: 0 1px 0 #737373, 0 1px 0 #131313 inset;
+  border-radius: 6px;
+	moz-border-radius: 6px;
+	o-border-radius: 6px;
+	webkit-border-radius: 6px;
+  border: 1px solid #111111 !important;
+  background-attachment: scroll;
+  background-clip: border-box;
+  background-color: transparent;
+  background-image: url("../images/texture_1.png");
+  background-origin: padding-box;
+  background-position: 0 0;
+  background-repeat: repeat;
+  background-size: auto auto;
+  height: 25px;
+  margin-bottom: 6px;
+  position: relative;
+}
+
+.trackliner-event {
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	o-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	border-radius: 5px;
+	moz-border-radius: 5px;
+	o-border-radius: 5px;
+	webkit-border-radius: 5px;
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(255,255,51)),
+		color-stop(1, rgb(140,215,90))
+	);
+	background-image: -moz-linear-gradient(
+		center bottom,
+		rgb(255,255,0) 0%,
+		rgb(200,200,0) 100%
+	);
+	font: normal 10px/25px Arial, Helvetica, sans-serif;
+	text-align: center;
+	text-transform: uppercase;
+	color: #333;
+	cursor: move;
+	overflow: hidden;
+	display: block;
+	height: 25px;
+	line-height: 25px;
+	opacity: 0.8;
+	position: absolute;
+}
+
+.trackliner-event:hover
+{
+	opacity: 1;
+}
+
+.trackliner-event-selected {
+  background-image: -moz-linear-gradient(top,  #0f0,  #060);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#0f0), to(#060));
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+
+.trackliner-event.footnote {
+  background-color: #8dd75a;
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(71,128,30)),
+		color-stop(1, rgb(140,215,90))
+	);
+	background-image: -moz-linear-gradient(
+		center bottom,
+		rgb(71,128,30) 0%,
+		rgb(140,215,90) 100%
+	);
+}
