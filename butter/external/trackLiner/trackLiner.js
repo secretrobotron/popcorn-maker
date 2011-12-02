@@ -350,7 +350,8 @@
 
               eventManager.dispatch( "trackeventupdated", {
                 track: track,
-                trackEvent: trackEvent
+                trackEvent: trackEvent,
+                ui: true
               });
             };
 
@@ -440,7 +441,8 @@
 
           eventManager.dispatch( "trackeventupdated", {
             track: track,
-            trackEvent: trackEvent
+            trackEvent: trackEvent,
+            ui: false
           });
 
           return trackEvent;

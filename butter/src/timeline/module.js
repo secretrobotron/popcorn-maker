@@ -76,7 +76,7 @@ THE SOFTWARE.
             cornOptions.start = 0;
           }
 
-          butter.dispatch( "trackeventupdated", butter.targettedEvent );
+          butter.targettedEvent.update( cornOptions );
         }
       };
 
@@ -107,7 +107,7 @@ THE SOFTWARE.
             cornOptions.end = butter.duration;
           }
 
-          butter.dispatch( "trackeventupdated", butter.targettedEvent );
+          butter.targettedEvent.update( cornOptions );
         }
       };
 
@@ -230,15 +230,17 @@ THE SOFTWARE.
 
           this.trackLine.listen( "trackeventupdated", function( e ) {
 
-            var trackLinerTrack = e.data.track,
-                butterTrack = currentMediaInstance.butterTracks[ trackLinerTrack.id ],
-                trackLinerTrackEvent = e.data.trackEvent,
-                butterTrackEvent = currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ];
+            if ( e.data.ui ) {
+              var trackLinerTrack = e.data.track,
+                  butterTrack = currentMediaInstance.butterTracks[ trackLinerTrack.id ],
+                  trackLinerTrackEvent = e.data.trackEvent,
+                  butterTrackEvent = currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ];
 
-            butterTrackEvent.popcornOptions.start = Math.max( 0, trackLinerTrackEvent.options.left / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
-            butterTrackEvent.popcornOptions.end = Math.max( 0, ( trackLinerTrackEvent.options.left + trackLinerTrackEvent.options.width ) / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
-
-            butter.dispatch( "trackeventupdated", butterTrackEvent, "timeline" );
+              var cornOptions = butterTrackEvent.popcornOptions;
+              cornOptions.start = Math.max( 0, trackLinerTrackEvent.options.left / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
+              cornOptions.end = Math.max( 0, ( trackLinerTrackEvent.options.left + trackLinerTrackEvent.options.width ) / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
+              butterTrackEvent.update( cornOptions );
+            } //if
           });
 
           this.trackLine.listen( "trackeventadded", function( e ) {
@@ -389,8 +391,9 @@ THE SOFTWARE.
 
         if ( !trackLinerTrackEvent ) {
 
-          var start = butterTrackEvent.popcornOptions.start,
-              end = butterTrackEvent.popcornOptions.end,
+          var corn = butterTrackEvent.popcornOptions,
+              start = corn.start,
+              end = corn.end,
               width = Math.max( 3, ( end - start ) / currentMediaInstance.duration * trackLinerTrack.getElement().offsetWidth ),
               left = start / currentMediaInstance.duration * trackLinerTrack.getElement().offsetWidth;
 
@@ -492,18 +495,16 @@ THE SOFTWARE.
       butter.listen( "trackeventupdated", function( e ) {
 
         // accounting for new events changed from butter
-        if ( e.target !== "timeline" ) {
+        var butterTrackEvent = e.data
+            trackLinerTrackEvent = currentMediaInstance.trackLinerTrackEvents[ butterTrackEvent.id ],
+            corn = butterTrackEvent.popcornOptions,
+            start = corn.start,
+            end = corn.end;
 
-          var butterTrackEvent = e.data
-              trackLinerTrackEvent = currentMediaInstance.trackLinerTrackEvents[ butterTrackEvent.id ],
-              start = butterTrackEvent.popcornOptions.start,
-              end = butterTrackEvent.popcornOptions.end;
+        trackLinerTrackEvent.options.left = start / currentMediaInstance.duration * target.offsetWidth;
+        trackLinerTrackEvent.options.width = Math.max( 3, ( end - start ) / currentMediaInstance.duration * target.offsetWidth );
 
-          trackLinerTrackEvent.options.left = start / currentMediaInstance.duration * target.offsetWidth;
-          trackLinerTrackEvent.options.width = Math.max( 3, ( end - start ) / currentMediaInstance.duration * target.offsetWidth );
-
-          currentMediaInstance.trackLine.getTrack( trackLinerTrackEvent.trackId ).updateTrackEvent( trackLinerTrackEvent );
-        }
+        currentMediaInstance.trackLine.getTrack( trackLinerTrackEvent.trackId ).updateTrackEvent( trackLinerTrackEvent );
       });
 
       this.currentTimeInPixels = function( pixel ) {
@@ -521,6 +522,7 @@ THE SOFTWARE.
           butterTrackEvent,
           start,
           end,
+          corn,
           originalWidth = target.offsetWidth,
           currentZoom = 1;
 
@@ -546,9 +548,9 @@ THE SOFTWARE.
 
           trackLinerEvent = currentMediaInstance.trackLinerTrackEvents[ i ];
           butterTrackEvent = currentMediaInstance.butterTrackEvents[ trackLinerEvent.element.id ];
-
-          start = butterTrackEvent.popcornOptions.start;
-          end = butterTrackEvent.popcornOptions.end;
+          corn = butterTrackEvent.popcornOptions,
+          start = corn.start;
+          end = corn.end;
 
           trackLinerEvent.element.style.width = Math.max( 3, ( end - start ) / currentMediaInstance.duration * target.offsetWidth ) + "px";
           trackLinerEvent.element.style.left = start / currentMediaInstance.duration * target.offsetWidth + "px";
