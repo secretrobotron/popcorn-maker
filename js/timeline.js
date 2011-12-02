@@ -329,10 +329,12 @@
           }
 
           var editor = new butter.trackeditor.Editor( track );
+
           trackJSONtextArea.value = JSON.stringify( editor.json );
           editTrackTargets.value = editor.target;
 
           $trackTitletb.val( $textNode.text() );
+          popupManager.showPopup( "edit-target" );
 
           var closeTrackEditor = function() {
             $trackTitletb.val( "" );

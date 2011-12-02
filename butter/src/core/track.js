@@ -121,6 +121,7 @@ THE SOFTWARE.
         trackEvent.track = that;
         trackEvent.listen( "trackeventupdated", em.repeat );
         em.dispatch( "trackeventadded", trackEvent );
+        trackEvent.listen( "trackeventupdated", em.repeat );
         return trackEvent;
       }; //addTrackEvent
 
