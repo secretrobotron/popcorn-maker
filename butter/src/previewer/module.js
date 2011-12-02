@@ -51,7 +51,7 @@
           }
           function onMediaTimeUpdate( e ) {
             if ( e.data.currentTime !== currentTime ) {
-              logger.log( "Sending mediatimeupdate: " + currentTime + ", " + e.data.currentTime );
+              //logger.log( "Sending mediatimeupdate: " + currentTime + ", " + e.data.currentTime );
               server.send( "link", e.data.currentTime, "mediatimeupdate" );
             } //if
           }

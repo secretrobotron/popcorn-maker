@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8">
+		<!-- Set your own title here -->
+		<title>Popcorn.js Map</title>
+		<!--
+		The base tag makes all relative URLs point to Mozillas server where
+		all the extra scripts and images are hosted.
+
+		If you want to add any of your own files, either remove the base tag
+		and make sure all the scripts refer to the right absolute URLs, or
+		set your own references to be absolute URLs on your server. 
+		-->
+		<!--
+		<base href="http://mozillapopcorn.org/maker/layouts/map/"/>
+		-->
+		<style type="text/css">
+		
+		body {
+			color: #222;
+			background-color: #aaa;
+			font-family: Helvetica,Arial,sans-serif;
+			font-size: 12px;
+			margin: 0;
+			padding: 0;
+		}
+
+		header {
+			padding: 0 40px;
+		}
+
+		#main-container {
+			position: relative;
+			overflow: hidden;
+		}
+
+		#video-container {
+			position: relative;
+		}
+
+		#video {
+			width: 100%;
+		}
+		
+		#video-container .vjs-big-play-button,
+		#video-container .vjs-controls,
+		#video-container .vjs-styles-check {
+			z-index: 202;
+		}
+		
+		#video-container .vjs-spinner {
+			z-index: 201;
+		}
+		
+		/* disable full screen button */
+		#video-container .vjs-fullscreen-control {
+			display: none;
+		}
+		#video-container .vjs-volume-control {
+			right: 10px;
+		}
+		#video-container .vjs-time-control {
+			right: 65px;
+		}
+		#video-container .vjs-progress-control {
+			right: 140px;
+		}
+
+		#video-container .popcorn-words {
+			z-index: 250;
+		}
+
+		#video-container video {
+			display: block;
+			width: 100%;
+		}
+		
+		#video-container {
+			font-size: 20px;
+			line-height: normal;
+		}
+
+		#video-container > div {
+			line-height: normal;
+		}
+		
+		#pop-container > div {
+			/* default position */
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+
+		.popcorn-map {
+			position: absolute;
+			top: 0;
+			left: 0;
+			opacity: 0;
+			-moz-transition: opacity 0.4s, visibility 0s;
+			-webkit-transition: opacity 0.4s, visibility 0s;
+			-o-transition: opacity 0.4s, visibility 0s;
+			-ie-transition: opacity 0.4s, visibility 0s;
+			transition: opacity 0.4s, visibility 0s;
+
+			-moz-transition-delay: 0s, 0.4s;
+			-webkit-transition-delay: 0s, 0.4s;
+			-o-transition-delay: 0s, 0.4s;
+			-ie-transition-delay: 0s, 0.4s;
+			transition-delay: 0s, 0.4s;
+		}
+		
+		.popcorn-map.active {
+			opacity: 1;
+			-moz-transition-delay: 0s;
+			-webkit-transition-delay: 0s;
+			-o-transition-delay: 0s;
+			-ie-transition-delay: 0s;
+			transition-delay: 0s;
+		}
+
+		</style>
+		<link rel="stylesheet" href="css/video-js.css" type="text/css" media="screen" title="Video JS">
+		<script data-butter="project-data" type="application/json"></script>
+	</head>
+	<body>
+		<header></header>
+		<div style=" width: 100%">
+			<div id="main-container">
+				<div id="video-container" class="video-js-box" data-butter="target">
+					<video id="video" preload class="video-js" data-butter="media" controls>
+						<source src="http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm" type='video/webm; codecs="vp8, vorbis"'/>
+					</video>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="external/video.js"></script>
+	<script type="text/javascript" src="../../lib/popcorn/popcorn.js"></script>
+	<script type="text/javascript" src="../shared/js/popcorn.words.js"></script>
+	<script type="text/javascript" src="../shared/js/popcorn.lightbox.js"></script>
+	<script type="text/javascript" src="../shared/js/popcorn.map.js"></script>
+  <script type="text/javascript" src="../../butter/src/previewer/butter.previewer.js"></script>
+	<script type="text/javascript" src="template.js"></script>
+</html>

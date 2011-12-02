@@ -1,9 +1,7 @@
 (function() {
 	"use strict";
 	
-	var Butter = window.Butter,
-		urlRegex = /^(([A-Za-z]+):\/\/)+(([a-zA-Z0-9\._\-]+\.[a-zA-Z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|localhost)(\:([0-9]+))*(\/[^#]*)?(\#.*)?$/;
-
+	var	urlRegex = /^(([A-Za-z]+):\/\/)+(([a-zA-Z0-9\._\-]+\.[a-zA-Z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|localhost)(\:([0-9]+))*(\/[^#]*)?(\#.*)?$/;
 
 	function clone(obj) {
 		if (null == obj || "object" != typeof obj) return obj;
@@ -417,7 +415,7 @@
 		this.pushState();
 
 		if (this.saveValue[field.type]) {
-			this.trackEvent[fieldName] = this.saveValue[field.type](value);
+			this.trackEvent[fieldName] = this.saveValue[field.type](value, field);
 		} else {
 			this.trackEvent[fieldName] = value;
 		}

@@ -2,34 +2,66 @@
   define( [ "core/logger", "core/eventmanager" ], function( Logger, EventManager ) {
 
     var TrackEvent = function ( options ) {
-      var id = "TrackEvent" + TrackEvent.guid++,
+
+      options = options || {};
+
+      var that = this,
+          id = "TrackEvent" + TrackEvent.guid++,
+          name = options.name || 'Track' + Date.now(),
           logger = new Logger( id ),
           em = new EventManager( { logger: logger } ),
-          that = this;
+          track,
+          type = options.type,
+          properties = [],
+          popcornOptions = options.popcornOptions || {
+            start: that.start,
+            end: that.end
+          };
 
       em.apply( "TrackEvent", this );
 
-      options = options || {};
-      var name = options.name || 'Track' + Date.now();
-      this.start = options.start || 0;
-      this.end = options.end || 0;
-      this.type = options.type;
-      this.popcornOptions = options.popcornOptions || {
-        start: that.start,
-        end: that.end
-      };
-      this.popcornEvent = options.popcornEvent;
-      this.track = options.track;
+      this.update = function( updateOptions ) {
+        for ( var prop in updateOptions ) {
+          if ( updateOptions.hasOwnProperty( prop ) ) {
+            popcornOptions[ prop ] = updateOptions[ prop ];
+          } //if
+        } //for
+        em.dispatch( "trackeventupdated", that );
+      }; //update
 
-      Object.defineProperty( this, "target", {
+      function clone( obj ) {
+        var newObj = {};
+        for ( var prop in obj ) {
+          if ( obj.hasOwnProperty( prop ) ) {
+            newObj[ prop ] = obj[ prop ];
+          } //if
+        } //for
+        return newObj;
+      } //clone
+
+      Object.defineProperty( this, "popcornOptions", {
+        enumerable: true,
         get: function() {
-          return that.popcornOptions.target;
+          return clone( popcornOptions );
+        }
+      });
+
+      Object.defineProperty( this, "type", {
+        enumerable: true,
+        get: function() {
+          return type;
+        }
+      });
+
+      Object.defineProperty( this, "track", {
+        get: function() {
+          return track;
         },
         set: function( val ) {
-          logger.log( "target changed: " + val );
-          that.popcornOptions.target = val;
+          track = val;
+          em.dispatch( "trackeventtrackchanged", that );
         }
-      }); //target
+      });
 
       Object.defineProperty( this, "name", {
         get: function() {
@@ -47,22 +79,19 @@
         get: function() {
           return {
             id: id,
-            start: this.start,
-            end: this.end,
             type: this.type,
-            popcornOptions: this.popcornOptions,
+            popcornOptions: clone ( popcornOptions ),
             track: this.track ? this.track.name : undefined,
             name: name
           };
         },
         set: function( importData ) {
-          this.start = importData.start || 0;
-          this.end = importData.end || 0;
-          this.type = importData.type;
+
+          type = popcornOptions.type = importData.type;
           if ( importData.name ) {
             name = importData.name;
           }
-          this.popcornOptions = importData.popcornOptions;
+          popcornOptions = importData.popcornOptions;
         }
       });
 

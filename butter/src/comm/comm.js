@@ -67,6 +67,7 @@
       var Client = function( name, client, callback ) {
 
         var id = Client.guid++,
+            clientWindow = client,
             logger = new Logger( id ),
             em = new EventManager( { logger: logger } ),
             that = this;
@@ -78,11 +79,13 @@
         };
 
         this.send = function ( message, type ) {
-          if ( !type ) {
-            client.postMessage( MESSAGE_PREFIX + JSON.stringify( message ), "*" );
-          }
-          else {
-            client.postMessage( MESSAGE_PREFIX + JSON.stringify( { type: type, message: message } ), "*" );
+          if ( clientWindow ) {
+            if ( !type ) {
+              clientWindow.postMessage( MESSAGE_PREFIX + JSON.stringify( message ), "*" );
+            }
+            else {
+              clientWindow.postMessage( MESSAGE_PREFIX + JSON.stringify( { type: type, message: message } ), "*" );
+            } //if
           } //if
         }; //send
 
@@ -96,8 +99,8 @@
         }; //async
 
         this.init = function( readyClient ) {
-          client = readyClient;
-          client.addEventListener( "message", function ( e ) {
+          clientWindow = readyClient;
+          clientWindow.addEventListener( "message", function ( e ) {
             var data = parseEvent( e, window );
             if ( data ) {
               em.dispatch( data.type, data.message );
