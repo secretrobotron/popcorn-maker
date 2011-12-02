@@ -98,19 +98,19 @@
 			return nop;
 		}
 
-		if (!options.target || !options.url && !options.thumb) {
+		if (!options.target || !options.src && !options.thumb) {
 			return nop;
 		}
 
-		if (options.url) {
+		if (options.src) {
 			if (!options.mode) {
-				ext = getExtension(options.url);
+				ext = getExtension(options.src);
 
 				options.mode = mediaTypes[ext] && mediaTypes[ext].split('/')[0] || 'image';
 			}
 
 			if (!options.thumb && options.mode === 'image') {
-				options.thumb = options.url;
+				options.thumb = options.src;
 			}
 		}
 
@@ -208,7 +208,7 @@
 				node.addEventListener('load', thumbLoaded, false);
 			}
 		} else {
-			node = makeMedia(options.url, options.mode);
+			node = makeMedia(options.src, options.mode);
 			
 			node.setAttribute('class','popcorn-overlay-thumb');
 			options.thumbImage = node;
@@ -221,15 +221,15 @@
 			}
 		}
 
-		if (options.url && options.mode) {
+		if (options.src && options.mode) {
 			lightboxContainer = document.createElement('div');
 			lightboxContainer.setAttribute('class', 'popcorn-overlay-lightbox');
 
 			if (options.mode === 'image') {
 				node = document.createElement('img');
-				node.src = options.url;
+				node.src = options.src;
 			} else {
-				node = makeMedia(options.url, options.mode);
+				node = makeMedia(options.src, options.mode);
 				node.setAttribute('controls', '');
 				options.media = node;
 			}
