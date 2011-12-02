@@ -5,21 +5,21 @@
 
       options = options || {};
 
-      var id = "TrackEvent" + TrackEvent.guid++,
+      var that = this,
+          id = "TrackEvent" + TrackEvent.guid++,
           name = options.name || 'Track' + Date.now(),
           logger = new Logger( id ),
           em = new EventManager( { logger: logger } ),
           track,
+          type = options.type,
           properties = [],
           popcornOptions = options.popcornOptions || {
             start: that.start,
             end: that.end
-          },
-          that = this;
+          };
 
       em.apply( "TrackEvent", this );
 
-      this.type = options.type;
       this.update = function( updateOptions ) {
         for ( var prop in updateOptions ) {
           if ( updateOptions.hasOwnProperty( prop ) ) {
@@ -43,6 +43,13 @@
         enumerable: true,
         get: function() {
           return clone( popcornOptions );
+        }
+      });
+
+      Object.defineProperty( this, "type", {
+        enumerable: true,
+        get: function() {
+          return type;
         }
       });
 
@@ -72,22 +79,20 @@
         get: function() {
           return {
             id: id,
-            start: this.start,
-            end: this.end,
             type: this.type,
-            popcornOptions: this.popcornOptions,
+            popcornOptions: clone ( popcornOptions ),
             track: this.track ? this.track.name : undefined,
             name: name
           };
         },
         set: function( importData ) {
-          this.start = importData.start || 0;
-          this.end = importData.end || 0;
-          this.type = importData.type;
+          //popcornOptions.start = importData.popcornOptions.start || 0;
+          //popcornOptions.end = importData.popcornOptions.end || 0;
+          type = popcornOptions.type = importData.type;
           if ( importData.name ) {
             name = importData.name;
           }
-          this.popcornOptions = importData.popcornOptions;
+          popcornOptions = importData.popcornOptions;
         }
       });
 
