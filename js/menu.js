@@ -26,6 +26,8 @@
       popupManager.addPopup( "edit-project", "#edit-project-popup" );
       popupManager.addPopup( "error", "#error-popup" );
       popupManager.addPopup( "delete-project", "#delete-project-popup" );
+      popupManager.addPopup( "clear-track-confirm", "#clear-track-confirmation" );
+      popupManager.addPopup( "delete-track-confirm", "#delete-track-confirmation" );
 
       buttonManager.add( "open-help", $( '.open-help, .help' ), {
         click: function() {
