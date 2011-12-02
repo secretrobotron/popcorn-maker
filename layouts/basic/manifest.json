@@ -3,6 +3,7 @@
   "description": "Basic HTML-only template with lots of plugins to try.",
   "thumbnail": "thumbnail.png",
   "template": "template.html",
+  "description": "A simple template with two text areas",
   "files": [
     "template.html",
     "thumbnail.gif"
