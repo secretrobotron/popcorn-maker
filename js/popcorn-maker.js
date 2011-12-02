@@ -53,6 +53,7 @@
         _templateManager = new TemplateManager({
           config: TEMPLATES_CONFIG,
           container: "layout-select",
+          description: "template-description",
           layoutsDir: LAYOUTS_DIR
         });
         _editorManager = new EditorManager({

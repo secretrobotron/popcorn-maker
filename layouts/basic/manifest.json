@@ -1,5 +1,6 @@
 {
   "title": "Basic",
+  "description": "Basic HTML-only template with lots of plugins to try.",
   "thumbnail": "thumbnail.png",
   "template": "template.html",
   "files": [
