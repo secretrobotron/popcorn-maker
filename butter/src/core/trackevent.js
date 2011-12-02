@@ -2,34 +2,59 @@
   define( [ "core/logger", "core/eventmanager" ], function( Logger, EventManager ) {
 
     var TrackEvent = function ( options ) {
+
+      options = options || {};
+
       var id = "TrackEvent" + TrackEvent.guid++,
+          name = options.name || 'Track' + Date.now(),
           logger = new Logger( id ),
           em = new EventManager( { logger: logger } ),
+          track,
+          properties = [],
+          popcornOptions = options.popcornOptions || {
+            start: that.start,
+            end: that.end
+          },
           that = this;
 
       em.apply( "TrackEvent", this );
 
-      options = options || {};
-      var name = options.name || 'Track' + Date.now();
-      this.start = options.start || 0;
-      this.end = options.end || 0;
       this.type = options.type;
-      this.popcornOptions = options.popcornOptions || {
-        start: that.start,
-        end: that.end
-      };
-      this.popcornEvent = options.popcornEvent;
-      this.track = options.track;
+      this.update = function( updateOptions ) {
+        for ( var prop in updateOptions ) {
+          if ( updateOptions.hasOwnProperty( prop ) ) {
+            popcornOptions[ prop ] = updateOptions[ prop ];
+          } //if
+        } //for
+        em.dispatch( "trackeventupdated", that );
+      }; //update
 
-      Object.defineProperty( this, "target", {
+      function clone( obj ) {
+        var newObj = {};
+        for ( var prop in obj ) {
+          if ( obj.hasOwnProperty( prop ) ) {
+            newObj[ prop ] = obj[ prop ];
+          } //if
+        } //for
+        return newObj;
+      } //clone
+
+      Object.defineProperty( this, "popcornOptions", {
+        enumerable: true,
         get: function() {
-          return that.popcornOptions.target;
+          return clone( popcornOptions );
+        }
+      });
+
+      Object.defineProperty( this, "track", {
+        get: function() {
+          return track;
         },
         set: function( val ) {
-          logger.log( "target changed: " + val );
-          that.popcornOptions.target = val;
+          track = val;
+          em.dispatch( "trackeventtrackchanged", that );
         }
-      }); //target
+      });
 
       Object.defineProperty( this, "name", {
         get: function() {

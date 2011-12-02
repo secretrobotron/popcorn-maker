@@ -49,7 +49,7 @@ THE SOFTWARE.
           em.dispatch( "tracktargetchanged", that );
           for( var i=0, l=trackEvents.length; i<l; i++ ) {
             trackEvents[ i ].target = val;
-            trackEvents[ i ].dispatch( "trackeventupdated", trackEvents[ i ] );
+            trackEvents[ i ].update({ target: val });
           } //for
           logger.log( "target changed: " + val );
         }
@@ -119,6 +119,7 @@ THE SOFTWARE.
         } //if
         trackEvents.push( trackEvent );
         trackEvent.track = that;
+        trackEvent.listen( "trackeventupdated", em.repeat );
         em.dispatch( "trackeventadded", trackEvent );
         return trackEvent;
       }; //addTrackEvent
@@ -133,6 +134,7 @@ THE SOFTWARE.
         if ( idx > -1 ) {
           trackEvents.splice( idx, 1 );
           trackEvent.track = undefined;
+          trackEvent.unlisten( "trackeventupdated", em.repeat );
           em.dispatch( "trackeventremoved", trackEvent );
         } //if
 

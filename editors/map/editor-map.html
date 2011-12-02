@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../shared/css/editor.css"/>
+    <script type="text/javascript" src="../../butter/src/eventeditor/butter.editors.js"></script>
+    <script type="text/javascript" src="../shared/js/editor-state.js"></script>
+		<style>
+		
+		#map {
+			height: 300px;
+		}
+		
+		</style>
+	</head>
+	<body>
+		<table class="form">
+			<tbody class="form-header">
+				<tr><th colspan="2">Time</th></tr>
+			</tbody>
+			<tbody>
+				<tr>
+					<th><label for="start">From:</label></th>
+					<td><input type="text" id="start"/></td>
+				</tr>
+				<tr>
+					<th><label for="end">To:</label></th>
+					<td><input type="text" id="end"/></td>
+				</tr>
+			</tbody>
+
+			<tbody class="form-header">
+				<tr><th colspan="2">Content</th></tr>
+			</tbody>
+			<tbody>
+				<tr>
+					<th><label for="title">Title:</label></th>
+					<td><input type="text" id="title"/></td>
+				</tr>
+				<tr>
+					<th><label for="link">Link:</label></th>
+					<td><input type="text" id="link"/></td>
+				</tr>
+			</tbody>
+
+			<tbody class="form-header">
+				<tr><th colspan="2">Location</th></tr>
+			</tbody>
+			<tbody>
+				<tr>
+					<th><label for="address">Address:</label></th>
+					<td><input type="text" id="address"/></td>
+				</tr>
+				<tr>
+					<th><label for="lat">Latitude:</label></th>
+					<td><input type="text" id="lat"/></td>
+				</tr>
+				<tr>
+					<th><label for="lng">Longitude:</label></th>
+					<td><input type="text" id="lng"/></td>
+				</tr>
+				<tr>
+					<th><label>Map:</label></th>
+					<td><div id="map"></div></td>
+				</tr>
+			</tbody>
+<!--
+			<tbody class="form-header">
+				<tr><th colspan="2">Position</th></tr>
+			</tbody>
+			<tbody>
+				<tr>
+					<th><label for="left">Left (%):</label></th>
+					<td><input type="text" id="left"/></td>
+				</tr>
+				<tr>
+					<th><label for="top">Top (%):</label></th>
+					<td><input type="text" id="top"/></td>
+				</tr>
+			</tbody>
+-->
+			<tbody id="target-section">
+				<tr>
+					<th><label for="target">Target:</label></th>
+					<td><select id="target"></select></td>
+				</tr>
+			</tbody>
+		</table>
+		<div id="control-buttons">
+			<input type="button" value="Undo" id="undo"/>
+			<input type="button" value="Cancel" id="cancel"/>
+			<input type="button" value="Delete" id="delete"/>
+			<input type="button" value="OK" id="ok"/>
+		</div>
+    <script type="text/javascript" src="editor.js"></script>
+	</body>
+</html>

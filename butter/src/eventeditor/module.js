@@ -123,7 +123,6 @@ THE SOFTWARE.
               commServer.listen( editorLinkName, "okayclicked", function( e ){
                 var newOptions = e.data;
                 filterKnownFields( newOptions );
-                trackEvent.popcornOptions = newOptions;
                 if ( targetWindow.close ) {
                   targetWindow.close();
                 }
@@ -132,15 +131,14 @@ THE SOFTWARE.
                 }
                 undoListeners();
                 targetWindow = undefined;
-                em.dispatch( "trackeventupdated", trackEvent );
+                trackEvent.update( newOptions );
                 em.dispatch( "trackeditclosed", that );
               });
 
               commServer.listen( editorLinkName, "applyclicked", function( e ) {
                 var newOptions = e.data;
                 filterKnownFields( newOptions );
-                trackEvent.popcornOptions = newOptions;
-                em.dispatch( "trackeventupdated", trackEvent );
+                trackEvent.update( newOptions );
               });
 
               commServer.listen( editorLinkName, "deleteclicked", function() {
@@ -319,7 +317,6 @@ THE SOFTWARE.
       init: function( butter, options ) {
         var ee = new EventEditor( butter, options );
         ee.listen( "clientdimsupdated", butter.eventManager.repeat );
-        ee.listen( "trackeventupdated", butter.eventManager.repeat );
         ee.listen( "trackeventupdated", butter.eventManager.repeat );
         ee.listen( "trackeditstarted", butter.eventManager.repeat );
         ee.listen( "trackeditclosed", butter.eventManager.repeat );

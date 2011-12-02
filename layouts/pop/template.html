@@ -12,7 +12,9 @@
 		and make sure all the scripts refer to the right absolute URLs, or
 		set your own references to be absolute URLs on your server. 
 		-->
+		<!--
 		<base href="http://mozillapopcorn.org/maker/layouts/pop/"/>
+		-->
 		<style type="text/css">
 		
 		body {
@@ -114,102 +116,8 @@
 	<script type="text/javascript" src="../../lib/popcorn/popcorn.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.pop.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.words.js"></script>
-	<script src="../../lib/butter.js"></script>
-	<script>
-	(function() {
-		var butterMapping = [];
-		var template = new Butter.Template({
-			loadFromData: function( importData ) {
-				var medias = importData.media;
-				if ( medias ) {
-					for ( var m=0; m<medias.length; ++m ) {
-						var media = medias[ m ],
-							//todo: load media here
-							popcorn = Popcorn( '#' + media.target, { frameAnimation: true } );
-						if ( media.tracks ) {
-							for ( var t=0; t<media.tracks.length; ++t ) {
-								var track = media.tracks[ t ];
-								if ( track.trackEvents ) {
-									for ( var e=0; e<track.trackEvents.length; ++e ) {
-										var trackEvent = track.trackEvents[ e ];
-										popcorn[ trackEvent.type ]( trackEvent.popcornOptions );
-									} //for trackEvents
-								} //if trackEvents
-							} //for tracks
-						} //if tracks
-					} //for medias
-				} //if medias
-			},
-			onfetchhtml: function( message ) {
-				return template.link.getHTML( message );
-			},
-			onmediaremoved: function( message ) {
-				template.link.removeMedia( template.link.getMedia( message.id ) );
-			},
-			onmediatimeupdate: function( message ) {
-				template.link.currentMedia.popcorn.currentTime( message );
-			},
-			onmediachanged: function( message ) {
-				if ( template.link.currentMedia ) {
-					template.link.currentMedia.removeHandlers( template.link.comm );
-				}
-				var currentMedia = template.link.currentMedia = template.link.getMedia( message.id );
-				if ( currentMedia ) {
-					currentMedia.addHandlers( template.link.comm, {
-						'trackeventadded': function( message ) {
-							var media = template.link.currentMedia;
-							media.popcorn[ message.type ]( message.popcornOptions );
-							butterMapping[ message.id ] = media.popcorn.getLastTrackEventId();
-						},
-						'trackeventupdated': function( message ) {
-							var media = template.link.currentMedia;
-							if ( butterMapping[ message.id ] ) {
-								media.popcorn.removeTrackEvent( butterMapping[ message.id ] );
-							}
-							media.popcorn[ message.type ]( message.popcornOptions );
-							butterMapping[ message.id ] = media.popcorn.getLastTrackEventId();
-						},
-						'trackeventremoved': function( message ) {
-							var media = template.link.currentMedia;
-							if ( butterMapping[ message.id ] ) {
-								media.popcorn.removeTrackEvent( butterMapping[ message.id ] );
-							}
-						},
-						'play': currentMedia.play,
-						'pause': currentMedia.pause,
-						'mute': currentMedia.mute
-					});
-				}
-			},
-			onmediaadded: function( message ) {
-				var link = template.link;
-				if ( !link.getMedia( message.id ) ) {
-					var media = new Butter.TemplateMedia( message );
-					link.addMedia( media );
-					media.prepareMedia( media.findMediaType() );
-					media.createPopcorn( media.generatePopcornString({
-						options: {
-							frameAnimation: true
-						}
-					}) );
-					media.waitForPopcorn( function( popcorn ) {
-					media.setupPopcornHandlers( link.comm );
-						link.sendMedia( media );
-					});
-				}
-			},
-			onsetup: function( options ) {
-				template.link.scrape();
-			}
-		});
-	})();
-	</script>
-	<script type="text/javascript">
-	
-	window.addEventListener('DOMContentLoaded', function() {
-	}, false);
-	
-	</script>
+  <script type="text/javascript" src="../../butter/src/previewer/butter.previewer.js"></script>
+	<script type="text/javascript" src="template.js"></script>
 	<!--
 
 	Sound credits:
