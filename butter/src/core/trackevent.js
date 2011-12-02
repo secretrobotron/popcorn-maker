@@ -86,8 +86,7 @@
           };
         },
         set: function( importData ) {
-          //popcornOptions.start = importData.popcornOptions.start || 0;
-          //popcornOptions.end = importData.popcornOptions.end || 0;
+
           type = popcornOptions.type = importData.type;
           if ( importData.name ) {
             name = importData.name;
