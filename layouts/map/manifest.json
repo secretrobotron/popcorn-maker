@@ -2,6 +2,7 @@
   "title": "Map",
   "thumbnail": "thumbnail.png",
   "template": "template.html",
+  "description": "Drop a pin on a map which will display over a full screen video",
   "files": [
     "template.html",
     "thumbnail.png"
