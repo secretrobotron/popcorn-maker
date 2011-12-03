@@ -7,7 +7,9 @@
       var manifest = utils.getJSON( layoutsDir + "/" + root + "/manifest.json" ),
           name = manifest.title || root,
           defaultMedia = manifest.defaultMedia || fallbackMedia,
+          description = manifest.description || "No description available.",
           thumbnail = new Image();
+
       if ( manifest.thumbnail ) {
         thumbnail.src = layoutsDir + "/" + root + "/" + manifest.thumbnail;
       }
@@ -15,8 +17,9 @@
       Object.defineProperty( this, "title", { get: function() { return name; } });
       Object.defineProperty( this, "thumbnail", { get: function() { return thumbnail; } });
       Object.defineProperty( this, "template", { get: function() { return layoutsDir + "/" + root + "/" + template; } });
-      Object.defineProperty( this, "root", { get: function() { return root } } );
-      Object.defineProperty( this, "defaultMedia", { get: function() { return defaultMedia } } );
+      Object.defineProperty( this, "root", { get: function() { return root; } } );
+      Object.defineProperty( this, "defaultMedia", { get: function() { return defaultMedia; } } );
+      Object.defineProperty( this, "description", { get: function() { return description; } } );
     } //Template
 
     function TemplateManager ( options ) {
@@ -43,6 +46,7 @@
       }; //find
 
       var select = document.getElementById( options.container ),
+          descriptionContainer = document.getElementById( options.description ),
           thumbnailContainer = $( "#template-thumbnail" );
 
       function showThumbnail( img ) {
@@ -51,6 +55,14 @@
       } //showThumbnail
 
       showThumbnail( templates[ 0 ].thumbnail );
+
+      function selectTemplate( template ) {
+        showThumbnail( template.thumbnail );
+        mediaInputBox.value = template.defaultMedia;
+        if ( descriptionContainer ) {
+          descriptionContainer.innerHTML = utils.getSafeString( template.description );
+        } //if
+      } //selectTemplate
 
       this.buildList = function() {
         function createOption( value, innerHTML ) {
@@ -72,12 +84,14 @@
         select.addEventListener( 'change', function( e ) {
           if ( select.selectedIndex === otherOption.index ) {
             $( "#template-other" ).show();
+            if ( descriptionContainer ) {
+              descriptionContainer.innerHTML = "";
+            } //if
           }
           else {
             for ( var i=0; i<templates.length; ++i ) {
               if ( templates[ i ].template === select.options[ select.selectedIndex ].value ) {
-                showThumbnail( templates[ i ].thumbnail );
-                mediaInputBox.value = templates[ i ].defaultMedia;
+                selectTemplate( templates[ i ] );
                 break;
               }
             }
@@ -87,6 +101,8 @@
         otherText.addEventListener( 'change', function( e ) {
           otherOption.value = otherText.value;
         }, false );
+
+        selectTemplate( templates[ 0 ] );
       }; //buildList
 
       this.init = function() {
