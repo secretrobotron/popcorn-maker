@@ -4,38 +4,38 @@
 
   function addTrackEvent(trackEvent) {
     var options = trackEvent.popcornOptions;
-    
+
     if (trackEvent.type === 'map') {
     }
-    
+
     if (typeof popcorn[ trackEvent.type ] === 'function') {
       popcorn[ trackEvent.type ]( trackEvent.popcornOptions );
     }
   }
-  
+
   function prepareVideoPlayer(video) {
     /*
     VideoJS unfortunately checks for <source> elements
     in the video to validate that it can play, which is
     a bad idea on many levels. Butter removes any <source>
     elements and sets a single src attribute.
-    
+
     In general, we should be using a different player, but
     for now, making this work by putting the source element
     back in place.
     */
-    
+
     var source, src, i, re,
       types = ['webm', 'mp4', 'ogg'];
-    
+
     if (typeof video === 'string') {
       video = document.getElementById(video);
     }
-    
+
     if (!video) {
       return;
     }
-    
+
     if (!video.children|| !video.children.length) {
       re = new RegExp('\\.(' + types.join('|') + ')$');
       source = document.createElement('source');
@@ -57,10 +57,10 @@
         }
       }
     }
-    
+
     var player = new VideoJS( video );
   }
-  
+
   var butterMapping = [];
 
   ButterTemplate( function() {
@@ -132,7 +132,15 @@
         if ( !link.getMedia( e.data.id ) ) {
           var media = new ButterTemplate.Media( e.data );
           link.addMedia( media );
-          media.prepareMedia( media.findMediaType() );
+          link.createMediaTimeout();
+          media.prepareMedia( media.findMediaType(), function( e ) {
+            link.comm.send({
+              message: "Error loading media.",
+              context: "previewer::buildMedia::popcornIsReady",
+              type: "media-loading",
+              error: JSON.stringify( e )
+            }, "error" );
+          });
           media.createPopcorn( media.generatePopcornString({
             options: {
               frameAnimation: true

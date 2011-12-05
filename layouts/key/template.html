@@ -10,22 +10,22 @@
 
 		If you want to add any of your own files, either remove the base tag
 		and make sure all the scripts refer to the right absolute URLs, or
-		set your own references to be absolute URLs on your server. 
+		set your own references to be absolute URLs on your server.
 		-->
 		<!--
 		<base href="http://mozillapopcorn.org/maker/layouts/key/"/>
 		-->
 		<style type="text/css">
-		
+
 		/*
 			Fonts
 		*/
 		@import url(http://fonts.googleapis.com/css?family=Bevan|Oswald);
-		
+
 		/*
 			styles borrowed from takepart.com
 		*/
-		
+
 		body {
 			background: none repeat scroll 0 0 #FFFFFF;
 			color: #333333;
@@ -34,12 +34,12 @@
 			margin: 0;
 			padding: 0;
 		}
-		
+
 		#page-wrapper {
 			margin: 0 auto;
 			width: 980px;
 		}
-		
+
 		.page {
 			padding: 35px 20px;
 		}
@@ -47,11 +47,11 @@
 		.clearfix {
 			display: block;
 		}
-		
+
 		/*
 			begin custom styles for Popcorn/Seriously
 		*/
-		
+
 		#scale-buttons {
 			position: fixed;
 			right: 35px;
@@ -63,7 +63,7 @@
 		#video-container {
 			position: relative;
 		}
-		
+
 		#video-container #canvas {
 			position: absolute;
 			top: 0;
@@ -72,17 +72,17 @@
 			z-index: 100;
 			width: 100%;
 		}
-		
+
 		#video-container .vjs-big-play-button,
 		#video-container .vjs-controls,
 		#video-container .vjs-styles-check {
 			z-index: 202;
 		}
-		
+
 		#video-container .vjs-spinner {
 			z-index: 201;
 		}
-		
+
 		/* disable full screen button */
 		#video-container .vjs-fullscreen-control {
 			display: none;
@@ -100,14 +100,14 @@
 		#video-container video {
 			display: none;
 		}
-		
+
 		#share-title {
 			color: #666666;
 			font-size: 16px;
 			font-weight: bold;
 			margin: 8px;
 		}
-		
+
 		.popcorn-tweet-chapter > p {
 			border: 4px solid #CACACA;
 			border-radius: 8px 8px 8px 8px;
@@ -120,7 +120,7 @@
 			text-decoration: none;
 			color: #222;
 		}
-		
+
 		.popcorn-tweet-chapter > .twitter-share-button {
 			float: right;
 		}
@@ -135,7 +135,7 @@
 		#video-container > div {
 			line-height: normal;
 		}
-		
+
 		#video-container a:visited {
 			color: #cc3333;
 		}
@@ -166,18 +166,18 @@
 		#front > div.title {
 			border-left: none;
 		}
-		
+
 		.popcorn-lightbox-link {
 			text-decoration: underline;
 		}
-		
+
 		body .popcorn-lightbox-lightbox {
 			color: black;
 			background-color: white;
 			border: 4px solid rgba(0, 0, 0, 0.6);
 		}
-		
-		.popcorn-lightbox-lightbox a, 
+
+		.popcorn-lightbox-lightbox a,
 		.popcorn-lightbox-lightbox a:visited {
 			color: #0099CC;
 		}
@@ -194,8 +194,6 @@
 					<div id="front" data-butter="target"></div>
 					<canvas id="canvas"></canvas>
 					<video id="video" preload class="video-js" data-butter="media">
-						<source src="http://mozillapopcorn.org/participant/knell.webm" type='video/webm; codecs="vp8, vorbis"'/>
-						<source src="video/knell.mp4" type='video/mp4'/>
 					</video>
 				</div>
 				<p id="share-title">Share this link with your followers</p>
@@ -208,6 +206,8 @@
 	<script type="text/javascript" src="external/seriously.chroma.js"></script>
 	<script type="text/javascript" src="external/video.js"></script>
 	<script type="text/javascript" src="../../lib/popcorn/popcorn.js"></script>
+	<script type="text/javascript" src="../../lib/popcorn/popcorn.youtube.js"></script>
+	<script type="text/javascript" src="../../lib/popcorn/popcorn.vimeo.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.words.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.lightbox.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.tweet-chapter.js"></script>

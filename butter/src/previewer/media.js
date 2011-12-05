@@ -30,15 +30,14 @@
         }, false);
       }; //setupPopcornHandlers
 
-      this.prepareMedia = function( type, link ) {
-        link.createMediaTimeout();
+      this.prepareMedia = function( type, onError ) {
         if ( type === "object" ) {
           var mediaElement = document.getElementById( that.target );
           if (  !mediaElement || [ 'AUDIO', 'VIDEO' ].indexOf( mediaElement.nodeName ) === -1 ) {
             var video = document.createElement( "video" ),
                 src = document.createElement( "source" );
-            link.attachLoadFailListener( src );
 
+            src.addEventListener( "error", onError );
             src.src = that.url;
             video.style.width = document.getElementById( that.target ).style.width;
             video.style.height = document.getElementById( that.target ).style.height;
@@ -65,7 +64,7 @@
               mediaElement.removeChild( mediaElement.firstChild );
             } //while
             mediaElement.removeAttribute( "src" );
-            link.attachLoadFailListener( mediaElement );
+            mediaElement.addEventListener( "error", onError );
             mediaElement.src = that.url;
             mediaElement.load();
             //}

@@ -289,6 +289,7 @@
             if ( previewOptions.onload ) {
               previewOptions.onload( preview );
             }
+            _popupManager.hidePopups();
             $('.tiny-scroll').tinyscrollbar();
             that.toggleLoadingScreen( false );
             that.toggleKeyboardFunctions( true );

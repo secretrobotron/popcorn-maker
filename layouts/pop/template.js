@@ -68,7 +68,15 @@ ButterTemplate(function() {
       if ( !link.getMedia( e.data.id ) ) {
         var media = new ButterTemplate.Media( e.data );
         link.addMedia( media );
-        media.prepareMedia( media.findMediaType() );
+        link.createMediaTimeout();
+        media.prepareMedia( media.findMediaType(), function( e ) {
+          link.comm.send({
+            message: "Error loading media.",
+            context: "previewer::buildMedia::popcornIsReady",
+            type: "media-loading",
+            error: JSON.stringify( e )
+          }, "error" );
+        });
         media.createPopcorn( media.generatePopcornString({
           options: {
             frameAnimation: true

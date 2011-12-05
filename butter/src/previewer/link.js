@@ -194,18 +194,6 @@
 
       }; //scrape
 
-      this.attachLoadFailListener = function( source ) {
-
-        source.addEventListener( "error", function( e ) {
-          comm.send({
-            message: "Error loading media.",
-            context: "previewer::buildMedia::popcornIsReady",
-            type: "media-loading",
-            error: JSON.stringify( e )
-          }, "error" );
-        }, false);
-      };
-
       var mediaTimeout;
       this.createMediaTimeout = function() {
         mediaTimeout = setTimeout( function() {

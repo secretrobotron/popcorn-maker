@@ -150,7 +150,15 @@
           if ( media.target ) {
             document.getElementById( media.target ).innerHTML = "";
           } //if
-          media.prepareMedia( media.findMediaType(), link );
+          link.createMediaTimeout();
+          media.prepareMedia( media.findMediaType(), function( e ) {
+            comm.send({
+              message: "Error loading media.",
+              context: "previewer::buildMedia::popcornIsReady",
+              type: "media-loading",
+              error: JSON.stringify( e )
+            }, "error" );
+          });
           try {
             media.createPopcorn( media.generatePopcornString() );
             media.waitForPopcorn( function( popcorn ) {

@@ -34,6 +34,7 @@
       buttonManager.add( "retry-load", $( "#retry-load"), {
         click: function() {
           pm.toggleLoadingScreen( false );
+          popupManager.hidePopups();
           popupManager.showPopup( "add-project" );
         }
       });
