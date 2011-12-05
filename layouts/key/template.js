@@ -162,11 +162,11 @@ ButterTemplate(function() {
       }							
 
       if ( template.link.currentMedia ) {
-        template.link.currentMedia.removeHandlers( template.link.comm );
+        template.link.removeMediaHandlers();
       }
       var currentMedia = template.link.currentMedia = template.link.getMedia( e.data.id );
       if ( currentMedia ) {
-        currentMedia.addHandlers( template.link.comm, {
+        link.addMediaHandlers({
           'trackeventadded': function( e ) {
             var media = template.link.currentMedia;
             if (e.data.type === 'key') {
@@ -212,7 +212,7 @@ ButterTemplate(function() {
           }
         }) );
         media.waitForPopcorn( function( popcorn ) {
-        media.setupPopcornHandlers( link.comm );
+        link.setupPopcornHandlers();
           link.sendMedia( media );
         });
       }

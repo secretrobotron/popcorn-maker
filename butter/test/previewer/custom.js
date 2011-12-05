@@ -34,11 +34,11 @@
       },
       onmediachanged: function( e ) {
         if ( template.link.currentMedia ) {
-          template.link.currentMedia.removeHandlers( template.link.comm );
+          template.link.removeMediaHandlers();
         }
         var currentMedia = template.link.currentMedia = template.link.getMedia( e.data.id );
         if ( currentMedia ) {
-          currentMedia.addHandlers( template.link.comm, {
+          template.link.addMediaHandlers({
             'trackeventadded': function( e ) {
               var media = template.link.currentMedia;
               media.popcorn[ e.data.type ]( e.data.popcornOptions );
@@ -76,7 +76,7 @@
             }
           }) );
           media.waitForPopcorn( function( popcorn ) {
-            media.setupPopcornHandlers( link.comm );
+            link.setupPopcornHandlers();
             link.sendMedia( media );
           });
         }

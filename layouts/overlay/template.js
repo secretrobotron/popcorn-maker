@@ -95,11 +95,11 @@ ButterTemplate(function() {
     },
     onmediachanged: function( e ) {
       if ( template.link.currentMedia ) {
-        template.link.currentMedia.removeHandlers( template.link.comm );
+        template.link.removeMediaHandlers();
       }
       var currentMedia = template.link.currentMedia = template.link.getMedia( e.data.id );
       if ( currentMedia ) {
-        currentMedia.addHandlers( template.link.comm, {
+        template.link.addMediaHandlers({
           'trackeventadded': function( e ) {
             var media = template.link.currentMedia;
             addTrackEvent( e.data );
@@ -138,7 +138,7 @@ ButterTemplate(function() {
         }) );
         media.waitForPopcorn( function( p ) {
           popcorn = p;
-          media.setupPopcornHandlers( link.comm );
+          link.setupPopcornHandlers();
           link.sendMedia( media );
         });
       }

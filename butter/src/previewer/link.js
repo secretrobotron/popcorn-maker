@@ -9,7 +9,40 @@
           importData = options.importData,
           that = this,
           linkType = options.type || "basic",
-          comm = new Comm.CommClient( "link" );
+          comm = new Comm.CommClient( "link" ),
+          mediaHandlers = {};
+
+      this.addMediaHandlers = function( options ) {
+        for ( var name in options ) {
+          if ( options.hasOwnProperty( name ) ) {
+            mediaHandlers[ name ] = options[ name ];
+            comm.listen( name, mediaHandlers[ name ] );
+          } //if
+        } //for
+      }; //addMediaHandlers
+
+      this.removeMediaHandlers = function() {
+        for ( var name in mediaHandlers ) {
+          if ( mediaHandlers.hasOwnProperty( name ) ) {
+            comm.unlisten( name, mediaHandlers[ name ] );
+            delete mediaHandlers[ name ];
+          } //if
+        } //for
+      }; //removeMediaHandlers
+
+      this.setupPopcornHandlers = function() {
+        currentMedia.popcorn.media.addEventListener( "timeupdate", function() {
+          comm.send( currentMedia.popcorn.media.currentTime, "mediatimeupdate" );                
+        },false);
+        currentMedia.popcorn.media.addEventListener( "pause", function() {
+          comm.send( "paused", "log" );
+          comm.send( currentMedia.id, "mediapaused" );
+        }, false);
+        currentMedia.popcorn.media.addEventListener( "playing", function() {
+          comm.send( "playing", "log" );
+          comm.send( currentMedia.id, "mediaplaying" );
+        }, false);
+      }; //setupPopcornHandlers
 
       var mediaChangedHandler = options.onmediachanged || function() {},
           mediaAddedHandler = options.onmediaadded || function() {},
