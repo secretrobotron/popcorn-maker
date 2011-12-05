@@ -108,7 +108,7 @@
 
         var scrubberLeft = checkScrubber();
 
-        timelineDuration.innerHTML = butter.timeline.secondsToSMPTE( butter.currentTime );
+        timelineDuration.innerHTML = butter.timeline.secondsToSMPTE( Math.round( butter.currentTime ) );
 
         scrubber.style.display = "block";
 
