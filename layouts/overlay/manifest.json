@@ -2,6 +2,7 @@
   "title": "Overlay",
   "thumbnail": "thumbnail.png",
   "template": "template.html",
+  "description": "Place an overlay of a video or image on a full screen video",
   "files": [
     "template.html",
     "thumbnail.png"

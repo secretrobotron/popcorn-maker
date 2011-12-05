@@ -28,6 +28,7 @@
       popupManager.addPopup( "delete-project", "#delete-project-popup" );
       popupManager.addPopup( "clear-track-confirm", "#clear-track-confirmation" );
       popupManager.addPopup( "delete-track-confirm", "#delete-track-confirmation" );
+      popupManager.addPopup( "credits-popup", "#credits-popup" );
 
       buttonManager.add( "open-help", $( '.open-help, .help' ), {
         click: function() {
@@ -218,6 +219,12 @@
           });
         }
       }); //show-html
+
+      buttonManager.add( "credits", $("h1.logo a"), {
+        click: function() {
+          popupManager.showPopup( "credits-popup" );
+        }
+      });
 
       butter.listen( "error", function( error ) {
         if( error.data.type === "popcorn-initialization" ) {
