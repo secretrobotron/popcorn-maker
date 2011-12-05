@@ -239,35 +239,49 @@ THE SOFTWARE.
               var cornOptions = butterTrackEvent.popcornOptions;
               cornOptions.start = Math.max( 0, trackLinerTrackEvent.options.left / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
               cornOptions.end = Math.max( 0, ( trackLinerTrackEvent.options.left + trackLinerTrackEvent.options.width ) / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
+
+              if ( trackLinerTrack.id !== currentMediaInstance.trackLinerTracks[ butterTrackEvent.track.id ].id ) {
+
+                currentMediaInstance.trackLinerTrackEvents[ butterTrackEvent.id ] = trackLinerTrackEvent;
+                currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ] = butterTrackEvent;
+
+                butterTrackEvent.track.removeTrackEvent( butterTrackEvent );
+                butterTrack.addTrackEvent( butterTrackEvent );
+              }
+              
               butterTrackEvent.update( cornOptions );
             } //if
           });
 
           this.trackLine.listen( "trackeventadded", function( e ) {
 
-            var trackLinerTrack = e.data.track,
-                butterTrack = currentMediaInstance.butterTracks[ trackLinerTrack.id ],
-                trackLinerTrackEvent = e.data.trackEvent,
-                butterTrackEvent = currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ],
-                name = e.data.name;
+            if ( e.data.ui ) {
 
-            if ( !butterTrackEvent ) {
+              var trackLinerTrack = e.data.track,
+                  butterTrack = currentMediaInstance.butterTracks[ trackLinerTrack.id ],
+                  trackLinerTrackEvent = e.data.trackEvent,
+                  butterTrackEvent = currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ],
+                  name = e.data.name;
 
-              var start = trackLinerTrackEvent.options.left / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration,
-                  end = start + ( trackLinerTrackEvent.options.width / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration );
+              if ( !butterTrackEvent ) {
 
-              butterTrackEvent = new Butter.TrackEvent({
-                popcornOptions: {
-                  start: start,
-                  end: end },
-                type: e.data.trackEvent.element.children[ 0 ].title
-              });
+                var start = trackLinerTrackEvent.options.left / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration,
+                    end = start + ( trackLinerTrackEvent.options.width / currentMediaInstance.container.offsetWidth * currentMediaInstance.duration ),
+                    type = e.data.trackEvent.element.children[ 0 ].title || e.data.trackEvent.options.innerHTML;
 
-              // make a function for this
-              currentMediaInstance.trackLinerTrackEvents[ butterTrackEvent.id ] = trackLinerTrackEvent;
-              currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ] = butterTrackEvent;
+                butterTrackEvent = new Butter.TrackEvent({
+                  popcornOptions: {
+                    start: start,
+                    end: end },
+                  type: type
+                });
 
-              butter.addTrackEvent( butterTrack, butterTrackEvent );
+                // make a function for this
+                currentMediaInstance.trackLinerTrackEvents[ butterTrackEvent.id ] = trackLinerTrackEvent;
+                currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ] = butterTrackEvent;
+
+                butter.addTrackEvent( butterTrack, butterTrackEvent );
+              }
             }
           });
 

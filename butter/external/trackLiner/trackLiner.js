@@ -166,7 +166,7 @@
               left: ( e.clientX - clientRects[ 0 ].left ) / scale,
               width: 50,
               innerHTML: ui.draggable[ 0 ].innerHTML
-            }));
+            }, true ));
         } //if
       };
 
@@ -331,7 +331,7 @@
           return element;
         } //createEventElement
 
-        this.createTrackEvent = function( inputOptions, event, ui ) {
+        this.createTrackEvent = function( inputOptions, ui ) {
 
           var trackEvent = {},
               eventId = "trackEvent" + eventCount++;
@@ -412,19 +412,21 @@
               stop: movedCallback
             });
 
-            return this.addTrackEvent( trackEvent );
+            return this.addTrackEvent( trackEvent, ui );
           } //if
         };
 
-        this.addTrackEvent = function( trackEvent ) {
+        this.addTrackEvent = function( trackEvent, ui ) {
 
           events[ trackEvent.element.id ] = trackEvent;
           element.appendChild( trackEvent.element );
           trackEvent.trackId = trackId;
+          ui = ui || false;
 
           eventManager.dispatch( "trackeventadded", {
             track: that,
-            trackEvent: trackEvent
+            trackEvent: trackEvent,
+            ui: ui
           });
 
           return trackEvent;
