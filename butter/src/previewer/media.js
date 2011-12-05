@@ -18,7 +18,7 @@
 
       this.setupPopcornHandlers = function( comm ) {
         that.popcorn.media.addEventListener( "timeupdate", function() {
-          comm.send( that.popcorn.media.currentTime, "mediatimeupdate" );                
+          comm.send( that.popcorn.media.currentTime, "mediatimeupdate" );
         },false);
         that.popcorn.media.addEventListener( "pause", function() {
           comm.send( "paused", "log" );
@@ -30,12 +30,13 @@
         }, false);
       }; //setupPopcornHandlers
 
-      this.prepareMedia = function( type ) {
+      this.prepareMedia = function( type, link ) {
         if ( type === "object" ) {
           var mediaElement = document.getElementById( that.target );
           if (  !mediaElement || [ 'AUDIO', 'VIDEO' ].indexOf( mediaElement.nodeName ) === -1 ) {
             var video = document.createElement( "video" ),
                 src = document.createElement( "source" );
+            link.attachLoadFailListener( src );
 
             src.src = that.url;
             video.style.width = document.getElementById( that.target ).style.width;
@@ -62,13 +63,8 @@
             while ( mediaElement.firstChild ) {
               mediaElement.removeChild( mediaElement.firstChild );
             } //while
-            //if ( !mediaElement.firstChild || !mediaElement.currentSrc ) {
             mediaElement.removeAttribute( "src" );
-            /*
-            var src = document.createElement( "source" );
-            src.src = that.url;
-            mediaElement.appendChild( src );
-            */
+            link.attachLoadFailListener( mediaElement );
             mediaElement.src = that.url;
             mediaElement.load();
             //}
@@ -88,7 +84,7 @@
             if ( node ) {
               return node;
             } //if
-          } //if 
+          } //if
         } //for
       } //findNode
 
@@ -143,7 +139,7 @@
           },
           "object": function() {
             return "var popcorn = Popcorn( '#" + that.mediaElement.id + "'" + popcornOptions + ");\n";
-          } 
+          }
         };
 
         // call certain player function depending on the regexResult
@@ -175,7 +171,7 @@
           popcornString += "\n},false);";
         }
         else {
-          popcornString = popcornString + "\n return popcorn;"; 
+          popcornString = popcornString + "\n return popcorn;";
         } //if
 
         return popcornString;

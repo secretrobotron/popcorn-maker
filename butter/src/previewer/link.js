@@ -27,7 +27,7 @@
       comm.returnAsync( "linktype", function() {
         return linkType;
       });
-      
+
       comm.returnAsync( 'html', fetchHTMLHandler );
 
       Object.defineProperty( this, "comm", {
@@ -110,8 +110,8 @@
               // add it to butters target list with a respective type
               if ( thisChild.getAttribute ) {
                 if( thisChild.getAttribute( "data-butter" ) === "target" ) {
-                  comm.send( { 
-                    name: thisChild.id, 
+                  comm.send( {
+                    name: thisChild.id,
                     type: "target"
                   }, "addtarget" );
                 }
@@ -120,7 +120,7 @@
 
                     var mediaSourceUrl = defaultMedia;
                     //var mediaSourceUrl = thisChild.currentSrc;
-                    
+
                     comm.send({
                       target: thisChild.id,
                       url: mediaSourceUrl,
@@ -141,13 +141,13 @@
                       }
                     }
 
-                    comm.send( { 
-                      target: thisChild.id, 
-                      url: vidUrl 
+                    comm.send( {
+                      target: thisChild.id,
+                      url: vidUrl
                     }, "addmedia" );
 
                   }
-                } // else 
+                } // else
               } //if
 
               if ( thisChild.children && thisChild.children.length > 0 ) {
@@ -194,6 +194,18 @@
 
       }; //scrape
 
+      this.attachLoadFailListener = function( source ) {
+
+        source.addEventListener( "error", function( e ) {
+          comm.send({
+            message: "Error loading media.",
+            context: "previewer::buildMedia::popcornIsReady",
+            type: "media-loading",
+            error: JSON.stringify( e )
+          }, "error" );
+        }, false);
+      };
+
       this.play = function() {
         currentMedia.popcorn.media.play();
       };
@@ -205,7 +217,7 @@
       this.pause = function() {
         currentMedia.popcorn.media.pause();
       };
-        
+
       this.mute = function() {
         currentMedia.popcorn.media.muted = !currentMedia.popcorn.media.muted;
       };

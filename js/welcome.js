@@ -26,6 +26,13 @@
         }, 500);
       });
 
+
+      buttonManager.add( "retry-load", $( "#retry-load"), {
+        click: function() {
+          popupManager.showPopup( "add-project" );
+        }
+      });
+
       buttonManager.add( "wizard-add-project", $( ".wizard-add-project-btn" ), {
         click: function() {
           popupManager.hidePopups();

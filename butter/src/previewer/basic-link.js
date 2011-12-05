@@ -150,7 +150,7 @@
           if ( media.target ) {
             document.getElementById( media.target ).innerHTML = "";
           } //if
-          media.prepareMedia( media.findMediaType() );
+          media.prepareMedia( media.findMediaType(), link );
           try {
             media.createPopcorn( media.generatePopcornString() );
             media.waitForPopcorn( function( popcorn ) {
@@ -187,7 +187,7 @@
       link.scrape();
 
     }; //BasicLink
-    
+
     return BasicLink;
 
   }); //define

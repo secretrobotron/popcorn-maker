@@ -68,6 +68,7 @@
         _popupManager.addPopup( "change-media", "#change-media-popup" );
         _popupManager.addPopup( "edit-track", "#edit-track-popup" );
         _popupManager.addPopup( "delete-track", "#delete-track-popup" );
+        _popupManager.addPopup( "load-failed", "#load-failed-popup" );
 
         _loadingOverlay = $( "#loading-overlay" );
         _loadingOverlay.hide();
@@ -290,7 +291,12 @@
             $('.tiny-scroll').tinyscrollbar();
             that.toggleLoadingScreen( false );
             that.toggleKeyboardFunctions( true );
-          } //onload
+          }, //onload
+          onfail: function( preview ) {
+            that.toggleLoadingScreen( false );
+            that.toggleKeyboardFunctions( true );
+            _popupManager.showPopup( "load-failed" );
+          }
         }); //Preview
       }; //createPreview
 
