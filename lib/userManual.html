@@ -1,0 +1,242 @@
+<html>
+  <head>
+    <title>Popcorn-Maker User Manual</title>
+    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
+  </head>
+  <body class="balck-overlay">
+    <div class="container">
+      <h1 style="font-size:350%;margin-left:-1em;padding:10px;">Popcorn-Maker User Manual</h1>
+      <h1>Part I: What is Popcorn Maker?</h1>
+      <p>
+        Popcorn Maker is a fun and easy way to make interactive open video pages. It's an HTML5 web app, so you can access it from any advanced browser and start creating. 
+      </p>
+      <p>
+        Popcorn Maker is not a video editor-it's a new kind of tool that seamlessly weaves your videos into the web. With Popcorn Maker, you can make advanced, "web-native" videos without learning how to code. (Of course, if you want to be a rockstar, you should learn how to code!)
+      </p>
+      <img src="../images/pmmanual/browsers.png">
+      <p>
+        It's been tested for compatibility with newer browsers. For best results, use Firefox 8 or newer, or Chrome 10 or newer. Your finished creations should work on any browser, depending on the technologies you use.
+      </p>
+
+      <p>
+      Popcorn Maker is and will always be 100% free and open source. If you want to customize Popcorn Maker, look under the hood, or host your own instance of the app, then go for it! The source code is available <a href="" target="_blank">here.</a>
+      </p>
+      <h1>Part II: What can I make?</h1>
+      <p>
+      Using Popcorn Maker, you can take any kind of timeline-based web media (like video, audio, or animation) and build an interactive web page around it. <a href="" target="_blank">Check out some examples here.</a>
+      </p>
+      <p>
+        You can mix and match functionality using our built in plug-ins, for everything from live tweets, to maps, to Facebook integration, web pages, and more. It's like remixing the web. And the aesthetics of how to present your project are totally up to you. 
+      </p>
+      <p>
+      There are many templates available for you to start from-everything from pop-up video, to book reports, to interactive news stories, and more. Check out the <a href="" target="_blank">template gallery</a> to see what's available. New templates are being added every day.
+      </p>
+      <p>
+      With a little bit of determination, you can make almost anything you can imagine in Popcorn Maker. If you don't find a template that meets your needs, you can make your own. It's easy—just like designing a regular web page with HTML and CSS. Read more about <a href="" target="_blank">making your own templates.</a> We hope you'll share!
+      </p>
+      <h1>Part III: Creating a project</h1>
+      <p>
+        To create a project, click the green "+" sign in the top right corner of the app.
+      </p>
+      <img src="../images/pmmanual/projectselect.png">
+      <p>
+        The "Create/Import Project" dialog will open:
+      </p>
+      <img src="../images/pmmanual/createproject.png">
+      <p>
+        1. <b>Give your project a title.</b> You can change this later.
+      </p>
+      <p>
+        2. <b>Then, enter your timeline media.</b> When you press "play" on your Popcorn Maker project, this is the media that will start. You have a few options:
+
+        <ul>
+          <li>a YouTube URL</li>
+          <li>a Vimeo URL</li>
+          <li>a Soundcloud URL</li>
+          <li>a URL of a video or audio file on your own server</li>
+          <li> an animation, dummy player, or processing sketch (advanced)</li>
+        </ul>
+
+        &nbsp;&nbsp;You can change your timeline media later. Learn more about video formats.
+      </p>
+      <p>
+        3. <b>Finally, choose a template for your project.</b> The template provides a visual layout and is usually designed for a specific kind of project. <a href="" target="_blank">You can see the available templates here</a>.
+      </p>
+      <p>
+        You can also load your own, custom template by selecting "Other."
+      </p>
+      <p>
+       You can't change your template after you've started a project, so choose carefully.
+      </p>
+      <p>
+        When you click "create," your project will be created, and you'll enter the editor view.
+      </p>
+      <h1>Part IV: Exploring the editor view</h1>
+      <p>
+        There are 4 regions in the Popcorn Maker app. We'll go into detail on each one, but here's an overview:
+      </p>
+      <img src="../images/pmmanual/popcornmaker.png">
+      <p>
+        <b>Preview area</b> - With Popcorn Maker, What You See Is What You Get ("WYSIWYG"). So when you're in the editor view, you're seeing the project as it will be experienced by your viewers. 
+      </p>
+      <p>
+        (You can also hide the timeline and plug-ins tray by clicking the hide tab:) 
+      </p>
+      <img src="../images/pmmanual/tab.png">
+      <p>
+        <b>Timeline tray</b> - this is a representation of your timeline media. You can add events along this timeline by dragging from the plugins tray.
+      </p>
+      <p>
+        <b>Plugins tray</b> - this is a list of available plug-ins. Each plug-in will allow you to add some functionality to your project. 
+      </p>
+      <img src="../images/pmmanual/toolbox.png">
+      <p>
+        <b>Menu bar</b> - From the menu bar, you can create a new project, save or export the current project, load a saved project, or get help.
+      </p>
+      <h1>Part V: Adding events</h1>
+      <p>
+        So you've created a Popcorn Maker project. Let's start adding events to your timeline.
+      </p>
+      <p>
+        Let's say you have a video about a cat, and want to queue #cats tweets between 1 and 10 seconds.
+      </p>
+      <p>
+        1. Find the Twitter plugin:
+      </p>
+      <img src="../images/pmmanual/twitterclose.png">
+      <p>
+        2. Drag your chosen plugin into the timeline. You can adjust the timing of the event by moving it along the timeline, or extend the length of the event by dragging from the edges.
+      </p>
+      <img src="../images/pmmanual/timelineexample.png">
+      <p>
+        3. Double click on an event to edit it. Here's an example of a event editor dialogue:
+      </p>
+      <img src="../images/pmmanual/eventeditor.png">
+      <p>
+        Each plugin has its own editor dialogue, based on the functionality of that plugin. In this example, we're configuring the Twitter plugin to check for #cats tweets.
+      </p>
+      <p>
+      4. Lastly, <b>make sure your event is assigned to a "Target Container."</b> A target container is a region in the page where your event will take place. Each template has its own target containers-you can experiment with your template to see what works best.
+      </p>
+      <p>
+        So, we've chosen a plugin (Twitter), added it as an event to the timeline (between 1 and 10 seconds), and assigned a target container ("sample-div-1.")
+      </p>
+      <p>
+        <b>Result:</b> When you play the timeline media, a Twitter widget will appear between 1 and 10 seconds displaying the latest #cats tweets.
+      </p>
+      <p>
+        Because there are many plugins and templates, there are infinite variations and possibilities. No two Popcorn Maker projects will be the same. But the authoring pattern is always the same: choose a plugin, add it to the timeline, and configure the event.
+      </p>
+      <h1>Part VI. About tracks and containers</h1>
+      <p>
+        Note: this part of the app is in active development. Documentation may be out of date.
+      </p>
+      <p>
+        A Popcorn Maker project can have an infinite number of tracks.
+      </p>
+      <p>
+        Tracks help you, the creator, organize events in the way that seems most logical to you. Maybe you want one track to visualize all the Twitter events. Or maybe you want one track to visualize all the cat-related events. It's up to you.
+      </p>
+      <p>
+        When you mouse over the name of a track, you'll see options to edit or delete the track:
+      </p>
+      <img src="../images/pmmanual/track.png">
+      <p>
+        In the track editor, you can see the code for the events that you've assigned to the track. If you like, you can directly edit the code here. And you can copy and paste code across tracks-this is helpful if you're working on multiple versions of a project.
+      </p>
+      <img src="../images/pmmanual/butterdata.png">
+      <p>
+        Lastly, you can override the Target Container for all events on the track. This will make it so all events on the track with take place in the same region of the page.
+     </p>
+     <p>
+       But be careful: if you don't know what you're doing, you could mess up your project.
+     </p>
+     <h1>Part VI: Publishing your projects</h1>
+     <i>Note: this part of the app is in active development. Documentation may be out of date.</i>
+     <p>
+       First off-don't forget to save your projects constantly! Future versions of the app will offer autosave and even cloud storage of your projects, but for now you're responsible for saving your work.
+     </p>
+     <p>
+       To save your progress, click the save icon in the menubar:
+     </p>
+     <img src="../images/pmmanual/projectselect.png">
+     <p>
+       That will queue up the Save/Export Dialog:
+     </p>
+     <img src="../images/pmmanual/export.png">
+     <p>
+       Then click the save button.
+     </p>
+     <p>
+       From here, you can also grab the code that makes your project work. Popcorn Maker projects are 100% HTML, CSS, and Javascript-open web technologies that are human readable and easily hackable.
+     </p>
+     <p>
+       You can grab this code and host it anywhere on the web.
+     </p>
+     <p>
+       Future versions of the app will offer one-click download for all project files, so you can easily host yourself; embedding; and even one-click hosting. But for now, you need to manually grab the code for your project and re-publish it.
+     </p>
+     <h1>Advanced: Keyboard shortcuts</h1>
+     <i>Coming soon</i>
+     <h1>Advanced: About video formats</h1>
+     <i>Note: this part of the app is in active development. Documentation may be out of date.</i>
+     <p>
+       Popcorn Maker supports many forms of timeline media: YouTube, Vimeo, Soundcloud, and HTML5 media.
+     </p>
+     <p>
+       But Popcorn Maker works best with HTML5 media. That's because there are a ton of things that you just can't do with Flash media, like piping video through WebGL, exposing raw audio data, and other advanced browser capabilities.
+     </p>
+     <p>
+       As Popcorn Maker matures, it will begin to offer plugins that only work with HTML5 media.
+     </p>
+     <p>
+       To future proof your projects, make sure you're using HTML5 media. And to ensure that your HTML5 media work in any browser, you should offer multiple source files (though the app doesn't yet support alternate timeline media, so you'll have to do this manually by editing the final project code).
+     </p>
+     <p>
+       For video: offer WebM and H264 encoded versions.
+     </p>
+     <p>
+       For audio: offer Theora and MP3 encoded versions.
+     </p>
+     <p>
+       If you're having trouble loading a particular kind of timeline media, make sure your browser supports it. Safari won't load WebM media, for instance.
+     </p>
+     <h1>Advanced: Designing your own templates</h1>
+     <p>
+       The best part about Popcorn Maker is that it uses no proprietary or new technologies. It's 100 percent HTML, CSS, and Javascript.
+     </p>
+     <p>
+       So, if you're a web designer, you can design template and plugin combinations to create any kind of authoring environment you might want. The sky is the limit.
+     </p>
+     <p>
+       To get started, write your web page or web app using any combination of technologies. Add any necessary JavaScript—including custom Popcorn plugins, if desired. If you don't include a version of popcorn.js core, we'll include it for you.
+     </p>
+     <p>
+       Then, turn it into a Popcorn Maker template using simple markup: 
+     </p>
+     <p>
+       Give the DOM element that will host the timeline media the [ data-butter="media" ] attribute. Example:
+     </p> 
+     <p>
+       &lt;div data-butter="media" id="outerVideo" width="300" height="200" controls&gt; 
+     </p>
+     <p>
+       For any page region that will be affected Popcorn events, give the DOM element the [ data-butter="target" ] attribute. Example: 
+     </p>
+     <p>
+       &lt;div data-butter="target" id="leftBox"&gt;&lt;/div&gt; 
+     </p>
+     <p>
+       By marking up web pages with these two attributes, anyone who knows HTML can make simple templates. And if you want to get more advanced, you can write <b>custom Popcorn plugins with custom editor dialogues.</b>
+     </p>
+     <p>
+       Using a combination of template design and plugin design, you can create any kind of authoring environment you like.  
+     </p>
+     <p>
+       As with other open source communities-like WordPress.org-we hope that the pool of available templates and plugins will grow deeper and more advanced with time. We hope that you'll share your creations so others can build off of your code. <a href="" target="_blank">Read more about sharing templates and plugins.</a>
+     </p>
+     <h1>Part X: Writing your own Popcorn plugins</h1>
+     <i>Coming Soon</i>
+    </div>
+  </body>
+</html>

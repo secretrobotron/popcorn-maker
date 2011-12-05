@@ -37,15 +37,6 @@
         }
       }); //open-help
 
-      buttonManager.add( "user-manual", $('#_user_manual'), {
-        click: function() {
-          $('#popup-add-project').hide();
-          $("#help-popup .scroll-popup-container").animate({
-            left: '-700px'
-          }, 500);
-        }
-      }); //user-manual
-
       buttonManager.add( "publish-project", $( ".publish-project-btn" ), {
         click: function() {
           pm.currentProject.preview.fetchHTML( function( html ) {
