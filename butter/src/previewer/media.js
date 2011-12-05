@@ -14,22 +14,6 @@
       this.type = undefined;
       this.mediaElement = undefined;
 
-      var handlers = {};
-
-      this.setupPopcornHandlers = function( comm ) {
-        that.popcorn.media.addEventListener( "timeupdate", function() {
-          comm.send( that.popcorn.media.currentTime, "mediatimeupdate" );                
-        },false);
-        that.popcorn.media.addEventListener( "pause", function() {
-          comm.send( "paused", "log" );
-          comm.send( that.id, "mediapaused" );
-        }, false);
-        that.popcorn.media.addEventListener( "playing", function() {
-          comm.send( "playing", "log" );
-          comm.send( that.id, "mediaplaying" );
-        }, false);
-      }; //setupPopcornHandlers
-
       this.prepareMedia = function( type ) {
         if ( type === "object" ) {
           var mediaElement = document.getElementById( that.target );
@@ -219,24 +203,6 @@
         }
         that.popcornScript = undefined;
       }; //destroyPopcorn
-
-      this.addHandlers = function( comm, options ) {
-        for ( var name in options ) {
-          if ( options.hasOwnProperty( name ) ) {
-            handlers[ name ] = options[ name ];
-            comm.listen( name, handlers[ name ] );
-          } //if
-        } //for
-      }; //addHandlers
-
-      this.removeHandlers = function( comm ) {
-        for ( var name in handlers ) {
-          if ( handlers.hasOwnProperty( name ) ) {
-            comm.unlisten( name, handlers[ name ] );
-            delete handlers[ name ];
-          } //if
-        } //for
-      }; //removeHandlers
 
       this.waitForPopcorn = function( callback ) {
         var popcorn = that.popcorn;

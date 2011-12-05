@@ -1,7 +1,41 @@
 (function() {
   define( [ "core/logger", "core/eventmanager", "comm/comm", "previewer/link", "previewer/media" ], function( Logger, EventManager, Comm, Link, Media ) {
     var BasicLink = function( options ) {
-      var link, comm, butterMapping = {};
+      var link, comm, butterMapping = {}
+          mediaHandlers = {};
+
+      var addMediaHandlers = function( options ) {
+        for ( var name in options ) {
+          if ( options.hasOwnProperty( name ) ) {
+            mediaHandlers[ name ] = options[ name ];
+            comm.listen( name, mediaHandlers[ name ] );
+          } //if
+        } //for
+      }; //addMediaHandlers
+
+      this.removeMediaHandlers = function() {
+        for ( var name in mediaHandlers ) {
+          if ( mediaHandlers.hasOwnProperty( name ) ) {
+            comm.unlisten( name, mediaHandlers[ name ] );
+            delete mediaHandlers[ name ];
+          } //if
+        } //for
+      }; //removeMediaHandlers
+
+      var setupPopcornHandlers = function() {
+        var media = link.currentMedia;
+        media.popcorn.media.addEventListener( "timeupdate", function() {
+          comm.send( media.popcorn.media.currentTime, "mediatimeupdate" );                
+        },false);
+        media.popcorn.media.addEventListener( "pause", function() {
+          comm.send( "paused", "log" );
+          comm.send( media.id, "mediapaused" );
+        }, false);
+        media.popcorn.media.addEventListener( "playing", function() {
+          comm.send( "playing", "log" );
+          comm.send( media.id, "mediaplaying" );
+        }, false);
+      }; //setupPopcornHandlers
 
       var trackEventAddedHandler = function( e ) {
         var media = link.currentMedia;
@@ -28,11 +62,11 @@
 
       var mediaChangedHandler = function( e ) {
         if ( link.currentMedia ) {
-          link.currentMedia.removeHandlers( comm );
+          removeMediaHandlers( comm );
         }
         var currentMedia = link.currentMedia = link.getMedia( e.data.id );
         if ( currentMedia ) {
-          currentMedia.addHandlers( comm, {
+          addMediaHandlers({
             'trackeventadded': trackEventAddedHandler,
             'trackeventupdated': trackEventUpdatedHandler,
             'trackeventremoved': trackEventRemovedHandler,
@@ -154,7 +188,7 @@
           try {
             media.createPopcorn( media.generatePopcornString() );
             media.waitForPopcorn( function( popcorn ) {
-              media.setupPopcornHandlers( comm );
+              setupPopcornHandlers();
               callback( media );
             });
           }
