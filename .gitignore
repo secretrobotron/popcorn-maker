@@ -8,3 +8,4 @@ server/bin
 server/include
 server/lib
 assets
+.DS_Store
