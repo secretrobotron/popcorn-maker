@@ -2155,6 +2155,12 @@ p.desc
 .input-title-text
 {
 	font-weight: bolder;
+  font-size: 110%;
+}
+#template-description
+{
+  width: 360px; 
+  height: 1em;
 }
 .import-screen-toggle, .new-proj-screen-toggle
 {
