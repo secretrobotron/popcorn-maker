@@ -274,9 +274,10 @@ THE SOFTWARE.
           this.trackLine.listen( "trackeventclicked", function( e ) {
 
             var track = e.data.track,
-                trackEventObj = e.data.trackEvent;
+                trackLinerTrackEvent = e.data.trackEvent,
+                butterTrackEvent = currentMediaInstance.butterTrackEvents[ trackLinerTrackEvent.element.id ];
 
-            butter.targettedEvent = trackEventObj.options;
+            butter.targettedEvent = butterTrackEvent;
           });
 
           this.trackLine.listen( "trackeventdoubleclicked", function( e ) {
