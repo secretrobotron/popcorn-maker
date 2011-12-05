@@ -206,6 +206,26 @@
         }, false);
       };
 
+      var mediaTimeout;
+      this.createMediaTimeout = function() {
+        mediaTimeout = setTimeout( function() {
+          comm.send({
+            message: "Media timeout error",
+            context: "previewer::buildMedia",
+            type: "media-timeout"
+          }, "error" );
+        }, 10000 );
+      };
+
+      this.cancelMediaTimeout = function() {
+        mediaTimeout && clearTimeout( mediaTimeout );
+      };
+
+      comm.unlisten( 'createmediatimeout' );
+      comm.unlisten( 'cancelmediatimeout' );
+      comm.listen( 'createmediatimeout', that.createMediaTimeout );
+      comm.listen( 'cancelmediatimeout', that.cancelMediaTimeout );
+
       this.play = function() {
         currentMedia.popcorn.media.play();
       };

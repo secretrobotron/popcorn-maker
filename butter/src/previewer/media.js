@@ -31,6 +31,7 @@
       }; //setupPopcornHandlers
 
       this.prepareMedia = function( type, link ) {
+        link.createMediaTimeout();
         if ( type === "object" ) {
           var mediaElement = document.getElementById( that.target );
           if (  !mediaElement || [ 'AUDIO', 'VIDEO' ].indexOf( mediaElement.nodeName ) === -1 ) {

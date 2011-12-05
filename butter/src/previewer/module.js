@@ -106,9 +106,27 @@
               server.send( "link", "mute", "mute" );
             }; //mute
 
-            server.listen( "link", "error", function( error ) {
-              //logger.error( error.message );
-              butter.dispatch( "error", error );
+            butter.listen( "timeoutkeepwaiting", function() {
+              server.send( "link", "createmediatimeout", "createmediatimeout" );
+            });
+
+            butter.listen( "timeoutretryload", function() {
+              that.destroy();
+              previewIframe.src = "";
+              butter.dispatch( "previewerfail" );
+            });
+
+            server.listen( "link", "error", function( e ) {
+              if ( e.data.type === "media-loading" ) {
+                that.destroy();
+                previewIframe.src = "";
+                butter.dispatch( "previewerfail" );
+                onfail && onfail( that );
+              } else if ( e.data.type === "media-timeout" ){
+                butter.dispatch( "previewertimeout" );
+              } else {
+                butter.dispatch( { data: {} }, "error" );
+              }
             });
 
             server.listen( "link", "loaded", function( e ) {
@@ -131,15 +149,9 @@
                     butter.importProject( importData );
                   } //if
                   butter.dispatch( "previewready", that );
+                  server.send( "link", "cancelmediatimeout", "cancelmediatimeout" );
                   onload && onload( that );
                 } //if
-              });
-
-              server.listen( "link", "error", function( e ) {
-                that.destroy();
-                previewIframe.src = "";
-                butter.dispatch( "previewerfail" );
-                onfail && onfail( that );
               });
             });
 

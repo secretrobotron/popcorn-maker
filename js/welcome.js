@@ -26,9 +26,14 @@
         }, 500);
       });
 
+      pm.butter.listen( "previewertimeout", function() {
+        pm.toggleLoadingScreen( false );
+        popupManager.showPopup( "load-timeout" );
+      });
 
       buttonManager.add( "retry-load", $( "#retry-load"), {
         click: function() {
+          pm.toggleLoadingScreen( false );
           popupManager.showPopup( "add-project" );
         }
       });
@@ -39,10 +44,27 @@
           popupManager.showPopup( "add-project" );
         }
       });
+
       buttonManager.add( "wizard-create-new", $('.wizard-create-new-btn'), {
         click: function() {
           popupManager.hidePopups();
           popupManager.showPopup( "add-project" );
+        }
+      });
+
+      buttonManager.add( "timeout-retry-load", $( "#timeout-retry-load" ), {
+        click: function() {
+          pm.butter.dispatch( "timeoutretryload" );
+          popupManager.hidePopups();
+          popupManager.showPopup( "add-project" );
+        }
+      });
+
+      buttonManager.add( "timeout-keep-waiting", $( "#timeout-keep-waiting" ), {
+        click: function() {
+          popupManager.hidePopups();
+          pm.butter.dispatch( "timeoutkeepwaiting" );
+          pm.toggleLoadingScreen( true );
         }
       });
 
