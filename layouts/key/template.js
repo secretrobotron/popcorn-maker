@@ -8,23 +8,23 @@ ButterTemplate(function() {
     in the video to validate that it can play, which is
     a bad idea on many levels. Butter removes any <source>
     elements and sets a single src attribute.
-    
+
     In general, we should be using a different player, but
     for now, making this work by putting the source element
     back in place.
     */
-    
+
     var source, src, i, re,
       types = ['webm', 'mp4', 'ogg'];
-    
+
     if (typeof video === 'string') {
       video = document.getElementById(video);
     }
-    
+
     if (!video) {
       return;
     }
-    
+
     if (!video.children|| !video.children.length) {
       re = new RegExp('\\.(' + types.join('|') + ')$');
       source = document.createElement('source');
@@ -46,7 +46,7 @@ ButterTemplate(function() {
         }
       }
     }
-    
+
     var player = new VideoJS( video );
     return player;
   }
@@ -56,7 +56,7 @@ ButterTemplate(function() {
     if (!isNaN(time) && time > 0 && time < video.duration) {
       video.currentTime = time;
     }
-  
+
     //var videoJS = VideoJS.setup(video.id);
     var videoJS = prepareVideoPlayer(video.id);
     videoJS.width(940);
@@ -105,12 +105,12 @@ ButterTemplate(function() {
     seriouslyEvents++;
     updateSeriously();
   }
-  
+
   function teardownUpSeriouslyEvent(options) {
     seriouslyEvents--;
     updateSeriously();
   }
-  
+
   var butterMapping = [];
   var template = new ButterTemplate.Custom({
     loadFromData: function( importData ) {
@@ -123,8 +123,8 @@ ButterTemplate(function() {
             setUpVideoSize();
           } else {
             video.addEventListener('loadedmetadata', setUpVideoSize, false);
-          }							
-            
+          }
+
           popcorn = Popcorn( '#' + media.target, { frameAnimation: true } );
           if ( media.tracks ) {
             for ( var t=0; t<media.tracks.length; ++t ) {
@@ -159,7 +159,7 @@ ButterTemplate(function() {
         setUpVideoSize();
       } else {
         video.addEventListener('loadedmetadata', setUpVideoSize, false);
-      }							
+      }
 
       if ( template.link.currentMedia ) {
         template.link.removeMediaHandlers();
@@ -205,15 +205,21 @@ ButterTemplate(function() {
       if ( !link.getMedia( e.data.id ) ) {
         var media = new ButterTemplate.Media( e.data );
         link.addMedia( media );
-        media.prepareMedia( media.findMediaType() );
-        media.createPopcorn( media.generatePopcornString({
-          options: {
+        media.prepare({
+          popcornOptions: {
             frameAnimation: true
+          },
+          success: function( successOptions ) {
+            popcorn = successOptions.popcorn;
+            link.setupPopcornHandlers();
+            link.sendMedia( media );
+          },
+          timeout: function() {
+            link.sendTimeoutError( media );
+          },
+          error: function( e ) {
+            link.sendLoadError( e );
           }
-        }) );
-        media.waitForPopcorn( function( popcorn ) {
-        link.setupPopcornHandlers();
-          link.sendMedia( media );
         });
       }
     },

@@ -60,7 +60,7 @@ ButterTemplate(function() {
       popcorn[ trackEvent.type ]( trackEvent.popcornOptions );
     }
   }
-  
+
   var butterMapping = [];
   var template = new ButterTemplate.Custom({
     loadFromData: function( importData ) {
@@ -130,16 +130,21 @@ ButterTemplate(function() {
       if ( !link.getMedia( e.data.id ) ) {
         var media = new ButterTemplate.Media( e.data );
         link.addMedia( media );
-        media.prepareMedia( media.findMediaType() );
-        media.createPopcorn( media.generatePopcornString({
-          options: {
+        media.prepare({
+          popcornOptions: {
             frameAnimation: true
+          },
+          success: function( successOptions ) {
+            popcorn = successOptions.popcorn;
+            link.setupPopcornHandlers();
+            link.sendMedia( media );
+          },
+          timeout: function() {
+            link.sendTimeoutError( media );
+          },
+          error: function( e ) {
+            link.sendLoadError( e );
           }
-        }) );
-        media.waitForPopcorn( function( p ) {
-          popcorn = p;
-          link.setupPopcornHandlers();
-          link.sendMedia( media );
         });
       }
     },

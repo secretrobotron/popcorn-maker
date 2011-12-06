@@ -68,6 +68,8 @@
         _popupManager.addPopup( "change-media", "#change-media-popup" );
         _popupManager.addPopup( "edit-track", "#edit-track-popup" );
         _popupManager.addPopup( "delete-track", "#delete-track-popup" );
+        _popupManager.addPopup( "load-failed", "#load-failed-popup" );
+        _popupManager.addPopup( "load-timeout", "#media-timeout-popup" );
 
         _loadingOverlay = $( "#loading-overlay" );
         _loadingOverlay.hide();
@@ -174,6 +176,7 @@
         if ( that.currentProject.preview ) {
           that.currentProject.preview.destroy();
           delete that.currentProject.preview;
+          delete that.currentProject.template;
         } //if
       }; //destroyCurrentPreview
 
@@ -290,10 +293,16 @@
             if ( previewOptions.onload ) {
               previewOptions.onload( preview );
             }
+            _popupManager.hidePopups();
             $('.tiny-scroll').tinyscrollbar();
             that.toggleLoadingScreen( false );
             that.toggleKeyboardFunctions( true );
-          } //onload
+          }, //onload
+          onfail: function( preview ) {
+            that.toggleLoadingScreen( false );
+            that.toggleKeyboardFunctions( true );
+            _popupManager.showPopup( "load-failed" );
+          }
         }); //Preview
       }; //createPreview
 
