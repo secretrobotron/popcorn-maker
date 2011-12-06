@@ -1480,7 +1480,7 @@ p.copyright a:last-child
 {
 	float: left;
 	padding: 20px 0;
-	width: 350px;
+	width: 600px;
 }
 #welcome-popup .left-div p.desc
 {
@@ -1492,16 +1492,14 @@ p.copyright a:last-child
 }
 #welcome-popup .left-div ul
 {
-	overflow: visible;
+
 	text-align: left;
 }
 #welcome-popup .left-div li
 {
 	font-size: 17px;
-	margin-bottom: 20px;
+
 	min-height: 55px;
-	padding: 5px 0 0 65px;
-	position: relative;
 }
 #welcome-popup .left-div li span
 {
@@ -1522,16 +1520,7 @@ p.copyright a:last-child
 	webkit-border-radius: 30px;
 	width: 50px;
 }
-#welcome-popup .save-btn,#welcome-popup .add-btn
-{
-	display: inline-block;
-	float: none;
-	margin: 10px 10px 0;
-}
-#welcome-popup .save-btn
-{
-	margin-top: -8px;
-}
+
 #welcome-popup .left-div li a
 {
 	color: #80BA4E;
@@ -1544,7 +1533,7 @@ p.copyright a:last-child
 #welcome-popup .left-div li img
 {
 	float: right;
-	margin: -22px -15px 0 0;
+	margin: -22px -30px 0 0;
 }
 #welcome-popup .left-div li p
 {
