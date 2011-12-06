@@ -54,13 +54,13 @@
 
       Object.defineProperty( this, "isMediaBroken", {
         get: function() {
-          return Object.keys( mediaErrorState ).length > 0;
+          return Object.keys( that.currentProject.mediaErrorState ).length > 0;
         }
       });
 
       Object.defineProperty( this, "mediaAccessAllowed", {
         get: function() {
-          return that.isMediaBroken
+          return !that.isMediaBroken
             && that.currentProject.initialized
             && that.currentProject.preview
             && that.currentProject.template;
