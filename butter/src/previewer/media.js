@@ -35,7 +35,7 @@
       this.prepare = function( prepareOptions ) {
         var onSuccess = prepareOptions.success || function() {},
             onError = prepareOptions.error || function() {},
-            onTimeout = prepareOptions.timeout || onError
+            onTimeout = prepareOptions.timeout || onError,
             popcornOptions = prepareOptions.popcornOptions;
 
         function popcornSuccess( popcorn ) {
