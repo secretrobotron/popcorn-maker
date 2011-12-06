@@ -10,13 +10,13 @@
 
 		If you want to add any of your own files, either remove the base tag
 		and make sure all the scripts refer to the right absolute URLs, or
-		set your own references to be absolute URLs on your server. 
+		set your own references to be absolute URLs on your server.
 		-->
 		<!--
 		<base href="http://mozillapopcorn.org/maker/layouts/pop/"/>
 		-->
 		<style type="text/css">
-		
+
 		body {
 			background: none repeat scroll 0 0 #FFFFFF;
 			color: #333333;
@@ -25,15 +25,15 @@
 			margin: 0;
 			padding: 0;
 		}
-		
+
 		.clearfix {
 			display: block;
 		}
-		
+
 		/*
 			begin custom styles for Popcorn/Seriously
 		*/
-		
+
 		#scale-buttons {
 			position: fixed;
 			right: 35px;
@@ -47,17 +47,17 @@
 			width: 768px;
 			margin: 1em auto;
 		}
-		
+
 		#video-container .vjs-big-play-button,
 		#video-container .vjs-controls,
 		#video-container .vjs-styles-check {
 			z-index: 202;
 		}
-		
+
 		#video-container .vjs-spinner {
 			z-index: 201;
 		}
-		
+
 		/* disable full screen button */
 		#video-container .vjs-fullscreen-control {
 			display: none;
@@ -80,7 +80,7 @@
 			display: block;
 			width: 100%;
 		}
-		
+
 		#video-container {
 			font-size: 20px;
 			line-height: normal;
@@ -89,7 +89,7 @@
 		#video-container > div {
 			line-height: normal;
 		}
-		
+
 		#pop-container > div {
 			/* default position */
 			position: absolute;
@@ -108,12 +108,13 @@
 		</div>
 		<div id="video-container" class="video-js-box">
 			<video id="video" preload class="video-js" data-butter="media" controls>
-				<source src="http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm" type='video/webm; codecs="vp8, vorbis"'/>
 			</video>
 			<div id="pop-container" data-butter="target"></div>
 		</div>
 	</body>
 	<script type="text/javascript" src="../../lib/popcorn/popcorn.js"></script>
+	<script type="text/javascript" src="../../lib/popcorn/popcorn.vimeo.js"></script>
+	<script type="text/javascript" src="../../lib/popcorn/popcorn.youtube.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.pop.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.words.js"></script>
   <script type="text/javascript" src="../../butter/src/previewer/butter.previewer.js"></script>
@@ -125,17 +126,17 @@
 	Credit: Herbert Boland
 	URL: http://www.freesound.org/people/HerbertBoland/sounds/33369/
 	CC: By
-	
+
 	Record Scratch #1 - "scratch23.wav"
 	Credit: JaZzy JunGgle
 	URL: http://www.freesound.org/people/junggle/sounds/29942/
 	CC:  Sample + By
-	
+
 	Video Game Blip #1 - "bump.wav"
 	Credit: StaneStane
 	http://www.freesound.org/people/StaneStane/sounds/73562/
 	CC: By
-	
+
 	Video Game Death #1 - "tape_slow9.wav"
 	Credit: zerolagtime
 	URL: http://www.freesound.org/people/zerolagtime/sounds/49246/

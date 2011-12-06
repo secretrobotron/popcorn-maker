@@ -10,13 +10,13 @@
 
 		If you want to add any of your own files, either remove the base tag
 		and make sure all the scripts refer to the right absolute URLs, or
-		set your own references to be absolute URLs on your server. 
+		set your own references to be absolute URLs on your server.
 		-->
 		<!--
 		<base href="http://mozillapopcorn.org/maker/layouts/map/"/>
 		-->
 		<style type="text/css">
-		
+
 		body {
 			color: #222;
 			background-color: #aaa;
@@ -42,17 +42,17 @@
 		#video {
 			width: 100%;
 		}
-		
+
 		#video-container .vjs-big-play-button,
 		#video-container .vjs-controls,
 		#video-container .vjs-styles-check {
 			z-index: 202;
 		}
-		
+
 		#video-container .vjs-spinner {
 			z-index: 201;
 		}
-		
+
 		/* disable full screen button */
 		#video-container .vjs-fullscreen-control {
 			display: none;
@@ -75,7 +75,7 @@
 			display: block;
 			width: 100%;
 		}
-		
+
 		#video-container {
 			font-size: 20px;
 			line-height: normal;
@@ -84,7 +84,7 @@
 		#video-container > div {
 			line-height: normal;
 		}
-		
+
 		#pop-container > div {
 			/* default position */
 			position: absolute;
@@ -109,7 +109,7 @@
 			-ie-transition-delay: 0s, 0.4s;
 			transition-delay: 0s, 0.4s;
 		}
-		
+
 		.popcorn-map.active {
 			opacity: 1;
 			-moz-transition-delay: 0s;
@@ -129,7 +129,6 @@
 			<div id="main-container">
 				<div id="video-container" class="video-js-box" data-butter="target">
 					<video id="video" preload class="video-js" data-butter="media" controls>
-						<source src="http://videos-cdn.mozilla.net/serv/webmademovies/Moz_Doc_0329_GetInvolved_ST.webm" type='video/webm; codecs="vp8, vorbis"'/>
 					</video>
 				</div>
 			</div>
@@ -137,6 +136,8 @@
 	</body>
 	<script type="text/javascript" src="external/video.js"></script>
 	<script type="text/javascript" src="../../lib/popcorn/popcorn.js"></script>
+  <script type="text/javascript" src="../../lib/popcorn/popcorn.vimeo.js"></script>
+	<script type="text/javascript" src="../../lib/popcorn/popcorn.youtube.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.words.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.lightbox.js"></script>
 	<script type="text/javascript" src="../shared/js/popcorn.map.js"></script>

@@ -62,6 +62,7 @@
       $('li.edit a.edit-timeline-media').click(function(){
         pm.popupManager.hidePopups();
         $('#url').val( pm.butter.currentMedia.url );
+        pm.state = "change-media";
         pm.popupManager.showPopup( "change-media" );
       });
 
@@ -133,7 +134,7 @@
 
       var zoom = function( delta ) {
 
-        if ( pm.currentProject.preview ) {
+        if ( pm.mediaAccessAllowed ) {
           var newZoom = butter.timeline.zoom( delta ),
               scrubberLeft = checkScrubber();
 
@@ -152,7 +153,7 @@
 
       var mouseEvent = function( event ) {
 
-        if ( pm.currentProject.preview && event.shiftKey ) {
+        if ( pm.mediaAccessAllowed && event.shiftKey ) {
 
           event.preventDefault();
           slideValue = zoom( event.detail || event.wheelDelta );
@@ -166,7 +167,7 @@
 
       tracksDiv.addEventListener( "scroll", function( event ) {
 
-        if ( pm.currentProject.preview ) {
+        if ( pm.mediaAccessAllowed ) {
           var scrubberLeft = checkScrubber();
 
           if ( scrubberLeft - 5 > scrubberContainer.offsetWidth || scrubberLeft < 0 ) {
@@ -183,7 +184,7 @@
 
       scrubberContainer.addEventListener( "mousedown", function( event ) {
 
-        if ( pm.currentProject.preview ) {
+        if ( pm.mediaAccessAllowed ) {
 
           scrubberClicked = true;
           butter.targettedEvent = undefined;
@@ -198,7 +199,7 @@
 
       document.addEventListener( "mousemove", function( event ) {
 
-        if ( scrubberClicked && pm.currentProject.preview ) {
+        if ( scrubberClicked && pm.mediaAccessAllowed ) {
 
           var scrubberPos = event.pageX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft;
 
@@ -458,7 +459,7 @@
       }, false);
 
       document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "click", function( event ) {
-        if ( pm.currentProject.preview ) {
+        if ( pm.mediaAccessAllowed ) {
           pm.currentProject.preview.playing ? pm.currentProject.preview.pause() : pm.currentProject.preview.play();
         } //if
       }, false);

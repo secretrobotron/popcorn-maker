@@ -145,27 +145,19 @@
         } //isPopcornReady
 
         function popcornIsReady() {
-          media.clearPopcorn();
-          media.destroyPopcorn();
-          if ( media.target ) {
-            document.getElementById( media.target ).innerHTML = "";
-          } //if
-          media.prepareMedia( media.findMediaType() );
-          try {
-            media.createPopcorn( media.generatePopcornString() );
-            media.waitForPopcorn( function( popcorn ) {
+          media.clear();
+          media.prepare({
+            success: function( successOptions ) {
               link.setupPopcornHandlers();
               callback( media );
-            });
-          }
-          catch( e ) {
-            comm.send({
-              message: "Couldn't instantiate popcorn instance: [" + e.fileName + ": " + e.message + "]",
-              context: "previewer::buildMedia::popcornIsReady",
-              type: "popcorn-initialization",
-              error: JSON.stringify( e )
-            }, "error" );
-          } //try
+            },
+            timeout: function() {
+              link.sendTimeoutError( media );
+            },
+            error: function( e ) {
+              link.sendLoadError( e );
+            }
+          });
         } //popcornIsReady
 
         if ( !window.Popcorn ) {
@@ -187,7 +179,7 @@
       link.scrape();
 
     }; //BasicLink
-    
+
     return BasicLink;
 
   }); //define

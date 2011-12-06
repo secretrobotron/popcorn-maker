@@ -14,13 +14,64 @@
       this.type = undefined;
       this.mediaElement = undefined;
 
-      this.prepareMedia = function( type ) {
+      var _interruptLoad = false
+          _mediaLoadAttempts = 0;
+      this.interruptLoad = function() {
+        _interruptLoad = true;
+      }; //interrupt
+
+      this.waitForMedia = function() {
+        _mediaLoadAttempts = 0;
+      }; //waitForMedia
+
+      this.clear = function() {
+        that.clearPopcorn();
+        that.destroyPopcorn();
+        if ( that.target ) {
+          document.getElementById( that.target ).innerHTML = "";
+        } //if
+      }; //clear
+
+      this.prepare = function( prepareOptions ) {
+        var onSuccess = prepareOptions.success || function() {},
+            onError = prepareOptions.error || function() {},
+            onTimeout = prepareOptions.timeout || onError,
+            popcornOptions = prepareOptions.popcornOptions;
+
+        function timeoutWrapper( e ) {
+          _interruptLoad = true;
+          onTimeout( e );
+        } //timeoutWrapper
+
+        function failureWrapper( e ) {
+          _interruptLoad = true;
+          onError( e );
+        } //failureWrapper
+        
+        function popcornSuccess( popcorn ) {
+          onSuccess({
+            popcorn: popcorn
+          });
+        } //popcornSuccess
+
+        that.prepareMedia( that.findMediaType(), failureWrapper );
+        try {
+          that.createPopcorn( that.generatePopcornString( { options: popcornOptions } ) );
+          that.waitForPopcorn( popcornSuccess, timeoutWrapper, 100 );
+        }
+        catch( e ) {
+          failureWrapper( e );
+        } //try
+      }; //prepare
+
+      this.prepareMedia = function( type, onError ) {
         if ( type === "object" ) {
           var mediaElement = document.getElementById( that.target );
           if (  !mediaElement || [ 'AUDIO', 'VIDEO' ].indexOf( mediaElement.nodeName ) === -1 ) {
             var video = document.createElement( "video" ),
                 src = document.createElement( "source" );
 
+            src.addEventListener( "error", onError );
             src.src = that.url;
             video.style.width = document.getElementById( that.target ).style.width;
             video.style.height = document.getElementById( that.target ).style.height;
@@ -46,13 +97,8 @@
             while ( mediaElement.firstChild ) {
               mediaElement.removeChild( mediaElement.firstChild );
             } //while
-            //if ( !mediaElement.firstChild || !mediaElement.currentSrc ) {
             mediaElement.removeAttribute( "src" );
-            /*
-            var src = document.createElement( "source" );
-            src.src = that.url;
-            mediaElement.appendChild( src );
-            */
+            mediaElement.addEventListener( "error", onError );
             mediaElement.src = that.url;
             mediaElement.load();
             //}
@@ -72,7 +118,7 @@
             if ( node ) {
               return node;
             } //if
-          } //if 
+          } //if
         } //for
       } //findNode
 
@@ -127,7 +173,7 @@
           },
           "object": function() {
             return "var popcorn = Popcorn( '#" + that.mediaElement.id + "'" + popcornOptions + ");\n";
-          } 
+          }
         };
 
         // call certain player function depending on the regexResult
@@ -159,7 +205,7 @@
           popcornString += "\n},false);";
         }
         else {
-          popcornString = popcornString + "\n return popcorn;"; 
+          popcornString = popcornString + "\n return popcorn;";
         } //if
 
         return popcornString;
@@ -204,42 +250,39 @@
         that.popcornScript = undefined;
       }; //destroyPopcorn
 
-      this.waitForPopcorn = function( callback ) {
+      this.waitForPopcorn = function( callback, timeoutCallback, tries ) {
         var popcorn = that.popcorn;
 
+        _mediaLoadAttempts = 0;
+        _interruptLoad = false;
+
         var checkMedia = function() {
-          if ( that.type === "youtu" ) {
-            popcorn.media.addEventListener( "durationchange", function( e ) {
+          ++_mediaLoadAttempts;
+          if ( tries !== undefined && _mediaLoadAttempts === tries ) {
+            if ( timeoutCallback ) {
+              timeoutCallback();
+            } //if
+          } //if
+          if ( _interruptLoad ) {
+            return;
+          } //if
+          if ( popcorn.media.readyState >= 2 && popcorn.duration() > 0 ) {
+            if ( that.type === "youtu" ) {
               that.duration = popcorn.duration();
               setTimeout( function() {
-                popcorn.pause( 0 );
-                callback( popcorn );
-              },1000 );
-            });
-          }
-          else if( that.type === "vimeo" ) {
-            popcorn.media.addEventListener( "durationchange", function( e ) {
+                popcorn.pause();
+              }, 1000 );
+            }
+            else if ( that.type === "vimeo" || that.type === "soundcloud" ) {
               that.duration = popcorn.duration();
-              callback( popcorn );
-            });
-          }
-          else if( that.type === "soundcloud" ) {
-            if ( popcorn.duration() === 0 ) {
-              that.duration = popcorn.duration();
-              callback( popcorn );
             }
             else {
-              setTimeout( checkMedia, 100 );
-            }
-          }
-          else {
-            if( popcorn.media.readyState >= 2 || popcorn.media.duration > 0 ) {
               that.duration = popcorn.media.duration;
-              callback( popcorn );
-            } else {
-              setTimeout( checkMedia, 100 );
-            }
-          }
+            } //if
+            callback( popcorn );
+          } else {
+            setTimeout( checkMedia, 100 );
+          } //if
         }
         checkMedia();
       }; //waitForPopcorn

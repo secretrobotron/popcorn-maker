@@ -51,16 +51,31 @@
           mediaRemovedHandler = options.onmediaremoved || function() {},
           fetchHTMLHandler = options.onfetchhtml || function() {};
 
-      comm.listen( 'mediachanged', mediaChangedHandler );
-      comm.listen( 'mediaadded', mediaAddedHandler );
-      comm.listen( 'mediaremoved', mediaRemovedHandler );
-      comm.listen( 'mediatimeupdate', mediaTimeUpdateHandler );
-      comm.listen( 'mediacontentchanged', mediaContentChangedHandler );
+      comm.listen( "mediachanged", mediaChangedHandler );
+      comm.listen( "mediaadded", mediaAddedHandler );
+      comm.listen( "mediaremoved", mediaRemovedHandler );
+      comm.listen( "mediatimeupdate", mediaTimeUpdateHandler );
+      comm.listen( "mediacontentchanged", mediaContentChangedHandler );
+
+      comm.listen( "destroy", function( e ) {
+        for ( var m in medias ) {
+          if ( medias.hasOwnProperty( m ) ) {
+            medias[ m ].interruptLoad();
+          } //if
+        } //for 
+      });
+
+      comm.listen( "waitformedia", function( e ) {
+        var media = medias[ e.data ];
+        if ( media ) {
+          media.waitForMedia();
+        } //if
+      });
 
       comm.returnAsync( "linktype", function() {
         return linkType;
       });
-      
+
       comm.returnAsync( 'html', fetchHTMLHandler );
 
       Object.defineProperty( this, "comm", {
@@ -143,8 +158,8 @@
               // add it to butters target list with a respective type
               if ( thisChild.getAttribute ) {
                 if( thisChild.getAttribute( "data-butter" ) === "target" ) {
-                  comm.send( { 
-                    name: thisChild.id, 
+                  comm.send( {
+                    name: thisChild.id,
                     type: "target"
                   }, "addtarget" );
                 }
@@ -153,7 +168,7 @@
 
                     var mediaSourceUrl = defaultMedia;
                     //var mediaSourceUrl = thisChild.currentSrc;
-                    
+
                     comm.send({
                       target: thisChild.id,
                       url: mediaSourceUrl,
@@ -174,13 +189,13 @@
                       }
                     }
 
-                    comm.send( { 
-                      target: thisChild.id, 
-                      url: vidUrl 
+                    comm.send( {
+                      target: thisChild.id,
+                      url: vidUrl
                     }, "addmedia" );
 
                   }
-                } // else 
+                } // else
               } //if
 
               if ( thisChild.children && thisChild.children.length > 0 ) {
@@ -227,6 +242,31 @@
 
       }; //scrape
 
+      this.sendTimeoutError = function( media ) {
+        comm.send( media.id, "mediatimeout" );
+      }; //sendTimeoutError
+
+      this.sendLoadError = function( e ) {
+        that.sendError({
+          message: "Error loading media.",
+          type: "media-loading",
+          error: "Error loading media."
+        });
+      }; //sendLoadError
+
+      this.sendError = function( errorOptions ) {
+        comm.send({
+          message: errorOptions.message,
+          context: errorOptions.context,
+          type: errorOptions.type,
+          error: JSON.stringify( errorOptions.error || "" )
+        }, "error" );
+      }; //sendError
+
+      this.cancelMediaTimeout = function() {
+        mediaTimeout && clearTimeout( mediaTimeout );
+      };
+
       this.play = function() {
         currentMedia.popcorn.media.play();
       };
@@ -238,7 +278,7 @@
       this.pause = function() {
         currentMedia.popcorn.media.pause();
       };
-        
+
       this.mute = function() {
         currentMedia.popcorn.media.muted = !currentMedia.popcorn.media.muted;
       };

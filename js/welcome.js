@@ -32,6 +32,7 @@
           popupManager.showPopup( "add-project" );
         }
       });
+
       buttonManager.add( "wizard-create-new", $('.wizard-create-new-btn'), {
         click: function() {
           popupManager.hidePopups();

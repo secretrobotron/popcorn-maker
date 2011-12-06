@@ -69,15 +69,17 @@
         if ( !link.getMedia( e.data.id ) ) {
           var media = new ButterTemplate.Media( e.data );
           link.addMedia( media );
-          media.prepareMedia( media.findMediaType() );
-          media.createPopcorn( media.generatePopcornString({
-            options: {
-              frameAnimation: true
+          media.prepare({
+            success: function( successOptions ) {
+              link.setupPopcornHandlers();
+              callback( media );
+            },
+            timeout: function() {
+              link.sendTimeoutError( media );
+            },
+            error: function( e ) {
+              link.sendLoadError( e );
             }
-          }) );
-          media.waitForPopcorn( function( popcorn ) {
-            link.setupPopcornHandlers();
-            link.sendMedia( media );
           });
         }
       },
