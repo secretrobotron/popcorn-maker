@@ -63,13 +63,15 @@
 
       buttonManager.add( "save-project", $(".save-project-btn"), {
         click: function() {
-          pm.currentProject.preview.fetchHTML( function( html ) {
-            popupManager.hidePopups();
-            $('#export-data').val( html );
-            var safeTitle = utils.getSafeString( pm.currentProject.title );
-            $saveProjectTitleInput.val( safeTitle );
-            popupManager.showPopup( "save" );
-          });
+          if ( pm.currentProject && pm.currentProject.preview ) {
+            pm.currentProject.preview.fetchHTML( function( html ) {
+              popupManager.hidePopups();
+              $('#export-data').val( html );
+              var safeTitle = utils.getSafeString( pm.currentProject.title );
+              $saveProjectTitleInput.val( safeTitle );
+              popupManager.showPopup( "save" );
+            });
+          } //if
         }
       }); //save-project-btn
 

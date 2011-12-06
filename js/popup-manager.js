@@ -86,7 +86,7 @@
         }
 
         if ( options.onClose && typeof options.onClose === "function" ) {
-          var closebtn = popup.children( "a.popup-close-btn" );
+          var closebtn = popup.children( ".popup-close-btn" );
           closebtn && closebtn.click( function() {
             $( this ).unbind( "click" );
             options.onClose();

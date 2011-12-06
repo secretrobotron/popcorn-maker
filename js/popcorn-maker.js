@@ -86,7 +86,10 @@
 
         _timeline.showTools();
         _popupManager.hidePopups();
-        _popupManager.showPopup( "welcome" );
+        _popupManager.showPopup( "welcome", {
+          onClose: function(){
+          }
+        });
       }; //init
 
       Object.defineProperty( that, "popupManager", { get: function() { return _popupManager; } } );

@@ -127,30 +127,32 @@
         max: 7,
         step: 1,
         slide: function( event, ui ) {
-
           slideValue = zoom( slideValue - ui.value );
         }
       });
 
       var zoom = function( delta ) {
 
-        var newZoom = butter.timeline.zoom( delta ),
-            scrubberLeft = checkScrubber();
+        if ( pm.currentProject.preview ) {
+          var newZoom = butter.timeline.zoom( delta ),
+              scrubberLeft = checkScrubber();
 
-        if ( scrubberLeft - 5 > scrubberContainer.offsetWidth || scrubberLeft < 0 ) {
-          scrubber.style.display = "none";
-        } else {
-          scrubber.style.display = "block";
+          if ( scrubberLeft - 5 > scrubberContainer.offsetWidth || scrubberLeft < 0 ) {
+            scrubber.style.display = "none";
+          } else {
+            scrubber.style.display = "block";
+          }
+
+          drawCanvas();
+
+          return newZoom;
         }
-
-        drawCanvas();
-
-        return newZoom;
+        return 0;
       };
 
       var mouseEvent = function( event ) {
 
-        if ( event.shiftKey ) {
+        if ( pm.currentProject.preview && event.shiftKey ) {
 
           event.preventDefault();
           slideValue = zoom( event.detail || event.wheelDelta );
@@ -164,24 +166,29 @@
 
       tracksDiv.addEventListener( "scroll", function( event ) {
 
-        var scrubberLeft = checkScrubber();
+        if ( pm.currentProject.preview ) {
+          var scrubberLeft = checkScrubber();
 
-        if ( scrubberLeft - 5 > scrubberContainer.offsetWidth || scrubberLeft < 0 ) {
-          scrubber.style.display = "none";
-        } else {
-          scrubber.style.display = "block";
-        }
+          if ( scrubberLeft - 5 > scrubberContainer.offsetWidth || scrubberLeft < 0 ) {
+            scrubber.style.display = "none";
+          } else {
+            scrubber.style.display = "block";
+          }
 
-        document.getElementById( "timing-notches-canvas" ).style.left = -tracksDiv.scrollLeft + "px";
+          document.getElementById( "timing-notches-canvas" ).style.left = -tracksDiv.scrollLeft + "px";
+        } //if
       }, false );
 
       var scrubberClicked = false;
 
       scrubberContainer.addEventListener( "mousedown", function( event ) {
 
-        scrubberClicked = true;
-        butter.targettedEvent = undefined;
-        butter.timeline.currentTimeInPixels( event.clientX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft );
+        if ( pm.currentProject.preview ) {
+
+          scrubberClicked = true;
+          butter.targettedEvent = undefined;
+          butter.timeline.currentTimeInPixels( event.clientX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft );
+        }
       }, false);
 
       document.addEventListener( "mouseup", function( event ) {
@@ -191,7 +198,7 @@
 
       document.addEventListener( "mousemove", function( event ) {
 
-        if ( scrubberClicked ) {
+        if ( scrubberClicked && pm.currentProject.preview ) {
 
           var scrubberPos = event.pageX - scrubberContainer.offsetLeft - 22 + tracksDiv.scrollLeft;
 
@@ -451,7 +458,9 @@
       }, false);
 
       document.getElementsByClassName( "play-btn" )[ 0 ].addEventListener( "click", function( event ) {
-        pm.currentProject.preview.playing ? pm.currentProject.preview.pause() : pm.currentProject.preview.play();
+        if ( pm.currentProject.preview ) {
+          pm.currentProject.preview.playing ? pm.currentProject.preview.pause() : pm.currentProject.preview.play();
+        } //if
       }, false);
 
       butter.listen( "mediaplaying", function( event ) {

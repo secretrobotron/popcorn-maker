@@ -73,7 +73,9 @@
       }; //unbind
 
       this.toggle = function( name, state ) {
-        buttons[ name ].setAttribute( "disabled", "true" );
+        if ( buttons[ name ] ) {
+          $( buttons[ name ].button ).attr( "disabled", "true" );
+        } //if
       }; //toggle
 
       this.init = function() {
