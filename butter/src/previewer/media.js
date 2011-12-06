@@ -256,38 +256,23 @@
           if ( _interruptLoad ) {
             return;
           } //if
-          if ( that.type === "youtu" ) {
-            popcorn.media.addEventListener( "durationchange", function( e ) {
+          if ( popcorn.media.readyState >= 2 && popcorn.duration() > 0 ) {
+            if ( that.type === "youtu" ) {
               that.duration = popcorn.duration();
               setTimeout( function() {
-                popcorn.pause( 0 );
-                callback( popcorn );
+                popcorn.pause();
               }, 1000 );
-            });
-          }
-          else if( that.type === "vimeo" ) {
-            popcorn.media.addEventListener( "durationchange", function( e ) {
+            }
+            else if ( that.type === "vimeo" || that.type === "soundcloud" ) {
               that.duration = popcorn.duration();
-              callback( popcorn );
-            });
-          }
-          else if( that.type === "soundcloud" ) {
-            if ( popcorn.duration() === 0 ) {
-              that.duration = popcorn.duration();
-              callback( popcorn );
             }
             else {
-              setTimeout( checkMedia, 100 );
-            }
-          }
-          else {
-            if( popcorn.media.readyState >= 2 || popcorn.media.duration > 0 ) {
               that.duration = popcorn.media.duration;
-              callback( popcorn );
-            } else {
-              setTimeout( checkMedia, 100 );
-            }
-          }
+            } //if
+            callback( popcorn );
+          } else {
+            setTimeout( checkMedia, 100 );
+          } //if
         }
         checkMedia();
       }; //waitForPopcorn
