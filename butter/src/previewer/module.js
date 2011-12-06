@@ -108,8 +108,6 @@
 
             server.listen( "link", "error", function( e ) {
               if ( e.data.type === "media-loading" ) {
-                that.destroy();
-                previewIframe.src = "";
                 butter.dispatch( "previewerfail" );
                 onfail && onfail( that );
               } else {

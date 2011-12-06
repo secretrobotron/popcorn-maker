@@ -38,19 +38,24 @@
             onTimeout = prepareOptions.timeout || onError,
             popcornOptions = prepareOptions.popcornOptions;
 
+        function failureWrapper( e ) {
+          _interruptLoad = true;
+          onError( e );
+        } //failureWrapper
+        
         function popcornSuccess( popcorn ) {
           onSuccess({
             popcorn: popcorn
           });
         } //popcornSuccess
 
-        that.prepareMedia( that.findMediaType(), onError );
+        that.prepareMedia( that.findMediaType(), failureWrapper );
         try {
           that.createPopcorn( that.generatePopcornString( { options: popcornOptions } ) );
           that.waitForPopcorn( popcornSuccess, onTimeout, 100 );
         }
         catch( e ) {
-          onError( e );
+          failureWrapper( e );
         } //try
       }; //prepare
 

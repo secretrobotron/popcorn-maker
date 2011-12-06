@@ -15,33 +15,67 @@
       // force the iframe's source to be nothing
       previewIframe.src = '';
 
+      var failureState = false;
+
       pm.butter.listen( "previewerfail", function() {
+        failureState = true;
         pm.toggleLoadingScreen( false );
+        popupManager.hidePopups();
         popupManager.showPopup( "load-failed" );
       });
 
       var timedOutMedia;
       pm.butter.listen( "previewertimeout", function( e ) {
-        timedOutMedia = e.data;
-        pm.toggleLoadingScreen( false );
-        popupManager.showPopup( "load-timeout" );
+        if ( !failureState ) {
+          pm.currentProject.mediaErrorState[ e.data ] = "timeout";
+          timedOutMedia = e.data;
+          pm.toggleLoadingScreen( false );
+          popupManager.hidePopups();
+          popupManager.showPopup( "load-timeout" );
+        } //if
+      });
+
+      pm.butter.listen( "mediaadded", function( e ) {
+        failureState = false;
+      });
+
+      pm.butter.listen( "mediacontentchanged", function( e ) {
+        failureState = false;
+      });
+
+      pm.butter.listen( "mediaready", function( e ) {
+        delete pm.currentProject.mediaErrorState[ e.data.id ];
+        pm.state = "ready";
+        failureState = false;
       });
 
       buttonManager.add( "retry-load", $( "#retry-load" ), {
         click: function() {
-          pm.destroyCurrentPreview();
-          pm.toggleLoadingScreen( false );
           popupManager.hidePopups();
-          popupManager.showPopup( "add-project" );
+          if ( !pm.currentProject.initialized ) {
+            pm.destroyCurrentPreview();
+          } //if
+          if ( pm.state === "change-media" ) {
+            popupManager.showPopup( "change-media" );
+          }
+          else {
+            popupManager.showPopup( "add-project" );
+          }
         }
       });
 
       buttonManager.add( "timeout-retry-load", $( "#timeout-retry-load" ), {
         click: function() {
-          pm.destroyCurrentPreview();
-          pm.toggleLoadingScreen( false );
           popupManager.hidePopups();
-          popupManager.showPopup( "add-project" );
+          if ( !pm.currentProject.initialized ) {
+            pm.destroyCurrentPreview();
+          } //if
+          if ( pm.state === "change-media" ) {
+            popupManager.showPopup( "change-media" );
+          }
+          else {
+            popupManager.showPopup( "add-project" );
+          }
         }
       });
 

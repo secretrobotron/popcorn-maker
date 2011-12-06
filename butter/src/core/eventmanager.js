@@ -94,8 +94,13 @@ THE SOFTWARE.
         } //if
 
         if ( type ) {
-          var theseListeners = listeners[ type ];
-          if ( theseListeners ) {
+          var theseListeners;
+          //copy the listeners to make sure they're all called
+          if ( listeners[ type ] ) {
+            theseListeners = [];
+            for ( var i=0, l=listeners[ type ].length; i<l; ++i ) {
+              theseListeners.push( listeners[ type ][ i ] );
+            } //for
             var e = preparedEvent || {
               currentTarget: target || that,
               target: target || that,

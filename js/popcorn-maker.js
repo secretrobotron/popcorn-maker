@@ -44,8 +44,28 @@
       this.currentProject = {
         guid: utils.getUUID(),
         preview: undefined,
-        template: undefined
+        template: undefined,
+        mediaErrorState: {},
+        initialized: false
       }; //currentProject
+
+      // horrible, horrible hack. must replace later
+      this.state = "initializing";
+
+      Object.defineProperty( this, "isMediaBroken", {
+        get: function() {
+          return Object.keys( mediaErrorState ).length > 0;
+        }
+      });
+
+      Object.defineProperty( this, "mediaAccessAllowed", {
+        get: function() {
+          return that.isMediaBroken
+            && that.currentProject.initialized
+            && that.currentProject.preview
+            && that.currentProject.template;
+        }
+      });
 
       var init = function( e ) {
         _butter = e.data;
@@ -92,6 +112,8 @@
           onClose: function(){
           }
         });
+
+        that.state = "ready";
       }; //init
 
       Object.defineProperty( that, "popupManager", { get: function() { return _popupManager; } } );
@@ -177,6 +199,7 @@
           that.currentProject.preview.destroy();
           delete that.currentProject.preview;
           delete that.currentProject.template;
+          that.currentProject.initialized = false;
         } //if
       }; //destroyCurrentPreview
 
@@ -224,6 +247,7 @@
           that.toggleLoadingScreen( true );
           that.toggleKeyboardFunctions( false );
           _popupManager.hidePopups();
+          that.currentProject.initialized = false;
           that.createPreview({
             template: template,
             projectData: projectData.project,
@@ -242,6 +266,7 @@
         that.toggleLoadingScreen( true );
         that.toggleKeyboardFunctions( false );
         that.destroyCurrentPreview();
+        that.currentProject.initialized = false;
         that.createPreview({
           template: _templateManager.find( { template: projectOptions.template } ),
           defaultMedia: projectOptions.defaultMedia,
@@ -269,6 +294,8 @@
           defaultMedia = projectData.project.media[ 0 ].url;
         } //if
 
+        that.currentProject.initialized = false;
+
         that.createPreview({
           template: _templateManager.find( { root: projectData.template } ) || _templateManager.templates[ 0 ],
           defaultMedia: defaultMedia,
@@ -282,6 +309,7 @@
       }; //importProject
 
       this.createPreview = function( previewOptions ) {
+        that.state = "create-preview";
         that.destroyCurrentPreview();
         that.currentProject.preview = new _butter.previewer.Preview({
           template: previewOptions.template.template,
@@ -290,6 +318,8 @@
           onload: function( preview ) {
             that.currentProject.template = previewOptions.template
             that.buildRegistry( _butter.currentMedia.registry );
+            that.currentProject.initialized = true;
+            _buttonManager.toggleSet( "preview", true );
             if ( previewOptions.onload ) {
               previewOptions.onload( preview );
             }
@@ -299,12 +329,36 @@
             that.toggleKeyboardFunctions( true );
           }, //onload
           onfail: function( preview ) {
-            that.toggleLoadingScreen( false );
             that.toggleKeyboardFunctions( true );
-            _popupManager.showPopup( "load-failed" );
           }
         }); //Preview
       }; //createPreview
+
+      _buttonManager.addSet( "all", [
+        "add-project",
+        "change-title",
+        "change-url",
+        "confirm-delete-project",
+        "confirm-load",
+        "create-new",
+        "credits",
+        "delete-project",
+        "edit-projects",
+        "import-json",
+        "load-project",
+        "open-help",
+        "popup-close",
+        "publish-project",
+        "retry-load",
+        "save-project",
+        "save-project-data",
+        "show-html",
+        "show-json",
+        "timeout-keep-waiting",
+        "timeout-retry-load",
+        "wizard-add-project",
+        "wizard-create-new"
+      ]);
 
     } //PopcornMaker
 
