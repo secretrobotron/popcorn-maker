@@ -9,7 +9,9 @@
 
   // Where to find modules that are outside of src.
   paths: {
-    'previewer': 'previewer'
+    'core': '../core',
+    'comm': '../comm',
+    'previewer': './'
   },
 
   // Use has branch trimming in the build to remove the document.write
