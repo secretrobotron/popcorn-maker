@@ -28,9 +28,9 @@
         path.pop();
         path = path.join( '/' ) + '/';
 
-        document.write( '<script src="' + path + '../../external/require/require.js"></' + 'script>' );
+        document.write( '<script data-requirebootstrap="butter.previewer" src="' + path + '../../external/require/require.js"></' + 'script>' );
 
-        document.write('<script>' + 
+        document.write('<script data-requirebootstrap="butter.previewer">' + 
           '(function(){' + 
           'var ctx = require.config({ ' + 
             'baseUrl: "' + path + '../",' +
