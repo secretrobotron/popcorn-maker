@@ -31,9 +31,8 @@ $(BUILD_DIR):
 	@@echo "Creating $(BUILD_DIR)"
 	@@mkdir $(BUILD_DIR)
 
-$(PREVIEWER_DIST): $(BUILD_DIR) $(DIST_DIR) $(PREVIEWER_SRC)
+$(PREVIEWER_DIST): $(DIST_DIR) $(PREVIEWER_SRC)
 	@@echo "Building $(PREVIEWER_DIST)"
-	@@cp $(PREVIEWER_FILES) $(BUILD_DIR)
 	@@node $(TOOLS_DIR)/r.js -o $(SRC_DIR)/build.js
 
 $(PREVIEWER_MIN): $(DIST_DIR) $(PREVIEWER_SRC)
