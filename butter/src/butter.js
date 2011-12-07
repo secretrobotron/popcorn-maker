@@ -50,6 +50,7 @@
             'baseUrl: "' + path + '",' +
             'context: "butter",' +
             'paths: {' +
+              'trackLiner: "' + path + '../external/trackLiner",' +
               'butter: "' + path + '"' +
               // Paths are relative to baseUrl; Notice the commas!
             '}' +

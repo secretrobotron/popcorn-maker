@@ -43,8 +43,8 @@
 
   // Wraps the built file in a closure and exports butter as a global.
   wrap: {
-    startFile: 'wrap.start',
-    endFile: 'wrap.end'
+    startFile: '../../tools/wrap.start',
+    endFile: '../../tools/wrap.end'
   },
 
   // The built butter.js file for use by web sites.

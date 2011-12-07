@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 (function() {
 
-  define( [ "core/logger", "core/eventmanager", "core/trackevent", "comm/comm", "butter/external/trackLiner/trackLiner.js" ], function( Logger, EventManager, TrackEvent, Comm ) {
+  define( [ "core/logger", "core/eventmanager", "core/trackevent", "comm/comm", "trackLiner/trackLiner" ], function( Logger, EventManager, TrackEvent, Comm ) {
 
     var Timeline = function( butter, options ) {
 

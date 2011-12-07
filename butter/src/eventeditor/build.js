@@ -5,22 +5,13 @@
  */
 ({
   // Where to find the module names listed below.
-  baseUrl: '../',
+  baseUrl: './',
 
   // Where to find modules that are outside of src.
-  // This setup assumes CubicVR.js is the built output,
-  // so this build file assumes make has already run in CubicVR.js
   paths: {
-    'butter': 'src/butter',
-    'butter-main': 'src/butter-main',
-    'core': 'src/core',
-    'comm': 'src/comm',
-    'previewer': 'src/previewer',
-    'eventeditor': 'src/eventeditor/',
-    'trackeditor': 'src/trackeditor/',
-    'pluginmanager': 'src/pluginmanager/',
-    'timeline': 'src/timeline/',
-    'trackLiner': 'external/trackLiner'
+    'core': '../core',
+    'comm': '../comm',
+    'eventeditor': './'
   },
 
   // Use has branch trimming in the build to remove the document.write
@@ -38,7 +29,7 @@
   // so it shows up first in the built file,
   // since the butter modules use the define/require APIs that the almond
   // provides. Path is relative to baseUrl.
-  name: 'tools/almond',
+  name: '../../tools/almond',
 
   // Files to include along with almond. Their nested dependencies will also be
   // included. Subsystems are listed explicitly because butter-src.js does not
@@ -46,16 +37,16 @@
   // butter.js references butter-src in a document.write string, so it will
   // not be found by the AST analysis done in the optimizer.
   include: [
-            'butter',
-            'butter-main'
+            'butter.editors',
+            'main'
            ],
 
   // Wraps the built file in a closure and exports butter as a global.
   wrap: {
-    startFile: 'wrap.start',
-    endFile: 'wrap.end'
+    startFile: '../../tools/wrap.start',
+    endFile: '../../tools/wrap.end'
   },
 
   // The built butter.js file for use by web sites.
-  out: '../dist/butter.js'
+  out: './dist/butter.editors.js'
 })

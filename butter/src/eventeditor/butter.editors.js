@@ -39,7 +39,7 @@
               // Paths are relative to baseUrl; Notice the commas!
             '}' +
           '});' +
-          'ctx(["eventeditor/eventeditor"])' + 
+          'ctx(["eventeditor/main"])' + 
           '})()' +
         '</script>');
     }
