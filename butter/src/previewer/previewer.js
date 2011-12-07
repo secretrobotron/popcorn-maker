@@ -16,6 +16,7 @@
         window.removeEventListener( 'message', window.ButterBootstrapper, false );
         var link = new BasicLink({
           defaultMedia: message.message.defaultMedia,
+          exportBaseUrl: message.message.exportBaseUrl,
           importData: message.message.importData,
           popcornUrl: message.message.popcornUrl,
         });

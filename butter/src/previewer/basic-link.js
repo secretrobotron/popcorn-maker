@@ -126,6 +126,7 @@
         onmediacontentchanged: mediaContentChangedHandler,
         onfetchhtml: fetchHTMLHandler,
         defaultMedia: options.defaultMedia,
+        exportBaseUrl: options.exportBaseUrl,
         importData: options.importData,
         popcornUrl: options.popcornUrl
       });

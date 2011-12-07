@@ -5,6 +5,7 @@
           originalBody, originalHead,
           currentMedia, popcornScript,
           popcornUrl = options.popcornUrl || "http://popcornjs.org/code/dist/popcorn-complete.js",
+          exportBaseUrl = options.exportBaseUrl,
           defaultMedia = options.defaultMedia,
           importData = options.importData,
           that = this,
@@ -91,7 +92,10 @@
         return array1.concat( array2 );
       } //concatNodeLists
 
-      this.getHTML = function( projectData ) {
+      this.getHTML = function( projectData, baseUrl ) {
+        
+        baseUrl = baseUrl || exportBaseUrl;
+
         var html = document.createElement( "html" ),
             head = originalHead.cloneNode( true ),
             body = originalBody.cloneNode( true );
@@ -138,6 +142,16 @@
             medias[ media ].alterMediaHTML( body );
           } //if
         } //for
+
+        var baseTag = document.createElement( "base" );
+        baseTag.setAttribute( "href", baseUrl );
+        if ( head.firstChild ) {
+          head.insertBefore( baseTag, head.firstChild );
+        }
+        else {
+          head.appendChild( baseTag );
+        } //if
+
         html.appendChild( head );
         html.appendChild( body );
         return "<!doctype html>\n<html>\n  <head>" + head.innerHTML + "</head>\n  <body>" + body.innerHTML + "</body>\n</html>";

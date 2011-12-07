@@ -356,6 +356,7 @@
           },
           previewer: {
             target: "main",
+            exportBaseUrl: "http://mozillapopcorn.org/maker"
           }
         },
         ready: init
