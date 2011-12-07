@@ -1,3 +1,4 @@
 *.swp
 *~
 dist
+src/previewer/build
