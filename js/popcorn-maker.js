@@ -80,7 +80,7 @@
           config: EDITORS_CONFIG,
           editorsDir: EDITORS_DIR
         });
-        _popupManager = new PopupManager(),
+        _popupManager = new PopupManager( that ),
         _buttonManager = new ButtonManager();
 
         _editorManager.initEditors( _butter );
@@ -114,34 +114,39 @@
         });
 
         that.state = "ready";
+
+        _buttonManager.addSet( "all", [
+          "add-project",
+          "change-title",
+          "change-url",
+          "confirm-delete-project",
+          "confirm-load",
+          "create-new",
+          "credits",
+          "delete-project",
+          "edit-projects",
+          "import-json",
+          "load-project",
+          "open-help",
+          "popup-close",
+          "publish-project",
+          "retry-load",
+          "save-project",
+          "save-project-data",
+          "show-html",
+          "show-json",
+          "timeout-keep-waiting",
+          "timeout-retry-load",
+          "wizard-add-project",
+          "wizard-create-new"
+        ]);
+
       }; //init
 
       Object.defineProperty( that, "popupManager", { get: function() { return _popupManager; } } );
       Object.defineProperty( that, "templateManager", { get: function() { return _templateManager; } } );
       Object.defineProperty( that, "buttonManager", { get: function() { return _buttonManager; } } );
       Object.defineProperty( that, "butter", { get: function() { return _butter; } } );
-
-      var _butter = new Butter({
-        modules: {
-          eventeditor: {
-            target: "editor-popup",
-          },
-          pluginmanager: {
-            target: "plugin-tray",
-            pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>'
-          },
-          timeline: {
-            target: "timeline-div"
-          },
-          trackeditor: {
-            target: "edit-target-popup"
-          },
-          previewer: {
-            target: "main",
-          }
-        },
-        ready: init
-      }); //butter
 
       function onKeyDown( event ) {
         var inc = event.shiftKey ? 1 : 0.1;
@@ -334,31 +339,27 @@
         }); //Preview
       }; //createPreview
 
-      _buttonManager.addSet( "all", [
-        "add-project",
-        "change-title",
-        "change-url",
-        "confirm-delete-project",
-        "confirm-load",
-        "create-new",
-        "credits",
-        "delete-project",
-        "edit-projects",
-        "import-json",
-        "load-project",
-        "open-help",
-        "popup-close",
-        "publish-project",
-        "retry-load",
-        "save-project",
-        "save-project-data",
-        "show-html",
-        "show-json",
-        "timeout-keep-waiting",
-        "timeout-retry-load",
-        "wizard-add-project",
-        "wizard-create-new"
-      ]);
+      var _butter = new Butter({
+        modules: {
+          eventeditor: {
+            target: "editor-popup",
+          },
+          pluginmanager: {
+            target: "plugin-tray",
+            pattern: '<li class="$type_tool"><a href="#" title="$type"><span></span>$type</a></li>'
+          },
+          timeline: {
+            target: "timeline-div"
+          },
+          trackeditor: {
+            target: "edit-target-popup"
+          },
+          previewer: {
+            target: "main",
+          }
+        },
+        ready: init
+      }); //butter
 
     } //PopcornMaker
 
