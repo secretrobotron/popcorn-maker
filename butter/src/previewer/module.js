@@ -234,9 +234,8 @@
             butter.unlisten( "trackeventupdated", onTrackEventUpdated );
           }; //destroy
 
-          this.waitForMedia = function( e ) {
-            var mediaId = e.media.id;
-            server.send( "link", mediaId, "waitformedia" );
+          this.waitForMedia = function( media ) {
+            server.send( "link", media.id, "waitformedia" );
           }; //waitForMedia
 
           Object.defineProperty( this, "type", {

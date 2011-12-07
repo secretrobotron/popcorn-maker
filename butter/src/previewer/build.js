@@ -37,8 +37,8 @@
   // butter.js references butter-src in a document.write string, so it will
   // not be found by the AST analysis done in the optimizer.
   include: [
-            'butter.previewer.js',
-            'previewer.js'
+            'butter.previewer',
+            'main'
            ],
 
   // Wraps the built file in a closure and exports butter as a global.

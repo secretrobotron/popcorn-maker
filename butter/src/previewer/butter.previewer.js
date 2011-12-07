@@ -39,7 +39,7 @@
               // Paths are relative to baseUrl; Notice the commas!
             '}' +
           '});' +
-          'ctx(["previewer/previewer"])' + 
+          'ctx(["previewer/main"])' + 
           '})()' +
         '</script>');
     }
