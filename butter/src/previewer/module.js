@@ -5,7 +5,8 @@
     var Previewer = function( butter, options ) {
 
       var id = "Previewer" + Previewer.guid++,
-          logger = new Logger( id );
+          logger = new Logger( id ),
+          exportBaseUrl = options.exportBaseUrl;
 
       var popcornUrl = options.popcornUrl || "http://popcornjs.org/code/dist/popcorn-complete.js";
 
@@ -204,7 +205,8 @@
           function sendSetup() {
             server.send( "link", {
               defaultMedia: defaultMedia,
-              importData: importData
+              importData: importData,
+              exportBaseUrl: exportBaseUrl
             }, "setup" );
           } //sendSetup
           server.listen( "link", "setup", function( e ) {

@@ -5,6 +5,7 @@
           originalBody, originalHead,
           currentMedia, popcornScript,
           popcornUrl = options.popcornUrl || "http://popcornjs.org/code/dist/popcorn-complete.js",
+          exportBaseUrl = options.exportBaseUrl,
           defaultMedia = options.defaultMedia,
           importData = options.importData,
           that = this,
@@ -84,7 +85,17 @@
         }
       });
 
-      this.getHTML = function( projectData ) {
+      function concatNodeLists( list1, list2 ) {
+        var array1 = Array.prototype.slice.call( list1 ),
+            array2 = Array.prototype.slice.call( list2 );
+
+        return array1.concat( array2 );
+      } //concatNodeLists
+
+      this.getHTML = function( projectData, baseUrl ) {
+        
+        baseUrl = baseUrl || exportBaseUrl;
+
         var html = document.createElement( "html" ),
             head = originalHead.cloneNode( true ),
             body = originalBody.cloneNode( true );
@@ -93,8 +104,26 @@
           projectData = JSON.stringify( projectData );
         } //if
 
-        var scripts = head.getElementsByTagName( "script" ),
+        var originalScripts = concatNodeLists( originalHead.getElementsByTagName( "script" ), originalBody.getElementsByTagName( "script" ) );
+        function isInOriginals( script ) {
+          for ( var i=0, l=originalScripts.length; i<l; ++i ) {
+            if ( originalScripts[ i ].src === script.src ) {
+              return true;
+            } //if
+          } //for
+          return false;
+        } //checkInOriginals
+
+        var scripts = concatNodeLists( body.getElementsByTagName( "script" ), head.getElementsByTagName( "script" ) ),
             projectScript;
+        for ( var i=scripts.length-1; i>0; --i ) {
+          var script = scripts[ i ];
+
+          if ( script.getAttribute( "data-requirecontext" ) === "butter.previewer" || 
+               script.getAttribute( "data-requirebootstrap" ) === "butter.previewer" ) {
+            script.parentNode.removeChild( script );
+          } //if
+        } //for
         for ( var i=0, l=scripts.length; i<l; ++i ) {
           if ( scripts[ i ].getAttribute( "data-butter" ) === "project-data" ) {
             projectScript = scripts[ i ];
@@ -113,6 +142,16 @@
             medias[ media ].alterMediaHTML( body );
           } //if
         } //for
+
+        var baseTag = document.createElement( "base" );
+        baseTag.setAttribute( "href", baseUrl );
+        if ( head.firstChild ) {
+          head.insertBefore( baseTag, head.firstChild );
+        }
+        else {
+          head.appendChild( baseTag );
+        } //if
+
         html.appendChild( head );
         html.appendChild( body );
         return "<!doctype html>\n<html>\n  <head>" + head.innerHTML + "</head>\n  <body>" + body.innerHTML + "</body>\n</html>";

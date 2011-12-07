@@ -2,14 +2,15 @@
 
   define( [], function() {
 
-    function PopupManager() {
+    function PopupManager( popcornMaker ) {
 
       var popups = [],
           openPopups = [],
           popupsByName = {},
           escapeKeyEnabled,
           that = this,
-          buttonListeners = {};
+          buttonListeners = {}
+          pm = popcornMaker;
 
       function removeButtonListeners( name ) {
         var listeners = buttonListeners[ name ]
@@ -40,9 +41,11 @@
         $('.balck-overlay').hide();
         escapeKeyEnabled = false;
         openPopups = [];
+        pm.toggleKeyboardFunctions( true );
       }; //hidePopups
 
       this.showPopup = function( name, options ) {
+        pm.toggleKeyboardFunctions( false );
         options = options || {};
 
         var popup = popupsByName[ name ];
@@ -105,6 +108,9 @@
           openPopups.splice( idx, 1 );
         } //if
         removeButtonListeners( name );
+        if ( openPopups.length === 0 ) {
+          pm.toggleKeyboardFunctions( true );
+        } //if
       }; //hidePopup
 
       Object.defineProperty( this, "open", {

@@ -24,6 +24,7 @@
           link = new Link({
             type: "custom",
             defaultMedia: message.message.defaultMedia,
+            exportBaseUrl: message.message.exportBaseUrl,
             importData: message.message.importData,
             popcornUrl: message.message.popcornUrl,
             onmediachanged: options.onmediachanged || function() {},
