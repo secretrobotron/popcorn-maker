@@ -17,6 +17,7 @@
   // Use has branch trimming in the build to remove the document.write
   // code in src/butter.js after a minification is done.
   has: {
+    'source-config': false
   },
 
   // Do not minify with the requirejs optimizer, to allow shipping
