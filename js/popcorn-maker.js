@@ -320,6 +320,7 @@
           template: previewOptions.template.template,
           defaultMedia: previewOptions.defaultMedia,
           importData: previewOptions.projectData,
+          exportBaseUrl: "http://mozillapopcorn.org/maker/" + previewOptions.template.template,
           onload: function( preview ) {
             that.currentProject.template = previewOptions.template
             that.buildRegistry( _butter.currentMedia.registry );

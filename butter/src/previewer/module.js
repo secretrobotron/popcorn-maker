@@ -6,7 +6,7 @@
 
       var id = "Previewer" + Previewer.guid++,
           logger = new Logger( id ),
-          exportBaseUrl = options.exportBaseUrl;
+          defaultExportBaseUrl = options.exportBaseUrl;
 
       var popcornUrl = options.popcornUrl || "http://popcornjs.org/code/dist/popcorn-complete.js";
 
@@ -24,6 +24,7 @@
             importData = options.importData,
             onload = options.onload,
             onfail = options.onfail,
+            exportBaseUrl = options.exportBaseUrl || defaultExportBaseUrl,
             id = "Preview" + Preview.guid++,
             logger = new Logger( id );
 
