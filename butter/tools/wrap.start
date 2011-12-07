@@ -1,5 +1,5 @@
 /**
- * @license
+ * MIT LICENSE
  * Copyright (c) 2011, Mozilla Foundation
  * All rights reserved.
  *
@@ -14,7 +14,7 @@
 
 (function () {
 
-  // Bail if there is already a gladius in the page.
-  if ( this.gladius ) {
+  // Bail if there is already a butter in the page.
+  if ( this.butter ) {
     return;
   }
