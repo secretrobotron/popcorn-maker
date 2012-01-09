@@ -1,5 +1,29 @@
+<!DOCTYPE html>
 <html>
-  <head>
+<head>
+    <title>Basic template</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <style>
+        #main, .content-div {
+            float: left;
+        }
+        .content-div {
+            min-width: 200px;
+            min-height: 200px;
+            border: 3px solid #000;
+            margin: 5px;
+        }
+        .container-div {
+            float: left;
+            text-align: center;
+            font-family: helvetica;
+            font-style: bold;
+        }
+        #main {
+            min-width: 300px;
+            min-height: 200px;
+        }
+    </style>
     <script src="../../lib/popcorn/popcorn.js"></script>
     <script src="../../lib/popcorn/popcorn.youtube.js"></script>
     <script src="../../lib/popcorn/popcorn.vimeo.js"></script>
@@ -14,36 +38,16 @@
     <script src="../../lib/popcorn/popcorn.wikipedia.js"></script>
     <script src="../../lib/popcorn/popcorn.googlemap.js"></script>
     <script src="../../butter/src/previewer/butter.previewer.js"></script>
-  </head>
-  <style>
-    #main, .content-div {
-      float: left;
-    }
-
-    .content-div {
-      min-width: 200px;
-      min-height: 200px;
-      border: 3px solid #000;
-      margin: 5px;
-    }
-
-    .container-div {
-      float: left;
-      text-align: center;
-      font-family: helvetica;
-      font-style: bold;
-    }
-    
-    #main {
-      min-width: 300px;
-      min-height: 200px;
-    }
-  </style>
-  <body>
+</head>
+<body>
     <div id="main" data-butter="media"></div>
     <div class="container-div">
-    <div class="content-div" data-butter="target" id="Area1"></div><p>Area 1</p></div>
+        <div class="content-div" data-butter="target" id="Area1"></div>
+        <p>Area 1</p>
+    </div>
     <div class="container-div">
-    <div class="content-div" data-butter="target" id="Area2"></div><p>Area 2</p></div>
-  </body>
+        <div class="content-div" data-butter="target" id="Area2"></div>
+        <p>Area 2</p>
+    </div>
+</body>
 </html>
