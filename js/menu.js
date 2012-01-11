@@ -200,6 +200,7 @@
 
       buttonManager.add( "show-json", $( ".show-json-btn" ), {
         click: function() {
+          $( "#export-data" ).show();
           var exp = pm.getProjectExport();
           $('#export-data').val( JSON.stringify( exp ) );
         }
@@ -207,11 +208,39 @@
 
       buttonManager.add( "show-html", $( ".show-html-btn" ), {
         click: function() {
+          $( "#export-data" ).show();
           pm.currentProject.preview.fetchHTML( function( html ) {
             $('#export-data').val( html );
           });
         }
       }); //show-html
+
+      buttonManager.add( "publish", $( ".publish-btn" ), {
+        click: function() {
+          $( "#export-data" ).hide();
+          //var exp = pm.getProjectExport();
+          //$('#export-data').val( JSON.stringify( exp ) );
+          pm.currentProject.preview.fetchHTML( function( html ) {
+ 
+            jQuery.ajax({
+              type: 'POST',
+              url: "http://hackpub.hackasaurus.org/publish",
+              data: {
+                'html': html,
+                'original-url': "http://github.com/secretrobotron/popcorn-maker"
+              },
+              crossDomain: true,
+              dataType: 'json',
+              success: function( resp ){
+                alert( resp[ "published-url" ] );
+              },
+              timeout: 5,
+              error: function(){
+              }
+            });
+          });
+        }
+      }); //show-json
 
       buttonManager.add( "credits", $("h1.logo a"), {
         click: function() {
