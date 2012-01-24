@@ -358,6 +358,8 @@
           previewer: {
             target: "main",
             exportBaseUrl: "http://mozillapopcorn.org/maker"
+          },
+          dialogs: {
           }
         },
         ready: init

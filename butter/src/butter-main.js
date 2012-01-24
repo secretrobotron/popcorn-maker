@@ -36,8 +36,9 @@ THE SOFTWARE.
             "previewer/module",
             "trackeditor/module",
             "pluginmanager/module",
-            "timeline/module" ],
-          function( require, Logger, EventManager, Track, TrackEvent, Target, Media ) {
+            "timeline/module",
+            "dialogs/module" ],
+          function( require, Logger, EventManager, Track, TrackEvent, Target, Media, Dialogs ) {
 
     var Butter = function ( options ) {
 
